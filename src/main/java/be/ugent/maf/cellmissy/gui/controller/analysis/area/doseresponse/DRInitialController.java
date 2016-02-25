@@ -5,6 +5,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInitialPlotPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
@@ -12,6 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,13 +78,10 @@ public class DRInitialController {
         dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
 
         //Log transform concentrations, keeping slopes the same
-        
+        LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
         //Populate table with the data
-        
         //Fit data according to initial parameters (standard hillslope, no constraints)
-        
         //Plot fitted data in dose-response curve, along with R² annotation
-        
         /**
          * Action listeners for buttons
          */
@@ -135,8 +137,8 @@ public class DRInitialController {
         });
 
         /**
-         * Perform fitting and plot new dose-response graph, taking into account any choices made by
-         * the user.
+         * Perform fitting and plot new dose-response graph, taking into account
+         * any choices made by the user.
          */
         dRInitialPlotPanel.getPlotGraphButton().addActionListener(new ActionListener() {
 
@@ -148,5 +150,40 @@ public class DRInitialController {
 
         //add view to parent panel
         doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInitialPlotPanel, gridBagConstraints);
+    }
+
+    /**
+     * Private methods
+     */
+    /**
+     * Prepare data for fitting starting from the analysis group.
+     *
+     * @param dRAnalysisGroup
+     * @return LinkedHashMap That maps the concentration (log-transformed!) to
+     * the replicate velocites
+     */
+    private LinkedHashMap<Double, List<Double>> prepareFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
+        LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
+        
+        List<List<Double>> allVelocities = new ArrayList<List<Double>>(dRAnalysisGroup.getVelocitiesMap().size());
+        for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
+            List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
+            
+            allVelocities.add(replicateVelocities);
+        }
+        
+        int i = 0;
+        LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
+        for (Double concentration : nestedMap.keySet()) {
+            String unit = nestedMap.get(concentration);
+
+            Double logConcentration = doseResponseController.logTransform(concentration, unit);
+            result.put(logConcentration, allVelocities.get(i));
+            
+            i++;
+        }
+
+
+        return result;
     }
 }

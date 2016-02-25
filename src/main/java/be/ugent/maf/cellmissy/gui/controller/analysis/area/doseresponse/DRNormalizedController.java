@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -16,6 +17,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartPanel;
@@ -79,7 +81,9 @@ public class DRNormalizedController {
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
 
-        //Perform initial normalization (mean values)
+        //LogTransform concentrations and perform initial normalization (mean values)
+        LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+
         //Populate table with normalized data
         //Perform initial curve fitting (standard hillslope, no constraints)
         //Plot fitted data in dose-response curve, along with R² annotation
@@ -239,6 +243,53 @@ public class DRNormalizedController {
             allMedians.add(AnalysisUtils.computeMedian(data));
         }
         return allMedians;
+    }
+
+    /**
+     * Prepare data for fitting starting from the analysis group.
+     *
+     * @param dRAnalysisGroup
+     * @return LinkedHashMap That maps the concentration (log-transformed!) to
+     * the normalized replicate velocites
+     */
+    private LinkedHashMap<Double, List<Double>> prepareFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
+        LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
+        
+        List<List<Double>> allVelocities = new ArrayList<List<Double>>(dRAnalysisGroup.getVelocitiesMap().size());
+        for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
+            List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
+            //normalize each value
+            List<Double> normalizedVelocities = new ArrayList<>();
+            for (Double value : replicateVelocities) {
+                normalizedVelocities.add(normalize(value));
+            }
+            
+            allVelocities.add(normalizedVelocities);
+        }
+        
+        int i = 0;
+        LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
+        for (Double concentration : nestedMap.keySet()) {
+            String unit = nestedMap.get(concentration);
+
+            Double logConcentration = doseResponseController.logTransform(concentration, unit);
+            result.put(logConcentration, allVelocities.get(i));
+            
+            i++;
+        }
+
+        return result;
+    }
+    
+    /**
+     * Perform normalization on velocities
+     */
+    private Double normalize(Double velocity) {
+        //check which values will become 0% and 100%
+        Double topNormalize = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
+        Double bottomNormalize = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
+        
+        return (velocity - bottomNormalize) / (topNormalize - bottomNormalize);
     }
 
 }

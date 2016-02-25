@@ -17,8 +17,6 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ButtonGroup;
@@ -161,25 +159,23 @@ public class DoseResponseController {
     }
     
     /**
-     * Prepare data for fitting. This can be for the initial fit (conc - velocities)
-     * or the normalized fit (conc - normalized velocities)
-     * @param dRAnalysisGroup
-     * @return LinkedHashMap That maps the concentration (log-transformed!) to the replicate velocites
+     * Log-transform a concentration according to its concentration unit.
+     * @param concentration Set by user in experimental setup screen
+     * @param unit The concentration unit (µM, nM...)
+     * @return The log-transformed value of the concentration (eg. 1 µm becomes -6)
      */
-    public LinkedHashMap<Double, List<Double>> makeFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
-        LinkedHashMap<Double,String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get( dRAnalysisGroup.getTreatmentToAnalyse() );
-        for (Double concentration : nestedMap.keySet()) {
-            String unit = nestedMap.get(concentration);
-            
-            logTransform(concentration, unit);
-        }
-        
-        for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()){
-            List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
-        }
-        
+    public Double logTransform(Double concentration, String unit) {
+        Double value = concentration;
+        if (unit.equals("mM") ){
+            value *= Math.pow(10, -3);
+        } else if (unit.equals("µM")) {
+            value *= Math.pow(10,-6);
+        } else if (unit.equals("nM")) {
+            value *= Math.pow(10, -9);
     }
-
+        return Math.log10(value);
+    }
+    
     /**
      * private methods
      */
