@@ -35,6 +35,9 @@ public class DRNormalizedController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRNormalizedController.class);
 
     //model
+    private Double bottomConstrainValue;
+    private Double topConstrainValue;
+    private boolean standardHillslope;
     //view
     private DRNormalizedPlotPanel dRNormalizedPlotPanel;
     private ChartPanel normalizedChartPanel;
@@ -85,8 +88,11 @@ public class DRNormalizedController {
         LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
 
         //Populate table with normalized data
+        doseResponseController.populateTable(dataToFit);
         //Perform initial curve fitting (standard hillslope, no constraints)
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
         //Plot fitted data in dose-response curve, along with R² annotation
+        doseResponseController.plotDoseResponse();
         /**
          * Action listeners for buttons
          */
@@ -98,7 +104,7 @@ public class DRNormalizedController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                standardHillslope = true;
             }
         });
         /**
@@ -109,7 +115,7 @@ public class DRNormalizedController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                standardHillslope = false;
             }
         });
 
@@ -174,9 +180,9 @@ public class DRNormalizedController {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    double bottomConstrainValue = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
+                    bottomConstrainValue = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
                 } else {
-
+                    bottomConstrainValue = null;
                 }
             }
         });
@@ -186,10 +192,10 @@ public class DRNormalizedController {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    double topConstrainValue = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
+                    topConstrainValue = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
 
                 } else {
-
+                    topConstrainValue = null;
                 }
             }
         });
@@ -202,8 +208,10 @@ public class DRNormalizedController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                doseResponseController.populateTable();
+                LinkedHashMap<Double, List<Double>> fittingData = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+                doseResponseController.populateTable(fittingData);
+                doseResponseController.performFitting(fittingData, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
+                doseResponseController.plotDoseResponse();
             }
         });
 

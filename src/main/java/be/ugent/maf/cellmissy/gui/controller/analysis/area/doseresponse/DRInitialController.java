@@ -32,6 +32,9 @@ public class DRInitialController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRInitialController.class);
     //model
+    Double bottomConstrainValue;
+    Double topConstrainValue;
+    boolean standardHillslope;
     //view
     private DRInitialPlotPanel dRInitialPlotPanel;
     private ChartPanel initialChartPanel;
@@ -78,10 +81,14 @@ public class DRInitialController {
         dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
 
         //Log transform concentrations, keeping slopes the same
-        LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+        final LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
         //Populate table with the data
+        doseResponseController.populateTable(dataToFit);
         //Fit data according to initial parameters (standard hillslope, no constraints)
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
+
         //Plot fitted data in dose-response curve, along with R² annotation
+        doseResponseController.plotDoseResponse();
         /**
          * Action listeners for buttons
          */
@@ -93,7 +100,7 @@ public class DRInitialController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                standardHillslope = true;
             }
         });
         /**
@@ -104,22 +111,22 @@ public class DRInitialController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                standardHillslope = false;
             }
         });
 
         /**
          * If selected, text field to enter value for parameter constraining
-         * will be editable and taken into account on plotting.
+         * will be taken into account on plotting.
          */
         dRInitialPlotPanel.getBottomCheckBox().addItemListener(new ItemListener() {
 
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    dRInitialPlotPanel.getBottomTextField().setEditable(true);
+                    bottomConstrainValue = 0.0;
                 } else {
-                    dRInitialPlotPanel.getBottomTextField().setEditable(false);
+                    bottomConstrainValue = null;
                 }
             }
         });
@@ -129,9 +136,9 @@ public class DRInitialController {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    dRInitialPlotPanel.getTopTextField().setEditable(true);
+                    topConstrainValue = 0.0;
                 } else {
-                    dRInitialPlotPanel.getTopTextField().setEditable(false);
+                    topConstrainValue = null;
                 }
             }
         });
@@ -144,7 +151,14 @@ public class DRInitialController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                if (bottomConstrainValue != null) {
+                    bottomConstrainValue = Double.parseDouble(dRInitialPlotPanel.getBottomTextField().getText());
+                }
+                if(topConstrainValue != null) {
+                    topConstrainValue = Double.parseDouble(dRInitialPlotPanel.getTopTextField().getText());
+                }
+                doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
+                doseResponseController.plotDoseResponse();
             }
         });
 

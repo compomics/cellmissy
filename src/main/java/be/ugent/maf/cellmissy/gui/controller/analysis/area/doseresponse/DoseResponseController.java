@@ -5,9 +5,11 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
+import be.ugent.maf.cellmissy.analysis.area.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
@@ -17,6 +19,7 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ButtonGroup;
@@ -51,6 +54,8 @@ public class DoseResponseController {
     private DRNormalizedController dRNormalizedController;
     private DRResultsController dRResultsController;
     // services
+    @Autowired
+    private SigmoidFitter sigmoidFitter;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -137,6 +142,43 @@ public class DoseResponseController {
      */
     public void plotDoseResponse() {
 
+    }
+    
+    /**
+     * Perform fitting according to user specifications. This method will check
+     * how many parameters have been constrained and pick the right fitter class.
+     * 
+     * @param dataToFit The data (log-transformed concentration - velocity)
+     * @param resultsHolder The class that will contain the results from fitting
+     * @param bottomConstrained Double if user constrains, otherwise null
+     * @param topConstrained Double if user constrains, otherwise null
+     * @param standardHillcurve If true, will use standardHillSlope field to constrain
+     */
+    public void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained, boolean standardHillcurve) {
+        if (bottomConstrained != null) {
+            
+            if (topConstrained != null) {
+                if (standardHillcurve) {
+                    sigmoidFitter.fitBotTopHillConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
+                } else {
+                    sigmoidFitter.fitBotTopConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained);
+                }
+            } else if (standardHillcurve) {
+                sigmoidFitter.fitBotHillConstrain(dataToFit, resultsHolder, bottomConstrained, getStandardHillslope());
+            } else {
+                sigmoidFitter.fitBotConstrain(dataToFit, resultsHolder, bottomConstrained);
+            }
+        } else if (topConstrained != null) {
+            if (standardHillcurve) {
+                sigmoidFitter.fitTopHillConstrain(dataToFit, resultsHolder, topConstrained, getStandardHillslope());
+            } else {
+                sigmoidFitter.fitTopConstrain(dataToFit, resultsHolder, topConstrained);
+            }
+        } else if (standardHillcurve) {
+            sigmoidFitter.fitHillConstrain(dataToFit, resultsHolder, getStandardHillslope());
+        } else {
+            sigmoidFitter.fitNoConstrain(dataToFit, resultsHolder);
+        }
     }
 
     /**

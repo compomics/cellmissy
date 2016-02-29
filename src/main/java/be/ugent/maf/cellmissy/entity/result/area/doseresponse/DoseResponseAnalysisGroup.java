@@ -30,6 +30,9 @@ public class DoseResponseAnalysisGroup {
     
     //The treatment to be analyzed
     private Treatment treatmentToAnalyse;
+    
+    //The results of the analysis
+    private DoseResponseAnalysisResults doseResponseAnalysisResults;
 
     /**
      * Constructor
@@ -108,6 +111,9 @@ public class DoseResponseAnalysisGroup {
     public void setTreatmentToAnalyse(Treatment treatmentToAnalyse) {
         this.treatmentToAnalyse = treatmentToAnalyse;
     }
-    
+
+    public DoseResponseAnalysisResults getDoseResponseAnalysisResults() {
+        return doseResponseAnalysisResults;
+    }
     
 }
