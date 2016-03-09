@@ -26,6 +26,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -129,34 +130,29 @@ public class DoseResponseController {
     public void updateTableInfoMessage(String messageToShow) {
         dRPanel.getTableInfoLabel().setText(messageToShow);
     }
-
-    /**
-     * Populate the table. Each subview uses this method to show different data.
-     */
-    public void populateTable() {
-
-    }
-
+    
     /**
      * Plots the fitted data.
      */
     public void plotDoseResponse() {
 
     }
-    
+
     /**
      * Perform fitting according to user specifications. This method will check
-     * how many parameters have been constrained and pick the right fitter class.
-     * 
+     * how many parameters have been constrained and pick the right fitter
+     * class.
+     *
      * @param dataToFit The data (log-transformed concentration - velocity)
      * @param resultsHolder The class that will contain the results from fitting
      * @param bottomConstrained Double if user constrains, otherwise null
      * @param topConstrained Double if user constrains, otherwise null
-     * @param standardHillcurve If true, will use standardHillSlope field to constrain
+     * @param standardHillcurve If true, will use standardHillSlope field to
+     * constrain
      */
     public void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained, boolean standardHillcurve) {
         if (bottomConstrained != null) {
-            
+
             if (topConstrained != null) {
                 if (standardHillcurve) {
                     sigmoidFitter.fitBotTopHillConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
@@ -199,25 +195,27 @@ public class DoseResponseController {
     public void resetOnCancel() {
 
     }
-    
+
     /**
      * Log-transform a concentration according to its concentration unit.
+     *
      * @param concentration Set by user in experimental setup screen
      * @param unit The concentration unit (µM, nM...)
-     * @return The log-transformed value of the concentration (eg. 1 µm becomes -6)
+     * @return The log-transformed value of the concentration (eg. 1 µm becomes
+     * -6)
      */
     public Double logTransform(Double concentration, String unit) {
         Double value = concentration;
-        if (unit.equals("mM") ){
+        if (unit.equals("mM")) {
             value *= Math.pow(10, -3);
         } else if (unit.equals("µM")) {
-            value *= Math.pow(10,-6);
+            value *= Math.pow(10, -6);
         } else if (unit.equals("nM")) {
             value *= Math.pow(10, -9);
-    }
+        }
         return Math.log10(value);
     }
-    
+
     /**
      * private methods
      */
@@ -254,7 +252,7 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                updateModelInTable(dRInputController.getTableModel());
             }
         });
 
@@ -262,7 +260,7 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                updateModelInTable(dRInitialController.getTableModel());
             }
         });
 
@@ -270,7 +268,7 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                updateModelInTable(dRNormalizedController.getTableModel());
             }
         });
 
@@ -278,12 +276,19 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                updateModelInTable(dRResultsController.getTableModel());
             }
         });
 
         //add view to parent panel
         areaMainController.getAreaAnalysisPanel().getDoseResponseParentPanel().add(dRPanel, gridBagConstraints);
+    }
+    
+    /**
+     * When switching to a different subview, change the model for the main table.
+     */
+    private void updateModelInTable(DefaultTableModel tableModel) {
+        dataTable.setModel(tableModel);
     }
 
 }
