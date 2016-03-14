@@ -53,18 +53,18 @@ public class StepCentricDataHolder {
     // a direction autocorrelation is defined as the cosine of the difference between turning angles at successive
     // time points
     private List<Double[]> directionAutocorrelations;
-
     // a 2D tree of points (spatially)
-    private KDTree<Point2D> spatial2DTree;
+    private KDTree<Point2D> xY2DTree;
     // the 2D trees of points (for the time series: x(t) and y(t))
-    private KDTree<Point2D> timeX2DTree;
-    private KDTree<Point2D> timeY2DTree;
+    private KDTree<Point2D> xT2DTree;
+    private KDTree<Point2D> yT2DTree;
     // a list of list of ellipse2D for the eclosing balls reference
     // a list of enclosing balls is computed for each radius value
-    private List<List<EnclosingBall>> spatialEnclosingBalls;
-    
-    private List<List<EnclosingBall>> xTemporalEnclosingBalls;
-    private List<List<EnclosingBall>> yTemporalEnclosingBalls;
+    private List<List<EnclosingBall>> xYEnclosingBalls;
+    // same as the spatial enclosing balls, but for the x(t) time series
+    private List<List<EnclosingBall>> xTEnclosingBalls;
+    // same as the spatial enclosing balls, but for the y(t) time series
+    private List<List<EnclosingBall>> yTEnclosingBalls;
 
     private double[][] dirAutoCorrMatrix; // might not be needed
     private double[] diffAngles; // might not be needed
@@ -199,52 +199,52 @@ public class StepCentricDataHolder {
         this.medianDirectionAutocorrelations = medianDirectionAutocorrelations;
     }
 
-    public KDTree<Point2D> getSpatial2DTree() {
-        return spatial2DTree;
+    public KDTree<Point2D> getxY2DTree() {
+        return xY2DTree;
     }
 
-    public void setSpatial2DTree(KDTree<Point2D> spatial2DTree) {
-        this.spatial2DTree = spatial2DTree;
+    public void setxY2DTree(KDTree<Point2D> xY2DTree) {
+        this.xY2DTree = xY2DTree;
     }
 
-    public KDTree<Point2D> getTimeX2DTree() {
-        return timeX2DTree;
+    public KDTree<Point2D> getxT2DTree() {
+        return xT2DTree;
     }
 
-    public void setTimeX2DTree(KDTree<Point2D> timeX2DTree) {
-        this.timeX2DTree = timeX2DTree;
+    public void setxT2DTree(KDTree<Point2D> xT2DTree) {
+        this.xT2DTree = xT2DTree;
     }
 
-    public KDTree<Point2D> getTimeY2DTree() {
-        return timeY2DTree;
+    public KDTree<Point2D> getyT2DTree() {
+        return yT2DTree;
     }
 
-    public void setTimeY2DTree(KDTree<Point2D> timeY2DTree) {
-        this.timeY2DTree = timeY2DTree;
+    public void setyT2DTree(KDTree<Point2D> yT2DTree) {
+        this.yT2DTree = yT2DTree;
     }
 
-    public List<List<EnclosingBall>> getSpatialEnclosingBalls() {
-        return spatialEnclosingBalls;
+    public List<List<EnclosingBall>> getxYEnclosingBalls() {
+        return xYEnclosingBalls;
     }
 
-    public void setSpatialEnclosingBalls(List<List<EnclosingBall>> spatialEnclosingBalls) {
-        this.spatialEnclosingBalls = spatialEnclosingBalls;
+    public void setxYEnclosingBalls(List<List<EnclosingBall>> xYEnclosingBalls) {
+        this.xYEnclosingBalls = xYEnclosingBalls;
     }
 
-    public List<List<EnclosingBall>> getxTemporalEnclosingBalls() {
-        return xTemporalEnclosingBalls;
+    public List<List<EnclosingBall>> getxTEnclosingBalls() {
+        return xTEnclosingBalls;
     }
 
-    public void setxTemporalEnclosingBalls(List<List<EnclosingBall>> xTemporalEnclosingBalls) {
-        this.xTemporalEnclosingBalls = xTemporalEnclosingBalls;
+    public void setxTEnclosingBalls(List<List<EnclosingBall>> xTEnclosingBalls) {
+        this.xTEnclosingBalls = xTEnclosingBalls;
     }
 
-    public List<List<EnclosingBall>> getyTemporalEnclosingBalls() {
-        return yTemporalEnclosingBalls;
+    public List<List<EnclosingBall>> getyTEnclosingBalls() {
+        return yTEnclosingBalls;
     }
 
-    public void setyTemporalEnclosingBalls(List<List<EnclosingBall>> yTemporalEnclosingBalls) {
-        this.yTemporalEnclosingBalls = yTemporalEnclosingBalls;
+    public void setyTEnclosingBalls(List<List<EnclosingBall>> yTEnclosingBalls) {
+        this.yTEnclosingBalls = yTEnclosingBalls;
     }
 
     public Map<InterpolationMethod, InterpolatedTrack> getInterpolationMap() {

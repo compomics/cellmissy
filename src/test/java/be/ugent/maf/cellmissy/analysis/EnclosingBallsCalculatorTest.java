@@ -5,7 +5,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallsCalculator;
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallCalculator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
@@ -34,7 +34,7 @@ public class EnclosingBallsCalculatorTest {
     @Autowired
     private StepCentricOperator stepCentricOperator;
     @Autowired
-    private EnclosingBallsCalculator enclosingBallsCalculator;
+    private EnclosingBallCalculator enclosingBallsCalculator;
     // the data holder
     private static final StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder();
 
@@ -68,23 +68,23 @@ public class EnclosingBallsCalculatorTest {
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
         double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
         double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
-        List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getSpatial2DTree(), 0.1);
+        List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 0.1);
         Assert.assertEquals(6, enclosingBalls.size());
 
-        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getSpatial2DTree(), 0.5);
+        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 0.5);
         Assert.assertEquals(5, enclosingBalls.size());
 
-        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getSpatial2DTree(), 1.1);
+        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 1.1);
         Assert.assertEquals(3, enclosingBalls.size());
-        Assert.assertEquals(3, enclosingBalls.get(0).getPoints().size());
-        Assert.assertEquals(2, enclosingBalls.get(1).getPoints().size());
-        Assert.assertEquals(1, enclosingBalls.get(2).getPoints().size());
+        Assert.assertEquals(3, enclosingBalls.get(0).getEnclosingPoints().size());
+        Assert.assertEquals(2, enclosingBalls.get(1).getEnclosingPoints().size());
+        Assert.assertEquals(1, enclosingBalls.get(2).getEnclosingPoints().size());
 
-        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getTimeX2DTree(), 0.5);
+        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getxT2DTree(), 0.5);
         Assert.assertEquals(6, enclosingBalls.size());
-        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getTimeX2DTree(), 1.0);
+        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getxT2DTree(), 1.0);
         Assert.assertEquals(6, enclosingBalls.size());
-        enclosingBalls = enclosingBallsCalculator.computeEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getTimeX2DTree(), 1.5);
+        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getxT2DTree(), 1.5);
         Assert.assertEquals(4, enclosingBalls.size());
     }
 }

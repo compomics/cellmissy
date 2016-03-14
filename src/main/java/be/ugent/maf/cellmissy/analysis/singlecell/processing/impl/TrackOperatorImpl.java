@@ -40,9 +40,9 @@ public class TrackOperatorImpl implements TrackOperator {
         stepCentricOperator.computeMeanDirectionAutocorrelations(stepCentricDataHolder);
         stepCentricOperator.interpolateTrack(stepCentricDataHolder);
         stepCentricOperator.init2Dtrees(stepCentricDataHolder);
-        stepCentricOperator.computeSpatialEnclosingBalls(stepCentricDataHolder);
-        stepCentricOperator.computeXTemporalEnclosingBalls(stepCentricDataHolder);
-        stepCentricOperator.computeYTemporalEnclosingBalls(stepCentricDataHolder);
+        stepCentricOperator.computeXYEnclosingBalls(stepCentricDataHolder);
+        stepCentricOperator.computeXTEnclosingBalls(stepCentricDataHolder);
+        stepCentricOperator.computeYTEnclosingBalls(stepCentricDataHolder);
     }
 
     @Override

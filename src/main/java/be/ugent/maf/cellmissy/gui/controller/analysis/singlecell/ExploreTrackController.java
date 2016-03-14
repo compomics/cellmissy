@@ -67,6 +67,7 @@ import java.util.concurrent.ExecutionException;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jfree.chart.annotations.XYShapeAnnotation;
+import org.jfree.data.Range;
 
 /**
  * This controller takes care of logic for exploring a track. Parent controller:
@@ -825,7 +826,7 @@ class ExploreTrackController {
      */
     private void plotSpatEnclosingBalls(TrackDataHolder trackDataHolder) {
         int selectedIndexRadius = exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex();
-        List<List<EnclosingBall>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls();
+        List<List<EnclosingBall>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getxYEnclosingBalls();
         List<EnclosingBall> enclosingBalls = enclosingBallsList.get(selectedIndexRadius);
         // get the coordinates matrix
         Double[][] coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
@@ -859,16 +860,16 @@ class ExploreTrackController {
 
         spatEnclosingBallChartPanel.setChart(chart);
         enclosingBalls.stream().forEach((ball) -> {
-            xyPlot.addAnnotation(new XYShapeAnnotation(ball.getBall(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
+            xyPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
         });
     }
 
     private void plotTempEnclosingBalls(TrackDataHolder trackDataHolder) {
         int selectedIndexEpsilon = exploreTrackPanel.getEnclosingBallEpsCombobox().getSelectedIndex();
-        List<List<EnclosingBall>> xtEnclosingBallList = trackDataHolder.getStepCentricDataHolder().getxTemporalEnclosingBalls();
+        List<List<EnclosingBall>> xtEnclosingBallList = trackDataHolder.getStepCentricDataHolder().getxTEnclosingBalls();
         List<EnclosingBall> xTempBalls = xtEnclosingBallList.get(selectedIndexEpsilon);
 
-        List<List<EnclosingBall>> ytEnclosingBallList = trackDataHolder.getStepCentricDataHolder().getyTemporalEnclosingBalls();
+        List<List<EnclosingBall>> ytEnclosingBallList = trackDataHolder.getStepCentricDataHolder().getyTEnclosingBalls();
         List<EnclosingBall> yTempBalls = ytEnclosingBallList.get(selectedIndexEpsilon);
 
         // get the selected track data holder, and thus the track to plot in time
@@ -920,40 +921,40 @@ class ExploreTrackController {
 
         tempEnclosingBallChartPanel.setChart(combinedChart);
         xTempBalls.stream().forEach((ball) -> {
-            xTPlot.addAnnotation(new XYShapeAnnotation(ball.getBall(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
+            xTPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
         });
         yTempBalls.stream().forEach((ball) -> {
-            yTPlot.addAnnotation(new XYShapeAnnotation(ball.getBall(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
+            yTPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
         });
     }
 
     // update the number of enclosing balls in space
     private void updateSpatEnclosingBallNumber(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls().get(index);
+        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxYEnclosingBalls().get(index);
         exploreTrackPanel.getSpatEnclosingBallsTextField().setText("" + balls.size());
     }
-    
+
     // update the list of enclosing balls in space
     private void updateSpatEnclosingBallsList(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getSpatialEnclosingBalls().get(index);
+        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxYEnclosingBalls().get(index);
         spatEnclosingBalls.clear();
         spatEnclosingBalls.addAll(balls);
     }
 
     // update the number of enclosing balls in time
     private void updateTempEnclosingBallNumber(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTemporalEnclosingBalls().get(index);
+        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTEnclosingBalls().get(index);
         exploreTrackPanel.getXtEnclosingBallsTextField().setText("" + balls.size());
-        balls = trackDataHolder.getStepCentricDataHolder().getyTemporalEnclosingBalls().get(index);
+        balls = trackDataHolder.getStepCentricDataHolder().getyTEnclosingBalls().get(index);
         exploreTrackPanel.getYtEnclosingBallsTextField().setText("" + balls.size());
     }
 
     // update the list of enclosing balls in time
     private void updateTempEnclosingBallsList(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTemporalEnclosingBalls().get(index);
+        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTEnclosingBalls().get(index);
         xtEnclosingBalls.clear();
         xtEnclosingBalls.addAll(balls);
-        balls = trackDataHolder.getStepCentricDataHolder().getyTemporalEnclosingBalls().get(index);
+        balls = trackDataHolder.getStepCentricDataHolder().getyTEnclosingBalls().get(index);
         ytEnclosingBalls.clear();
         ytEnclosingBalls.addAll(balls);
     }

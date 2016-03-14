@@ -625,7 +625,7 @@ public class JFreeChartUtils {
      * @param plot
      * @return the Range
      */
-    private static Range computeMaxRange(XYPlot plot) {
+    public static Range computeMaxRange(XYPlot plot) {
         Range domain = plot.getDomainAxis().getRange();
         Range range = plot.getRangeAxis().getRange();
         double lowerBound = Math.min(domain.getLowerBound(), range.getLowerBound());

@@ -13,19 +13,19 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * An open ball enclosing a geometric point of a track. Contains a radius, the
- * correspondent ellipse and the number of points inside it.
+ * An enclosing ball entity: has a shape (2D ellipse), a radius, and a list of
+ * enclosing points.
  *
  * @author Paola
  */
 public class EnclosingBall {
 
-    // the ball 
-    private Ellipse2D ball;
-    // the radius of the ball
+    // the shape 
+    private Ellipse2D shape;
+    // the radius of the shape
     private double radius;
-    // the points inside the ball
-    private List<Point2D> points;
+    // the enclosingPoints inside the shape
+    private List<Point2D> enclosingPoints;
 
     /**
      * Empty constructor.
@@ -34,24 +34,24 @@ public class EnclosingBall {
     }
 
     public EnclosingBall(Ellipse2D ball, double radius, List<Point2D> points) {
-        this.ball = ball;
+        this.shape = ball;
         this.radius = radius;
-        this.points = points;
+        this.enclosingPoints = points;
     }
 
-    // the list with points is updated while computing the enclosing balls
+    // the list with enclosingPoints is updated while computing the enclosing balls
     public EnclosingBall(Ellipse2D ball, double radius) {
-        this.ball = ball;
+        this.shape = ball;
         this.radius = radius;
-        this.points = new ArrayList<>();
+        this.enclosingPoints = new ArrayList<>();
     }
 
-    public Ellipse2D getBall() {
-        return ball;
+    public Ellipse2D getShape() {
+        return shape;
     }
 
-    public void setBall(Ellipse2D ball) {
-        this.ball = ball;
+    public void setShape(Ellipse2D shape) {
+        this.shape = shape;
     }
 
     public double getRadius() {
@@ -62,18 +62,18 @@ public class EnclosingBall {
         this.radius = radius;
     }
 
-    public List<Point2D> getPoints() {
-        return points;
+    public List<Point2D> getEnclosingPoints() {
+        return enclosingPoints;
     }
 
-    public void setPoints(List<Point2D> points) {
-        this.points = points;
+    public void setEnclosingPoints(List<Point2D> enclosingPoints) {
+        this.enclosingPoints = enclosingPoints;
     }
 
     @Override
     public String toString() {
-        return "centerX: " + AnalysisUtils.roundTwoDecimals(ball.getCenterX()) + ", centerY: "
-                + AnalysisUtils.roundTwoDecimals(ball.getCenterY()) + "; N: " + points.size();
+        return "centerX: " + AnalysisUtils.roundTwoDecimals(shape.getCenterX()) + ", centerY: "
+                + AnalysisUtils.roundTwoDecimals(shape.getCenterY()) + "; N: " + enclosingPoints.size();
     }
 
     @Override
@@ -91,6 +91,6 @@ public class EnclosingBall {
             return false;
         }
         final EnclosingBall other = (EnclosingBall) obj;
-        return Objects.equals(this.ball, other.ball);
+        return Objects.equals(this.shape, other.shape);
     }
 }

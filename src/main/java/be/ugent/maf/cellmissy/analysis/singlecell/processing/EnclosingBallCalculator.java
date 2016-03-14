@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author Paola
  */
-public interface EnclosingBallsCalculator {
+public interface EnclosingBallCalculator {
 
     /**
      * Given a 2D series, compute the enclosing balls necessary to cover it.
@@ -28,6 +28,6 @@ public interface EnclosingBallsCalculator {
      * @param eps: the epsilon (radius) of the enclosing balls
      * @return: a list of enclosing ball objects
      */
-    List<EnclosingBall> computeEnclosingBalls(double[] firstDimension, double[] secondDimension, KDTree<Point2D> tree, double eps);
+    List<EnclosingBall> findEnclosingBalls(double[] firstDimension, double[] secondDimension, KDTree<Point2D> tree, double eps);
 
 }

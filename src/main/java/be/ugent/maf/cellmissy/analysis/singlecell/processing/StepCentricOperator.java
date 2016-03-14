@@ -34,7 +34,7 @@ public interface StepCentricOperator {
 
     /**
      * Compute shifted track coordinates starting from the track coordinates
-     * matrix; shifted means track coordinates are normalised to 0.
+     * matrix; shifted means track coordinates are normalized to 0.
      *
      * @param stepCentricDataHolder
      */
@@ -85,6 +85,7 @@ public interface StepCentricOperator {
     // these might not be needed in the end!!!
     void computeDiffAngles(StepCentricDataHolder stepCentricDataHolder);
 
+    // these might not be needed in the end!!!
     void computeDirAutocorrMatrix(StepCentricDataHolder stepCentricDataHolder);
 
     /**
@@ -95,23 +96,36 @@ public interface StepCentricOperator {
     void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
 
     /**
+     * Initialize the 2D trees for the step centric data holder: one 2D tree for
+     * the x-y coordinates, one for the x(t) time series, and one for the y(t)
+     * time series.
      *
      * @param stepCentricDataHolder
      */
     void init2Dtrees(StepCentricDataHolder stepCentricDataHolder);
 
     /**
-     *
+     * Compute the spatial enclosing balls for the step centric data holder.
      *
      * @param stepCentricDataHolder
      */
-    void computeSpatialEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
+    void computeXYEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
 
-    void computeXTemporalEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
-    
-    
-    void computeYTemporalEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
+    /**
+     * Compute the balls enclosing the x(t) time series for the step centric
+     * data holder.
+     *
+     * @param stepCentricDataHolder
+     */
+    void computeXTEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
 
+    /**
+     * Compute the balls enclosing the y(t) time series for the step centric
+     * data holder.
+     *
+     * @param stepCentricDataHolder
+     */
+    void computeYTEnclosingBalls(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Interpolate cell trajectory.
