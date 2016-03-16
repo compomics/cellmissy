@@ -4,15 +4,19 @@
  */
 package be.ugent.maf.cellmissy.analysis.singlecell.processing.impl;
 
+import be.ugent.maf.cellmissy.analysis.LinearRegressor;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.CellCentricOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.ConvexHullOperator;
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.result.singlecell.BoundingBox;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
+import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +36,8 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     private GrahamScanAlgorithm grahamScanAlgorithm;
     @Autowired
     private ConvexHullOperator convexHullOperator;
+    @Autowired
+    private LinearRegressor linearRegressor;
 
     @Override
     public void computeTrackDuration(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder, double timeLapse) {
@@ -157,6 +163,43 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         // simply compute the median of the turning angles
         double medianTurningAngle = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNaNvalues));
         cellCentricDataHolder.setMedianTurningAngle(medianTurningAngle);
+    }
+
+    @Override
+    public void computeEntropies(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+        int N = stepCentricDataHolder.getTrack().getTrackPointList().size();
+        List<Double> entropies = new ArrayList<>();
+        List<List<EnclosingBall>> xyEnclosingBalls = stepCentricDataHolder.getxYEnclosingBalls();
+        xyEnclosingBalls.stream().map((enclosingBalls) -> {
+            double sum = 0;
+            for (EnclosingBall enclosingBall : enclosingBalls) {
+                sum += (1 / (double) N) * Math.log10((double) enclosingBall.getEnclosingPoints().size() / (double) N);
+            }
+            return sum;
+        }).map((sum) -> -(1 / (double) N) * sum).forEach((entropy) -> {
+            entropies.add(entropy);
+        });
+        cellCentricDataHolder.setEntropies(entropies);
+    }
+
+    @Override
+    public void computeFractalDimension(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+        List<List<EnclosingBall>> xyEnclosingBalls = stepCentricDataHolder.getxYEnclosingBalls();
+        double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
+        double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
+        double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
+        int N = (int) ((r_max - r_min) / r_step) + 1;
+        double[] balls = new double[N];
+        double[] radii = new double[N];
+        for (int i = 0; i < N; i++) {
+            balls[i] = Math.log10(xyEnclosingBalls.get(i).size());
+            radii[i] = Math.log10(r_min + (i * r_step));
+        }
+
+        double[][] data = new double[][]{balls, radii};
+        List<Double> linearModel = linearRegressor.estimateLinearModel(data);
+        double slope = linearModel.get(0);
+        cellCentricDataHolder.setFractalDimension(slope);
     }
 
     @Override

@@ -4,6 +4,8 @@
  */
 package be.ugent.maf.cellmissy.entity.result.singlecell;
 
+import java.util.List;
+
 /**
  * This class keeps the measurements about a certain track, on a cell-centric
  * level, i.e. averaged across all the time points.
@@ -43,8 +45,10 @@ public class CellCentricDataHolder {
     private double outreachRatio;
     // track angle: the median turning angle computed from all time intervals throughout a track
     private double medianTurningAngle;
-
-    private double[] fractalDimensions;
+    // the track entropies -- an entropy entry for each enclosing ball radius
+    private List<Double> entropies;
+    // the fractal dimension of the track
+    private double fractalDimension;
     //@todo: to be deleted afterwards, for testing only
     private int label;
     // the root mean squared deviation from average displacement
@@ -159,12 +163,20 @@ public class CellCentricDataHolder {
         this.medianTurningAngle = medianTurningAngle;
     }
 
-    public double[] getFractalDimensions() {
-        return fractalDimensions;
+    public List<Double> getEntropies() {
+        return entropies;
     }
 
-    public void setFractalDimensions(double[] fractalDimensions) {
-        this.fractalDimensions = fractalDimensions;
+    public void setEntropies(List<Double> entropies) {
+        this.entropies = entropies;
+    }
+
+    public double getFractalDimension() {
+        return fractalDimension;
+    }
+
+    public void setFractalDimension(double fractalDimension) {
+        this.fractalDimension = fractalDimension;
     }
 
     public int getLabel() {

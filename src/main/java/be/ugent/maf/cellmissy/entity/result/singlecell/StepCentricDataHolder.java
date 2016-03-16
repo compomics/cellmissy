@@ -58,17 +58,13 @@ public class StepCentricDataHolder {
     // the 2D trees of points (for the time series: x(t) and y(t))
     private KDTree<Point2D> xT2DTree;
     private KDTree<Point2D> yT2DTree;
-    // a list of list of ellipse2D for the eclosing balls reference
+    // a list of lists of eclosing balls 
     // a list of enclosing balls is computed for each radius value
     private List<List<EnclosingBall>> xYEnclosingBalls;
     // same as the spatial enclosing balls, but for the x(t) time series
     private List<List<EnclosingBall>> xTEnclosingBalls;
     // same as the spatial enclosing balls, but for the y(t) time series
     private List<List<EnclosingBall>> yTEnclosingBalls;
-
-    private double[][] dirAutoCorrMatrix; // might not be needed
-    private double[] diffAngles; // might not be needed
-
     // an array for the mean values of the direction autocorrelations
     // per each time point (overlapping time interval), a mean DA is computed
     private Double[] medianDirectionAutocorrelations;
@@ -173,22 +169,6 @@ public class StepCentricDataHolder {
 
     public void setDirectionAutocorrelations(List<Double[]> directionAutocorrelations) {
         this.directionAutocorrelations = directionAutocorrelations;
-    }
-
-    public double[][] getDirAutoCorrMatrix() {
-        return dirAutoCorrMatrix;
-    }
-
-    public void setDirAutoCorrMatrix(double[][] dirAutoCorrMatrix) {
-        this.dirAutoCorrMatrix = dirAutoCorrMatrix;
-    }
-
-    public double[] getDiffAngles() {
-        return diffAngles;
-    }
-
-    public void setDiffAngles(double[] diffAngles) {
-        this.diffAngles = diffAngles;
     }
 
     public Double[] getMedianDirectionAutocorrelations() {

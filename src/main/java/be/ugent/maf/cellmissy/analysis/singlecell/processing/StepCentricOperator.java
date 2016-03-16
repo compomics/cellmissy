@@ -82,12 +82,6 @@ public interface StepCentricOperator {
      */
     void computeDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder);
 
-    // these might not be needed in the end!!!
-    void computeDiffAngles(StepCentricDataHolder stepCentricDataHolder);
-
-    // these might not be needed in the end!!!
-    void computeDirAutocorrMatrix(StepCentricDataHolder stepCentricDataHolder);
-
     /**
      * Compute mean direction autocorrelations values.
      *

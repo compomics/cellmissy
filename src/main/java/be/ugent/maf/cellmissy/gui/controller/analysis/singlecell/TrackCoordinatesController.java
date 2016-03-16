@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.explore.ExploreTrackController;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -58,7 +59,7 @@ import java.util.concurrent.ExecutionException;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("trackCoordinatesController")
-class TrackCoordinatesController {
+public class TrackCoordinatesController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackCoordinatesController.class);
     // model

@@ -200,53 +200,6 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     }
 
     @Override
-    public void computeDiffAngles(StepCentricDataHolder stepCentricDataHolder) {
-        Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
-        int N = turningAngles.length; // number of displacement vectors
-        int M = (N - 1) * N / 2; // 
-        double[] diffAngles = new double[M];
-        int counter = 0;
-        for (int deltaT = 1; deltaT < N; deltaT++) {
-            for (int i = 0; i < turningAngles.length; i++) {
-                if (i + deltaT < turningAngles.length) {
-                    double firstTA = turningAngles[i];
-                    double secondTA = turningAngles[i + deltaT];
-                    double diffAngle = firstTA - secondTA;
-                    diffAngles[counter] = diffAngle;
-                    counter++;
-                }
-            }
-        }
-        stepCentricDataHolder.setDiffAngles(diffAngles);
-    }
-
-    @Override
-    public void computeDirAutocorrMatrix(StepCentricDataHolder stepCentricDataHolder) {
-        Double[] turningAngles = stepCentricDataHolder.getTurningAngles();
-        // number of displacement vectors (number of track points of track - 1)
-        int numberDisplacements = turningAngles.length;
-        int size = numberDisplacements - 1;
-        // N - 2 is the maximum number of possible time intervals
-        double[][] dirAutoCorrMatrix = new double[size][size];
-        for (int counter = 0; counter < size; counter++) {
-            double[] tempVec = new double[size];
-            for (int j = 0; j < size; j++) {
-                double dirAutocorr;
-                double currentTA = turningAngles[j];
-                if (j + counter + 1 >= numberDisplacements) {
-                    dirAutocorr = Double.NaN;
-                } else {
-                    double nextTA = turningAngles[j + counter + 1];
-                    dirAutocorr = Math.cos(Math.toRadians(currentTA - nextTA));
-                }
-                tempVec[j] = dirAutocorr;
-            }
-            dirAutoCorrMatrix[counter] = tempVec;
-        }
-        stepCentricDataHolder.setDirAutoCorrMatrix(dirAutoCorrMatrix);
-    }
-
-    @Override
     public void computeMeanDirectionAutocorrelations(StepCentricDataHolder stepCentricDataHolder) {
         List<Double[]> directionAutocorrelations = stepCentricDataHolder.getDirectionAutocorrelations();
         Double[] medianDirectionAutocorrelations = new Double[directionAutocorrelations.size()];
@@ -272,15 +225,15 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     public void computeXYEnclosingBalls(StepCentricDataHolder stepCentricDataHolder) {
         KDTree<Point2D> kdTree = stepCentricDataHolder.getxY2DTree();
         List<List<EnclosingBall>> list = new ArrayList<>();
-        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
-        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
-        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
-        int N = (int) ((eps_max - eps_min) / eps_step) + 1;
+        double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
+        double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
+        double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
+        int N = (int) ((r_max - r_min) / r_step) + 1;
 
         double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[0]));
         double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[1]));
         for (int i = 0; i < N; i++) {
-            list.add(enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, kdTree, (eps_min + (i * eps_step))));
+            list.add(enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, kdTree, (r_min + (i * r_step))));
         }
         stepCentricDataHolder.setxYEnclosingBalls(list);
     }

@@ -5,10 +5,12 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import be.ugent.maf.cellmissy.analysis.singlecell.processing.CellCentricOperator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallCalculator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -34,9 +36,12 @@ public class EnclosingBallsCalculatorTest {
     @Autowired
     private StepCentricOperator stepCentricOperator;
     @Autowired
+    private CellCentricOperator cellCentricOperator;
+    @Autowired
     private EnclosingBallCalculator enclosingBallsCalculator;
     // the data holder
     private static final StepCentricDataHolder stepCentricDataHolder = new StepCentricDataHolder();
+    private static final CellCentricDataHolder cellCentricDataHolder = new CellCentricDataHolder();
 
     @BeforeClass
     public static void createTrack() {
@@ -73,6 +78,12 @@ public class EnclosingBallsCalculatorTest {
 
         enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 0.5);
         Assert.assertEquals(5, enclosingBalls.size());
+        List<List<EnclosingBall>> list = new ArrayList<>();
+        list.add(enclosingBalls);
+        stepCentricDataHolder.setxYEnclosingBalls(list);
+        cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
+        Double entropy = cellCentricDataHolder.getEntropies().get(0);
+        Assert.assertEquals(0.099, entropy, 0.1);
 
         enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 1.1);
         Assert.assertEquals(3, enclosingBalls.size());
@@ -86,5 +97,11 @@ public class EnclosingBallsCalculatorTest {
         Assert.assertEquals(6, enclosingBalls.size());
         enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getxT2DTree(), 1.5);
         Assert.assertEquals(4, enclosingBalls.size());
+
+        stepCentricDataHolder.setxYEnclosingBalls(list);
+        cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
+        entropy = cellCentricDataHolder.getEntropies().get(0);
+        Assert.assertEquals(0.07, entropy, 0.1);
     }
+
 }

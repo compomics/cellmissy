@@ -1,4 +1,4 @@
-package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
+package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.explore;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.InterpolationMethod;
 import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;

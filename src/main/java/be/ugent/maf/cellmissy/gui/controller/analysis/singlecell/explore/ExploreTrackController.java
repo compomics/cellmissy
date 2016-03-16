@@ -2,15 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
+package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.explore;
 
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
-import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.GeometricPoint;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
+import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.TrackCoordinatesController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.ExploreTrackPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsMenuBar;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.PlotSettingsRendererGiver;
@@ -57,17 +57,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
-import org.jfree.chart.annotations.XYShapeAnnotation;
-import org.jfree.data.Range;
 
 /**
  * This controller takes care of logic for exploring a track. Parent controller:
@@ -76,15 +72,12 @@ import org.jfree.data.Range;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("exploreTrackController")
-class ExploreTrackController {
+public class ExploreTrackController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(ExploreTrackController.class);
     // model
     private BindingGroup bindingGroup;
     private PlayTrackSwingWorker playTrackSwingWorker;
-    private ObservableList<EnclosingBall> spatEnclosingBalls;
-    private ObservableList<EnclosingBall> xtEnclosingBalls;
-    private ObservableList<EnclosingBall> ytEnclosingBalls;
     // view
     private ExploreTrackPanel exploreTrackPanel;
     private PlotSettingsMenuBar plotSettingsMenuBar;
@@ -95,8 +88,6 @@ class ExploreTrackController {
     private ChartPanel convexHullChartPanel;
     private ChartPanel histogramChartPanel;
     private ChartPanel polarPlotChartPanel;
-    private ChartPanel spatEnclosingBallChartPanel;
-    private ChartPanel tempEnclosingBallChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
@@ -105,6 +96,8 @@ class ExploreTrackController {
     private DirectionTrackController directionTrackController;
     @Autowired
     private TrackInterpolationController trackInterpolationController;
+    @Autowired
+    private EnclosingBallController enclosingBallController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -120,6 +113,7 @@ class ExploreTrackController {
         // init child controller
         directionTrackController.init();
         trackInterpolationController.init();
+        enclosingBallController.init();
     }
 
     /**
@@ -195,19 +189,6 @@ class ExploreTrackController {
         // init jlist binding: track data holders
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, trackDataHolderBindingList, exploreTrackPanel.getTracksList());
         bindingGroup.addBinding(jListBinding);
-
-        spatEnclosingBalls = ObservableCollections.observableList(new ArrayList<>());
-        jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, spatEnclosingBalls, exploreTrackPanel.getSpatialEnclosingBallList());
-        bindingGroup.addBinding(jListBinding);
-
-        xtEnclosingBalls = ObservableCollections.observableList(new ArrayList<>());
-        jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, xtEnclosingBalls, exploreTrackPanel.getXtEnclosingBallList());
-        bindingGroup.addBinding(jListBinding);
-
-        ytEnclosingBalls = ObservableCollections.observableList(new ArrayList<>());
-        jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, ytEnclosingBalls, exploreTrackPanel.getYtEnclosingBallList());
-        bindingGroup.addBinding(jListBinding);
-
         // do the binding
         bindingGroup.bind();
         // set cell renderer for the tracks list
@@ -233,12 +214,6 @@ class ExploreTrackController {
         polarPlotChartPanel = new ChartPanel(null);
         polarPlotChartPanel.setOpaque(false);
 
-        spatEnclosingBallChartPanel = new ChartPanel(null);
-        spatEnclosingBallChartPanel.setOpaque(false);
-
-        tempEnclosingBallChartPanel = new ChartPanel(null);
-        tempEnclosingBallChartPanel.setOpaque(false);
-
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getDisplacementTParentPanel().add(displacementTChartPanel, gridBagConstraints);
 
@@ -247,9 +222,6 @@ class ExploreTrackController {
 
         exploreTrackPanel.getHistogramParentPanel().add(histogramChartPanel, gridBagConstraints);
         exploreTrackPanel.getPolarPlotParentPanel().add(polarPlotChartPanel, gridBagConstraints);
-
-        exploreTrackPanel.getSpatialEnclosingBallsParentPanel().add(spatEnclosingBallChartPanel, gridBagConstraints);
-        exploreTrackPanel.getTemporalEnclosingBallsParentPanel().add(tempEnclosingBallChartPanel, gridBagConstraints);
 
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
@@ -277,18 +249,20 @@ class ExploreTrackController {
         exploreTrackPanel.getEnclosingBallRadiusCombobox().addActionListener((ActionEvent e) -> {
             int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
             if (selectedTrackIndex != -1) {
-                plotSpatEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
-                updateSpatEnclosingBallNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
-                updateSpatEnclosingBallsList(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                enclosingBallController.plotXYBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
+                enclosingBallController.updateXYBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex),
+                        exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                enclosingBallController.updateTrackEntropy(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex),
+                        exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
             }
         });
 
         exploreTrackPanel.getEnclosingBallEpsCombobox().addActionListener((ActionEvent e) -> {
             int selectedTrackIndex = exploreTrackPanel.getTracksList().getSelectedIndex();
             if (selectedTrackIndex != -1) {
-                plotTempEnclosingBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
-                updateTempEnclosingBallNumber(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
-                updateTempEnclosingBallsList(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                enclosingBallController.plotXTBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
+                enclosingBallController.plotYTBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
+                enclosingBallController.updateTBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
             }
         });
 
@@ -578,13 +552,15 @@ class ExploreTrackController {
         // plot direction autocorrelation with a specified time interval provided by the user
         directionTrackController.plotDirectionAutocorrelationForDeltaT(trackDataHolder, (int) exploreTrackPanel.getDeltaTComboBox().getSelectedItem());
         // plot spatial and temporal enclosing balls
-        plotSpatEnclosingBalls(trackDataHolder);
-        updateSpatEnclosingBallNumber(trackDataHolder, exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
-        updateSpatEnclosingBallsList(trackDataHolder, exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+        enclosingBallController.plotXYBalls(trackDataHolder);
+        enclosingBallController.updateXYBalls(trackDataHolder, exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+        enclosingBallController.updateTrackEntropy(trackDataHolder, exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
 
-        plotTempEnclosingBalls(trackDataHolder);
-        updateTempEnclosingBallNumber(trackDataHolder, exploreTrackPanel.getEnclosingBallEpsCombobox().getSelectedIndex());
-        updateTempEnclosingBallsList(trackDataHolder, exploreTrackPanel.getEnclosingBallEpsCombobox().getSelectedIndex());
+        enclosingBallController.plotXTBalls(trackDataHolder);
+        enclosingBallController.plotYTBalls(trackDataHolder);
+        enclosingBallController.updateTBalls(trackDataHolder, exploreTrackPanel.getEnclosingBallEpsCombobox().getSelectedIndex());
+
+        enclosingBallController.plotFractalAnalysis(trackDataHolder);
         // the interpolation logic goes here:
         trackInterpolationController.plotInterpolatedTrackData(trackDataHolder);
     }
@@ -817,146 +793,6 @@ class ExploreTrackController {
         JFreeChart polarChart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
         JFreeChartUtils.setupPolarChart(polarChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
         polarPlotChartPanel.setChart(polarChart);
-    }
-
-    /**
-     * Plot enclosing balls for a specific track.
-     *
-     * @param trackDataHolder
-     */
-    private void plotSpatEnclosingBalls(TrackDataHolder trackDataHolder) {
-        int selectedIndexRadius = exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex();
-        List<List<EnclosingBall>> enclosingBallsList = trackDataHolder.getStepCentricDataHolder().getxYEnclosingBalls();
-        List<EnclosingBall> enclosingBalls = enclosingBallsList.get(selectedIndexRadius);
-        // get the coordinates matrix
-        Double[][] coordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix();
-        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(coordinatesMatrix);
-        int trackNumber = trackDataHolder.getTrack().getTrackNumber();
-        Well well = trackDataHolder.getTrack().getWellHasImagingType().getWell();
-        String seriesKey = "track " + trackNumber + ", well " + well;
-        xYSeries.setKey(seriesKey);
-        XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
-        JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
-        XYPlot xyPlot = chart.getXYPlot();
-        JFreeChartUtils.setupXYPlot(xyPlot);
-        // set title font
-        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
-        // set up the chart
-        int trackIndex = trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder);
-        // assign 2 renderers: one for the coordinates line and one for the convex hull plot
-        XYLineAndShapeRenderer coordinatesRenderer = new XYLineAndShapeRenderer();
-        coordinatesRenderer.setSeriesStroke(0, JFreeChartUtils.getWideLine());
-        int length = GuiUtils.getAvailableColors().length;
-        int colorIndex = trackIndex % length;
-        coordinatesRenderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[colorIndex]);
-        // show both lines and points
-        coordinatesRenderer.setSeriesLinesVisible(0, true);
-        coordinatesRenderer.setSeriesShapesVisible(0, true);
-        xyPlot.setRenderer(0, coordinatesRenderer);
-        XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
-        double minY = dataset.getSeries(0).getMinY();
-        double maxY = dataset.getSeries(0).getMaxY();
-        xyPlot.getRangeAxis().setRange(minY - 10, maxY + 10);
-
-        spatEnclosingBallChartPanel.setChart(chart);
-        enclosingBalls.stream().forEach((ball) -> {
-            xyPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
-        });
-    }
-
-    private void plotTempEnclosingBalls(TrackDataHolder trackDataHolder) {
-        int selectedIndexEpsilon = exploreTrackPanel.getEnclosingBallEpsCombobox().getSelectedIndex();
-        List<List<EnclosingBall>> xtEnclosingBallList = trackDataHolder.getStepCentricDataHolder().getxTEnclosingBalls();
-        List<EnclosingBall> xTempBalls = xtEnclosingBallList.get(selectedIndexEpsilon);
-
-        List<List<EnclosingBall>> ytEnclosingBallList = trackDataHolder.getStepCentricDataHolder().getyTEnclosingBalls();
-        List<EnclosingBall> yTempBalls = ytEnclosingBallList.get(selectedIndexEpsilon);
-
-        // get the selected track data holder, and thus the track to plot in time
-        Track track = trackDataHolder.getTrack();
-        // get the track coordinates matrix and transpose it
-        Double[][] transpose2DArray = AnalysisUtils.transpose2DArray(trackDataHolder.getStepCentricDataHolder().getCoordinatesMatrix());
-        // we get the x coordinates and the time information
-        double[] xCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[0]));
-        double[] timeIndexes = trackDataHolder.getStepCentricDataHolder().getTimeIndexes();
-        // we create the series and set its key
-        XYSeries xtSeries = JFreeChartUtils.generateXYSeries(timeIndexes, xCoordinates);
-        int trackNumber = track.getTrackNumber();
-        Well well = track.getWellHasImagingType().getWell();
-        String seriesKey = "track " + trackNumber + ", well " + well;
-        xtSeries.setKey(seriesKey);
-        // we then create the XYSeriesCollection and use it to make a new line chart
-        XYSeriesCollection xtSeriesCollection = new XYSeriesCollection(xtSeries);
-        XYItemRenderer renderer = new StandardXYItemRenderer();
-        NumberAxis xAxis = new NumberAxis("x (µm)");
-        XYPlot xTPlot = new XYPlot(xtSeriesCollection, null, xAxis, renderer);
-        // y axis
-        NumberAxis yAxis = new NumberAxis("y (µm)");
-        // we repeat exactly the same with the y coordinates in time
-        double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transpose2DArray[1]));
-        XYSeries ytSeries = JFreeChartUtils.generateXYSeries(timeIndexes, yCoordinates);
-        ytSeries.setKey(seriesKey);
-        XYSeriesCollection ytSeriesCollection = new XYSeriesCollection(ytSeries);
-        XYPlot yTPlot = new XYPlot(ytSeriesCollection, null, yAxis, renderer);
-        // domain axis
-        NumberAxis domainAxis = new NumberAxis("time index");
-        CombinedDomainXYPlot combinedDomainXYPlot = new CombinedDomainXYPlot(domainAxis);
-        combinedDomainXYPlot.setRenderer(new XYLineAndShapeRenderer());
-        combinedDomainXYPlot.add(xTPlot);
-        combinedDomainXYPlot.add(yTPlot);
-        combinedDomainXYPlot.setOrientation(PlotOrientation.VERTICAL);
-        JFreeChart combinedChart = new JFreeChart(seriesKey, JFreeChartUtils.getChartFont(), combinedDomainXYPlot, Boolean.FALSE);
-        JFreeChartUtils.setupCombinedChart(combinedChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
-
-//        XYSeriesCollection dataset = (XYSeriesCollection) xTPlot.getDataset(0);
-//        double minY = dataset.getSeries(0).getMinY();
-//        double maxY = dataset.getSeries(0).getMaxY();
-//        xTPlot.getRangeAxis().setRange(minY - 10, maxY + 10);
-//        dataset = (XYSeriesCollection) yTPlot.getDataset(0);
-//        minY = dataset.getSeries(0).getMinY();
-//        maxY = dataset.getSeries(0).getMaxY();
-//        yTPlot.getRangeAxis().setRange(minY - 10, maxY + 10);
-        XYLineAndShapeRenderer r = (XYLineAndShapeRenderer) combinedDomainXYPlot.getRenderer();
-        r.setSeriesShapesVisible(0, true);
-
-        tempEnclosingBallChartPanel.setChart(combinedChart);
-        xTempBalls.stream().forEach((ball) -> {
-            xTPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
-        });
-        yTempBalls.stream().forEach((ball) -> {
-            yTPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
-        });
-    }
-
-    // update the number of enclosing balls in space
-    private void updateSpatEnclosingBallNumber(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxYEnclosingBalls().get(index);
-        exploreTrackPanel.getSpatEnclosingBallsTextField().setText("" + balls.size());
-    }
-
-    // update the list of enclosing balls in space
-    private void updateSpatEnclosingBallsList(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxYEnclosingBalls().get(index);
-        spatEnclosingBalls.clear();
-        spatEnclosingBalls.addAll(balls);
-    }
-
-    // update the number of enclosing balls in time
-    private void updateTempEnclosingBallNumber(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTEnclosingBalls().get(index);
-        exploreTrackPanel.getXtEnclosingBallsTextField().setText("" + balls.size());
-        balls = trackDataHolder.getStepCentricDataHolder().getyTEnclosingBalls().get(index);
-        exploreTrackPanel.getYtEnclosingBallsTextField().setText("" + balls.size());
-    }
-
-    // update the list of enclosing balls in time
-    private void updateTempEnclosingBallsList(TrackDataHolder trackDataHolder, int index) {
-        List<EnclosingBall> balls = trackDataHolder.getStepCentricDataHolder().getxTEnclosingBalls().get(index);
-        xtEnclosingBalls.clear();
-        xtEnclosingBalls.addAll(balls);
-        balls = trackDataHolder.getStepCentricDataHolder().getyTEnclosingBalls().get(index);
-        ytEnclosingBalls.clear();
-        ytEnclosingBalls.addAll(balls);
     }
 
     /**

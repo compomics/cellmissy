@@ -120,6 +120,10 @@ public interface CellCentricOperator {
      */
     void computeMedianTurningAngle(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
+    void computeEntropies(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+
+    void computeFractalDimension(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+
     /**
      * Compute median direction autocorrelations at time interval of size (step)
      * 1.

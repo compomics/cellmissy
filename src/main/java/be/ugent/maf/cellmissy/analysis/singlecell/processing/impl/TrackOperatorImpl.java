@@ -35,8 +35,6 @@ public class TrackOperatorImpl implements TrackOperator {
         stepCentricOperator.computeDirectionalityRatios(stepCentricDataHolder);
         stepCentricOperator.computeMeanSquareDisplacements(stepCentricDataHolder);
         stepCentricOperator.computeDirectionAutocorrelations(stepCentricDataHolder);
-        stepCentricOperator.computeDirAutocorrMatrix(stepCentricDataHolder);
-        stepCentricOperator.computeDiffAngles(stepCentricDataHolder);
         stepCentricOperator.computeMeanDirectionAutocorrelations(stepCentricDataHolder);
         stepCentricOperator.interpolateTrack(stepCentricDataHolder);
         stepCentricOperator.init2Dtrees(stepCentricDataHolder);
@@ -59,6 +57,8 @@ public class TrackOperatorImpl implements TrackOperator {
         cellCentricOperator.computeDisplacementRatio(cellCentricDataHolder);
         cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);
         cellCentricOperator.computeMedianTurningAngle(stepCentricDataHolder, cellCentricDataHolder);
+        cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
+        cellCentricOperator.computeFractalDimension(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeMedianDirectionAutocorrelation(stepCentricDataHolder, cellCentricDataHolder);
     }
 }
