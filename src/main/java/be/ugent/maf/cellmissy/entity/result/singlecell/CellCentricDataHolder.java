@@ -47,8 +47,12 @@ public class CellCentricDataHolder {
     private double medianTurningAngle;
     // the track entropies -- an entropy entry for each enclosing ball radius
     private List<Double> entropies;
-    // the fractal dimension of the track
-    private double fractalDimension;
+    // the x-y fractal dimension (FD) of the track
+    private FractalDimension xYFD;
+    // the x-t fractal dimension
+    private FractalDimension xTFD;
+    // the y-t fractal dimension
+    private FractalDimension yTFD;
     //@todo: to be deleted afterwards, for testing only
     private int label;
     // the root mean squared deviation from average displacement
@@ -171,12 +175,28 @@ public class CellCentricDataHolder {
         this.entropies = entropies;
     }
 
-    public double getFractalDimension() {
-        return fractalDimension;
+    public FractalDimension getxYFD() {
+        return xYFD;
     }
 
-    public void setFractalDimension(double fractalDimension) {
-        this.fractalDimension = fractalDimension;
+    public void setxYFD(FractalDimension xYFD) {
+        this.xYFD = xYFD;
+    }
+
+    public FractalDimension getxTFD() {
+        return xTFD;
+    }
+
+    public void setxTFD(FractalDimension xTFD) {
+        this.xTFD = xTFD;
+    }
+
+    public FractalDimension getyTFD() {
+        return yTFD;
+    }
+
+    public void setyTFD(FractalDimension yTFD) {
+        this.yTFD = yTFD;
     }
 
     public int getLabel() {

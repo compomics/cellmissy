@@ -106,7 +106,7 @@ public interface CellCentricOperator {
     /**
      * Compute outreach ratio of a certain track: the max span (the length of
      * the segment connecting the two most distant points on the cell track)
-     * divided by the cumulative distance travelled by the cell.
+     * divided by the cumulative distance traveled by the cell.
      *
      * @param cellCentricDataHolder
      */
@@ -120,9 +120,38 @@ public interface CellCentricOperator {
      */
     void computeMedianTurningAngle(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
+    /**
+     * Compute the track entropy values -- for each enclosing ball radius value,
+     * a different entropy value.
+     *
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
+     */
     void computeEntropies(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
-    void computeFractalDimension(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+    /**
+     * Compute x-y FD.
+     *
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
+     */
+    void computeXYFD(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+
+    /**
+     * Compute x-t FD.
+     *
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
+     */
+    void computeXTFD(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
+
+    /**
+     * Compute y-t FD.
+     *
+     * @param stepCentricDataHolder
+     * @param cellCentricDataHolder
+     */
+    void computeYTFD(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder);
 
     /**
      * Compute median direction autocorrelations at time interval of size (step)

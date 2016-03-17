@@ -58,7 +58,9 @@ public class TrackOperatorImpl implements TrackOperator {
         cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);
         cellCentricOperator.computeMedianTurningAngle(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeFractalDimension(stepCentricDataHolder, cellCentricDataHolder);
+        cellCentricOperator.computeXYFD(stepCentricDataHolder, cellCentricDataHolder);
+        cellCentricOperator.computeXTFD(stepCentricDataHolder, cellCentricDataHolder);
+        cellCentricOperator.computeYTFD(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeMedianDirectionAutocorrelation(stepCentricDataHolder, cellCentricDataHolder);
     }
 }

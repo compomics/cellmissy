@@ -262,7 +262,7 @@ public class ExploreTrackController {
             if (selectedTrackIndex != -1) {
                 enclosingBallController.plotXTBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
                 enclosingBallController.plotYTBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex));
-                enclosingBallController.updateTBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallRadiusCombobox().getSelectedIndex());
+                enclosingBallController.updateTBalls(trackCoordinatesController.getTrackDataHolderBindingList().get(selectedTrackIndex), exploreTrackPanel.getEnclosingBallEpsCombobox().getSelectedIndex());
             }
         });
 
@@ -560,7 +560,9 @@ public class ExploreTrackController {
         enclosingBallController.plotYTBalls(trackDataHolder);
         enclosingBallController.updateTBalls(trackDataHolder, exploreTrackPanel.getEnclosingBallEpsCombobox().getSelectedIndex());
 
-        enclosingBallController.plotFractalAnalysis(trackDataHolder);
+        enclosingBallController.plotXYFractalAnalysis(trackDataHolder);
+        enclosingBallController.plotXTFractalAnalysis(trackDataHolder);
+        enclosingBallController.plotYTFractalAnalysis(trackDataHolder);
         // the interpolation logic goes here:
         trackInterpolationController.plotInterpolatedTrackData(trackDataHolder);
     }

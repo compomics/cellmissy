@@ -229,7 +229,6 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
         double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
         double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
         int N = (int) ((r_max - r_min) / r_step) + 1;
-
         double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[0]));
         double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[1]));
         for (int i = 0; i < N; i++) {
@@ -246,7 +245,6 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
         double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
         double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
         int N = (int) ((eps_max - eps_min) / eps_step) + 1;
-
         double[] time = stepCentricDataHolder.getTimeIndexes();
         double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[0]));
         for (int i = 0; i < N; i++) {
@@ -263,7 +261,6 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
         double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
         double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
         int N = (int) ((eps_max - eps_min) / eps_step) + 1;
-
         double[] time = stepCentricDataHolder.getTimeIndexes();
         double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(stepCentricDataHolder.getCoordinatesMatrix())[1]));
         for (int i = 0; i < N; i++) {

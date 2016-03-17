@@ -5,9 +5,8 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.explore;
 
-import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
-import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.FractalDimension;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -29,7 +28,6 @@ import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,9 @@ class EnclosingBallController {
     private ChartPanel xYBallsChartPanel;
     private ChartPanel xTBallsChartPanel;
     private ChartPanel yTBallsChartPanel;
-    private ChartPanel fractalDimensionChartPanel;
+    private ChartPanel xYFDChartPanel;
+    private ChartPanel xTFDChartPanel;
+    private ChartPanel yTFDChartPanel;
     // parent controller
     @Autowired
     private ExploreTrackController exploreTrackController;
@@ -102,14 +102,23 @@ class EnclosingBallController {
         yTBallsChartPanel = new ChartPanel(null);
         yTBallsChartPanel.setOpaque(false);
 
-        fractalDimensionChartPanel = new ChartPanel(null);
-        fractalDimensionChartPanel.setOpaque(false);
+        xYFDChartPanel = new ChartPanel(null);
+        xYFDChartPanel.setOpaque(false);
+
+        xTFDChartPanel = new ChartPanel(null);
+        xTFDChartPanel.setOpaque(false);
+
+        yTFDChartPanel = new ChartPanel(null);
+        yTFDChartPanel.setOpaque(false);
 
         // add the subviews to the main view
-        exploreTrackController.getExploreTrackPanel().getSpatialEnclosingBallsParentPanel().add(xYBallsChartPanel, gridBagConstraints);
+        exploreTrackController.getExploreTrackPanel().getxYBallsParentPanel().add(xYBallsChartPanel, gridBagConstraints);
         exploreTrackController.getExploreTrackPanel().getxTBallsParentPanel().add(xTBallsChartPanel, gridBagConstraints);
         exploreTrackController.getExploreTrackPanel().getyTBallsParentPanel().add(yTBallsChartPanel, gridBagConstraints);
-        exploreTrackController.getExploreTrackPanel().getFractalDimensionParentPanel().add(fractalDimensionChartPanel, gridBagConstraints);
+
+        exploreTrackController.getExploreTrackPanel().getxYFDParentPanel().add(xYFDChartPanel, gridBagConstraints);
+        exploreTrackController.getExploreTrackPanel().getxTFDParentPanel().add(xTFDChartPanel, gridBagConstraints);
+        exploreTrackController.getExploreTrackPanel().getyTFDParentPanel().add(yTFDChartPanel, gridBagConstraints);
 
     }
 
@@ -153,7 +162,7 @@ class EnclosingBallController {
         JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - enclosing balls", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
         XYPlot xyPlot = chart.getXYPlot();
         JFreeChartUtils.setupXYPlot(xyPlot);
-        setupChart(chart, trackDataHolder);
+        JFreeChartUtils.setupSingleTrackPlot(chart, exploreTrackController.getExploreTrackPanel().getTracksList().getSelectedIndex(), true);
         XYSeriesCollection dataset = (XYSeriesCollection) xyPlot.getDataset(0);
         double minY = dataset.getSeries(0).getMinY();
         double maxY = dataset.getSeries(0).getMaxY();
@@ -187,7 +196,7 @@ class EnclosingBallController {
         NumberAxis yaxis = (NumberAxis) xyPlot.getRangeAxis();
         yaxis.setAutoRangeIncludesZero(false);
         JFreeChartUtils.setupXYPlot(xyPlot);
-        setupChart(chart, trackDataHolder);
+        JFreeChartUtils.setupSingleTrackPlot(chart, exploreTrackController.getExploreTrackPanel().getTracksList().getSelectedIndex(), true);
         xTBallsChartPanel.setChart(chart);
         xTempBalls.stream().forEach((ball) -> {
             xyPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
@@ -216,52 +225,42 @@ class EnclosingBallController {
         NumberAxis yaxis = (NumberAxis) xyPlot.getRangeAxis();
         yaxis.setAutoRangeIncludesZero(false);
         JFreeChartUtils.setupXYPlot(xyPlot);
-        setupChart(chart, trackDataHolder);
+        JFreeChartUtils.setupSingleTrackPlot(chart, exploreTrackController.getExploreTrackPanel().getTracksList().getSelectedIndex(), true);
         yTBallsChartPanel.setChart(chart);
         yTempBalls.stream().forEach((ball) -> {
             xyPlot.addAnnotation(new XYShapeAnnotation(ball.getShape(), JFreeChartUtils.getDashedLine(), GuiUtils.getDefaultColor()));
         });
     }
 
-    // plot fractan analysis
-    public void plotFractalAnalysis(TrackDataHolder trackDataHolder) {
-        StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
-        List<List<EnclosingBall>> xyEnclosingBalls = stepCentricDataHolder.getxYEnclosingBalls();
-        double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
-        double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
-        double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
-        int N = (int) ((r_max - r_min) / r_step) + 1;
-        double[] balls = new double[N];
-        double[] radii = new double[N];
-        for (int i = 0; i < N; i++) {
-            balls[i] = Math.log10(xyEnclosingBalls.get(i).size());
-            radii[i] = Math.log10(r_min + (i * r_step));
-        }
-        XYSeries series = JFreeChartUtils.generateXYSeries(radii, balls);
+    // plot x-y fractal analysis
+    public void plotXYFractalAnalysis(TrackDataHolder trackDataHolder) {
+        FractalDimension xyfd = trackDataHolder.getCellCentricDataHolder().getxYFD();
+        xYFDChartPanel.setChart(makeFDChart(trackDataHolder, xyfd));
+    }
+
+    // plot x-t fractal analysis
+    public void plotXTFractalAnalysis(TrackDataHolder trackDataHolder) {
+        FractalDimension xtfd = trackDataHolder.getCellCentricDataHolder().getxTFD();
+        xTFDChartPanel.setChart(makeFDChart(trackDataHolder, xtfd));
+    }
+
+    // plot y-t fractal analysis
+    public void plotYTFractalAnalysis(TrackDataHolder trackDataHolder) {
+        FractalDimension ytfd = trackDataHolder.getCellCentricDataHolder().getyTFD();
+        yTFDChartPanel.setChart(makeFDChart(trackDataHolder, ytfd));
+    }
+
+    // create a chart for a fractal dimension analysis
+    private JFreeChart makeFDChart(TrackDataHolder trackDataHolder, FractalDimension fractalDimension) {
+        XYSeries series = JFreeChartUtils.generateXYSeries(fractalDimension.getxValues(), fractalDimension.getyValues());
         String seriesKey = "track " + trackDataHolder.getTrack().getTrackNumber() + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell();
         series.setKey(seriesKey);
         XYSeriesCollection collection = new XYSeriesCollection(series);
-        JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - FD = " + AnalysisUtils.roundThreeDecimals(trackDataHolder.getCellCentricDataHolder().
-                getFractalDimension()), "log(r)", "log(N)",
+        JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - FD = " + AnalysisUtils.roundThreeDecimals(fractalDimension.getFD()), "log(r)", "log(N)",
                 collection, PlotOrientation.VERTICAL, false, true, false);
-        XYPlot xyPlot = chart.getXYPlot();
-        JFreeChartUtils.setupXYPlot(xyPlot);
-        setupChart(chart, trackDataHolder);
-        fractalDimensionChartPanel.setChart(chart);
+        JFreeChartUtils.setupXYPlot(chart.getXYPlot());
+        JFreeChartUtils.setupSingleTrackPlot(chart, exploreTrackController.getExploreTrackPanel().getTracksList().getSelectedIndex(), true);
+        return chart;
     }
 
-    // set up jfree chart
-    private void setupChart(JFreeChart chart, TrackDataHolder trackDataHolder) {
-        // set title font
-        chart.getTitle().setFont(JFreeChartUtils.getChartFont());
-        // set up the chart
-        XYLineAndShapeRenderer coordinatesRenderer = new XYLineAndShapeRenderer();
-        coordinatesRenderer.setSeriesStroke(0, JFreeChartUtils.getWideLine());
-        coordinatesRenderer.setSeriesPaint(0, GuiUtils.getAvailableColors()[exploreTrackController.getTrackDataHolderBindingList().indexOf(trackDataHolder)
-                % GuiUtils.getAvailableColors().length]);
-        // show both lines and points
-        coordinatesRenderer.setSeriesLinesVisible(0, true);
-        coordinatesRenderer.setSeriesShapesVisible(0, true);
-        chart.getXYPlot().setRenderer(0, coordinatesRenderer);
-    }
 }

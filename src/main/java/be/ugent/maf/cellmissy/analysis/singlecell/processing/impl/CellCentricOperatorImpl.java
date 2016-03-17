@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.BoundingBox;
 import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
+import be.ugent.maf.cellmissy.entity.result.singlecell.FractalDimension;
 import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -183,7 +184,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     }
 
     @Override
-    public void computeFractalDimension(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+    public void computeXYFD(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         List<List<EnclosingBall>> xyEnclosingBalls = stepCentricDataHolder.getxYEnclosingBalls();
         double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
         double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
@@ -192,14 +193,51 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         double[] balls = new double[N];
         double[] radii = new double[N];
         for (int i = 0; i < N; i++) {
-            balls[i] = Math.log10(xyEnclosingBalls.get(i).size());
             radii[i] = Math.log10(r_min + (i * r_step));
+            balls[i] = Math.log10(xyEnclosingBalls.get(i).size());
         }
+        double[][] data = new double[][]{radii, balls};
+        FractalDimension fractalDimension = new FractalDimension(radii, balls);
+        fractalDimension.setFD(linearRegressor.estimateLinearModel(data).get(0));
+        cellCentricDataHolder.setxYFD(fractalDimension);
+    }
 
-        double[][] data = new double[][]{balls, radii};
-        List<Double> linearModel = linearRegressor.estimateLinearModel(data);
-        double slope = linearModel.get(0);
-        cellCentricDataHolder.setFractalDimension(slope);
+    @Override
+    public void computeXTFD(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+        List<List<EnclosingBall>> xtEnclosingBalls = stepCentricDataHolder.getxTEnclosingBalls();
+        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("eps_min");
+        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
+        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
+        int N = (int) ((eps_max - eps_min) / eps_step) + 1;
+        double[] balls = new double[N];
+        double[] radii = new double[N];
+        for (int i = 0; i < N; i++) {
+            radii[i] = Math.log10(eps_min + (i * eps_step));
+            balls[i] = Math.log10(xtEnclosingBalls.get(i).size());
+        }
+        double[][] data = new double[][]{radii, balls};
+        FractalDimension fractalDimension = new FractalDimension(radii, balls);
+        fractalDimension.setFD(linearRegressor.estimateLinearModel(data).get(0));
+        cellCentricDataHolder.setxTFD(fractalDimension);
+    }
+
+    @Override
+    public void computeYTFD(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
+        List<List<EnclosingBall>> ytEnclosingBalls = stepCentricDataHolder.getyTEnclosingBalls();
+        double eps_min = PropertiesConfigurationHolder.getInstance().getDouble("eps_min");
+        double eps_max = PropertiesConfigurationHolder.getInstance().getDouble("eps_max");
+        double eps_step = PropertiesConfigurationHolder.getInstance().getDouble("eps_step");
+        int N = (int) ((eps_max - eps_min) / eps_step) + 1;
+        double[] balls = new double[N];
+        double[] radii = new double[N];
+        for (int i = 0; i < N; i++) {
+            radii[i] = Math.log10(eps_min + (i * eps_step));
+            balls[i] = Math.log10(ytEnclosingBalls.get(i).size());
+        }
+        double[][] data = new double[][]{radii, balls};
+        FractalDimension fractalDimension = new FractalDimension(radii, balls);
+        fractalDimension.setFD(linearRegressor.estimateLinearModel(data).get(0));
+        cellCentricDataHolder.setyTFD(fractalDimension);
     }
 
     @Override
@@ -215,4 +253,5 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         double medianDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(directionAutocorrelations));
         cellCentricDataHolder.setMedianDirectionAutocorrelation(medianDirectionAutocorrelation);
     }
+
 }

@@ -7,8 +7,8 @@ package be.ugent.maf.cellmissy.entity.result.singlecell;
 
 /**
  * A bounding box is a box defined by minimum and maximum coordinates per
- * dimension for all positions in a track. It also contains net displacement in
- * the x and y directions.
+ * dimension for all positions in a track. It also contains a reference to the
+ * net displacements in the x and y directions.
  *
  * @author Paola
  */
