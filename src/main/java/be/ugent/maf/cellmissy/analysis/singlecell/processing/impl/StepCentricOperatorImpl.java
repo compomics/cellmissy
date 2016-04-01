@@ -42,6 +42,8 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
 
     @Autowired
     private EnclosingBallCalculator enclosingBallsCalculator;
+    @Autowired
+    private NonOverlappingMSDCalculator nonOverlappingMSDCalculator;
 
     @Override
     public void generateTimeIndexes(StepCentricDataHolder stepCentricDataHolder) {
@@ -175,7 +177,9 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
     }
 
     @Override
-    public void computeMeanSquareDisplacements(StepCentricDataHolder stepCentricDataHolder) {
+    public void computeMSD(StepCentricDataHolder stepCentricDataHolder) {
+        double[][] msd = nonOverlappingMSDCalculator.computeMSD(stepCentricDataHolder);
+        stepCentricDataHolder.setMSD(msd);
     }
 
     @Override

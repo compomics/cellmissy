@@ -4,7 +4,6 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
-import be.ugent.maf.cellmissy.analysis.singlecell.processing.EnclosingBallCalculator;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.StepCentricOperator;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
@@ -101,5 +100,10 @@ public class StepCentricOperatorTest {
         Double[] lastTime = directionAutocorrelations.get(size - 1);
         Assert.assertEquals(1, lastTime.length);
         Assert.assertEquals(0.414, AnalysisUtils.roundThreeDecimals(lastTime[0]), 0);
+
+        stepCentricOperator.computeMSD(stepCentricDataHolder);
+        double[][] msd = stepCentricDataHolder.getMSD();
+        Assert.assertEquals(0.0, msd[0][0], 0);
+        Assert.assertEquals(8.60, msd[5][1], 0.5); // the msd value at time lag of 5
     }
 }

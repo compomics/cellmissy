@@ -68,7 +68,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     public void computeMedianDisplacement(StepCentricDataHolder stepCentricDataHolder, CellCentricDataHolder cellCentricDataHolder) {
         Double[] instantaneousDisplacements = stepCentricDataHolder.getInstantaneousDisplacements();
         Double[] excludeNullValues = AnalysisUtils.excludeNullValues(instantaneousDisplacements);
-        double medianDisplacement = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(excludeNullValues));
+        double medianDisplacement = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(excludeNullValues));
         cellCentricDataHolder.setMedianDisplacement(medianDisplacement);
     }
 
@@ -193,7 +193,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         double[] balls = new double[N];
         double[] radii = new double[N];
         for (int i = 0; i < N; i++) {
-            radii[i] = Math.log10(r_min + (i * r_step));
+            radii[i] = Math.log10(1 / (r_min + (i * r_step)));
             balls[i] = Math.log10(xyEnclosingBalls.get(i).size());
         }
         double[][] data = new double[][]{radii, balls};
@@ -212,7 +212,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         double[] balls = new double[N];
         double[] radii = new double[N];
         for (int i = 0; i < N; i++) {
-            radii[i] = Math.log10(eps_min + (i * eps_step));
+            radii[i] = Math.log10(1 / (eps_min + (i * eps_step)));
             balls[i] = Math.log10(xtEnclosingBalls.get(i).size());
         }
         double[][] data = new double[][]{radii, balls};
@@ -231,7 +231,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         double[] balls = new double[N];
         double[] radii = new double[N];
         for (int i = 0; i < N; i++) {
-            radii[i] = Math.log10(eps_min + (i * eps_step));
+            radii[i] = Math.log10(1 / (eps_min + (i * eps_step)));
             balls[i] = Math.log10(ytEnclosingBalls.get(i).size());
         }
         double[][] data = new double[][]{radii, balls};
@@ -250,7 +250,7 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
             directionAutocorrelations = directionAutocorrelationsList.get(0);
         }
         // simply compute the median of the direction autocorrelations
-        double medianDirectionAutocorrelation = AnalysisUtils.computeMean(ArrayUtils.toPrimitive(directionAutocorrelations));
+        double medianDirectionAutocorrelation = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(directionAutocorrelations));
         cellCentricDataHolder.setMedianDirectionAutocorrelation(medianDirectionAutocorrelation);
     }
 

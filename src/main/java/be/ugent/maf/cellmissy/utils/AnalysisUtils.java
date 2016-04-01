@@ -70,6 +70,16 @@ public class AnalysisUtils {
         return transposed;
     }
 
+    public static double[][] transpose2DArray(double[][] data) {
+        double[][] transposed = new double[data[0].length][data.length];
+        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < data[0].length; columnIndex++) {
+                transposed[columnIndex][rowIndex] = data[rowIndex][columnIndex];
+            }
+        }
+        return transposed;
+    }
+
     /**
      * Transpose a 2D array of boolean
      *

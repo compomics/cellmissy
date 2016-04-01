@@ -113,10 +113,10 @@ public class JFreeChartUtils {
      * @return the chart
      */
     public static JFreeChart generateDensityFunctionChart(PlateCondition plateCondition, int conditionIndex,
-              XYSeriesCollection xYSeriesCollection, String chartTitle) {
+            XYSeriesCollection xYSeriesCollection, String chartTitle) {
         String specificChartTitle = chartTitle + " Condition " + conditionIndex + " (replicates)";
         JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, "% increase (Area)", "Density",
-                  xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+                xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         densityChart.getTitle().setFont(chartFont);
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();
@@ -126,7 +126,7 @@ public class JFreeChartUtils {
         setupXYPlot(xYPlot);
         //set ranges for x and y axes
         xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection
-                  .getDomainUpperBound(true) + 0.05);
+                .getDomainUpperBound(true) + 0.05);
         xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
         xYPlot.setBackgroundPaint(Color.white);
         //renderer for wide line
@@ -164,7 +164,7 @@ public class JFreeChartUtils {
     public static JFreeChart generateDensityFunctionChart(SingleCellConditionDataHolder singleCellConditionDataHolder, XYSeriesCollection xYSeriesCollection, String chartTitle, String xLabel) {
         String specificChartTitle = chartTitle + " - " + singleCellConditionDataHolder.getPlateCondition() + " (replicates)";
         JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, xLabel, "Density",
-                  xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+                xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
         densityChart.getTitle().setFont(chartFont);
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();
@@ -174,7 +174,7 @@ public class JFreeChartUtils {
         setupXYPlot(xYPlot);
         //set ranges for x and y axes
         xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection
-                  .getDomainUpperBound(true) + 0.05);
+                .getDomainUpperBound(true) + 0.05);
         xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
         xYPlot.setBackgroundPaint(Color.white);
         //renderer for wide line
@@ -316,6 +316,12 @@ public class JFreeChartUtils {
         double[] yCoordinates = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(transposed[1]));
         // generate xy series for the plot
         return JFreeChartUtils.generateXYSeries(xCoordinates, yCoordinates);
+    }
+
+    public static XYSeries generateXYSeries(double[][] data) {
+        // transpose the array
+        double[][] transposed = AnalysisUtils.transpose2DArray(data);
+        return JFreeChartUtils.generateXYSeries(transposed[0], transposed[1]);
     }
 
     /**
@@ -477,8 +483,8 @@ public class JFreeChartUtils {
 
                     if ((numberTick.getValue() % 6 == 0)) {
                         myTicks.add(new NumberTick(TickType.MINOR, numberTick.getValue(), "" + numberTick.getValue(),
-                                  numberTick.getTextAnchor(), numberTick.getRotationAnchor(),
-                                  numberTick.getAngle()));
+                                numberTick.getTextAnchor(), numberTick.getRotationAnchor(),
+                                numberTick.getAngle()));
                         continue;
                     }
                     myTicks.add(tick);
@@ -547,7 +553,7 @@ public class JFreeChartUtils {
                 int indexOfColor = conditionIndex % lenght;
                 // add vertical annotation on plot
                 XYLineAnnotation vertical = new XYLineAnnotation(x, y - dy, x, y + dy, stroke, GuiUtils
-                          .getAvailableColors()[indexOfColor]);
+                        .getAvailableColors()[indexOfColor]);
                 plot.addAnnotation(vertical);
             }
         }

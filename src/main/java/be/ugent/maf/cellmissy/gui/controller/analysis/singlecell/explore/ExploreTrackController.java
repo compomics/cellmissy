@@ -88,6 +88,7 @@ public class ExploreTrackController {
     private ChartPanel convexHullChartPanel;
     private ChartPanel histogramChartPanel;
     private ChartPanel polarPlotChartPanel;
+    private ChartPanel msdChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
@@ -214,6 +215,9 @@ public class ExploreTrackController {
         polarPlotChartPanel = new ChartPanel(null);
         polarPlotChartPanel.setOpaque(false);
 
+        msdChartPanel = new ChartPanel(null);
+        msdChartPanel.setOpaque(false);
+
         exploreTrackPanel.getxYTCoordinatesParentPanel().add(xYTCoordinateChartPanel, gridBagConstraints);
         exploreTrackPanel.getDisplacementTParentPanel().add(displacementTChartPanel, gridBagConstraints);
 
@@ -222,6 +226,8 @@ public class ExploreTrackController {
 
         exploreTrackPanel.getHistogramParentPanel().add(histogramChartPanel, gridBagConstraints);
         exploreTrackPanel.getPolarPlotParentPanel().add(polarPlotChartPanel, gridBagConstraints);
+
+        exploreTrackPanel.getMsdParentPanel().add(msdChartPanel, gridBagConstraints);
 
         exploreTrackPanel.getTrackDataTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
         exploreTrackPanel.getTrackDataTable().getTableHeader().setReorderingAllowed(false);
@@ -543,6 +549,8 @@ public class ExploreTrackController {
         plotTurnAngleHistogram(trackDataHolder);
         // plot the polar plot
         plotPolarPlot(trackDataHolder);
+        // plot the MSD 
+        plotMSD(trackDataHolder);
         // plot the directionality ratio in time
         directionTrackController.plotDirectionalityRatioInTime(trackDataHolder);
         // plot the direction autocorrelation coefficients in time
@@ -645,10 +653,7 @@ public class ExploreTrackController {
         // get the coordinates matrix
         Double[][] shiftedCoordinatesMatrix = trackDataHolder.getStepCentricDataHolder().getShiftedCoordinatesMatrix();
         XYSeries xYSeries = JFreeChartUtils.generateXYSeries(shiftedCoordinatesMatrix);
-        Track track = trackDataHolder.getTrack();
-        int trackNumber = track.getTrackNumber();
-        Well well = track.getWellHasImagingType().getWell();
-        String seriesKey = "track " + trackNumber + ", well " + well;
+        String seriesKey = "track " + trackDataHolder.getTrack().getTrackNumber() + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell();
         xYSeries.setKey(seriesKey);
         XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
         JFreeChart shiftedCoordinatesChart = ChartFactory.createXYLineChart(seriesKey + " - shifted coordinates", "x (µm)", "y (µm)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
@@ -795,6 +800,24 @@ public class ExploreTrackController {
         JFreeChart polarChart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
         JFreeChartUtils.setupPolarChart(polarChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder));
         polarPlotChartPanel.setChart(polarChart);
+    }
+
+    /**
+     * Plot the mean-squared displacement graph for a given track data holder.
+     *
+     * @param trackDataHolder
+     */
+    private void plotMSD(TrackDataHolder trackDataHolder) {
+        double[][] msd = trackDataHolder.getStepCentricDataHolder().getMSD();
+        XYSeries xYSeries = JFreeChartUtils.generateXYSeries(msd);
+        String seriesKey = "track " + trackDataHolder.getTrack().getTrackNumber() + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell();
+        xYSeries.setKey(seriesKey);
+        XYSeriesCollection ySeriesCollection = new XYSeriesCollection(xYSeries);
+        JFreeChart msdChart = ChartFactory.createXYLineChart(seriesKey + " - MSD", "time-lag", "MSD (µm²)", ySeriesCollection, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupSingleTrackPlot(msdChart, trackCoordinatesController.getTrackDataHolderBindingList().indexOf(trackDataHolder), true);
+        msdChart.getXYPlot().setRangeGridlinePaint(Color.black);
+        msdChart.getXYPlot().setDomainGridlinePaint(Color.black);
+        msdChartPanel.setChart(msdChart);
     }
 
     /**

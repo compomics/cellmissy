@@ -73,7 +73,7 @@ public interface StepCentricOperator {
      *
      * @param stepCentricDataHolder
      */
-    void computeMeanSquareDisplacements(StepCentricDataHolder stepCentricDataHolder);
+    void computeMSD(StepCentricDataHolder stepCentricDataHolder);
 
     /**
      * Compute direction autocorrelation values.

@@ -256,7 +256,7 @@ class EnclosingBallController {
         String seriesKey = "track " + trackDataHolder.getTrack().getTrackNumber() + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell();
         series.setKey(seriesKey);
         XYSeriesCollection collection = new XYSeriesCollection(series);
-        JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - FD = " + AnalysisUtils.roundThreeDecimals(fractalDimension.getFD()), "log(r)", "log(N)",
+        JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - FD = " + AnalysisUtils.roundThreeDecimals(fractalDimension.getFD()), "log(1/r)", "log(N)",
                 collection, PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupXYPlot(chart.getXYPlot());
         JFreeChartUtils.setupSingleTrackPlot(chart, exploreTrackController.getExploreTrackPanel().getTracksList().getSelectedIndex(), true);

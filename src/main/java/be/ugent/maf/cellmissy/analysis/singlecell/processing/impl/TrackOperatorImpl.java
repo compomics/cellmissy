@@ -33,7 +33,7 @@ public class TrackOperatorImpl implements TrackOperator {
         stepCentricOperator.computeInstantaneousDisplacements(stepCentricDataHolder);
         stepCentricOperator.computeTurningAngles(stepCentricDataHolder);
         stepCentricOperator.computeDirectionalityRatios(stepCentricDataHolder);
-        stepCentricOperator.computeMeanSquareDisplacements(stepCentricDataHolder);
+        stepCentricOperator.computeMSD(stepCentricDataHolder);
         stepCentricOperator.computeDirectionAutocorrelations(stepCentricDataHolder);
         stepCentricOperator.computeMeanDirectionAutocorrelations(stepCentricDataHolder);
         stepCentricOperator.interpolateTrack(stepCentricDataHolder);

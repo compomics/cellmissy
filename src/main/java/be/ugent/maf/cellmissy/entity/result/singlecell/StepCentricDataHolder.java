@@ -47,9 +47,10 @@ public class StepCentricDataHolder {
     // travelled time point
     // the math concept is the same as for the end point directionality vector, but this is computed in time
     private Double[] directionalityRatios;
-    // array for the MSD values
-    private Double[] meanSquareDisplacements;
-    // list of arrays for the direction autocorrelations
+    // array for the MSD values: mean-squared displacement
+    // this array contains both the lag times (tau, col:0) and the msd values (col:1)
+    private double[][] MSD;
+    // list of arrays for the diMSDrection autocorrelations
     // a direction autocorrelation is defined as the cosine of the difference between turning angles at successive
     // time points
     private List<Double[]> directionAutocorrelations;
@@ -155,12 +156,12 @@ public class StepCentricDataHolder {
         this.directionalityRatios = directionalityRatios;
     }
 
-    public Double[] getMeanSquareDisplacements() {
-        return meanSquareDisplacements;
+    public double[][] getMSD() {
+        return MSD;
     }
 
-    public void setMeanSquareDisplacements(Double[] meanSquareDisplacements) {
-        this.meanSquareDisplacements = meanSquareDisplacements;
+    public void setMSD(double[][] MSD) {
+        this.MSD = MSD;
     }
 
     public List<Double[]> getDirectionAutocorrelations() {
