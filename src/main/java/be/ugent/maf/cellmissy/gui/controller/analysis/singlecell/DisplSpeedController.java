@@ -35,11 +35,13 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -63,6 +65,7 @@ class DisplSpeedController {
     private DisplSpeedPanel displSpeedPanel;
     private ChartPanel boxPlotChartPanel;
     private ChartPanel densityPlotChartPanel;
+    private ChartPanel msdChartPanel;
     // parent controller
     @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
@@ -79,6 +82,7 @@ class DisplSpeedController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         boxPlotChartPanel = new ChartPanel(null);
         densityPlotChartPanel = new ChartPanel(null);
+        msdChartPanel = new ChartPanel(null);
         // init views
         initDisplSpeedPanel();
     }
@@ -97,6 +101,7 @@ class DisplSpeedController {
         dataTable.setModel(new DefaultTableModel());
         boxPlotChartPanel.setChart(null);
         densityPlotChartPanel.setChart(null);
+        msdChartPanel.setChart(null);
         densityFunctionHolderCacheSingleCell.clearCache();
     }
 
@@ -168,6 +173,16 @@ class DisplSpeedController {
     }
 
     /**
+     * Show the mean-squared displacements in a table.
+     *
+     * @param plateCondition
+     */
+    public void showMSDInTable(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+
+    }
+
+    /**
      * Private methods and classes.
      */
     /**
@@ -193,37 +208,44 @@ class DisplSpeedController {
         radioButtonGroup.add(displSpeedPanel.getInstantaneousDisplRadioButton());
         radioButtonGroup.add(displSpeedPanel.getTrackDisplRadioButton());
         radioButtonGroup.add(displSpeedPanel.getTrackSpeedsRadioButton());
+        radioButtonGroup.add(displSpeedPanel.getMsdRadioButton());
 
         /**
          * Add action listeners
          */
         // show instantaneous displacements
         displSpeedPanel.getInstantaneousDisplRadioButton().addActionListener((ActionEvent e) -> {
-            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
             //check that a condition is selected
-            if (currentCondition != null) {
-                showInstantaneousDisplInTable(currentCondition); // show the data
-                plotDisplAndSpeedData(currentCondition); // plot the data
+            if (singleCellPreProcessingController.getCurrentCondition() != null) {
+                showInstantaneousDisplInTable(singleCellPreProcessingController.getCurrentCondition()); // show the data
+                plotDisplAndSpeedData(singleCellPreProcessingController.getCurrentCondition()); // plot the data
             }
         });
 
         // show track displacements
         displSpeedPanel.getTrackDisplRadioButton().addActionListener((ActionEvent e) -> {
-            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
             //check that a condition is selected
-            if (currentCondition != null) {
-                showTrackDisplInTable(currentCondition); // show the data
-                plotDisplAndSpeedData(currentCondition); // plot the data
+            if (singleCellPreProcessingController.getCurrentCondition() != null) {
+                showTrackDisplInTable(singleCellPreProcessingController.getCurrentCondition()); // show the data
+                plotDisplAndSpeedData(singleCellPreProcessingController.getCurrentCondition()); // plot the data
             }
         });
 
         // show track speeds
         displSpeedPanel.getTrackSpeedsRadioButton().addActionListener((ActionEvent e) -> {
-            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
             //check that a condition is selected
-            if (currentCondition != null) {
-                showTrackSpeedsInTable(currentCondition); // show the data
-                plotDisplAndSpeedData(currentCondition); // plot the data
+            if (singleCellPreProcessingController.getCurrentCondition() != null) {
+                showTrackSpeedsInTable(singleCellPreProcessingController.getCurrentCondition()); // show the data
+                plotDisplAndSpeedData(singleCellPreProcessingController.getCurrentCondition()); // plot the data
+            }
+        });
+
+        // show MSD mean-squared-displacement
+        displSpeedPanel.getMsdRadioButton().addActionListener((ActionEvent e) -> {
+            //check that a condition is selected
+            if (singleCellPreProcessingController.getCurrentCondition() != null) {
+                showMSDInTable(singleCellPreProcessingController.getCurrentCondition()); // show the data
+                plotDisplAndSpeedData(singleCellPreProcessingController.getCurrentCondition()); // plot the data
             }
         });
 
@@ -348,7 +370,7 @@ class DisplSpeedController {
                 densityFunctionsMap = estimateDensityFunctions(singleCellConditionDataHolder);
                 densityFunctionHolderCacheSingleCell.putInCache(singleCellConditionDataHolder, densityFunctionsMap);
             }
-            // set xyseriesCollections calling the generateDensityFunctions method
+            // set xyseriesCollections
             instDisplCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.INST_DISPL);
             trackDisplCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.TRACK_DISPL);
             trackSpeedCollection = generateDensityFunction(singleCellConditionDataHolder, densityFunctionsMap, DataCategory.TRACK_SPEED);
@@ -381,8 +403,15 @@ class DisplSpeedController {
                     boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, trackSpeedDataset,
                             "track speed");
                 }
-                plotDensityChart(densityChart);
-                plotBoxPlotChart(boxPlotChart);
+                if (displSpeedPanel.getMsdRadioButton().isSelected()) {
+                    JFreeChart msdChart = ChartFactory.createXYLineChart(singleCellConditionDataHolder.toString()
+                            + " - MSD", "time-lag", "MSD (µm²)", generateMSDCollection(singleCellConditionDataHolder),
+                            PlotOrientation.VERTICAL, false, true, false);
+                    plotMSDChart(msdChart);
+                } else {
+                    plotDensityChart(densityChart);
+                    plotBoxPlotChart(boxPlotChart);
+                }
                 singleCellPreProcessingController.hideWaitingDialog();
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } catch (InterruptedException | ExecutionException ex) {
@@ -399,9 +428,24 @@ class DisplSpeedController {
      */
     private void plotDensityChart(JFreeChart densityChart) {
         densityPlotChartPanel.setChart(densityChart);
-        displSpeedPanel.getRightPlotParentPanel().add(densityPlotChartPanel, gridBagConstraints);
-        displSpeedPanel.getRightPlotParentPanel().revalidate();
-        displSpeedPanel.getRightPlotParentPanel().repaint();
+        gridBagConstraints.gridx = 0;
+        displSpeedPanel.getPlotPanel().add(densityPlotChartPanel, gridBagConstraints);
+        displSpeedPanel.getPlotPanel().revalidate();
+        displSpeedPanel.getPlotPanel().repaint();
+    }
+
+    /**
+     *
+     * @param msdChart
+     */
+    private void plotMSDChart(JFreeChart msdChart) {
+        displSpeedPanel.getPlotPanel().removeAll();
+        displSpeedPanel.getPlotPanel().revalidate();
+        displSpeedPanel.getPlotPanel().repaint();
+        msdChartPanel.setChart(msdChart);
+        displSpeedPanel.getPlotPanel().add(msdChartPanel, gridBagConstraints);
+        displSpeedPanel.getPlotPanel().revalidate();
+        displSpeedPanel.getPlotPanel().repaint();
     }
 
     /**
@@ -411,9 +455,10 @@ class DisplSpeedController {
      */
     private void plotBoxPlotChart(JFreeChart boxPlotChart) {
         boxPlotChartPanel.setChart(boxPlotChart);
-        displSpeedPanel.getLeftPlotParentPanel().add(boxPlotChartPanel, gridBagConstraints);
-        displSpeedPanel.getLeftPlotParentPanel().revalidate();
-        displSpeedPanel.getLeftPlotParentPanel().repaint();
+        gridBagConstraints.gridx = 1;
+        displSpeedPanel.getPlotPanel().add(boxPlotChartPanel, gridBagConstraints);
+        displSpeedPanel.getPlotPanel().revalidate();
+        displSpeedPanel.getPlotPanel().repaint();
     }
 
     /**
@@ -483,6 +528,22 @@ class DisplSpeedController {
                 counter += numberOfSamplesPerWell;
             }
 
+        }
+        return xySeriesCollection;
+    }
+
+    /**
+     *
+     * @param singleCellConditionDataHolder
+     * @return
+     */
+    private XYSeriesCollection generateMSDCollection(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            double[][] msdArray = singleCellWellDataHolder.getMsdArray();
+            XYSeries xySeries = JFreeChartUtils.generateXYSeries(msdArray);
+            xySeries.setKey(singleCellWellDataHolder.toString());
+            xySeriesCollection.addSeries(xySeries);
         }
         return xySeriesCollection;
     }

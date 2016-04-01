@@ -717,6 +717,8 @@ class SingleCellPreProcessingController {
                 singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
                 LOG.info("generating track end-point directionality ratios...");
                 singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+                LOG.info("generating mean-squared displacement...");
+                singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);                
                 LOG.info("generating convex hulls...");
                 singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
                 LOG.info("generating track displacements...");

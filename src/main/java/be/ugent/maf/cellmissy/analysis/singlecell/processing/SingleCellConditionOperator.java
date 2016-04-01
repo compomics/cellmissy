@@ -72,6 +72,12 @@ public interface SingleCellConditionOperator {
     void generateTrackSpeedsVector(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
+     * 
+     * @param singleCellConditionDataHolder 
+     */
+    void generateMSDArray(SingleCellConditionDataHolder singleCellConditionDataHolder);
+
+    /**
      * Generate the directionality vector.
      *
      * @param singleCellConditionDataHolder

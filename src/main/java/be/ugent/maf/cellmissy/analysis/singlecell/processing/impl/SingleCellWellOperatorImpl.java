@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,7 +49,7 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
         for (Iterator<TrackDataHolder> it = singleCellWellDataHolder.getTrackDataHolders().iterator(); it.hasNext();) {
             TrackDataHolder trackDataHolder = it.next();
             Double[] instantaneousDisplacements = trackDataHolder.getStepCentricDataHolder()
-                      .getInstantaneousDisplacements();
+                    .getInstantaneousDisplacements();
             for (Double instantaneousDisplacement : instantaneousDisplacements) {
                 instantaneousDisplacementsVector[counter] = instantaneousDisplacement;
                 counter++;
@@ -128,12 +129,48 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
     }
 
     @Override
+    public void generateMSDArray(SingleCellWellDataHolder singleCellWellDataHolder) {
+        int max = 0;
+        List<TrackDataHolder> trackDataHolders = singleCellWellDataHolder.getTrackDataHolders();
+        for (TrackDataHolder trackDataHolder : trackDataHolders) {
+            double[][] msd = trackDataHolder.getStepCentricDataHolder().getMSD();
+            if (msd.length > max) {
+                max = msd.length;
+            }
+        }
+
+        double[][] msdArray = new double[max][2];
+        msdArray[0][0] = 0; // always zero at this cell
+
+        double[] dt_n = new double[max];
+
+        for (int j = 1; j < max; j++) {
+            msdArray[j][0] = j;
+            for (TrackDataHolder trackDataHolder : trackDataHolders) {
+                double[][] msd = trackDataHolder.getStepCentricDataHolder().getMSD();
+                if (msd.length > j) {
+
+                    msdArray[j][1] += msd[j][1];
+                    dt_n[j]++;
+                }
+            }
+        }
+        
+        // divide by the number of occurrences to get the average
+        for (int dt = 1; dt < max; dt++) {
+            msdArray[dt][1] = (dt_n[dt] != 0) ? msdArray[dt][1] / dt_n[dt] : 0;
+        }
+        
+        singleCellWellDataHolder.setMsdArray(msdArray);
+    }
+
+    @Override
     public void generateEndPointDirectionalityRatiosVector(SingleCellWellDataHolder singleCellWellDataHolder) {
         Double[] endPointDirectionalityRatios = new Double[singleCellWellDataHolder.getTrackDataHolders().size()];
         for (int i = 0; i < endPointDirectionalityRatios.length; i++) {
             TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
             double endPointDirectionalityRatio = trackDataHolder.getCellCentricDataHolder()
-                      .getEndPointDirectionalityRatio();
+                    .getEndPointDirectionalityRatio();
             endPointDirectionalityRatios[i] = endPointDirectionalityRatio;
         }
         singleCellWellDataHolder.setEndPointDirectionalityRatios(endPointDirectionalityRatios);
@@ -203,7 +240,7 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
         for (int i = 0; i < medianDirectionAutocorrelationsVector.length; i++) {
             TrackDataHolder trackDataHolder = singleCellWellDataHolder.getTrackDataHolders().get(i);
             double medianDirectionAutocorrelation = trackDataHolder.getCellCentricDataHolder()
-                      .getMedianDirectionAutocorrelation();
+                    .getMedianDirectionAutocorrelation();
             medianDirectionAutocorrelationsVector[i] = medianDirectionAutocorrelation;
         }
         singleCellWellDataHolder.setMedianDirectionAutocorrelationsVector(medianDirectionAutocorrelationsVector);

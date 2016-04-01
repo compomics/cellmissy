@@ -51,13 +51,15 @@
                       <Component id="tableInfoLabel" min="-2" pref="574" max="-2" attributes="1"/>
                       <Group type="102" attributes="0">
                           <Component id="instantaneousDisplRadioButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="trackDisplRadioButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="trackSpeedsRadioButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="msdRadioButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="464" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -69,6 +71,7 @@
                       <Component id="instantaneousDisplRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="trackDisplRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="trackSpeedsRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="msdRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="tableInfoLabel" min="-2" max="-2" attributes="0"/>
@@ -80,7 +83,7 @@
       <SubComponents>
         <Component class="javax.swing.JRadioButton" name="instantaneousDisplRadioButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="instantaneous displacements"/>
+            <Property name="text" type="java.lang.String" value="instantaneous displacements (step-centric)"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
@@ -99,21 +102,26 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="trackDisplRadioButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="track displacements"/>
+            <Property name="text" type="java.lang.String" value="track displacements (cell-centric)"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="trackSpeedsRadioButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="track speeds"/>
+            <Property name="text" type="java.lang.String" value="track speeds (cell-centric)"/>
             <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="msdRadioButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="MSD"/>
           </Properties>
         </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JSplitPane" name="bottomSplitPane">
       <Properties>
-        <Property name="dividerLocation" type="int" value="80"/>
+        <Property name="dividerLocation" type="int" value="85"/>
         <Property name="orientation" type="int" value="0"/>
         <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[20, 20]"/>
@@ -141,47 +149,14 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
         </Container>
-        <Container class="javax.swing.JSplitPane" name="plotsSplitPane">
-          <Properties>
-            <Property name="dividerLocation" type="int" value="600"/>
-          </Properties>
+        <Container class="javax.swing.JPanel" name="plotPanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
               <JSplitPaneConstraints position="right"/>
             </Constraint>
           </Constraints>
 
-          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
-          <SubComponents>
-            <Container class="javax.swing.JPanel" name="leftPlotParentPanel">
-              <Properties>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[20, 20]"/>
-                </Property>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                  <JSplitPaneConstraints position="left"/>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
-            </Container>
-            <Container class="javax.swing.JPanel" name="rightPlotParentPanel">
-              <Properties>
-                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[20, 20]"/>
-                </Property>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                  <JSplitPaneConstraints position="right"/>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
-            </Container>
-          </SubComponents>
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
         </Container>
       </SubComponents>
     </Container>

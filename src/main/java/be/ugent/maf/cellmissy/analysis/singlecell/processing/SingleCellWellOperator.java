@@ -72,6 +72,12 @@ public interface SingleCellWellOperator {
     void generateTrackSpeedsVector(SingleCellWellDataHolder singleCellWellDataHolder);
 
     /**
+     * 
+     * @param singleCellWellDataHolder 
+     */
+    void generateMSDArray(SingleCellWellDataHolder singleCellWellDataHolder);
+
+    /**
      * Generate the directionality vector.
      *
      * @param singleCellWellDataHolder

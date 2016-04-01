@@ -40,6 +40,8 @@ public class SingleCellWellDataHolder {
     private Double[] trackDisplacementsVector;
     // array for track speeds
     private Double[] trackSpeedsVector;
+    // 2D array for mean-squared displacements
+    private double[][] msdArray;
     // array for track cumulative distancse
     private Double[] cumulativeDistancesVector;
     // array for track Euclidean distancse
@@ -163,6 +165,14 @@ public class SingleCellWellDataHolder {
 
     public void setTrackSpeedsVector(Double[] trackSpeedsVector) {
         this.trackSpeedsVector = trackSpeedsVector;
+    }
+
+    public double[][] getMsdArray() {
+        return msdArray;
+    }
+
+    public void setMsdArray(double[][] msdArray) {
+        this.msdArray = msdArray;
     }
 
     public Double[] getCumulativeDistancesVector() {
