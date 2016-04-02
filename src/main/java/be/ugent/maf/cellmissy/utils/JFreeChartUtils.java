@@ -393,6 +393,36 @@ public class JFreeChartUtils {
     }
 
     /**
+     * 
+     * @param chart
+     * @param conditions
+     * @param plotLines
+     * @param plotPoints 
+     */
+    public static void setupConditionsChart(JFreeChart chart, List<PlateCondition> conditions, boolean plotLines, boolean plotPoints) {
+        // set title font
+        chart.getTitle().setFont(chartFont);
+        // get xyplot from the chart
+        XYPlot xYPlot = chart.getXYPlot();
+        setupXYPlot(xYPlot);
+        // get the xyseriescollection from the plot
+        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
+        // modify renderer
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) xYPlot.getRenderer();
+        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
+            // wide line
+            renderer.setSeriesStroke(i, normalLine);
+            // plot lines according to conditions indexes
+            int colorIndex = i % GuiUtils.getAvailableColors().length;
+            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+            // show lines?
+            renderer.setSeriesLinesVisible(i, plotLines);
+            // show points?
+            renderer.setSeriesShapesVisible(i, plotPoints);
+        }
+    }
+
+    /**
      * Set up a plot for track coordinates. Given the chart, set font for the
      * title, set outline and background paint and compute max range. The max
      * range is used to set both the axes and maintain the plot squared.

@@ -286,7 +286,9 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
             double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
             InterpolatedTrack interpolatedTrack = trackInterpolator.interpolateTrack(timeIndexes, xCoord, yCoord);
-            interpolationMap.put(method, interpolatedTrack);
+            if (interpolatedTrack != null) {
+                interpolationMap.put(method, interpolatedTrack);
+            }
         }
         stepCentricDataHolder.setInterpolationMap(interpolationMap);
     }

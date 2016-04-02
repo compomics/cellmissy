@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.InterpolatedTrack;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.util.MathArrays;
 
 /**
@@ -19,6 +20,8 @@ import org.apache.commons.math3.util.MathArrays;
  * @author Paola
  */
 public class TrackLinearInterpolator implements TrackInterpolator {
+
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackLinearInterpolator.class);
 
     @Override
     public InterpolatedTrack interpolateTrack(double[] time, double[] x, double[] y) {
@@ -41,19 +44,24 @@ public class TrackLinearInterpolator implements TrackInterpolator {
         }
 
         // call the interpolator, and actually do the interpolation
-        PolynomialSplineFunction functionX = linearInterpolator.interpolate(time, x);
-        PolynomialSplineFunction functionY = linearInterpolator.interpolate(time, y);
+        try {
+            PolynomialSplineFunction functionX = linearInterpolator.interpolate(time, x);
+            PolynomialSplineFunction functionY = linearInterpolator.interpolate(time, y);
 
-        // get the polynomial functions in both directions
-        PolynomialFunction polynomialFunctionX = functionX.getPolynomials()[0];
-        PolynomialFunction polynomialFunctionY = functionY.getPolynomials()[0];
+            // get the polynomial functions in both directions
+            PolynomialFunction polynomialFunctionX = functionX.getPolynomials()[0];
+            PolynomialFunction polynomialFunctionY = functionY.getPolynomials()[0];
 
-        for (int i = 0; i < interpolationPoints; i++) {
-            interpolantTime[i] = time[0] + (i * interpolationStep);
-            interpolatedX[i] = functionX.value(interpolantTime[i]);
-            interpolatedY[i] = functionY.value(interpolantTime[i]);
+            for (int i = 0; i < interpolationPoints; i++) {
+                interpolantTime[i] = time[0] + (i * interpolationStep);
+                interpolatedX[i] = functionX.value(interpolantTime[i]);
+                interpolatedY[i] = functionY.value(interpolantTime[i]);
+            }
+
+            return new InterpolatedTrack(interpolantTime, interpolatedX, interpolatedY, polynomialFunctionX, polynomialFunctionY);
+        } catch (NumberIsTooSmallException e) {
+            LOG.error(e.getMessage());
+            return null;
         }
-
-        return new InterpolatedTrack(interpolantTime, interpolatedX, interpolatedY, polynomialFunctionX, polynomialFunctionY);
     }
 }

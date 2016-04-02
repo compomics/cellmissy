@@ -361,6 +361,14 @@ class SingleCellPreProcessingController {
     }
 
     /**
+     *
+     */
+    public void enableAnalysis() {
+        ProceedToAnalysisSwingWorker proceedToAnalysisSwingWorker = new ProceedToAnalysisSwingWorker();
+        proceedToAnalysisSwingWorker.execute();
+    }
+
+    /**
      * Set cursor from main controller
      */
     public void setCursor(Cursor cursor) {
@@ -674,6 +682,49 @@ class SingleCellPreProcessingController {
     }
 
     /**
+     *
+     * @param plateCondition
+     */
+    private void computeCondition(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = preProcessingMap.get(plateCondition);
+        LOG.info("****************");
+        LOG.info("Operating now on: " + singleCellConditionDataHolder);
+        LOG.info("operating on steps and cells...");
+        singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
+        LOG.info("generating instantaneous displacements...");
+        singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+        LOG.info("generating directionality ratios...");
+        singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating track displacements...");
+        singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating median directionality ratios...");
+        singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+        LOG.info("generating cumulative distances...");
+        singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+        LOG.info("generating euclidean distances...");
+        singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+        LOG.info("generating track speeds...");
+        singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+        LOG.info("generating track end-point directionality ratios...");
+        singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating mean-squared displacement...");
+        singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
+        LOG.info("generating convex hulls...");
+        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+        LOG.info("generating track displacements...");
+        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating outreach ratios...");
+        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating turning angles...");
+        singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+        LOG.info("generating median turning angles...");
+        singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+        LOG.info("computing for interpolated tracks...");
+        singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
+        plateCondition.setComputed(true);
+    }
+
+    /**
      * A class extending a swing worker to operate (i.e. perform some basic
      * computations) on a specific plateCondition.
      */
@@ -703,43 +754,7 @@ class SingleCellPreProcessingController {
             SingleCellConditionDataHolder singleCellConditionDataHolder = preProcessingMap.get(plateCondition);
             // check if the condition is actually to be analyzed
             if (singleCellConditionDataHolder != null) {
-
-                LOG.info("****************");
-                LOG.info("Operating now on: " + singleCellConditionDataHolder);
-
-                LOG.info("operating on steps and cells...");
-                singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
-                LOG.info("generating instantaneous displacements...");
-                singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
-                LOG.info("generating directionality ratios...");
-                singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
-                LOG.info("generating track displacements...");
-                singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
-                LOG.info("generating median directionality ratios...");
-                singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-                LOG.info("generating cumulative distances...");
-                singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
-                LOG.info("generating euclidean distances...");
-                singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
-                LOG.info("generating track speeds...");
-                singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
-                LOG.info("generating track end-point directionality ratios...");
-                singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
-                LOG.info("generating mean-squared displacement...");
-                singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
-                LOG.info("generating convex hulls...");
-                singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
-                LOG.info("generating track displacements...");
-                singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-                LOG.info("generating outreach ratios...");
-                singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
-                LOG.info("generating turning angles...");
-                singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
-                LOG.info("generating median turning angles...");
-                singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
-                LOG.info("computing for interpolated tracks...");
-                singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
-                plateCondition.setComputed(true);
+                computeCondition(plateCondition);
             } else {
                 // if not, just inform the user and skip the computation
                 LOG.info("Apparently this condition was not imaged/analyzed!");
@@ -759,6 +774,42 @@ class SingleCellPreProcessingController {
                 // the condition is loaded, and plate view is refreshed
                 singleCellMainController.showNotImagedWells(plateCondition);
                 singleCellMainController.showWellsForCurrentCondition(plateCondition);
+                // when done, enable back the list and put back cursor to default
+                singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
+                singleCellMainController.controlGuiComponents(true);
+                singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                singleCellMainController.handleUnexpectedError(ex);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private class ProceedToAnalysisSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            // show waiting dialog
+            singleCellMainController.showWaitingDialog("Enabling analysis, processing the other conditions...");
+            // show a waiting cursor, disable GUI components
+            singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            singleCellMainController.controlGuiComponents(false);
+            for (PlateCondition condition : singleCellMainController.getPlateConditionList()) {
+                if (!condition.isComputed()) {
+                    computeCondition(condition);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                singleCellMainController.hideWaitingDialog();
                 // when done, enable back the list and put back cursor to default
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.controlGuiComponents(true);

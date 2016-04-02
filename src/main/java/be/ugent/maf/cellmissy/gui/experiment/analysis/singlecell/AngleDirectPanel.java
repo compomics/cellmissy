@@ -103,7 +103,9 @@ public class AngleDirectPanel extends javax.swing.JPanel {
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(radioButtonsPanelLayout.createSequentialGroup()
+                        .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(199, 199, 199))
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                         .addComponent(instTurnAngleRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -114,7 +116,7 @@ public class AngleDirectPanel extends javax.swing.JPanel {
                         .addComponent(endPointDirectRatioRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(directionAutocorrelationRadioButton)))
-                .addContainerGap(282, Short.MAX_VALUE))
+                .addGap(282, 282, 282))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

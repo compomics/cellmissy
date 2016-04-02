@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.*;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
@@ -16,6 +17,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MetadataSingleCellPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisInfoDialog;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.ConditionsAnalysisListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.CoordinatesUnitOfMeasurementComboBoxRenderer;
@@ -42,6 +44,7 @@ import java.text.Format;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -77,6 +80,8 @@ public class SingleCellMainController {
     // child controllers
     @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
+    @Autowired
+    private SingleCellAnalysisController singleCellAnalysisController;
     // services
     @Autowired
     private ExperimentService experimentService;
@@ -113,6 +118,7 @@ public class SingleCellMainController {
         format = new DecimalFormat(PropertiesConfigurationHolder.getInstance().getString("dataFormat"));
         // init child controllers
         singleCellPreProcessingController.init();
+        singleCellAnalysisController.init();
         // init other views
         initPlatePanel();
         initMainPanel();
@@ -176,6 +182,14 @@ public class SingleCellMainController {
 
     public AnalysisPlatePanel getAnalysisPlatePanel() {
         return analysisPlatePanel;
+    }
+
+    public SingleCellAnalysisPanel getSingleCellAnalysisPanel() {
+        return singleCellPreProcessingController.getSingleCellAnalysisPanel();
+    }
+
+    public Map<PlateCondition, SingleCellConditionDataHolder> getPreProcessingMap() {
+        return singleCellPreProcessingController.getPreProcessingMap();
     }
 
     /**
@@ -349,6 +363,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
                 showInfoMessage("Tracks are shown for each well, together with (column, row) coordinates");
                 singleCellPreProcessingController.showTracksInTable();
                 break;
@@ -360,6 +376,8 @@ public class SingleCellMainController {
                         .getInspectingDataLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
                 showInfoMessage("Track Coordinates are shown for each well");
                 singleCellPreProcessingController.updateTracksNumberInfo(selectedCondition);
                 singleCellPreProcessingController.updateWellBindingList(selectedCondition);
@@ -384,6 +402,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
                 showInfoMessage("Single Cell Displacements and Speeds");
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
@@ -408,6 +428,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
                 showInfoMessage("Single Cell Turning Angles and Directionality Measures");
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getAngleDirectPanel().getInstTurnAngleRadioButton().isSelected()) {
@@ -419,12 +441,45 @@ public class SingleCellMainController {
                 }
                 singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
                 break;
+            case "analysisParentPanel":
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getInspectingDataLabel());
+                showInfoMessage("Conditions-based analysis");
+                // see if some conditions still need to be processed
+                if (!proceedToAnalysis()) {
+                    singleCellPreProcessingController.enableAnalysis();
+                }
+                // check which button is actually selected
+                if (singleCellAnalysisController.getAnalysisPanel().getFilteringRadioButton().isSelected()) {
+
+                } else if (singleCellAnalysisController.getAnalysisPanel().getMsdRadioButton().isSelected()) {
+                    singleCellAnalysisController.showMSD();
+                }
+                break;
+
         }
     }
 
     /**
-     * Private methods and classes
+     *
+     * @return
      */
+    private boolean proceedToAnalysis() {
+        for (PlateCondition plateCondition : plateConditionList) {
+            if (!plateCondition.isComputed()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Initialize plate panel view
      */

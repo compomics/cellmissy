@@ -63,10 +63,17 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     public JPanel getAngleDirectParentPanel() {
         return angleDirectParentPanel;
     }
-    
 
     public JTextArea getLogTextArea() {
         return logTextArea;
+    }
+
+    public JPanel getAnalysisParentPanel() {
+        return analysisParentPanel;
+    }
+
+    public JLabel getAnalysisLabel() {
+        return analysisLabel;
     }
 
     /**
@@ -91,7 +98,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         cellTracksLabel = new javax.swing.JLabel();
         displSpeedLabel = new javax.swing.JLabel();
         angleDirectLabel = new javax.swing.JLabel();
-        angleDirectLabel1 = new javax.swing.JLabel();
+        analysisLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         inspectingDataPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -105,6 +112,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         cellTracksParentPanel = new javax.swing.JPanel();
         displSpeedParentPanel = new javax.swing.JPanel();
         angleDirectParentPanel = new javax.swing.JPanel();
+        analysisParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -129,9 +137,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         angleDirectLabel.setText("4. Turning Angle/Directionality");
         angleDirectLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
-        angleDirectLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        angleDirectLabel1.setText("5. Experiment statistics");
-        angleDirectLabel1.setToolTipText("Data pre-processing: normalization and outliers detection");
+        analysisLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        analysisLabel.setText("5. Conditions analysis");
+        analysisLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -147,8 +155,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(angleDirectLabel)
                 .addGap(18, 18, 18)
-                .addComponent(angleDirectLabel1)
-                .addContainerGap(372, Short.MAX_VALUE))
+                .addComponent(analysisLabel)
+                .addContainerGap(385, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -159,7 +167,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(cellTracksLabel)
                     .addComponent(displSpeedLabel)
                     .addComponent(angleDirectLabel)
-                    .addComponent(angleDirectLabel1))
+                    .addComponent(analysisLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -304,6 +312,11 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.add(angleDirectParentPanel, "angleDirectParentPanel");
         angleDirectParentPanel.getAccessibleContext().setAccessibleName("angleDirectParentPanel");
 
+        analysisParentPanel.setName("analysisParentPanel"); // NOI18N
+        analysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(analysisParentPanel, "analysisParentPanel");
+        analysisParentPanel.getAccessibleContext().setAccessibleName("analysisParentPanel");
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -315,8 +328,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel analysisLabel;
+    private javax.swing.JPanel analysisParentPanel;
     private javax.swing.JLabel angleDirectLabel;
-    private javax.swing.JLabel angleDirectLabel1;
     private javax.swing.JPanel angleDirectParentPanel;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JLabel cellTracksLabel;
