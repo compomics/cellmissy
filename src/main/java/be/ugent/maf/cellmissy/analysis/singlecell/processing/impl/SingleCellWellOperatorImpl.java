@@ -139,6 +139,7 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
             }
         }
 
+        // the new array
         double[][] msdArray = new double[max][2];
         msdArray[0][0] = 0; // always zero at this cell
 

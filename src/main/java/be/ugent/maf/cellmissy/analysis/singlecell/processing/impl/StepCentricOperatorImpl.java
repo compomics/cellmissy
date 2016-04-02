@@ -178,8 +178,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
 
     @Override
     public void computeMSD(StepCentricDataHolder stepCentricDataHolder) {
-        double[][] msd = nonOverlappingMSDCalculator.computeMSD(stepCentricDataHolder);
-        stepCentricDataHolder.setMSD(msd);
+        stepCentricDataHolder.setMSD(nonOverlappingMSDCalculator.computeMSD(stepCentricDataHolder));
     }
 
     @Override

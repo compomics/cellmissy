@@ -45,7 +45,9 @@ public class SingleCellConditionDataHolder {
     private Double[] trackDisplacementsVector;
     // array for track speeds
     private Double[] trackSpeedsVector;
-    // array for track cumulative distancse
+    // array for MSD values
+    private double[][] msdArray;
+    // array for track cumulative distances
     private Double[] cumulativeDistancesVector;
     // array for track Euclidean distancse
     private Double[] euclideanDistancesVector;
@@ -178,6 +180,14 @@ public class SingleCellConditionDataHolder {
 
     public void setTrackSpeedsVector(Double[] trackSpeedsVector) {
         this.trackSpeedsVector = trackSpeedsVector;
+    }
+
+    public double[][] getMsdArray() {
+        return msdArray;
+    }
+
+    public void setMsdArray(double[][] msdArray) {
+        this.msdArray = msdArray;
     }
 
     public Double[] getCumulativeDistancesVector() {

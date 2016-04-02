@@ -330,8 +330,9 @@ public class JFreeChartUtils {
      * @param chart: chart to setup
      * @param wellList: keep track of wells added, removed: list needed
      * @param plotLines: show lines on plot?
+     * @param plotPoints
      */
-    public static void setupReplicatesAreaChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
+    public static void setupReplicatesChart(JFreeChart chart, List<Well> wellList, boolean plotLines, boolean plotPoints) {
         // set title font
         chart.getTitle().setFont(chartFont);
         // put legend on the right edge

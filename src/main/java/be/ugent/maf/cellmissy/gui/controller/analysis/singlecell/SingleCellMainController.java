@@ -275,7 +275,7 @@ public class SingleCellMainController {
     public void fetchTracks(PlateCondition plateCondition) {
         LOG.info("* Fetching data for plate condition: " + plateCondition + " *");
         // fetch tracks for each well of condition
-        plateCondition.getWellList().stream().forEach((well) -> {       
+        plateCondition.getWellList().stream().forEach((well) -> {
             LOG.info("** fetching cell tracks for sample: " + well + " **");
             wellService.fetchTracks(well, getSelectedAlgorithm().getAlgorithmid(), getSelectedImagingType().getImagingTypeid());
         });
@@ -388,12 +388,17 @@ public class SingleCellMainController {
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousSpeedsInTable(selectedCondition);
+                    singleCellPreProcessingController.plotDisplAndSpeedData(selectedCondition);
                 } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackDisplInTable(selectedCondition);
+                    singleCellPreProcessingController.plotDisplAndSpeedData(selectedCondition);
                 } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackSpeedsRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackSpeedsInTable(selectedCondition);
+                    singleCellPreProcessingController.plotDisplAndSpeedData(selectedCondition);
+                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getMsdRadioButton().isSelected()) {
+                    singleCellPreProcessingController.showMsdInTable(selectedCondition);
+                    singleCellPreProcessingController.plotMsdData(selectedCondition);
                 }
-                singleCellPreProcessingController.plotDisplAndSpeedData(selectedCondition);
                 break;
             case "angleDirectParentPanel":
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()

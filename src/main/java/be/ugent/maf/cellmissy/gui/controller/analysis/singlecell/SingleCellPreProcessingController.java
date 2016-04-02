@@ -211,6 +211,10 @@ class SingleCellPreProcessingController {
         displSpeedController.plotDisplAndSpeedData(plateCondition);
     }
 
+    public void plotMsdData(PlateCondition plateCondition) {
+        displSpeedController.plotMsdData(plateCondition);
+    }
+
     public void plotAngleAndDirectData(PlateCondition plateCondition) {
         angleDirectController.plotAngleAndDirectData(plateCondition);
     }
@@ -221,6 +225,10 @@ class SingleCellPreProcessingController {
 
     public void showTrackSpeedsInTable(PlateCondition plateCondition) {
         displSpeedController.showTrackSpeedsInTable(plateCondition);
+    }
+
+    public void showMsdInTable(PlateCondition plateCondition) {
+        displSpeedController.showMsdInTable(plateCondition);
     }
 
     CellMissyFrame getMainFrame() {
@@ -718,7 +726,7 @@ class SingleCellPreProcessingController {
                 LOG.info("generating track end-point directionality ratios...");
                 singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
                 LOG.info("generating mean-squared displacement...");
-                singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);                
+                singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
                 LOG.info("generating convex hulls...");
                 singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
                 LOG.info("generating track displacements...");

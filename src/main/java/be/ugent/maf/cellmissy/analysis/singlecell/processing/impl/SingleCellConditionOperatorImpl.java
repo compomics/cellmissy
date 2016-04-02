@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -142,6 +143,40 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
         singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellOperator.generateMSDArray(singleCellWellDataHolder);
         });
+
+        List<SingleCellWellDataHolder> singleCellWellDataHolders = singleCellConditionDataHolder.getSingleCellWellDataHolders();
+        int max = 0;
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellWellDataHolders) {
+            double[][] msd = singleCellWellDataHolder.getMsdArray();
+            if (msd.length > max) {
+                max = msd.length;
+            }
+        }
+
+        // the new array
+        double[][] msdArray = new double[max][2];
+        msdArray[0][0] = 0; // always zero at this cell
+
+        double[] dt_n = new double[max];
+
+        for (int j = 1; j < max; j++) {
+            msdArray[j][0] = j;
+            for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellWellDataHolders) {
+                double[][] msd = singleCellWellDataHolder.getMsdArray();
+                if (msd.length > j) {
+
+                    msdArray[j][1] += msd[j][1];
+                    dt_n[j]++;
+                }
+            }
+        }
+
+        // divide by the number of occurrences to get the average
+        for (int dt = 1; dt < max; dt++) {
+            msdArray[dt][1] = (dt_n[dt] != 0) ? msdArray[dt][1] / dt_n[dt] : 0;
+        }
+
+        singleCellConditionDataHolder.setMsdArray(msdArray);
     }
 
     @Override

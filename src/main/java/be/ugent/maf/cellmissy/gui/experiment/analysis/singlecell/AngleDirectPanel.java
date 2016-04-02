@@ -86,9 +86,9 @@ public class AngleDirectPanel extends javax.swing.JPanel {
         tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        instTurnAngleRadioButton.setText("instantaneous turning angles");
+        instTurnAngleRadioButton.setText("instantaneous TA (step-centric)");
 
-        trackTurnAngleRadioButton.setText("track turning angles");
+        trackTurnAngleRadioButton.setText("track TA (cell-centric)");
 
         dynamicDirectRatioRadioButton.setText("dynamic directionality ratios");
 
@@ -106,15 +106,15 @@ public class AngleDirectPanel extends javax.swing.JPanel {
                     .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 574, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                         .addComponent(instTurnAngleRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(trackTurnAngleRadioButton)
-                        .addGap(34, 34, 34)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dynamicDirectRatioRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(endPointDirectRatioRadioButton)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(directionAutocorrelationRadioButton)))
-                .addContainerGap(124, Short.MAX_VALUE))
+                .addContainerGap(282, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
