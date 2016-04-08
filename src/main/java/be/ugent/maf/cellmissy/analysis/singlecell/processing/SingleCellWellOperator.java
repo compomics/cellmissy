@@ -72,8 +72,9 @@ public interface SingleCellWellOperator {
     void generateTrackSpeedsVector(SingleCellWellDataHolder singleCellWellDataHolder);
 
     /**
-     * 
-     * @param singleCellWellDataHolder 
+     * Generate a 2D array for mean-squared displacements.
+     *
+     * @param singleCellWellDataHolder
      */
     void generateMSDArray(SingleCellWellDataHolder singleCellWellDataHolder);
 

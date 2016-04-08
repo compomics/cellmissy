@@ -61,6 +61,11 @@ public class TrackLoessInterpolator implements TrackInterpolator {
                 interpolatedY[i] = functionY.value(interpolantTime[i]);
             }
 
+            for (int k = 0; k < interpolationPoints; k++) {
+                if (Double.isNaN(interpolatedX[k]) | Double.isNaN(interpolatedY[k])) {
+                    return null;
+                }
+            }
             return new InterpolatedTrack(interpolantTime, interpolatedX, interpolatedY, polynomialFunctionX, polynomialFunctionY);
         } catch (NumberIsTooSmallException e) {
             LOG.error(e.getMessage());

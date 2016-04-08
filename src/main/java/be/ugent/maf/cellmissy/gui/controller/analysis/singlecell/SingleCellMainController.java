@@ -365,6 +365,8 @@ public class SingleCellMainController {
                         .getAngleDirectLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
                 showInfoMessage("Tracks are shown for each well, together with (column, row) coordinates");
                 singleCellPreProcessingController.showTracksInTable();
                 break;
@@ -378,6 +380,8 @@ public class SingleCellMainController {
                         .getAngleDirectLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
                 showInfoMessage("Track Coordinates are shown for each well");
                 singleCellPreProcessingController.updateTracksNumberInfo(selectedCondition);
                 singleCellPreProcessingController.updateWellBindingList(selectedCondition);
@@ -404,6 +408,8 @@ public class SingleCellMainController {
                         .getAngleDirectLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
                 showInfoMessage("Single Cell Displacements and Speeds");
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
@@ -430,6 +436,8 @@ public class SingleCellMainController {
                         .getInspectingDataLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
                 showInfoMessage("Single Cell Turning Angles and Directionality Measures");
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getAngleDirectPanel().getInstTurnAngleRadioButton().isSelected()) {
@@ -441,6 +449,21 @@ public class SingleCellMainController {
                 }
                 singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
                 break;
+            case "filteringParentPanel":
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getInspectingDataLabel());
+                showInfoMessage("Conditions-based filtering-quality control");
+                singleCellPreProcessingController.plotRawKde();
+                break;
             case "analysisParentPanel":
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAnalysisLabel());
@@ -451,6 +474,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
                 showInfoMessage("Conditions-based analysis");
                 // see if some conditions still need to be processed
                 if (!proceedToAnalysis()) {

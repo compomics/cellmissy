@@ -76,6 +76,8 @@ class SingleCellPreProcessingController {
     private DisplSpeedController displSpeedController;
     @Autowired
     private AngleDirectController angleDirectController;
+    @Autowired
+    private FilteringController filteringController;
     //services
     @Autowired
     private SingleCellConditionPreProcessor singleCellConditionPreProcessor;
@@ -95,6 +97,7 @@ class SingleCellPreProcessingController {
         trackCoordinatesController.init();
         displSpeedController.init();
         angleDirectController.init();
+        filteringController.init();
         // get the GUI appender and set the text area for it
         LogTextAreaAppender appender = (LogTextAreaAppender) org.apache.log4j.Logger.getLogger("gui").getAppender("gui");
         appender.setTextArea(singleCellAnalysisPanel.getLogTextArea());
@@ -269,6 +272,10 @@ class SingleCellPreProcessingController {
 
     public Map<PlateCondition, SingleCellConditionDataHolder> getPreProcessingMap() {
         return preProcessingMap;
+    }
+
+    public void plotRawKde() {
+        filteringController.plotRawKde();
     }
 
     /**

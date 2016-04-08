@@ -72,6 +72,14 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return analysisParentPanel;
     }
 
+    public JLabel getFilteringLabel() {
+        return filteringLabel;
+    }
+
+    public JPanel getFilteringParentPanel() {
+        return filteringParentPanel;
+    }
+
     public JLabel getAnalysisLabel() {
         return analysisLabel;
     }
@@ -98,6 +106,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         cellTracksLabel = new javax.swing.JLabel();
         displSpeedLabel = new javax.swing.JLabel();
         angleDirectLabel = new javax.swing.JLabel();
+        filteringLabel = new javax.swing.JLabel();
         analysisLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         inspectingDataPanel = new javax.swing.JPanel();
@@ -112,6 +121,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         cellTracksParentPanel = new javax.swing.JPanel();
         displSpeedParentPanel = new javax.swing.JPanel();
         angleDirectParentPanel = new javax.swing.JPanel();
+        filteringParentPanel = new javax.swing.JPanel();
         analysisParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -137,8 +147,12 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         angleDirectLabel.setText("4. Turning Angle/Directionality");
         angleDirectLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
+        filteringLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        filteringLabel.setText("5. Filtering/QC");
+        filteringLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+
         analysisLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        analysisLabel.setText("5. Conditions analysis");
+        analysisLabel.setText("6. Conditions analysis");
         analysisLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
@@ -155,8 +169,10 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(angleDirectLabel)
                 .addGap(18, 18, 18)
+                .addComponent(filteringLabel)
+                .addGap(18, 18, 18)
                 .addComponent(analysisLabel)
-                .addContainerGap(385, Short.MAX_VALUE))
+                .addContainerGap(289, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,7 +183,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(cellTracksLabel)
                     .addComponent(displSpeedLabel)
                     .addComponent(angleDirectLabel)
-                    .addComponent(analysisLabel))
+                    .addComponent(analysisLabel)
+                    .addComponent(filteringLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -312,7 +329,14 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         bottomPanel.add(angleDirectParentPanel, "angleDirectParentPanel");
         angleDirectParentPanel.getAccessibleContext().setAccessibleName("angleDirectParentPanel");
 
+        filteringParentPanel.setName("filteringParentPanel"); // NOI18N
+        filteringParentPanel.setOpaque(false);
+        filteringParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(filteringParentPanel, "filteringParentPanel");
+        filteringParentPanel.getAccessibleContext().setAccessibleName("filteringParentPanel");
+
         analysisParentPanel.setName("analysisParentPanel"); // NOI18N
+        analysisParentPanel.setOpaque(false);
         analysisParentPanel.setLayout(new java.awt.GridBagLayout());
         bottomPanel.add(analysisParentPanel, "analysisParentPanel");
         analysisParentPanel.getAccessibleContext().setAccessibleName("analysisParentPanel");
@@ -337,6 +361,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel cellTracksParentPanel;
     private javax.swing.JLabel displSpeedLabel;
     private javax.swing.JPanel displSpeedParentPanel;
+    private javax.swing.JLabel filteringLabel;
+    private javax.swing.JPanel filteringParentPanel;
     private javax.swing.JLabel inspectingDataLabel;
     private javax.swing.JPanel inspectingDataPanel;
     private javax.swing.JPanel jPanel1;

@@ -393,6 +393,7 @@ class DisplSpeedController {
         @Override
         protected Void doInBackground() throws Exception {
             singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            singleCellPreProcessingController.controlGuiComponents(false);
             // check if density functions have already been computed: in this case, they are stored in the cache
             if (densityFunctionHolderCacheSingleCell.containsKey(singleCellConditionDataHolder)) {
                 // if results are in cache, get them from cache
@@ -440,6 +441,7 @@ class DisplSpeedController {
                 plotBoxPlotChart(boxPlotChart);
                 singleCellPreProcessingController.hideWaitingDialog();
                 singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                singleCellPreProcessingController.controlGuiComponents(true);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 singleCellPreProcessingController.handleUnexpectedError(ex);
@@ -555,12 +557,14 @@ class DisplSpeedController {
      */
     private XYSeriesCollection generateMSDCollection(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder) -> {
             double[][] msdArray = singleCellWellDataHolder.getMsdArray();
             XYSeries xySeries = JFreeChartUtils.generateXYSeries(msdArray);
             xySeries.setKey(singleCellWellDataHolder.getWell().toString());
+            return xySeries;
+        }).forEach((xySeries) -> {
             xySeriesCollection.addSeries(xySeries);
-        }
+        });
         return xySeriesCollection;
     }
 }
