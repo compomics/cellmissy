@@ -5,9 +5,11 @@
  */
 package be.ugent.maf.cellmissy.gui.view.table.model;
 
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.table.AbstractTableModel;
@@ -19,20 +21,26 @@ import javax.swing.table.AbstractTableModel;
  */
 public class FilterTrackTableModel extends AbstractTableModel {
 
-    private final Map<TrackDataHolder, boolean[]> filterMap;
-    private final double[] motileSteps;
+    private final Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> map;
+    private final List<Double> motileSteps;
     private String columnNames[];
     private Object[][] data;
 
-    public FilterTrackTableModel(Map<TrackDataHolder, boolean[]> filterMap, double[] motileSteps) {
-        this.filterMap = filterMap;
+    /**
+     * Constructor.
+     *
+     * @param filterMap
+     * @param motileSteps
+     */
+    public FilterTrackTableModel(Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> filterMap, List<Double> motileSteps) {
+        this.map = filterMap;
         this.motileSteps = motileSteps;
         initTable();
     }
 
     @Override
     public int getRowCount() {
-        return filterMap.size();
+        return data.length;
     }
 
     @Override
@@ -54,29 +62,43 @@ public class FilterTrackTableModel extends AbstractTableModel {
      * Initialize the table
      */
     private void initTable() {
-        // how many motile steps + 1 for the "track" header
-        columnNames = new String[motileSteps.length + 1];
-        columnNames[0] = "track";
-        for (int i = 1; i < columnNames.length; i++) {
-            columnNames[i] = "step: " + AnalysisUtils.roundTwoDecimals(motileSteps[i - 1]);
+        // how many motile steps + 2 for the "well" and the "track" headers
+        columnNames = new String[motileSteps.size() + 2];
+        columnNames[0] = "well";
+        columnNames[1] = "track";
+
+        for (int i = 2; i < columnNames.length; i++) {
+            columnNames[i] = "step: " + AnalysisUtils.roundTwoDecimals(motileSteps.get(i - 2));
         }
 
         // now the data
-        List<TrackDataHolder> holders = new ArrayList<>(filterMap.keySet());
+        List<SingleCellWellDataHolder> holders = new ArrayList<>(map.keySet());
 
-        data = new Object[holders.size()][columnNames.length];
+        int size = 0;
+        size = holders.stream().map((holder) -> new ArrayList<>(map.get(holder).keySet())).map((trackHolders) -> trackHolders.size()).reduce(size, Integer::sum);
 
-        for (int i = 0; i < holders.size(); i++) {
+        data = new Object[size][columnNames.length];
 
-            TrackDataHolder trackHolder = holders.get(i);
-            boolean[] values = filterMap.get(trackHolder);
+        Map<TrackDataHolder, boolean[]> totalMap = new LinkedHashMap<>();
+        holders.stream().forEach((holder) -> {
+            totalMap.putAll(map.get(holder));
+        });
+
+        List<TrackDataHolder> trackDataHolders = new ArrayList<>(totalMap.keySet());
+
+        for (int i = 0; i < trackDataHolders.size(); i++) {
+
+            TrackDataHolder trackHolder = trackDataHolders.get(i);
+            boolean[] values = totalMap.get(trackHolder);
 
             // first column is always the track
-            data[i][0] = "" + trackHolder.getTrack().getWellHasImagingType().getWell() + "-" + trackHolder.getTrack().toString();
+            data[i][0] = "" + trackHolder.getTrack().getWellHasImagingType().getWell();
+            data[i][1] = "" + trackHolder.getTrack();
             for (int j = 0; j < values.length; j++) {
-                data[i][j + 1] = values[j];
+                data[i][j + 2] = values[j];
             }
         }
+
     }
 
 }

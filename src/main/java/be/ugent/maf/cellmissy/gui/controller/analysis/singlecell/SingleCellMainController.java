@@ -462,7 +462,7 @@ public class SingleCellMainController {
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
                 showInfoMessage("Conditions-based filtering-quality control");
-                singleCellPreProcessingController.plotRawKde();
+                singleCellPreProcessingController.plotRawKde(selectedCondition);
                 break;
             case "analysisParentPanel":
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()

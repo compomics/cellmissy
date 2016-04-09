@@ -274,8 +274,8 @@ class SingleCellPreProcessingController {
         return preProcessingMap;
     }
 
-    public void plotRawKde() {
-        filteringController.plotRawKde();
+    public void plotRawKde(PlateCondition plateCondition) {
+        filteringController.plotRawKde(plateCondition);
     }
 
     /**

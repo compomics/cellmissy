@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
@@ -49,14 +50,15 @@ class FilteringController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(FilteringController.class);
     // model
-    private double[] motileSteps;
+    private List<Double> motileSteps;
     private double percentageMotile;
-    private Map<TrackDataHolder, boolean[]> filterMap;
+    private Map<SingleCellConditionDataHolder, Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>>> filterMap;
     // view
     private FilteringPanel filteringPanel;
     private FilteringInfoDialog filteringInfoDialog;
     private ChartPanel rawKdeChartPanel;
     private ChartPanel filteredKdeChartPanel;
+    private List<ChartPanel> filteredKdeChartPanels;
     // parent controller
     @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
@@ -69,6 +71,7 @@ class FilteringController {
      * Initialize controller
      */
     public void init() {
+        filteredKdeChartPanels = new ArrayList<>();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         filterMap = new LinkedHashMap<>();
         // init views
@@ -81,13 +84,12 @@ class FilteringController {
     /**
      * Plot the raw KDE for track displacements.
      */
-    public void plotRawKde() {
-        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(singleCellPreProcessingController.getCurrentCondition());
+    public void plotRawKde(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         List<List<double[]>> estimateRawDensityFunction = estimateRawDensityFunction(conditionDataHolder);
         XYSeriesCollection densityFunction = generateDensityFunction(conditionDataHolder, estimateRawDensityFunction);
         JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, densityFunction, "raw KDE track displ", "track displ");
         rawKdeChartPanel.setChart(densityChart);
-
     }
 
     /**
@@ -147,10 +149,10 @@ class FilteringController {
                 percentageMotile = Double.parseDouble(filteringPanel.getPercentageMotileStepsTextField().getText());
 
                 int numberSteps = (int) ((topLimit - bottomLimit) / (10 * step)) + 1;
-                motileSteps = new double[numberSteps];
+                motileSteps = new ArrayList<>();
 
                 for (int i = 0; i < numberSteps; i++) {
-                    motileSteps[i] = ((double) bottomLimit / 10) + (step * i);
+                    motileSteps.add(((double) bottomLimit / 10) + (step * i));
                 }
 
             } catch (NumberFormatException ex) {
@@ -194,37 +196,114 @@ class FilteringController {
 
         return densityFunction;
     }
-    
-//    /**
-//     * 
-//     * @param singleCellConditionDataHolder
-//     * @param motileStep
-//     * @return 
-//     */
-//    private List<List<double[]>> estimateFilteredDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, double motileStep) {
-//        String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
-//        List<List<double[]>> densityFunction = new ArrayList<>();
-//        
-//        
-//        Set<TrackDataHolder> keySet = filterMap.keySet();
-//        for(TrackDataHolder holder: keySet){
-//            boolean[] filter = filterMap.get(holder);
-//        }
-//        
-//        singleCellPreProcessingController.estimateDensityFunction(data, kernelDensityEstimatorBeanName);
-//        
-//        
-//        
-//        
-//        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder)
-//                -> singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
-//                        kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackDisplDensityFunction) -> {
-//                    densityFunction.add(oneReplicateTrackDisplDensityFunction);
-//                });
-//
-//        return densityFunction;
-//    }
-    
+
+    /**
+     *
+     * @param singleCellConditionDataHolder
+     * @param motileStepIndex
+     * @return
+     */
+    private List<List<double[]>> estimateFilteredDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, int motileStepIndex) {
+        String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
+        List<List<double[]>> densityFunction = new ArrayList<>();
+        Map<SingleCellWellDataHolder, List<TrackDataHolder>> map = getRetainedTracks(singleCellConditionDataHolder, motileStepIndex);
+
+        for (SingleCellWellDataHolder singleCellWellDataHolder : map.keySet()) {
+            Double[] retainedDisplacements = getRetainedDisplacements(map, singleCellWellDataHolder);
+            List<double[]> oneReplicateTrackDisplDensityFunction
+                    = singleCellPreProcessingController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName);
+            densityFunction.add(oneReplicateTrackDisplDensityFunction);
+        }
+        return densityFunction;
+    }
+
+    /**
+     *
+     * @param singleCellConditionDataHolder
+     * @param motileStepIndex
+     * @return
+     */
+    private Map<SingleCellWellDataHolder, List<TrackDataHolder>> getRetainedTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int motileStepIndex) {
+        Map<SingleCellWellDataHolder, List<TrackDataHolder>> map = new LinkedHashMap<>();
+        Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> tempMap = filterMap.get(singleCellConditionDataHolder);
+        for (SingleCellWellDataHolder singleCellWellDataHolder : tempMap.keySet()) {
+            List<TrackDataHolder> retainedTracks = new ArrayList<>();
+
+            Map<TrackDataHolder, boolean[]> tempMap2 = tempMap.get(singleCellWellDataHolder);
+            for (TrackDataHolder trackDataHolder : tempMap2.keySet()) {
+                boolean isRetained = tempMap2.get(trackDataHolder)[motileStepIndex];
+                if (isRetained) {
+                    retainedTracks.add(trackDataHolder);
+                }
+            }
+            map.put(singleCellWellDataHolder, retainedTracks);
+
+        }
+        return map;
+    }
+
+    /**
+     *
+     * @param map
+     * @param singleCellWellDataHolder
+     * @return
+     */
+    private Double[] getRetainedDisplacements(Map<SingleCellWellDataHolder, List<TrackDataHolder>> map, SingleCellWellDataHolder singleCellWellDataHolder) {
+        List<TrackDataHolder> retainedTracks = map.get(singleCellWellDataHolder);
+        Double[] trackDisplacementsVector = new Double[retainedTracks.size()];
+        for (int i = 0; i < trackDisplacementsVector.length; i++) {
+            TrackDataHolder retainedTrack = retainedTracks.get(i);
+            double trackMeanDisplacement = retainedTrack.getCellCentricDataHolder().getMedianDisplacement();
+            trackDisplacementsVector[i] = trackMeanDisplacement;
+        }
+        return trackDisplacementsVector;
+    }
+
+    /**
+     *
+     * @param plateCondition
+     */
+    private List<XYSeriesCollection> getFilteredKdeDatasets(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        List<XYSeriesCollection> xYSeriesCollections = new ArrayList<>();
+        for (int i = 0; i < motileSteps.size(); i++) {
+            List<List<double[]>> estimateFilteredDensityFunction = estimateFilteredDensityFunction(conditionDataHolder, i);
+            XYSeriesCollection densityFunction = generateDensityFunction(conditionDataHolder, estimateFilteredDensityFunction);
+            xYSeriesCollections.add(densityFunction);
+        }
+        return xYSeriesCollections;
+    }
+
+    /**
+     *
+     * @param nCols
+     */
+    private void plotFilteredKde(PlateCondition plateCondition, int nCols) {
+        filteredKdeChartPanels.clear();
+        filteringPanel.getFilteredPlotParentPanel().removeAll();
+
+        filteringPanel.getFilteredPlotParentPanel().revalidate();
+        filteringPanel.getFilteredPlotParentPanel().repaint();
+
+        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        List<XYSeriesCollection> filteredKdeDatasets = getFilteredKdeDatasets(plateCondition);
+        int nPlots = filteredKdeDatasets.size();
+
+        for (int i = 0; i < nPlots; i++) {
+
+            XYSeriesCollection collection = filteredKdeDatasets.get(i);
+            JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, collection,
+                    "step: " + AnalysisUtils.roundTwoDecimals(motileSteps.get(i)) + " filtered KDE track displ", "track displ");
+
+            ChartPanel filteredChartPanel = new ChartPanel(densityChart);
+            GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(nPlots, i, nCols);
+            filteringPanel.getFilteredPlotParentPanel().add(filteredChartPanel, tempBagConstraints);
+
+            filteredKdeChartPanels.add(filteredChartPanel);
+            filteringPanel.getFilteredPlotParentPanel().revalidate();
+            filteringPanel.getFilteredPlotParentPanel().repaint();
+        }
+    }
 
     /**
      *
@@ -288,6 +367,9 @@ class FilteringController {
     }
 
     /**
+     * Filter motile steps for a given track and a motile step threshold: if a
+     * displacement is equal or greater than the motile step--mark the
+     * displacement with a true. Else, the default is false.
      *
      * @param trackDataHolder
      * @param motileStep
@@ -306,12 +388,16 @@ class FilteringController {
     }
 
     /**
+     * Filter a single track. First mark motile steps as True (if >= threshold)
+     * or False (otherwise). Then compute the percentage of True motile steps.
+     * If this percentage is >= than percentageMotile, return true (and
+     * therefore mark track as True), else default to false.
      *
      * @param trackDataHolder
      * @param motileStep
      * @return
      */
-    private boolean filterMotileTracks(TrackDataHolder trackDataHolder, double motileStep) {
+    private boolean filterSingleTrack(TrackDataHolder trackDataHolder, double motileStep) {
         boolean[] filterMotileSteps = filterMotileSteps(trackDataHolder, motileStep);
         int count = 0;
         for (int j = 0; j < filterMotileSteps.length; j++) {
@@ -323,35 +409,37 @@ class FilteringController {
     }
 
     /**
-     * Filter motile tracks for a condition.
+     * Filter motile tracks for a condition: update the filter map.
      */
-    private void filterConditionMotileTracks() {
-        // reset the map (this might be needed)
-        filterMap.clear();
+    private void updateFilterMap(SingleCellConditionDataHolder conditionDataHolder) {
 
-        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(singleCellPreProcessingController.getCurrentCondition());
-        List<SingleCellWellDataHolder> singleCellWellDataHolders = conditionDataHolder.getSingleCellWellDataHolders();
+        Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> tempMap2 = new LinkedHashMap<>();
 
-        singleCellWellDataHolders.stream().forEach((wellDataHolder) -> {
-            wellDataHolder.getTrackDataHolders().stream().forEach((trackHolder) -> {
-                boolean[] filter = new boolean[motileSteps.length];
-                for (int j = 0; j < motileSteps.length; j++) {
-                    filter[j] = filterMotileTracks(trackHolder, motileSteps[j]);
+        for (SingleCellWellDataHolder singleCellWellDataHolder : conditionDataHolder.getSingleCellWellDataHolders()) {
+            Map<TrackDataHolder, boolean[]> tempMap = new LinkedHashMap<>();
+            for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
+
+                // an empty default to false array of boolean
+                boolean[] filter = new boolean[motileSteps.size()];
+                for (int j = 0; j < motileSteps.size(); j++) {
+                    filter[j] = filterSingleTrack(trackDataHolder, motileSteps.get(j));
                 }
-                filterMap.put(trackHolder, filter);
-            });
-        });
-
+                tempMap.put(trackDataHolder, filter);
+            }
+            tempMap2.put(singleCellWellDataHolder, tempMap);
+        }
+        filterMap.put(conditionDataHolder, tempMap2);
     }
 
     /**
      * Update the table with the right elements.
      */
-    private void updateFilterTable() {
-        filteringPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(filterMap, motileSteps));
+    private void updateFilterTable(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> map = filterMap.get(singleCellConditionDataHolder);
+        filteringPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(map, motileSteps));
 
         AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
-        for (int i = 1; i < filteringPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
+        for (int i = 0; i < filteringPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
             filteringPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
         }
         filteringPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
@@ -365,15 +453,12 @@ class FilteringController {
 
         @Override
         protected Void doInBackground() throws Exception {
-
             // show waiting dialog
             singleCellPreProcessingController.showWaitingDialog("Filtering: " + singleCellPreProcessingController.getCurrentCondition());
             // show a waiting cursor, disable GUI components
             singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             singleCellPreProcessingController.controlGuiComponents(false);
-
-            filterConditionMotileTracks();
-
+            updateFilterMap(singleCellPreProcessingController.getConditionDataHolder(singleCellPreProcessingController.getCurrentCondition()));
             return null;
         }
 
@@ -382,9 +467,9 @@ class FilteringController {
             try {
                 get();
                 // update the table
-                updateFilterTable();
-                // plot the filtered KDE
-
+                updateFilterTable(singleCellPreProcessingController.getConditionDataHolder(singleCellPreProcessingController.getCurrentCondition()));
+                // plot the filtered KDE plots
+                plotFilteredKde(singleCellPreProcessingController.getCurrentCondition(), 2);
                 // recontrol GUI
                 singleCellPreProcessingController.hideWaitingDialog();
                 singleCellPreProcessingController.controlGuiComponents(true);

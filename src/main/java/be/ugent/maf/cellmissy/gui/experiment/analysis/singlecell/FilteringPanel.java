@@ -311,7 +311,7 @@ public class FilteringPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weightx = 0.4;
         gridBagConstraints.weighty = 1.0;
         plotsPanel.add(rawPlotParentPanel, gridBagConstraints);
 
@@ -322,7 +322,7 @@ public class FilteringPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 1.0;
         plotsPanel.add(filteredPlotParentPanel, gridBagConstraints);
 
