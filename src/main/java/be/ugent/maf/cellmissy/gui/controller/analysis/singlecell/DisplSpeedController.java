@@ -423,17 +423,17 @@ class DisplSpeedController {
                 JFreeChart boxPlotChart;
                 if (displSpeedPanel.getInstantaneousDisplRadioButton().isSelected()) {
                     densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
-                            instDisplCollection, "KDE inst displ", "inst displ");
+                            instDisplCollection, "KDE inst displ", "inst displ", true);
                     boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, instDisplDataset,
                             "inst displ");
                 } else if (displSpeedPanel.getTrackDisplRadioButton().isSelected()) {
                     densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
-                            trackDisplCollection, "KDE track displ", "track displ");
+                            trackDisplCollection, "KDE track displ", "track displ", true);
                     boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, trackDisplDataset,
                             "track displ");
                 } else {
                     densityChart = JFreeChartUtils.generateDensityFunctionChart(singleCellConditionDataHolder,
-                            trackSpeedCollection, "KDE track spped", "track speed");
+                            trackSpeedCollection, "KDE track spped", "track speed", true);
                     boxPlotChart = generateBoxPlotChart(singleCellConditionDataHolder, trackSpeedDataset,
                             "track speed");
                 }

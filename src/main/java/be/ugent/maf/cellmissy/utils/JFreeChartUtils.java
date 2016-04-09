@@ -161,10 +161,11 @@ public class JFreeChartUtils {
      * @param xLabel
      * @return the chart
      */
-    public static JFreeChart generateDensityFunctionChart(SingleCellConditionDataHolder singleCellConditionDataHolder, XYSeriesCollection xYSeriesCollection, String chartTitle, String xLabel) {
+    public static JFreeChart generateDensityFunctionChart(SingleCellConditionDataHolder singleCellConditionDataHolder,
+            XYSeriesCollection xYSeriesCollection, String chartTitle, String xLabel, boolean legend) {
         String specificChartTitle = chartTitle + " - " + singleCellConditionDataHolder.getPlateCondition() + " (replicates)";
         JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, xLabel, "Density",
-                xYSeriesCollection, PlotOrientation.VERTICAL, true, true, false);
+                xYSeriesCollection, PlotOrientation.VERTICAL, legend, true, false);
         densityChart.getTitle().setFont(chartFont);
         //XYplot
         XYPlot xYPlot = densityChart.getXYPlot();

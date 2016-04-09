@@ -6,7 +6,6 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import javax.swing.JButton;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
@@ -16,12 +15,12 @@ import javax.swing.JTextField;
  *
  * @author Paola
  */
-public class FilteringPanel extends javax.swing.JPanel {
+public class MinTranslocationFilteringPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form FilteringPanel
      */
-    public FilteringPanel() {
+    public MinTranslocationFilteringPanel() {
         initComponents();
     }
 

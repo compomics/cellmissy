@@ -10,7 +10,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHo
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.FilteringInfoDialog;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.FilteringPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MinTranslocationFilteringPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.FilterTrackTableModel;
@@ -54,11 +54,10 @@ class FilteringController {
     private double percentageMotile;
     private Map<SingleCellConditionDataHolder, Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>>> filterMap;
     // view
-    private FilteringPanel filteringPanel;
+    private MinTranslocationFilteringPanel minTranslFilteringPanel;
     private FilteringInfoDialog filteringInfoDialog;
     private ChartPanel rawKdeChartPanel;
     private ChartPanel filteredKdeChartPanel;
-    private List<ChartPanel> filteredKdeChartPanels;
     // parent controller
     @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
@@ -71,7 +70,6 @@ class FilteringController {
      * Initialize controller
      */
     public void init() {
-        filteredKdeChartPanels = new ArrayList<>();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         filterMap = new LinkedHashMap<>();
         // init views
@@ -88,7 +86,7 @@ class FilteringController {
         SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         List<List<double[]>> estimateRawDensityFunction = estimateRawDensityFunction(conditionDataHolder);
         XYSeriesCollection densityFunction = generateDensityFunction(conditionDataHolder, estimateRawDensityFunction);
-        JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, densityFunction, "raw KDE track displ", "track displ");
+        JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, densityFunction, "raw KDE track displ", "track displ", true);
         rawKdeChartPanel.setChart(densityChart);
     }
 
@@ -100,53 +98,53 @@ class FilteringController {
      */
     private void initFilteringPanel() {
         // make a new view
-        filteringPanel = new FilteringPanel();
+        minTranslFilteringPanel = new MinTranslocationFilteringPanel();
         // make a new radio button group for the radio buttons
         ButtonGroup radioButtonGroup = new ButtonGroup();
-        radioButtonGroup.add(filteringPanel.getPixelRadioButton());
-        radioButtonGroup.add(filteringPanel.getMicroMeterRadioButton());
+        radioButtonGroup.add(minTranslFilteringPanel.getPixelRadioButton());
+        radioButtonGroup.add(minTranslFilteringPanel.getMicroMeterRadioButton());
 
         // set icon for question button
         Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
         ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
-        filteringPanel.getQuestionButton().setIcon(scaledQuestionIcon);
+        minTranslFilteringPanel.getQuestionButton().setIcon(scaledQuestionIcon);
         // action listeners
         // info button
-        filteringPanel.getQuestionButton().addActionListener((ActionEvent e) -> {
+        minTranslFilteringPanel.getQuestionButton().addActionListener((ActionEvent e) -> {
             // pack and show info dialog
             GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), filteringInfoDialog);
             filteringInfoDialog.setVisible(true);
         });
 
         // pixels or µm?
-        filteringPanel.getPixelRadioButton().addActionListener((ActionEvent e) -> {
+        minTranslFilteringPanel.getPixelRadioButton().addActionListener((ActionEvent e) -> {
             // pixel: we need a conversion factor
-            filteringPanel.getConversionFactorTextField().setEnabled(true);
+            minTranslFilteringPanel.getConversionFactorTextField().setEnabled(true);
         });
 
-        filteringPanel.getMicroMeterRadioButton().addActionListener((ActionEvent e) -> {
+        minTranslFilteringPanel.getMicroMeterRadioButton().addActionListener((ActionEvent e) -> {
             // µm: we do not need a conversion factor
-            filteringPanel.getConversionFactorTextField().setEnabled(false);
+            minTranslFilteringPanel.getConversionFactorTextField().setEnabled(false);
         });
 
         // actually do the filtering
-        filteringPanel.getFilterButton().addActionListener((ActionEvent e) -> {
+        minTranslFilteringPanel.getFilterButton().addActionListener((ActionEvent e) -> {
 
             // try to read the user-inserted values for up and down limit
             // check for number format exception
             try {
-                if (filteringPanel.getPixelRadioButton().isSelected()) {
-                    double conversionFactor = Double.parseDouble(filteringPanel.getConversionFactorTextField().getText());
-                    filteringPanel.getBottomLimTextField().setText(""
-                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(filteringPanel.getBottomLimTextField().getText()) / conversionFactor));
-                    filteringPanel.getTopLimTextField().setText(""
-                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(filteringPanel.getTopLimTextField().getText()) / conversionFactor));
+                if (minTranslFilteringPanel.getPixelRadioButton().isSelected()) {
+                    double conversionFactor = Double.parseDouble(minTranslFilteringPanel.getConversionFactorTextField().getText());
+                    minTranslFilteringPanel.getBottomLimTextField().setText(""
+                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(minTranslFilteringPanel.getBottomLimTextField().getText()) / conversionFactor));
+                    minTranslFilteringPanel.getTopLimTextField().setText(""
+                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(minTranslFilteringPanel.getTopLimTextField().getText()) / conversionFactor));
                 }
 
-                int topLimit = (int) (Double.parseDouble(filteringPanel.getTopLimTextField().getText()) * 10);
-                int bottomLimit = (int) (Double.parseDouble(filteringPanel.getBottomLimTextField().getText()) * 10);
-                double step = Double.parseDouble(filteringPanel.getTranslocationStepTextField().getText());
-                percentageMotile = Double.parseDouble(filteringPanel.getPercentageMotileStepsTextField().getText());
+                int topLimit = (int) (Double.parseDouble(minTranslFilteringPanel.getTopLimTextField().getText()) * 10);
+                int bottomLimit = (int) (Double.parseDouble(minTranslFilteringPanel.getBottomLimTextField().getText()) * 10);
+                double step = Double.parseDouble(minTranslFilteringPanel.getTranslocationStepTextField().getText());
+                percentageMotile = Double.parseDouble(minTranslFilteringPanel.getPercentageMotileStepsTextField().getText());
 
                 int numberSteps = (int) ((topLimit - bottomLimit) / (10 * step)) + 1;
                 motileSteps = new ArrayList<>();
@@ -166,24 +164,41 @@ class FilteringController {
         });
 
         // set default to micrometer
-        filteringPanel.getMicroMeterRadioButton().setSelected(true);
+        minTranslFilteringPanel.getMicroMeterRadioButton().setSelected(true);
         // and therefore no need for the conversion factor
-        filteringPanel.getConversionFactorTextField().setEnabled(false);
+        minTranslFilteringPanel.getConversionFactorTextField().setEnabled(false);
         // set some default values for the top and bottom translocaton limits
-        filteringPanel.getBottomLimTextField().setText("0.4");
-        filteringPanel.getTopLimTextField().setText("2.4");
-        filteringPanel.getTranslocationStepTextField().setText("0.2");
-        filteringPanel.getPercentageMotileStepsTextField().setText("30");
+        minTranslFilteringPanel.getBottomLimTextField().setText("0.4");
+        minTranslFilteringPanel.getTopLimTextField().setText("2.8");
+        minTranslFilteringPanel.getTranslocationStepTextField().setText("0.8");
+        minTranslFilteringPanel.getPercentageMotileStepsTextField().setText("30");
         percentageMotile = 30;
 
         // add view to parent component
-        singleCellPreProcessingController.getSingleCellAnalysisPanel().getFilteringParentPanel().add(filteringPanel, gridBagConstraints);
+        singleCellPreProcessingController.getSingleCellAnalysisPanel().getMinTranslParentPanel().add(minTranslFilteringPanel, gridBagConstraints);
     }
 
     /**
+     * Initialize the other views of the controller.
+     */
+    private void initOtherViews() {
+        rawKdeChartPanel = new ChartPanel(null);
+        rawKdeChartPanel.setOpaque(false);
+        filteredKdeChartPanel = new ChartPanel(null);
+        filteredKdeChartPanel.setOpaque(false);
+
+        // add chart panels to parent containers
+        minTranslFilteringPanel.getRawPlotParentPanel().add(rawKdeChartPanel, gridBagConstraints);
+        minTranslFilteringPanel.getFilteredPlotParentPanel().add(filteredKdeChartPanel, gridBagConstraints);
+    }
+
+    /**
+     * Estimate the raw density functions for the replicates of a single cell
+     * condition data holder.
      *
      * @param singleCellConditionDataHolder
-     * @return
+     * @return a list of a list of double containing the estimated density
+     * functions.
      */
     private List<List<double[]>> estimateRawDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
@@ -198,6 +213,8 @@ class FilteringController {
     }
 
     /**
+     * Estimate the filtered density functions for the replicates of a single
+     * cell condition data holder and given a motile step.
      *
      * @param singleCellConditionDataHolder
      * @param motileStepIndex
@@ -206,10 +223,10 @@ class FilteringController {
     private List<List<double[]>> estimateFilteredDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, int motileStepIndex) {
         String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
         List<List<double[]>> densityFunction = new ArrayList<>();
-        Map<SingleCellWellDataHolder, List<TrackDataHolder>> map = getRetainedTracks(singleCellConditionDataHolder, motileStepIndex);
+        Map<SingleCellWellDataHolder, List<TrackDataHolder>> retainedTrackMap = getRetainedTracks(singleCellConditionDataHolder, motileStepIndex);
 
-        for (SingleCellWellDataHolder singleCellWellDataHolder : map.keySet()) {
-            Double[] retainedDisplacements = getRetainedDisplacements(map, singleCellWellDataHolder);
+        for (SingleCellWellDataHolder singleCellWellDataHolder : retainedTrackMap.keySet()) {
+            Double[] retainedDisplacements = getRetainedDisplacements(retainedTrackMap, singleCellWellDataHolder);
             List<double[]> oneReplicateTrackDisplDensityFunction
                     = singleCellPreProcessingController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName);
             densityFunction.add(oneReplicateTrackDisplDensityFunction);
@@ -218,6 +235,10 @@ class FilteringController {
     }
 
     /**
+     * Get the tracks that are retained after applying a filter motile step. The
+     * method returns a map with key-single cell well data holder and value-the
+     * list of retained tracks. This makes sure that the relationship -
+     * replicate data/track is maintained in place.
      *
      * @param singleCellConditionDataHolder
      * @param motileStepIndex
@@ -226,30 +247,30 @@ class FilteringController {
     private Map<SingleCellWellDataHolder, List<TrackDataHolder>> getRetainedTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int motileStepIndex) {
         Map<SingleCellWellDataHolder, List<TrackDataHolder>> map = new LinkedHashMap<>();
         Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> tempMap = filterMap.get(singleCellConditionDataHolder);
-        for (SingleCellWellDataHolder singleCellWellDataHolder : tempMap.keySet()) {
+        tempMap.keySet().stream().forEach((singleCellWellDataHolder) -> {
             List<TrackDataHolder> retainedTracks = new ArrayList<>();
 
             Map<TrackDataHolder, boolean[]> tempMap2 = tempMap.get(singleCellWellDataHolder);
-            for (TrackDataHolder trackDataHolder : tempMap2.keySet()) {
+            tempMap2.keySet().stream().forEach((trackDataHolder) -> {
                 boolean isRetained = tempMap2.get(trackDataHolder)[motileStepIndex];
                 if (isRetained) {
                     retainedTracks.add(trackDataHolder);
                 }
-            }
+            });
             map.put(singleCellWellDataHolder, retainedTracks);
-
-        }
+        });
         return map;
     }
 
     /**
+     * Having the retained tracks, take the displacements.
      *
-     * @param map
+     * @param retainedTrackMap
      * @param singleCellWellDataHolder
      * @return
      */
-    private Double[] getRetainedDisplacements(Map<SingleCellWellDataHolder, List<TrackDataHolder>> map, SingleCellWellDataHolder singleCellWellDataHolder) {
-        List<TrackDataHolder> retainedTracks = map.get(singleCellWellDataHolder);
+    private Double[] getRetainedDisplacements(Map<SingleCellWellDataHolder, List<TrackDataHolder>> retainedTrackMap, SingleCellWellDataHolder singleCellWellDataHolder) {
+        List<TrackDataHolder> retainedTracks = retainedTrackMap.get(singleCellWellDataHolder);
         Double[] trackDisplacementsVector = new Double[retainedTracks.size()];
         for (int i = 0; i < trackDisplacementsVector.length; i++) {
             TrackDataHolder retainedTrack = retainedTracks.get(i);
@@ -260,10 +281,11 @@ class FilteringController {
     }
 
     /**
+     * Create the datasets for the filtered KDE.
      *
      * @param plateCondition
      */
-    private List<XYSeriesCollection> getFilteredKdeDatasets(PlateCondition plateCondition) {
+    private List<XYSeriesCollection> getRetainedKdeDatasets(PlateCondition plateCondition) {
         SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         List<XYSeriesCollection> xYSeriesCollections = new ArrayList<>();
         for (int i = 0; i < motileSteps.size(); i++) {
@@ -275,33 +297,32 @@ class FilteringController {
     }
 
     /**
+     * Plot KDE after filtering -- retained track displacements.
      *
      * @param nCols
      */
-    private void plotFilteredKde(PlateCondition plateCondition, int nCols) {
-        filteredKdeChartPanels.clear();
-        filteringPanel.getFilteredPlotParentPanel().removeAll();
-
-        filteringPanel.getFilteredPlotParentPanel().revalidate();
-        filteringPanel.getFilteredPlotParentPanel().repaint();
+    private void plotRetainedKde(PlateCondition plateCondition, int nCols) {
+        // reset the logic first
+        minTranslFilteringPanel.getFilteredPlotParentPanel().removeAll();
+        minTranslFilteringPanel.getFilteredPlotParentPanel().revalidate();
+        minTranslFilteringPanel.getFilteredPlotParentPanel().repaint();
 
         SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
-        List<XYSeriesCollection> filteredKdeDatasets = getFilteredKdeDatasets(plateCondition);
+        // create the datasets for the plot logic
+        List<XYSeriesCollection> filteredKdeDatasets = getRetainedKdeDatasets(plateCondition);
+        // the number of plots needed
         int nPlots = filteredKdeDatasets.size();
-
         for (int i = 0; i < nPlots; i++) {
-
             XYSeriesCollection collection = filteredKdeDatasets.get(i);
             JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, collection,
-                    "step: " + AnalysisUtils.roundTwoDecimals(motileSteps.get(i)) + " filtered KDE track displ", "track displ");
+                    "step: " + AnalysisUtils.roundTwoDecimals(motileSteps.get(i)) + " filtered KDE track displ", "track displ", false);
 
             ChartPanel filteredChartPanel = new ChartPanel(densityChart);
             GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(nPlots, i, nCols);
-            filteringPanel.getFilteredPlotParentPanel().add(filteredChartPanel, tempBagConstraints);
+            minTranslFilteringPanel.getFilteredPlotParentPanel().add(filteredChartPanel, tempBagConstraints);
 
-            filteredKdeChartPanels.add(filteredChartPanel);
-            filteringPanel.getFilteredPlotParentPanel().revalidate();
-            filteringPanel.getFilteredPlotParentPanel().repaint();
+            minTranslFilteringPanel.getFilteredPlotParentPanel().revalidate();
+            minTranslFilteringPanel.getFilteredPlotParentPanel().repaint();
         }
     }
 
@@ -353,20 +374,6 @@ class FilteringController {
     }
 
     /**
-     * Initialize the other views of the controller.
-     */
-    private void initOtherViews() {
-        rawKdeChartPanel = new ChartPanel(null);
-        rawKdeChartPanel.setOpaque(false);
-        filteredKdeChartPanel = new ChartPanel(null);
-        filteredKdeChartPanel.setOpaque(false);
-
-        // add chart panels to parent containers
-        filteringPanel.getRawPlotParentPanel().add(rawKdeChartPanel, gridBagConstraints);
-        filteringPanel.getFilteredPlotParentPanel().add(filteredKdeChartPanel, gridBagConstraints);
-    }
-
-    /**
      * Filter motile steps for a given track and a motile step threshold: if a
      * displacement is equal or greater than the motile step--mark the
      * displacement with a true. Else, the default is false.
@@ -415,19 +422,18 @@ class FilteringController {
 
         Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> tempMap2 = new LinkedHashMap<>();
 
-        for (SingleCellWellDataHolder singleCellWellDataHolder : conditionDataHolder.getSingleCellWellDataHolders()) {
+        conditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             Map<TrackDataHolder, boolean[]> tempMap = new LinkedHashMap<>();
-            for (TrackDataHolder trackDataHolder : singleCellWellDataHolder.getTrackDataHolders()) {
-
+            singleCellWellDataHolder.getTrackDataHolders().stream().forEach((trackDataHolder) -> {
                 // an empty default to false array of boolean
                 boolean[] filter = new boolean[motileSteps.size()];
                 for (int j = 0; j < motileSteps.size(); j++) {
                     filter[j] = filterSingleTrack(trackDataHolder, motileSteps.get(j));
                 }
                 tempMap.put(trackDataHolder, filter);
-            }
+            });
             tempMap2.put(singleCellWellDataHolder, tempMap);
-        }
+        });
         filterMap.put(conditionDataHolder, tempMap2);
     }
 
@@ -436,13 +442,13 @@ class FilteringController {
      */
     private void updateFilterTable(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> map = filterMap.get(singleCellConditionDataHolder);
-        filteringPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(map, motileSteps));
+        minTranslFilteringPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(map, motileSteps));
 
         AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
-        for (int i = 0; i < filteringPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
-            filteringPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+        for (int i = 0; i < minTranslFilteringPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
+            minTranslFilteringPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
         }
-        filteringPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        minTranslFilteringPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
     }
 
     /**
@@ -469,7 +475,7 @@ class FilteringController {
                 // update the table
                 updateFilterTable(singleCellPreProcessingController.getConditionDataHolder(singleCellPreProcessingController.getCurrentCondition()));
                 // plot the filtered KDE plots
-                plotFilteredKde(singleCellPreProcessingController.getCurrentCondition(), 2);
+                plotRetainedKde(singleCellPreProcessingController.getCurrentCondition(), 2);
                 // recontrol GUI
                 singleCellPreProcessingController.hideWaitingDialog();
                 singleCellPreProcessingController.controlGuiComponents(true);
