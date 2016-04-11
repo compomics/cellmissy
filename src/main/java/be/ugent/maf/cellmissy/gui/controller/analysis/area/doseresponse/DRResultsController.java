@@ -60,12 +60,18 @@ public class DRResultsController {
     public void setTableModel(NonEditableTableModel tableModel) {
         this.tableModel = tableModel;
     }
+
+    public ChartPanel getResultsChartPanel() {
+        return resultsChartPanel;
+    }
     
     /**
      * Initialize view
      */
     private void initDRResultsPanel() {
         dRResultsPanel = new DRResultsPanel();
+        resultsChartPanel = new ChartPanel(null);
+        resultsChartPanel.setOpaque(false);
 
         /**
          * Action listener for button. Copies the table with statistical values

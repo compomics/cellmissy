@@ -107,13 +107,15 @@ public class DRInputController {
         List<Integer> numberOfReplicates = doseResponseController.getNumberOfReplicates();
         //create and set the table model for the top panel table
         setTableModel(createTableModel(processedConditions));
-
-        // control opaque property of table
+        
+        // control opaque property of bottom table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         JTable slopesTable = dRInputPanel.getSlopesTable();
         slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         slopesTable.getTableHeader().setReorderingAllowed(false);
         slopesTable.setFillsViewportHeight(true);
+        //set table model
+        dRInputPanel.getSlopesTable().setModel(bottomTableModel);
 
         // put conditions in selectable list
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
@@ -198,7 +200,7 @@ public class DRInputController {
         // override variable if one existed already
         doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
         // populate bottom table with the analysis group
-
+        
     }
 
     /**
@@ -302,5 +304,9 @@ public class DRInputController {
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
         nonEditableTableModel.setDataVector(data, columnNames);
         return nonEditableTableModel;
+    }
+    
+    private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
+        
     }
 }

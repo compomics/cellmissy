@@ -75,6 +75,10 @@ public class DRNormalizedController {
     private void setTableModel(NonEditableTableModel tableModel) {
         this.tableModel = tableModel;
     }
+
+    public ChartPanel getNormalizedChartPanel() {
+        return normalizedChartPanel;
+    }
     
     /**
      * Initialize view
@@ -98,6 +102,9 @@ public class DRNormalizedController {
         setTableModel(createTableModel(dataToFit));
         //Perform initial curve fitting (standard hillslope, no constraints)
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
+        //init chart panel
+        normalizedChartPanel = new ChartPanel(null);
+        normalizedChartPanel.setOpaque(false);
         //Plot fitted data in dose-response curve, along with R² annotation
         doseResponseController.plotDoseResponse();
         /**

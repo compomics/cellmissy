@@ -13,7 +13,9 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResu
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
@@ -28,7 +30,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -195,7 +200,10 @@ public class DoseResponseController {
      * Reset views on cancel
      */
     public void resetOnCancel() {
-
+        dataTable.setModel(new DefaultTableModel());
+        dRInitialController.getInitialChartPanel().setChart(null);
+        dRNormalizedController.getNormalizedChartPanel().setChart(null);
+        dRResultsController.getResultsChartPanel().setChart(null);
     }
 
     /**
@@ -216,6 +224,12 @@ public class DoseResponseController {
             value *= Math.pow(10, -9);
         }
         return Math.log10(value);
+    }
+    
+    public JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot) {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        Double[][] dataToShow = null;
+        
     }
 
     /**
@@ -256,9 +270,13 @@ public class DoseResponseController {
             public void actionPerformed(ActionEvent e) {
                 updateModelInTable(dRInputController.getTableModel());
                 updateTableInfoMessage("This table contains all conditions and their respective slopes");
-                for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
+                /**
+                 * for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
                     GuiUtils.packColumn(dataTable, columnIndex);
-                }
+                }*/
+                dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
+                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+                
             }
         });
 
@@ -270,9 +288,12 @@ public class DoseResponseController {
                 updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
                 // set cell renderer: rect icon in the first column
                 dataTable.getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
-                for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
+                /**
+                 * for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
                     GuiUtils.packColumn(dataTable, columnIndex);
-                }
+                }*/
+                dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
+                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
             }
         });
 
@@ -284,9 +305,12 @@ public class DoseResponseController {
                 updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
                 // set cell renderer: rect icon in the first column
                 dataTable.getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
-                for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
+                /**
+                 * for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
                     GuiUtils.packColumn(dataTable, columnIndex);
-                }
+                }*/
+                dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
+                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
             }
         });
 

@@ -75,6 +75,10 @@ public class DRInitialController {
         this.tableModel = tableModel;
     }
 
+    public ChartPanel getInitialChartPanel() {
+        return initialChartPanel;
+    }
+    
     /**
      * Initialize view
      */
@@ -97,7 +101,9 @@ public class DRInitialController {
         setTableModel(createTableModel(dataToFit));
         //Fit data according to initial parameters (standard hillslope, no constraints)
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
-
+        //init chart panel
+        initialChartPanel = new ChartPanel(null);
+        initialChartPanel.setOpaque(false);
         //Plot fitted data in dose-response curve, along with R² annotation
         doseResponseController.plotDoseResponse();
         /**
