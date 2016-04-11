@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRNormalizedPlotPanel;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,7 @@ public class DRNormalizedController {
     private Double bottomConstrainValue;
     private Double topConstrainValue;
     private boolean standardHillslope;
+    private NonEditableTableModel tableModel;
     //view
     private DRNormalizedPlotPanel dRNormalizedPlotPanel;
     private ChartPanel normalizedChartPanel;
@@ -65,14 +68,19 @@ public class DRNormalizedController {
         return dRNormalizedPlotPanel;
     }
 
+    public NonEditableTableModel getTableModel() {
+        return tableModel;
+    }
+
+    private void setTableModel(NonEditableTableModel tableModel) {
+        this.tableModel = tableModel;
+    }
+    
     /**
      * Initialize view
      */
     private void initDRNormalizedPanel() {
         dRNormalizedPlotPanel = new DRNormalizedPlotPanel();
-
-        //update table info label
-        doseResponseController.updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
         //create a ButtonGroup for the radioButtons of the hillslope choice
         ButtonGroup hillslopeRadioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
@@ -86,9 +94,8 @@ public class DRNormalizedController {
 
         //LogTransform concentrations and perform initial normalization (mean values)
         LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
-
-        //Populate table with normalized data
-        doseResponseController.populateTable(dataToFit);
+        //create and set the table model for the top panel table (dependent on normalization)
+        setTableModel(createTableModel(dataToFit));
         //Perform initial curve fitting (standard hillslope, no constraints)
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
         //Plot fitted data in dose-response curve, along with R² annotation
@@ -209,7 +216,7 @@ public class DRNormalizedController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LinkedHashMap<Double, List<Double>> fittingData = prepareFittingData(doseResponseController.getdRAnalysisGroup());
-                doseResponseController.populateTable(fittingData);
+                setTableModel(createTableModel(fittingData));
                 doseResponseController.performFitting(fittingData, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
                 doseResponseController.plotDoseResponse();
             }
@@ -298,6 +305,47 @@ public class DRNormalizedController {
         Double bottomNormalize = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
         
         return (velocity - bottomNormalize) / (topNormalize - bottomNormalize);
+    }
+    
+    /**
+     * Create the table model for the top panel table. Table contains icon,
+     * log-transformed concentration and normalized slopes per condition
+     *
+     * @param dataToFit
+     * @return the model
+     */
+    private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
+        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 2];
+
+        int rowIndex = 0;
+        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
+            //log concentration is put on 2nd column
+            data[rowIndex][1] = entry.getKey();
+            for (int columnIndex = 2; columnIndex < entry.getValue().size() + 2; columnIndex++) {
+                Double slope = entry.getValue().get(columnIndex - 2);
+                if (slope != null && !slope.isNaN()) {
+                    // round to three decimals slopes and coefficients
+                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 2));
+                    // show in table slope + (coefficient)
+                    data[rowIndex][columnIndex] = slope;
+                } else if (slope == null) {
+                    data[rowIndex][columnIndex] = "excluded";
+                } else if (slope.isNaN()) {
+                    data[rowIndex][columnIndex] = "NaN";
+                }
+            }
+            rowIndex++;
+        }
+        // array of column names for table model
+        String[] columnNames = new String[data[0].length];
+        columnNames[1] = "Log-concentration";
+        for (int x = 2; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x - 1);
+        }
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
     }
 
 }

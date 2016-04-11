@@ -13,6 +13,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.ChooseTr
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
@@ -52,7 +53,7 @@ public class DRInputController {
     private BindingGroup bindingGroup;
     private List<PlateCondition> plateConditionsList;
     private List<AreaAnalysisResults> areaAnalysisResultsList;
-    private DefaultTableModel tableModel;
+    private NonEditableTableModel tableModel;
     //view
     private DRInputPanel dRInputPanel;
     private ChooseTreatmentDialog chooseTreatmentDialog;
@@ -68,6 +69,7 @@ public class DRInputController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+        tableModel = new NonEditableTableModel();
         //init view
         initDRInputPanel();
     }
@@ -85,8 +87,12 @@ public class DRInputController {
         return chooseTreatmentDialog;
     }
 
-    public DefaultTableModel getTableModel() {
+    public NonEditableTableModel getTableModel() {
         return tableModel;
+    }
+
+    private void setTableModel(NonEditableTableModel tableModel) {
+        this.tableModel = tableModel;
     }
 
     /**
@@ -99,11 +105,10 @@ public class DRInputController {
         List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
         //number of replicates per condition will be added to list as information
         List<Integer> numberOfReplicates = doseResponseController.getNumberOfReplicates();
+        //create and set the table model for the top panel table
+        setTableModel(createTableModel(processedConditions));
 
-        //update table info label
-        doseResponseController.updateTableInfoMessage("This table contains all conditions and their respective slopes");
-        //set model for main panel table when on this view
-        setTableModel(processedConditions) // control opaque property of table
+        // control opaque property of table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         JTable slopesTable = dRInputPanel.getSlopesTable();
         slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
@@ -230,7 +235,15 @@ public class DRInputController {
         return selectedConditions;
     }
 
-    private void setTableModel(List<PlateCondition> processedConditions) {
+    /**
+     * Create and return table model for top panel table. Table contains
+     * condition number, treatment name, concentration and concentration unit
+     * and replicate slopes.
+     *
+     * @param processedConditions
+     * @return
+     */
+    private NonEditableTableModel createTableModel(List<PlateCondition> processedConditions) {
         List<Integer> conditionNumberList = new ArrayList();
         List<String> treatmentNameList = new ArrayList();
         List<Double> concentrationList = new ArrayList();
@@ -269,7 +282,25 @@ public class DRInputController {
                     data[rowIndex][columnIndex] = "NaN";
                 }
             }
+            // first column contains condition numbers
+            data[rowIndex][0] = conditionNumberList.get(rowIndex);
+            // second to fourth will contain treatment information
+            data[rowIndex][1] = treatmentNameList.get(rowIndex);
+            data[rowIndex][2] = concentrationList.get(rowIndex);
+            data[rowIndex][3] = concentrationUnitList.get(rowIndex);
         }
+        // array of column names for table model
+        String[] columnNames = new String[data[0].length];
+        columnNames[0] = "Condition number";
+        columnNames[1] = "Treatment";
+        columnNames[2] = "Concentration";
+        columnNames[3] = "Unit";
+        for (int x = 4; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x - 3);
+        }
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
     }
 }
-

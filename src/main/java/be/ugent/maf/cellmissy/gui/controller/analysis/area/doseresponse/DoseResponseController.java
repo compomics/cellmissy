@@ -13,6 +13,8 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResu
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
 import java.awt.Color;
@@ -130,7 +132,7 @@ public class DoseResponseController {
     public void updateTableInfoMessage(String messageToShow) {
         dRPanel.getTableInfoLabel().setText(messageToShow);
     }
-    
+
     /**
      * Plots the fitted data.
      */
@@ -253,6 +255,10 @@ public class DoseResponseController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateModelInTable(dRInputController.getTableModel());
+                updateTableInfoMessage("This table contains all conditions and their respective slopes");
+                for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
+                    GuiUtils.packColumn(dataTable, columnIndex);
+                }
             }
         });
 
@@ -261,6 +267,12 @@ public class DoseResponseController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateModelInTable(dRInitialController.getTableModel());
+                updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
+                // set cell renderer: rect icon in the first column
+                dataTable.getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
+                for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
+                    GuiUtils.packColumn(dataTable, columnIndex);
+                }
             }
         });
 
@@ -269,6 +281,12 @@ public class DoseResponseController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateModelInTable(dRNormalizedController.getTableModel());
+                updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
+                // set cell renderer: rect icon in the first column
+                dataTable.getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
+                for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
+                    GuiUtils.packColumn(dataTable, columnIndex);
+                }
             }
         });
 
@@ -277,17 +295,20 @@ public class DoseResponseController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateModelInTable(dRResultsController.getTableModel());
+                updateTableInfoMessage("Statistical values from the curve fit of the initial and normalized data.");
+
             }
         });
 
         //add view to parent panel
         areaMainController.getAreaAnalysisPanel().getDoseResponseParentPanel().add(dRPanel, gridBagConstraints);
     }
-    
+
     /**
-     * When switching to a different subview, change the model for the main table.
+     * When switching to a different subview, change the model for the main
+     * table.
      */
-    private void updateModelInTable(DefaultTableModel tableModel) {
+    private void updateModelInTable(NonEditableTableModel tableModel) {
         dataTable.setModel(tableModel);
     }
 

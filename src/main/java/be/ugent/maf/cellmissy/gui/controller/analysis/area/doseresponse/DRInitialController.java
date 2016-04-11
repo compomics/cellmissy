@@ -8,6 +8,8 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInitialPlotPanel;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -17,6 +19,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +35,11 @@ public class DRInitialController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRInitialController.class);
     //model
-    Double bottomConstrainValue;
-    Double topConstrainValue;
-    boolean standardHillslope;
+    private Double bottomConstrainValue;
+    private Double topConstrainValue;
+    private boolean standardHillslope;
+    private NonEditableTableModel tableModel;
+
     //view
     private DRInitialPlotPanel dRInitialPlotPanel;
     private ChartPanel initialChartPanel;
@@ -62,13 +67,19 @@ public class DRInitialController {
         return dRInitialPlotPanel;
     }
 
+    public NonEditableTableModel getTableModel() {
+        return tableModel;
+    }
+
+    private void setTableModel(NonEditableTableModel tableModel) {
+        this.tableModel = tableModel;
+    }
+
     /**
      * Initialize view
      */
     private void initDRInitialPanel() {
         dRInitialPlotPanel = new DRInitialPlotPanel();
-        //update table info label
-        doseResponseController.updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
         //create a ButtonGroup for the radioButtons of the hillslope choice
         ButtonGroup hillslopeRadioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
@@ -82,10 +93,10 @@ public class DRInitialController {
 
         //Log transform concentrations, keeping slopes the same
         final LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
-        //Populate table with the data
-        doseResponseController.populateTable(dataToFit);
+        //create and set the table model for the top panel table
+        setTableModel(createTableModel(dataToFit));
         //Fit data according to initial parameters (standard hillslope, no constraints)
-        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
 
         //Plot fitted data in dose-response curve, along with R² annotation
         doseResponseController.plotDoseResponse();
@@ -154,7 +165,7 @@ public class DRInitialController {
                 if (bottomConstrainValue != null) {
                     bottomConstrainValue = Double.parseDouble(dRInitialPlotPanel.getBottomTextField().getText());
                 }
-                if(topConstrainValue != null) {
+                if (topConstrainValue != null) {
                     topConstrainValue = Double.parseDouble(dRInitialPlotPanel.getTopTextField().getText());
                 }
                 doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
@@ -178,14 +189,14 @@ public class DRInitialController {
      */
     private LinkedHashMap<Double, List<Double>> prepareFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
         LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
-        
+
         List<List<Double>> allVelocities = new ArrayList<List<Double>>(dRAnalysisGroup.getVelocitiesMap().size());
         for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
             List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
-            
+
             allVelocities.add(replicateVelocities);
         }
-        
+
         int i = 0;
         LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
         for (Double concentration : nestedMap.keySet()) {
@@ -193,11 +204,51 @@ public class DRInitialController {
 
             Double logConcentration = doseResponseController.logTransform(concentration, unit);
             result.put(logConcentration, allVelocities.get(i));
-            
+
             i++;
         }
 
-
         return result;
+    }
+
+    /**
+     * Create the table model for the top panel table. Table contains icon,
+     * log-transformed concentration and replicate slopes per condition
+     *
+     * @param dataToFit
+     * @return the model
+     */
+    private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
+        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 2];
+
+        int rowIndex = 0;
+        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
+            //log concentration is put on 2nd column
+            data[rowIndex][1] = entry.getKey();
+            for (int columnIndex = 2; columnIndex < entry.getValue().size() + 2; columnIndex++) {
+                Double slope = entry.getValue().get(columnIndex - 2);
+                if (slope != null && !slope.isNaN()) {
+                    // round to three decimals slopes and coefficients
+                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 2));
+                    // show in table slope + (coefficient)
+                    data[rowIndex][columnIndex] = slope;
+                } else if (slope == null) {
+                    data[rowIndex][columnIndex] = "excluded";
+                } else if (slope.isNaN()) {
+                    data[rowIndex][columnIndex] = "NaN";
+                }
+            }
+            rowIndex++;
+        }
+        // array of column names for table model
+        String[] columnNames = new String[data[0].length];
+        columnNames[1] = "Log-concentration";
+        for (int x = 2; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x - 1);
+        }
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
     }
 }

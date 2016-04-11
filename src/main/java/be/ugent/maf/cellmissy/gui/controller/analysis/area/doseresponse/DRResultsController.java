@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ public class DRResultsController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRResultsController.class);
 
     //model
+    private NonEditableTableModel tableModel;
     //view
     private DRResultsPanel dRResultsPanel;
     private ChartPanel resultsChartPanel;
@@ -51,13 +53,19 @@ public class DRResultsController {
         return dRResultsPanel;
     }
 
+    public NonEditableTableModel getTableModel() {
+        return tableModel;
+    }
+
+    public void setTableModel(NonEditableTableModel tableModel) {
+        this.tableModel = tableModel;
+    }
+    
     /**
      * Initialize view
      */
     private void initDRResultsPanel() {
         dRResultsPanel = new DRResultsPanel();
-        //update table info label
-        doseResponseController.updateTableInfoMessage("Statistical values from the curve fit of the initial and normalized data.");
 
         /**
          * Action listener for button. Copies the table with statistical values
@@ -70,5 +78,16 @@ public class DRResultsController {
 
             }
         });
+    }
+    
+    /**
+     * Create the table model for the top panel table. Table contains icon,
+     * log-transformed concentration and normalized slopes per condition
+     *
+     * @param dataToFit
+     * @return the model
+     */
+    private NonEditableTableModel createTableModel(data) {
+        
     }
 }
