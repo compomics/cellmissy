@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 
 /**
  *
@@ -16,7 +17,8 @@ public class ChooseTreatmentDialog extends javax.swing.JDialog {
     /**
      * Creates new form ChooseTreatmentDialog
      */
-    public ChooseTreatmentDialog() {
+    public ChooseTreatmentDialog(java.awt.Frame parent, boolean modal) {
+        super(parent,modal);
         initComponents();
     }
     
@@ -27,6 +29,11 @@ public class ChooseTreatmentDialog extends javax.swing.JDialog {
     public JButton getSelectTreatmentButton() {
         return selectTreatmentButton;
     }
+
+    public JComboBox getTreatmentComboBox() {
+        return treatmentComboBox;
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -39,9 +46,8 @@ public class ChooseTreatmentDialog extends javax.swing.JDialog {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        firstRadioButton = new javax.swing.JRadioButton();
-        secondRadioButton = new javax.swing.JRadioButton();
         selectTreatmentButton = new javax.swing.JButton();
+        treatmentComboBox = new javax.swing.JComboBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -51,30 +57,22 @@ public class ChooseTreatmentDialog extends javax.swing.JDialog {
         jTextArea1.setText("The conditions you have selected have been\ntreated with more than one compound.\n\nPlease choose the treatment you wish to\nperform a dose-response analysis on.");
         jScrollPane1.setViewportView(jTextArea1);
 
-        firstRadioButton.setBackground(new java.awt.Color(255, 255, 255));
-        firstRadioButton.setText("jRadioButton1");
-
-        secondRadioButton.setBackground(new java.awt.Color(255, 255, 255));
-        secondRadioButton.setText("jRadioButton2");
-
         selectTreatmentButton.setText("Close");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(firstRadioButton)
-                            .addComponent(secondRadioButton))
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(selectTreatmentButton)))
+                        .addComponent(selectTreatmentButton))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(treatmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -82,11 +80,9 @@ public class ChooseTreatmentDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(firstRadioButton)
                 .addGap(18, 18, 18)
-                .addComponent(secondRadioButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                .addComponent(treatmentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(selectTreatmentButton)
                 .addContainerGap())
         );
@@ -94,10 +90,9 @@ public class ChooseTreatmentDialog extends javax.swing.JDialog {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton firstRadioButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JRadioButton secondRadioButton;
     private javax.swing.JButton selectTreatmentButton;
+    private javax.swing.JComboBox treatmentComboBox;
     // End of variables declaration//GEN-END:variables
 }

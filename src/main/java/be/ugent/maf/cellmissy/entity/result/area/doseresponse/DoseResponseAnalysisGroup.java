@@ -27,10 +27,10 @@ public class DoseResponseAnalysisGroup {
 
     //A condition can have multiple replicates, each with their own velocity.
     private LinkedHashMap<PlateCondition, List<Double>> velocitiesMap;
-    
+
     //The treatment to be analyzed
     private Treatment treatmentToAnalyse;
-    
+
     //The results of the analysis
     private DoseResponseAnalysisResults doseResponseAnalysisResults;
 
@@ -55,16 +55,22 @@ public class DoseResponseAnalysisGroup {
 
         for (PlateCondition plateCondition : plateConditions) {
             //1 platecondition might have multiple treatments
+
             List<Treatment> treatmentList = plateCondition.getTreatmentList();
 
             for (Treatment treatment : treatmentList) {
-                Double concentration = treatment.getConcentration();
-                //concentration unit needs to be saved, needed for log-transformation
-                String concentrationUnit = treatment.getConcentrationUnit();
+                //treatment needs to be of type 1 to be analyzable
+                if (treatment.getTreatmentType().getTreatmentCategory() == 1) {
+                    
+                    Double concentration = treatment.getConcentration();
+                    //concentration unit needs to be saved, needed for log-transformation
+                    String concentrationUnit = treatment.getConcentrationUnit();
 
-                //put in map
-                nestedMap.put(concentration, concentrationUnit);
-                concentrationsMap.put(treatment, nestedMap);
+                    //put in map
+                    nestedMap.put(concentration, concentrationUnit);
+                    concentrationsMap.put(treatment, nestedMap);
+                }
+
             }
         }
 
@@ -115,5 +121,5 @@ public class DoseResponseAnalysisGroup {
     public DoseResponseAnalysisResults getDoseResponseAnalysisResults() {
         return doseResponseAnalysisResults;
     }
-    
+
 }

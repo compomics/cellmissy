@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalys
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -22,12 +23,14 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -53,7 +56,7 @@ public class DRInputController {
     private BindingGroup bindingGroup;
     private List<PlateCondition> plateConditionsList;
     private List<AreaAnalysisResults> areaAnalysisResultsList;
-    private NonEditableTableModel tableModel;
+    private NonEditableTableModel sharedTableModel;
     //view
     private DRInputPanel dRInputPanel;
     private ChooseTreatmentDialog chooseTreatmentDialog;
@@ -69,7 +72,7 @@ public class DRInputController {
     public void init() {
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        tableModel = new NonEditableTableModel();
+        sharedTableModel = new NonEditableTableModel();
         //init view
         initDRInputPanel();
     }
@@ -88,11 +91,11 @@ public class DRInputController {
     }
 
     public NonEditableTableModel getTableModel() {
-        return tableModel;
+        return sharedTableModel;
     }
 
     private void setTableModel(NonEditableTableModel tableModel) {
-        this.tableModel = tableModel;
+        this.sharedTableModel = tableModel;
     }
 
     /**
@@ -107,15 +110,17 @@ public class DRInputController {
         List<Integer> numberOfReplicates = doseResponseController.getNumberOfReplicates();
         //create and set the table model for the top panel table
         setTableModel(createTableModel(processedConditions));
-        
+
         // control opaque property of bottom table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         JTable slopesTable = dRInputPanel.getSlopesTable();
         slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         slopesTable.getTableHeader().setReorderingAllowed(false);
         slopesTable.setFillsViewportHeight(true);
-        //set table model
-        dRInputPanel.getSlopesTable().setModel(bottomTableModel);
+        //set bottom table model
+        dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+        // set cell renderer: rect icon in the first column
+        dRInputPanel.getSlopesTable().getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
 
         // put conditions in selectable list
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
@@ -177,6 +182,19 @@ public class DRInputController {
             }
         });
 
+        /**
+         * When button is pressed, selection of combo box gets taken into
+         * account as treatment to analyse and dialog closes.
+         */
+        chooseTreatmentDialog.getSelectTreatmentButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTreatment(chooseTreatmentDialog.getTreatmentComboBox().getSelectedItem().toString());
+                chooseTreatmentDialog.setVisible(false);
+            }
+        });
+
         //add view to parent panel
         doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel, gridBagConstraints);
     }
@@ -199,8 +217,9 @@ public class DRInputController {
         // make a new analysis group, with those conditions and those results
         // override variable if one existed already
         doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
+        // check treatments, dialog pops up if necessary
+        checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
-        
     }
 
     /**
@@ -218,6 +237,8 @@ public class DRInputController {
             }
         }
         doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
+        //check treatments, dialog pops up if necessary
+        checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
     }
 
@@ -305,8 +326,92 @@ public class DRInputController {
         nonEditableTableModel.setDataVector(data, columnNames);
         return nonEditableTableModel;
     }
-    
+
     private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
-        
+        LinkedHashMap<Double, String> concentrationsMap = analysisGroup.getConcentrationsMap().get(analysisGroup.getTreatmentToAnalyse());
+        LinkedHashMap<PlateCondition, List<Double>> velocitiesMap = analysisGroup.getVelocitiesMap();
+
+        List<List<Double>> allVelocities = new ArrayList<List<Double>>(velocitiesMap.size());
+
+        Object[][] data = new Object[concentrationsMap.size()][velocitiesMap.entrySet().iterator().next().getValue().size() + 3];
+
+        for (PlateCondition plateCondition : velocitiesMap.keySet()) {
+            List<Double> replicateVelocities = analysisGroup.getVelocitiesMap().get(plateCondition);
+            allVelocities.add(replicateVelocities);
+        }
+        int rowIndex = 0;
+
+        for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
+            data[rowIndex][1] = entry.getKey();
+            data[rowIndex][2] = entry.getValue();
+
+            for (int columnIndex = 3; columnIndex < allVelocities.get(0).size() + 3; columnIndex++) {
+                Double slope = allVelocities.get(rowIndex).get(columnIndex - 3);
+                if (slope != null && !slope.isNaN()) {
+                    // round to three decimals slopes and coefficients
+                    slope = AnalysisUtils.roundThreeDecimals(allVelocities.get(rowIndex).get(columnIndex - 3));
+                    // show in table slope + (coefficient)
+                    data[rowIndex][columnIndex] = slope;
+                } else if (slope == null) {
+                    data[rowIndex][columnIndex] = "excluded";
+                } else if (slope.isNaN()) {
+                    data[rowIndex][columnIndex] = "NaN";
+                }
+            }
+            rowIndex++;
+        }
+        // array of column names for table model
+        String[] columnNames = new String[data[0].length];
+        columnNames[1] = "Conc of " + analysisGroup.getTreatmentToAnalyse().getTreatmentType().getName();
+        columnNames[2] = "Unit";
+        for (int x = 3; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x - 2);
+        }
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
+
+    }
+
+    /**
+     * Checks analysis group treatments. If there is more than one, a dialog
+     * must pop up where the user must choose which treatment to analyze.
+     */
+    private void checkTreatments(DoseResponseAnalysisGroup analysisGroup, ChooseTreatmentDialog dialog) {
+        Set<Treatment> treatmentSet = analysisGroup.getConcentrationsMap().keySet();
+        //remove all so that items are not duplicated, because this method can be called several times
+        dialog.getTreatmentComboBox().removeAllItems();
+        if (treatmentSet.size() > 1) {
+            //Strings are needed for display
+            for (Treatment treatment : treatmentSet) {
+                dialog.getTreatmentComboBox().addItem(treatment.getTreatmentType().getName());
+            }
+            dialog.pack();
+            // center the dialog on the main frame
+            GuiUtils.centerDialogOnFrame(doseResponseController.getCellMissyFrame(), dialog);
+            // show the dialog
+            dialog.setVisible(true);
+
+        } else {
+            for (Treatment treatment : treatmentSet) {
+                analysisGroup.setTreatmentToAnalyse(treatment);
+            }
+        }
+    }
+
+    /**
+     * Sets the treatment to analyse in the analysis group to the treatment with
+     * this name.
+     *
+     * @param treatmentName The string selected in the dialog combobox
+     */
+    private void setTreatment(String treatmentName) {
+        Set<Treatment> allTreatments = doseResponseController.getdRAnalysisGroup().getConcentrationsMap().keySet();
+        for (Treatment treatment : allTreatments) {
+            if (treatment.getTreatmentType().getName().equals(treatmentName)) {
+                doseResponseController.getdRAnalysisGroup().setTreatmentToAnalyse(treatment);
+            }
+        }
     }
 }
