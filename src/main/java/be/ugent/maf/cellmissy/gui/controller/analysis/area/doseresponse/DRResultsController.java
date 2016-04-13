@@ -64,7 +64,7 @@ public class DRResultsController {
     public ChartPanel getResultsChartPanel() {
         return resultsChartPanel;
     }
-    
+
     /**
      * Initialize view
      */
@@ -85,7 +85,7 @@ public class DRResultsController {
             }
         });
     }
-    
+
     /**
      * Create the table model for the top panel table. Table contains icon,
      * log-transformed concentration and normalized slopes per condition
@@ -94,6 +94,6 @@ public class DRResultsController {
      * @return the model
      */
     private NonEditableTableModel createTableModel(data) {
-        
+
     }
 }

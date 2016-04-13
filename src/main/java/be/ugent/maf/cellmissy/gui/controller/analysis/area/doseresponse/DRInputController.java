@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalys
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
@@ -31,6 +32,7 @@ import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -70,6 +72,7 @@ public class DRInputController {
      * Initialize controller
      */
     public void init() {
+        plateConditionsList = new ArrayList<>();
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         sharedTableModel = new NonEditableTableModel();
@@ -121,6 +124,8 @@ public class DRInputController {
         dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
         // set cell renderer: rect icon in the first column
         dRInputPanel.getSlopesTable().getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
+        dRInputPanel.getSlopesTable().setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
+        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
 
         // put conditions in selectable list
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);

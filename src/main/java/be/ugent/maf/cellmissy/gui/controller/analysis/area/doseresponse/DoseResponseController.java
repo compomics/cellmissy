@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -33,6 +34,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,9 +203,16 @@ public class DoseResponseController {
      */
     public void resetOnCancel() {
         dataTable.setModel(new DefaultTableModel());
+        dRInputController.getdRInputPanel().getSlopesTable().setModel(new DefaultTableModel());
         dRInitialController.getInitialChartPanel().setChart(null);
         dRNormalizedController.getNormalizedChartPanel().setChart(null);
         dRResultsController.getResultsChartPanel().setChart(null);
+        dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
+        dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
+        dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
+        dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
+        dRPanel.getGraphicsDRParentPanel().revalidate();
+        dRPanel.getGraphicsDRParentPanel().repaint();
     }
 
     /**
@@ -225,11 +234,40 @@ public class DoseResponseController {
         }
         return Math.log10(value);
     }
-    
-    public JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot) {
+
+    /**
+     * Returns a dose-response chart containing scattered xy experimental values
+     * and the curve (line) from the fitting. To be visible in the program,
+     * another method adds the chart to the right panel.
+     *
+     * @param dataToPlot The map created in a child controller, maps
+     * log-transformed concentration to replicate (normalized) velocities.
+     * @param analysisGroup The dose-response analysis group
+     * @param normalized Whether the data is normalized or not
+     * @return
+     */
+    public JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        Double[][] dataToShow = null;
-        
+        // create xy series of experimental concentrations/slopes data
+        XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(JFreeChartUtils.generateXValues(dataToPlot), JFreeChartUtils.generateYValues(dataToPlot));
+        scatterXYSeries.setKey("Experimental data");
+        xySeriesCollection.addSeries(scatterXYSeries);
+        // create xy series of simulated data from the parameters from the fitting
+        simulateData(analysisGroup, normalized);
+
+    }
+
+    /**
+     * This method takes the fitted parameters that make up the dose-response
+     * function from the analysis group results holder and creates x and y
+     * values. This is needed to put the fitted function curve on the plot.
+     *
+     * @param analysisGroup
+     * @param normalized Whether the method takes the fitted parameters from the
+     * normalized or initial fitting
+     */
+    public void simulateData(DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+
     }
 
     /**
@@ -268,15 +306,26 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                //switch shared table view
                 updateModelInTable(dRInputController.getTableModel());
                 updateTableInfoMessage("This table contains all conditions and their respective slopes");
                 /**
-                 * for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
-                    GuiUtils.packColumn(dataTable, columnIndex);
-                }*/
+                 * for (int columnIndex = 0; columnIndex <
+                 * dataTable.getColumnCount(); columnIndex++) {
+                 * GuiUtils.packColumn(dataTable, columnIndex); }
+                 */
                 dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
-                
+                //remove other panels
+                dRInitialController.getInitialChartPanel().setChart(null);
+                dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                dRResultsController.getResultsChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                //add panel to view
+                dRPanel.getGraphicsDRParentPanel().add(dRInputController.getdRInputPanel(), gridBagConstraints);
             }
         });
 
@@ -284,16 +333,27 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                //switch shared table view
                 updateModelInTable(dRInitialController.getTableModel());
                 updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
                 // set cell renderer: rect icon in the first column
                 dataTable.getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
                 /**
-                 * for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
-                    GuiUtils.packColumn(dataTable, columnIndex);
-                }*/
+                 * for (int columnIndex = 0; columnIndex <
+                 * dataTable.getColumnCount(); columnIndex++) {
+                 * GuiUtils.packColumn(dataTable, columnIndex); }
+                 */
                 dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+                //remove other panels
+                dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                dRResultsController.getResultsChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                //plot according to 'data to fit' - the plotting method add the panel to the view
+                plot
             }
         });
 
@@ -301,16 +361,27 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                //switch shared table view
                 updateModelInTable(dRNormalizedController.getTableModel());
                 updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
                 // set cell renderer: rect icon in the first column
                 dataTable.getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
                 /**
-                 * for (int columnIndex = 0; columnIndex < dataTable.getColumnCount(); columnIndex++) {
-                    GuiUtils.packColumn(dataTable, columnIndex);
-                }*/
+                 * for (int columnIndex = 0; columnIndex <
+                 * dataTable.getColumnCount(); columnIndex++) {
+                 * GuiUtils.packColumn(dataTable, columnIndex); }
+                 */
                 dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+                //remove other panels
+                dRInitialController.getInitialChartPanel().setChart(null);
+                dRResultsController.getResultsChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                //plot according to 'data to fit' - the plotting method add the panel to the view
+                plot
             }
         });
 
@@ -318,9 +389,18 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                //switch shared table view
                 updateModelInTable(dRResultsController.getTableModel());
                 updateTableInfoMessage("Statistical values from the curve fit of the initial and normalized data.");
 
+                //remove other panels
+                dRInitialController.getInitialChartPanel().setChart(null);
+                dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                // re-plot both initial and normalized plots
             }
         });
 

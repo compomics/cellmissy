@@ -7,6 +7,19 @@ package be.ugent.maf.cellmissy.utils;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Paint;
+import java.awt.Stroke;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -481,8 +494,8 @@ public class JFreeChartUtils {
         xYPlot.getDomainAxis().setRange(maxRange);
         xYPlot.getRangeAxis().setRange(maxRange);
     }
-    
-    public static void setupDoseResponseChart(JFreeChart chart){
+
+    public static void setupDoseResponseChart(JFreeChart chart) {
         // set title font
         chart.getTitle().setFont(chartFont);
         // get xyplot from the chart
@@ -490,7 +503,7 @@ public class JFreeChartUtils {
         setupXYPlot(xYPlot);
         // get the xyseriescollection from the plot
         XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
-        
+
     }
 
     /**
@@ -703,6 +716,38 @@ public class JFreeChartUtils {
         // show line AND points
         renderer.setSeriesLinesVisible(0, true);
         renderer.setSeriesShapesVisible(0, true);
+    }
+
+    /**
+     * Generate an array of x values from a HashMap.
+     *
+     * @param data The HashMap that maps one x value to replicate y values.
+     * @return An array of x values duplicated to the according amount of
+     * replicates in the original map.
+     */
+    public static double[] generateXValues(LinkedHashMap<Double, List<Double>> data) {
+        List<Double> xValues = new ArrayList<>();
+        for (Map.Entry<Double,List<Double>> entry : data.entrySet()) {
+            for (int i = 0; i < entry.getValue().size(); i++) {
+                xValues.add(entry.getKey());
+            }
+        }
+        return ArrayUtils.toPrimitive(xValues.toArray(new Double[xValues.size()]));
+    }
+    
+    /**
+     * Generate an array of y values from a Hashmap.
+     * @param data The HashMap that maps one x value to replicate y values.
+     * @return An array of all y values in the original map
+     */
+    public static double[] generateYValues(LinkedHashMap<Double, List<Double>> data) {
+        List<Double> yValues = new ArrayList<>();
+        for (Map.Entry<Double,List<Double>> entry : data.entrySet()) {
+            for (Double yValue : entry.getValue()) {
+                yValues.add(yValue);
+            }
+        }
+        return ArrayUtils.toPrimitive(yValues.toArray(new Double[yValues.size()]));
     }
 
     /**
