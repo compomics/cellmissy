@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInitialPlotPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
@@ -17,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class DRInitialController {
     private Double topConstrainValue;
     private boolean standardHillslope;
     private NonEditableTableModel tableModel;
-
+    private LinkedHashMap<Double, List<Double>> dataToFit;
     //view
     private DRInitialPlotPanel dRInitialPlotPanel;
     private ChartPanel initialChartPanel;
@@ -79,6 +81,21 @@ public class DRInitialController {
         return initialChartPanel;
     }
     
+    public void initDRInitialData() {
+        //Log transform concentrations, keeping slopes the same
+        dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+        //create and set the table model for the top panel table
+        setTableModel(createTableModel(dataToFit));
+        //Fit data according to initial parameters (standard hillslope, no constraints)
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), null, null, true);
+        //set text field for standard hillslope and make uneditable
+        dRInitialPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
+        dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
+        //Plot fitted data in dose-response curve, along with R² annotation
+        doseResponseController.plotDoseResponse();
+        
+    }
+
     /**
      * Initialize view
      */
@@ -91,21 +108,10 @@ public class DRInitialController {
         hillslopeRadioButtonGroup.add(dRInitialPlotPanel.getVariableHillslopeRadioButton());
         //select as default first button (standard hillslope)
         dRInitialPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
-        //set text field for standard hillslope and make uneditable
-        dRInitialPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
-        dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
-
-        //Log transform concentrations, keeping slopes the same
-        final LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
-        //create and set the table model for the top panel table
-        setTableModel(createTableModel(dataToFit));
-        //Fit data according to initial parameters (standard hillslope, no constraints)
-        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
+        
         //init chart panel
         initialChartPanel = new ChartPanel(null);
         initialChartPanel.setOpaque(false);
-        //Plot fitted data in dose-response curve, along with R² annotation
-        doseResponseController.plotDoseResponse();
         /**
          * Action listeners for buttons
          */
@@ -178,9 +184,6 @@ public class DRInitialController {
                 doseResponseController.plotDoseResponse();
             }
         });
-
-        //add view to parent panel
-        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInitialPlotPanel, gridBagConstraints);
     }
 
     /**
@@ -196,46 +199,60 @@ public class DRInitialController {
     private LinkedHashMap<Double, List<Double>> prepareFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
         LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
 
-        List<List<Double>> allVelocities = new ArrayList<List<Double>>(dRAnalysisGroup.getVelocitiesMap().size());
-        for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
-            List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
+        List<List<Double>> allVelocities = new ArrayList<List<Double>>();
+        List<Double> allLogConcentrations = new ArrayList<Double>();
 
-            allVelocities.add(replicateVelocities);
-        }
-
-        int i = 0;
+        //put concentrations of treatment to analyze (control not included!) in list
         LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
         for (Double concentration : nestedMap.keySet()) {
             String unit = nestedMap.get(concentration);
 
-            Double logConcentration = doseResponseController.logTransform(concentration, unit);
-            result.put(logConcentration, allVelocities.get(i));
+            Double logConcentration = AnalysisUtils.logTransform(concentration, unit);
+            allLogConcentrations.add(logConcentration);
+        }
+        
+        Double lowestLogConc = Collections.min(allLogConcentrations, AnalysisUtils.doublesComparator());
+        //iterate through conditions
+        int x = 0;
+        for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
+            List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
 
-            i++;
+            //check if this platecondition is the control
+            for (Treatment treatment : plateCondition.getTreatmentList()) {
+                if (treatment.getTreatmentType().getName().equals("control")) {
+                    allLogConcentrations.add(x, lowestLogConc - 1.0);
+                }
+            }
+
+            allVelocities.add(replicateVelocities);
+            x++;
         }
 
+        for (int i = 0; i < allVelocities.size(); i++) {
+            result.put(allLogConcentrations.get(i), allVelocities.get(i));
+        }
         return result;
     }
 
     /**
-     * Create the table model for the top panel table. Table contains icon,
+     * Create the table model for the top panel table. Table contains
      * log-transformed concentration and replicate slopes per condition
      *
      * @param dataToFit
      * @return the model
      */
     private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
-        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 2];
+        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 1];
 
         int rowIndex = 0;
         for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
-            //log concentration is put on 2nd column
-            data[rowIndex][1] = entry.getKey();
-            for (int columnIndex = 2; columnIndex < entry.getValue().size() + 2; columnIndex++) {
-                Double slope = entry.getValue().get(columnIndex - 2);
+            //log concentration is put on 1st column
+            data[rowIndex][0] = entry.getKey();
+            for (int columnIndex = 1; columnIndex < entry.getValue().size() + 1; columnIndex++) {
+                Double slope = entry.getValue().get(columnIndex - 1);
                 if (slope != null && !slope.isNaN()) {
                     // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 2));
+                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 1));
                     // show in table slope + (coefficient)
                     data[rowIndex][columnIndex] = slope;
                 } else if (slope == null) {
@@ -248,9 +265,9 @@ public class DRInitialController {
         }
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
-        columnNames[1] = "Log-concentration";
-        for (int x = 2; x < columnNames.length; x++) {
-            columnNames[x] = "Repl " + (x - 1);
+        columnNames[0] = "Log-concentration";
+        for (int x = 1; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x);
         }
 
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();

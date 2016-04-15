@@ -93,7 +93,7 @@ public class DRResultsController {
      * @param dataToFit
      * @return the model
      */
-    private NonEditableTableModel createTableModel(data) {
-
+    private NonEditableTableModel createTableModel() {
+        return null;
     }
 }

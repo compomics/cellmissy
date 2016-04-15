@@ -72,6 +72,7 @@ public class DoseResponseAnalysisGroup {
                 }
 
             }
+            this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
         }
 
         //setting the velocities from areaAnalysisResults

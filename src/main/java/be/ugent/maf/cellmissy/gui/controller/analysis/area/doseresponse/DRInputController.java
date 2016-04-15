@@ -12,8 +12,6 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalys
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.RectIconCellRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -32,7 +30,6 @@ import java.util.Set;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -102,37 +99,37 @@ public class DRInputController {
     }
 
     /**
-     * Initialize view
+     * Initalize data, called on switch from linear regression to dose-response
      */
-    private void initDRInputPanel() {
-        dRInputPanel = new DRInputPanel();
-
+    public void initDRInputData() {
         //get conditions processed in area analysis
         List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
         //number of replicates per condition will be added to list as information
         List<Integer> numberOfReplicates = doseResponseController.getNumberOfReplicates();
         //create and set the table model for the top panel table
         setTableModel(createTableModel(processedConditions));
-
-        // control opaque property of bottom table
-        dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
-        JTable slopesTable = dRInputPanel.getSlopesTable();
-        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
-        slopesTable.getTableHeader().setReorderingAllowed(false);
-        slopesTable.setFillsViewportHeight(true);
-        //set bottom table model
-        dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-        // set cell renderer: rect icon in the first column
-        dRInputPanel.getSlopesTable().getColumnModel().getColumn(0).setCellRenderer(new RectIconCellRenderer());
-        dRInputPanel.getSlopesTable().setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
-        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
-
         // put conditions in selectable list
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
         dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
+
+    }
+
+    /**
+     * Initialize view
+     */
+    private void initDRInputPanel() {
+        dRInputPanel = new DRInputPanel();
+        plateConditionsList = new ArrayList<>();
+        areaAnalysisResultsList = new ArrayList<>();
+        // control opaque property of bottom table
+        dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
+        JTable slopesTable = dRInputPanel.getSlopesTable();
+        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        slopesTable.getTableHeader().setReorderingAllowed(false);
+        slopesTable.setFillsViewportHeight(true);
 
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup experimentTypeRadioButtonGroup = new ButtonGroup();
@@ -197,11 +194,12 @@ public class DRInputController {
             public void actionPerformed(ActionEvent e) {
                 setTreatment(chooseTreatmentDialog.getTreatmentComboBox().getSelectedItem().toString());
                 chooseTreatmentDialog.setVisible(false);
+                doseResponseController.initFirstFitting();
             }
         });
 
         //add view to parent panel
-        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel, gridBagConstraints);
+        //doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel, gridBagConstraints);
     }
 
     /**
@@ -225,6 +223,9 @@ public class DRInputController {
         // check treatments, dialog pops up if necessary
         checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
+        dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+
     }
 
     /**
@@ -245,6 +246,9 @@ public class DRInputController {
         //check treatments, dialog pops up if necessary
         checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
+        dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+
     }
 
     /**
@@ -257,7 +261,7 @@ public class DRInputController {
         int[] selectedIndices = dRInputPanel.getConditionsList().getSelectedIndices();
         List<PlateCondition> selectedConditions = new ArrayList<>();
         for (int selectedIndex : selectedIndices) {
-            PlateCondition selectedCondition = doseResponseController.getPlateConditionList().get(selectedIndex);
+            PlateCondition selectedCondition = doseResponseController.getProcessedConditions().get(selectedIndex);
             selectedConditions.add(selectedCondition);
         }
         return selectedConditions;
@@ -332,45 +336,81 @@ public class DRInputController {
         return nonEditableTableModel;
     }
 
+    /**
+     * Table model for bottom table: starts from analysis group.
+     *
+     * @param analysisGroup
+     * @return
+     */
     private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
         LinkedHashMap<Double, String> concentrationsMap = analysisGroup.getConcentrationsMap().get(analysisGroup.getTreatmentToAnalyse());
         LinkedHashMap<PlateCondition, List<Double>> velocitiesMap = analysisGroup.getVelocitiesMap();
 
-        List<List<Double>> allVelocities = new ArrayList<List<Double>>(velocitiesMap.size());
+        List<List<Double>> allVelocities = new ArrayList<List<Double>>();
 
-        Object[][] data = new Object[concentrationsMap.size()][velocitiesMap.entrySet().iterator().next().getValue().size() + 3];
-
+        Object[][] data = new Object[concentrationsMap.size()][velocitiesMap.entrySet().iterator().next().getValue().size() + 2];
+        int i = 0;
+        int controlIndex = 0;
         for (PlateCondition plateCondition : velocitiesMap.keySet()) {
             List<Double> replicateVelocities = analysisGroup.getVelocitiesMap().get(plateCondition);
             allVelocities.add(replicateVelocities);
+
+            //check if this platecondition is the control, save index for table
+            for (Treatment treatment : plateCondition.getTreatmentList()) {
+                if (treatment.getTreatmentType().getName().equalsIgnoreCase("control")) {
+                    controlIndex = i;
+                }
+            }
+            i++;
         }
+        data[controlIndex][0] = 0.0;
+        data[controlIndex][1] = "--";
+
         int rowIndex = 0;
 
         for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
-            data[rowIndex][1] = entry.getKey();
-            data[rowIndex][2] = entry.getValue();
+            if (rowIndex >= controlIndex) {
+                data[rowIndex + 1][0] = entry.getKey();
+                data[rowIndex + 1][1] = entry.getValue();
+            } else {
+                data[rowIndex][0] = entry.getKey();
+                data[rowIndex][1] = entry.getValue();
+            }
 
-            for (int columnIndex = 3; columnIndex < allVelocities.get(0).size() + 3; columnIndex++) {
-                Double slope = allVelocities.get(rowIndex).get(columnIndex - 3);
-                if (slope != null && !slope.isNaN()) {
-                    // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(allVelocities.get(rowIndex).get(columnIndex - 3));
-                    // show in table slope + (coefficient)
-                    data[rowIndex][columnIndex] = slope;
-                } else if (slope == null) {
-                    data[rowIndex][columnIndex] = "excluded";
-                } else if (slope.isNaN()) {
-                    data[rowIndex][columnIndex] = "NaN";
+            for (int columnIndex = 2; columnIndex < allVelocities.get(0).size() + 2; columnIndex++) {
+                Double slope = allVelocities.get(rowIndex).get(columnIndex - 2);
+                if (rowIndex < controlIndex) {
+                    if (slope != null && !slope.isNaN()) {
+                        // round to three decimals slopes and coefficients
+                        slope = AnalysisUtils.roundThreeDecimals(allVelocities.get(rowIndex).get(columnIndex - 2));
+                        // show in table slope + (coefficient)
+                        data[rowIndex][columnIndex] = slope;
+                    } else if (slope == null) {
+                        data[rowIndex][columnIndex] = "excluded";
+                    } else if (slope.isNaN()) {
+                        data[rowIndex][columnIndex] = "NaN";
+                    }
+                } else {
+                    if (slope != null && !slope.isNaN()) {
+                        // round to three decimals slopes and coefficients
+                        slope = AnalysisUtils.roundThreeDecimals(allVelocities.get(rowIndex).get(columnIndex - 2));
+                        // show in table slope + (coefficient)
+                        data[rowIndex + 1][columnIndex] = slope;
+                    } else if (slope == null) {
+                        data[rowIndex + 1][columnIndex] = "excluded";
+                    } else if (slope.isNaN()) {
+                        data[rowIndex + 1][columnIndex] = "NaN";
+                    }
                 }
             }
             rowIndex++;
         }
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
-        columnNames[1] = "Conc of " + analysisGroup.getTreatmentToAnalyse().getTreatmentType().getName();
-        columnNames[2] = "Unit";
-        for (int x = 3; x < columnNames.length; x++) {
-            columnNames[x] = "Repl " + (x - 2);
+        columnNames[0] = "Conc of " + analysisGroup.getTreatmentToAnalyse().getTreatmentType().getName();
+        columnNames[1] = "Unit";
+        for (int x = 2; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x - 1);
         }
 
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
@@ -380,17 +420,21 @@ public class DRInputController {
     }
 
     /**
-     * Checks analysis group treatments. If there is more than one, a dialog
-     * must pop up where the user must choose which treatment to analyze.
+     * Checks analysis group treatments. If there is more than one (excluding
+     * control), a dialog must pop up where the user must choose which treatment
+     * to analyze.
      */
     private void checkTreatments(DoseResponseAnalysisGroup analysisGroup, ChooseTreatmentDialog dialog) {
         Set<Treatment> treatmentSet = analysisGroup.getConcentrationsMap().keySet();
         //remove all so that items are not duplicated, because this method can be called several times
         dialog.getTreatmentComboBox().removeAllItems();
-        if (treatmentSet.size() > 1) {
+        if (treatmentSet.size() > 2) {
             //Strings are needed for display
             for (Treatment treatment : treatmentSet) {
-                dialog.getTreatmentComboBox().addItem(treatment.getTreatmentType().getName());
+                String treatmentName = treatment.getTreatmentType().getName();
+                if (!treatmentName.equalsIgnoreCase("control")) {
+                    dialog.getTreatmentComboBox().addItem(treatmentName);
+                }
             }
             dialog.pack();
             // center the dialog on the main frame
@@ -400,8 +444,11 @@ public class DRInputController {
 
         } else {
             for (Treatment treatment : treatmentSet) {
-                analysisGroup.setTreatmentToAnalyse(treatment);
+                if (!treatment.getTreatmentType().getName().equalsIgnoreCase("control")) {
+                    analysisGroup.setTreatmentToAnalyse(treatment);
+                }
             }
+            doseResponseController.initFirstFitting();
         }
     }
 

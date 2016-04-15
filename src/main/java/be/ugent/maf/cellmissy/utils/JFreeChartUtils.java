@@ -35,6 +35,8 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.Range;
+import org.jfree.data.function.Function2D;
+import org.jfree.data.general.DatasetUtilities;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleEdge;
@@ -719,35 +721,19 @@ public class JFreeChartUtils {
     }
 
     /**
-     * Generate an array of x values from a HashMap.
-     *
-     * @param data The HashMap that maps one x value to replicate y values.
-     * @return An array of x values duplicated to the according amount of
-     * replicates in the original map.
+     * Create a dataset corresponding a sigmoid model according to the
+     * parameters given. This method is used when putting the fitted
+     * dose-response model on a chart.
      */
-    public static double[] generateXValues(LinkedHashMap<Double, List<Double>> data) {
-        List<Double> xValues = new ArrayList<>();
-        for (Map.Entry<Double,List<Double>> entry : data.entrySet()) {
-            for (int i = 0; i < entry.getValue().size(); i++) {
-                xValues.add(entry.getKey());
+    public static XYSeries createFittedDataset(final double top, final double bottom, final double hillslope, final double logEC50) {
+        Function2D fittedFunction = new Function2D() {
+
+            @Override
+            public double getValue(double conc) {
+                return (bottom + (top - bottom) / (1 + Math.pow(10, (logEC50 - conc) * hillslope)));
             }
-        }
-        return ArrayUtils.toPrimitive(xValues.toArray(new Double[xValues.size()]));
-    }
-    
-    /**
-     * Generate an array of y values from a Hashmap.
-     * @param data The HashMap that maps one x value to replicate y values.
-     * @return An array of all y values in the original map
-     */
-    public static double[] generateYValues(LinkedHashMap<Double, List<Double>> data) {
-        List<Double> yValues = new ArrayList<>();
-        for (Map.Entry<Double,List<Double>> entry : data.entrySet()) {
-            for (Double yValue : entry.getValue()) {
-                yValues.add(yValue);
-            }
-        }
-        return ArrayUtils.toPrimitive(yValues.toArray(new Double[yValues.size()]));
+        };
+        return DatasetUtilities.sampleFunction2DToSeries(fittedFunction, -10, -2, 1000, "fittedfunction");
     }
 
     /**

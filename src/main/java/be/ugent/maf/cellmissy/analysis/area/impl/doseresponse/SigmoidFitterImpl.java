@@ -13,11 +13,13 @@ import java.util.List;
 import org.apache.commons.math3.optimization.fitting.CurveFitter;
 import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author Gwendolien
  */
+@Component("sigmoidFitter")
 public class SigmoidFitterImpl implements SigmoidFitter {
 
     //implementation of interface method

@@ -51,6 +51,11 @@ public class DoseResponseAnalysisResults {
 
     private Double[] confidenceIntervalHillslopeNormalized;
 
+    public DoseResponseAnalysisResults() {
+        this.initialFittingResults = new SigmoidFittingResultsHolder();
+        this.normalizedFittingResults = new SigmoidFittingResultsHolder();
+    }
+
     /**
      * Getters and setters
      *

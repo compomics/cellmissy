@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
@@ -41,6 +42,7 @@ public class DRNormalizedController {
     private Double topConstrainValue;
     private boolean standardHillslope;
     private NonEditableTableModel tableModel;
+    private LinkedHashMap<Double, List<Double>> dataToFit;
     //view
     private DRNormalizedPlotPanel dRNormalizedPlotPanel;
     private ChartPanel normalizedChartPanel;
@@ -79,7 +81,26 @@ public class DRNormalizedController {
     public ChartPanel getNormalizedChartPanel() {
         return normalizedChartPanel;
     }
-    
+
+    public void initDRNormalizedData() {
+        //set text field for standard hillslope and make uneditable
+        dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
+        dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
+                //set initial parameters
+        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
+        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
+
+        //LogTransform concentrations and perform initial normalization (mean values)
+        dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+        //create and set the table model for the top panel table (dependent on normalization)
+        setTableModel(createTableModel(dataToFit));
+        //Perform initial curve fitting (standard hillslope, no constraints)
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), null, null, true);
+        //Plot fitted data in dose-response curve, along with R² annotation
+        doseResponseController.plotDoseResponse();
+
+    }
+
     /**
      * Initialize view
      */
@@ -92,21 +113,10 @@ public class DRNormalizedController {
         hillslopeRadioButtonGroup.add(dRNormalizedPlotPanel.getVariableHillslopeRadioButton());
         //select as default first button (standard hillslope)
         dRNormalizedPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
-        //set text field for standard hillslope and make uneditable
-        dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
-        dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
-
-        //LogTransform concentrations and perform initial normalization (mean values)
-        LinkedHashMap<Double, List<Double>> dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
-        //create and set the table model for the top panel table (dependent on normalization)
-        setTableModel(createTableModel(dataToFit));
-        //Perform initial curve fitting (standard hillslope, no constraints)
-        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
         //init chart panel
         normalizedChartPanel = new ChartPanel(null);
         normalizedChartPanel.setOpaque(false);
-        //Plot fitted data in dose-response curve, along with R² annotation
-        doseResponseController.plotDoseResponse();
+
         /**
          * Action listeners for buttons
          */
@@ -145,11 +155,11 @@ public class DRNormalizedController {
                 switch (value) {
                     case "Smallest Mean Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
                         break;
                     case "Smallest Median Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getBottomTextField().setText("");
@@ -171,11 +181,11 @@ public class DRNormalizedController {
                 switch (choice) {
                     case "Largest Mean Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
                         break;
                     case "Largest Median Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getTopTextField().setText("");
@@ -224,13 +234,10 @@ public class DRNormalizedController {
             public void actionPerformed(ActionEvent e) {
                 LinkedHashMap<Double, List<Double>> fittingData = prepareFittingData(doseResponseController.getdRAnalysisGroup());
                 setTableModel(createTableModel(fittingData));
-                doseResponseController.performFitting(fittingData, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue,standardHillslope);
+                doseResponseController.performFitting(fittingData, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
                 doseResponseController.plotDoseResponse();
             }
         });
-
-        //add view to parent panel
-        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRNormalizedPlotPanel, gridBagConstraints);
     }
 
     /**
@@ -276,33 +283,48 @@ public class DRNormalizedController {
      */
     private LinkedHashMap<Double, List<Double>> prepareFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
         LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
-        
-        List<List<Double>> allVelocities = new ArrayList<List<Double>>(dRAnalysisGroup.getVelocitiesMap().size());
+
+        //!! control concentrations (10 * lower than lowest treatment conc) also need to be added
+        List<List<Double>> allVelocities = new ArrayList<List<Double>>();
+        List< Double> allLogConcentrations = new ArrayList<Double>();
+
+        //put concentrations of treatment to analyze (control not included!) in list
+        LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
+        for (Double concentration : nestedMap.keySet()) {
+            String unit = nestedMap.get(concentration);
+
+            Double logConcentration = AnalysisUtils.logTransform(concentration, unit);
+            allLogConcentrations.add(logConcentration);
+        }
+
+        Double lowestLogConc = Collections.min(allLogConcentrations, AnalysisUtils.doublesComparator());
+        //iterate through conditions
+        int x = 0;
         for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
             List<Double> replicateVelocities = dRAnalysisGroup.getVelocitiesMap().get(plateCondition);
+
             //normalize each value
             List<Double> normalizedVelocities = new ArrayList<>();
             for (Double value : replicateVelocities) {
                 normalizedVelocities.add(normalize(value));
             }
-            
-            allVelocities.add(normalizedVelocities);
-        }
-        
-        int i = 0;
-        LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
-        for (Double concentration : nestedMap.keySet()) {
-            String unit = nestedMap.get(concentration);
+            //check if this platecondition is the control
+            for (Treatment treatment : plateCondition.getTreatmentList()) {
+                if (treatment.getTreatmentType().getName().equalsIgnoreCase("control")) {
+                    allLogConcentrations.add(x, lowestLogConc - 1.0);
+                }
+            }
 
-            Double logConcentration = doseResponseController.logTransform(concentration, unit);
-            result.put(logConcentration, allVelocities.get(i));
-            
-            i++;
+            allVelocities.add(normalizedVelocities);
+            x++;
+        }
+        for (int i = 0; i < allLogConcentrations.size(); i++) {
+            result.put(allLogConcentrations.get(i), allVelocities.get(i));
         }
 
         return result;
     }
-    
+
     /**
      * Perform normalization on velocities
      */
@@ -310,29 +332,34 @@ public class DRNormalizedController {
         //check which values will become 0% and 100%
         Double topNormalize = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
         Double bottomNormalize = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
-        
+
+        if (velocity == null) {
+            return velocity;
+        } else if (velocity.isNaN()) {
+            return velocity;
+        }
         return (velocity - bottomNormalize) / (topNormalize - bottomNormalize);
     }
-    
+
     /**
-     * Create the table model for the top panel table. Table contains icon,
+     * Create the table model for the top panel table. Table contains
      * log-transformed concentration and normalized slopes per condition
      *
      * @param dataToFit
      * @return the model
      */
     private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
-        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 2];
+        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 1];
 
         int rowIndex = 0;
         for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
-            //log concentration is put on 2nd column
-            data[rowIndex][1] = entry.getKey();
-            for (int columnIndex = 2; columnIndex < entry.getValue().size() + 2; columnIndex++) {
-                Double slope = entry.getValue().get(columnIndex - 2);
+            //log concentration is put on 1st column
+            data[rowIndex][0] = entry.getKey();
+            for (int columnIndex = 1; columnIndex < entry.getValue().size() + 1; columnIndex++) {
+                Double slope = entry.getValue().get(columnIndex - 1);
                 if (slope != null && !slope.isNaN()) {
                     // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 2));
+                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 1));
                     // show in table slope + (coefficient)
                     data[rowIndex][columnIndex] = slope;
                 } else if (slope == null) {
@@ -345,9 +372,9 @@ public class DRNormalizedController {
         }
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
-        columnNames[1] = "Log-concentration";
-        for (int x = 2; x < columnNames.length; x++) {
-            columnNames[x] = "Repl " + (x - 1);
+        columnNames[0] = "Log-concentration";
+        for (int x = 1; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x);
         }
 
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();

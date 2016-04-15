@@ -12,7 +12,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 /**
  * Utility class for Analysis -- basic math and statistics methods
@@ -413,4 +418,72 @@ public class AnalysisUtils {
         });
         return list;
     }
+
+    /**
+     * Generate an array of x values from a HashMap.
+     *
+     * @param data The HashMap that maps one x value to replicate y values.
+     * @return An array of x values duplicated to the according amount of
+     * replicates in the original map.
+     */
+    public static double[] generateXValues(LinkedHashMap<Double, List<Double>> data) {
+        List<Double> xValues = new ArrayList<>();
+        for (Map.Entry<Double, List<Double>> entry : data.entrySet()) {
+            for (int i = 0; i < entry.getValue().size(); i++) {
+                xValues.add(entry.getKey());
+            }
+        }
+        return ArrayUtils.toPrimitive(xValues.toArray(new Double[xValues.size()]));
+    }
+
+    /**
+     * Generate an array of y values from a Hashmap.
+     *
+     * @param data The HashMap that maps one x value to replicate y values.
+     * @return An array of all y values in the original map
+     */
+    public static double[] generateYValues(LinkedHashMap<Double, List<Double>> data) {
+        List<Double> yValues = new ArrayList<>();
+        for (Map.Entry<Double, List<Double>> entry : data.entrySet()) {
+            for (Double yValue : entry.getValue()) {
+                yValues.add(yValue);
+            }
+        }
+        return ArrayUtils.toPrimitive(yValues.toArray(new Double[yValues.size()]));
+    }
+
+    /**
+     * Log-transform a concentration according to its concentration unit.
+     *
+     * @param concentration Set by user in experimental setup screen
+     * @param unit The concentration unit (µM, nM...)
+     * @return The log-transformed value of the concentration (eg. 1 µm becomes
+     * -6)
+     */
+    public static Double logTransform(Double concentration, String unit) {
+        Double value = concentration;
+        if (unit.equals("mM")) {
+            value *= Math.pow(10, -3);
+        } else if (unit.equals("µM")) {
+            value *= Math.pow(10, -6);
+        } else if (unit.equals("nM")) {
+            value *= Math.pow(10, -9);
+        }
+        return Math.log10(value);
+    }
+
+    /**
+     * Return a comparator for comparing Doubles. This method can be used to
+     * find a max or min value in a list.
+     * @return 
+     */
+    public static Comparator doublesComparator() {
+        return new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return Double.valueOf(o1).compareTo(Double.valueOf(o2));
+            }
+        };
+    }
+
 }

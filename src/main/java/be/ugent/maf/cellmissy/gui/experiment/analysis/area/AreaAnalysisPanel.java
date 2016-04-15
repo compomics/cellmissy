@@ -618,6 +618,7 @@ public class AreaAnalysisPanel extends javax.swing.JPanel {
 
         doseResponseParentPanel.setBackground(new java.awt.Color(255, 255, 255));
         doseResponseParentPanel.setName("doseResponseParentPanel"); // NOI18N
+        doseResponseParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         doseResponseParentPanel.setLayout(new java.awt.GridBagLayout());
         bottomPanel.add(doseResponseParentPanel, "doseResponseParentPanel");
         doseResponseParentPanel.getAccessibleContext().setAccessibleName("doseResponseParentPanel");
