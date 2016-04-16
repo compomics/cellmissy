@@ -497,15 +497,13 @@ public class JFreeChartUtils {
         xYPlot.getRangeAxis().setRange(maxRange);
     }
 
-    public static void setupDoseResponseChart(JFreeChart chart) {
+    public static void setupDoseResponseChart(JFreeChart chart, String title) {
         // set title font
         chart.getTitle().setFont(chartFont);
+        chart.setTitle(title);
         // get xyplot from the chart
         XYPlot xYPlot = chart.getXYPlot();
         setupXYPlot(xYPlot);
-        // get the xyseriescollection from the plot
-        XYSeriesCollection xYSeriesCollection = (XYSeriesCollection) xYPlot.getDataset();
-
     }
 
     /**

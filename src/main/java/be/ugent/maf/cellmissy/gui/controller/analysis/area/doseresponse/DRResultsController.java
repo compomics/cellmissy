@@ -5,6 +5,9 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -66,6 +69,14 @@ public class DRResultsController {
     }
 
     /**
+     * When changing view to results panel, calculate statistics and re-plot
+     * fittings.
+     */
+    public void initDRResultsData() {
+        calculateStatistics(doseResponseController.getdRAnalysisGroup());
+    }
+
+    /**
      * Initialize view
      */
     private void initDRResultsPanel() {
@@ -95,5 +106,15 @@ public class DRResultsController {
      */
     private NonEditableTableModel createTableModel() {
         return null;
+    }
+
+    /**
+     * Calculate statictics and set corresponding fields in analysisResults
+     * class
+     */
+    private void calculateStatistics(DoseResponseAnalysisGroup analysisGroup) {
+        DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
+        SigmoidFittingResultsHolder initialFittingResults = analysisResults.getInitialFittingResults();
+        SigmoidFittingResultsHolder normalizedFittingResults = analysisResults.getNormalizedFittingResults();
     }
 }

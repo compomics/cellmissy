@@ -82,14 +82,17 @@ public class DRNormalizedController {
         return normalizedChartPanel;
     }
 
+    /**
+     * When changing view from input panel: make dataset, do fitting and plot
+     * according to starting parameters.
+     */
     public void initDRNormalizedData() {
         //set text field for standard hillslope and make uneditable
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
-                //set initial parameters
+        //set initial parameters
         dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
         dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
-
         //LogTransform concentrations and perform initial normalization (mean values)
         dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
         //create and set the table model for the top panel table (dependent on normalization)
@@ -97,7 +100,7 @@ public class DRNormalizedController {
         //Perform initial curve fitting (standard hillslope, no constraints)
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), null, null, true);
         //Plot fitted data in dose-response curve, along with R² annotation
-        doseResponseController.plotDoseResponse();
+        doseResponseController.plotDoseResponse(normalizedChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), true);
 
     }
 
@@ -232,10 +235,10 @@ public class DRNormalizedController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                LinkedHashMap<Double, List<Double>> fittingData = prepareFittingData(doseResponseController.getdRAnalysisGroup());
-                setTableModel(createTableModel(fittingData));
-                doseResponseController.performFitting(fittingData, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
-                doseResponseController.plotDoseResponse();
+                dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+                setTableModel(createTableModel(dataToFit));
+                doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
+                doseResponseController.plotDoseResponse(normalizedChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), true);
             }
         });
     }

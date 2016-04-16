@@ -14,7 +14,6 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResu
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -34,7 +33,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDotRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -54,6 +60,7 @@ public class DoseResponseController {
     private JTable dataTable;
     private int standardHillslope;
     private DoseResponseAnalysisGroup dRAnalysisGroup;
+    private boolean firstFitting;
     //view
     private DRPanel dRPanel;
     // parent controller
@@ -124,16 +131,26 @@ public class DoseResponseController {
         return areaMainController.getCellMissyFrame();
     }
 
+    public boolean isFirstFitting() {
+        return firstFitting;
+    }
+
+    public void setFirstFitting(boolean firstFitting) {
+        this.firstFitting = firstFitting;
+    }
+
     /**
      * Called by parent controller, initialize tables
      */
     public void onDoseResponse() {
         dRInputController.initDRInputData();
+        //switch shared table view
+        updateModelInTable(dRInputController.getTableModel());
+        updateTableInfoMessage("This table contains all conditions and their respective slopes");
     }
 
     /**
-     * Do a fitting according to initial, standard parameters and calculate
-     * results. This method is only called when the treatment to analyze is set.
+     * Do a fitting according to initial, standard parameters.
      */
     public void initFirstFitting() {
         dRInitialController.initDRInitialData();
@@ -153,8 +170,12 @@ public class DoseResponseController {
     /**
      * Plots the fitted data.
      */
-    public void plotDoseResponse() {
-
+    public void plotDoseResponse(ChartPanel chartPanel, LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+        JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, analysisGroup, normalized);
+        chartPanel.setChart(doseResponseChart);
+        //add chartpanel to graphics parent panel and repaint
+        //dRPanel.getGraphicsDRParentPanel().add(chartPanel,gridBagConstraints);
+        //dRPanel.getGraphicsDRParentPanel().repaint();
     }
 
     /**
@@ -237,14 +258,53 @@ public class DoseResponseController {
      * @return
      */
     public JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
-        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
-        // create xy series of experimental concentrations/slopes data
+        //a single plot contains both scatter data and fitted line
+        XYPlot plot = new XYPlot();
+        //setup scatter data of experimental concentrations/slopes, renderer and axis
+        XYSeriesCollection experimentalData = new XYSeriesCollection();
         XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(AnalysisUtils.generateXValues(dataToPlot), AnalysisUtils.generateYValues(dataToPlot));
         scatterXYSeries.setKey("Experimental data");
-        xySeriesCollection.addSeries(scatterXYSeries);
+        experimentalData.addSeries(scatterXYSeries);
+        XYItemRenderer renderer1 = new XYDotRenderer();   // Shapes only
+        ValueAxis domain1 = new NumberAxis("Domain1");
+        ValueAxis range1 = new NumberAxis("Range1");
+        // Set the scatter data, renderer, and axis into plot
+        plot.setDataset(0, experimentalData);
+        plot.setRenderer(0, renderer1);
+        plot.setDomainAxis(0, domain1);
+        plot.setRangeAxis(0, range1);
+        // Map the scatter to the first Domain and first Range
+        plot.mapDatasetToDomainAxis(0, 0);
+        plot.mapDatasetToRangeAxis(0, 0);
+
+        // Create the line data, renderer, and axis
+        XYSeriesCollection fitting = new XYSeriesCollection();
         // create xy series of simulated data from the parameters from the fitting
         XYSeries fittingData = simulateData(analysisGroup, normalized);
-        return ;
+        fittingData.setKey("Fitting");
+        fitting.addSeries(fittingData);
+        XYItemRenderer renderer2 = new XYSplineRenderer();   // Lines only
+        ValueAxis domain2 = new NumberAxis("Domain2");
+        ValueAxis range2 = new NumberAxis("Range2");
+        // Set the line data, renderer, and axis into plot
+        plot.setDataset(1, fitting);
+        plot.setRenderer(1, renderer2);
+        plot.setDomainAxis(1, domain2);
+        plot.setRangeAxis(1, range2);
+        // Map the line to the second Domain and second Range
+        plot.mapDatasetToDomainAxis(1, 1);
+        plot.mapDatasetToRangeAxis(1, 1);
+
+        // Create the chart with the plot and no legend
+        JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
+        String title = new String();
+        if (normalized) {
+            title = "Normalized fitting";
+        } else {
+            title = "Initial fitting";
+        }
+        JFreeChartUtils.setupDoseResponseChart(chart, title);
+        return chart;
     }
 
     /**
@@ -264,7 +324,7 @@ public class DoseResponseController {
         } else {
             resultsholder = analysisResults.getNormalizedFittingResults();
         }
-        return JFreeChartUtils.createFittedDataset(resultsholder.getTop(),resultsholder.getBottom(),resultsholder.getHillslope(),resultsholder.getLogEC50());
+        return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50());
     }
 
     /**
@@ -311,7 +371,6 @@ public class DoseResponseController {
                  * dataTable.getColumnCount(); columnIndex++) {
                  * GuiUtils.packColumn(dataTable, columnIndex); }
                  */
-                dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
                 //remove other panels
                 dRInitialController.getInitialChartPanel().setChart(null);
@@ -330,6 +389,10 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (isFirstFitting()) {
+                    initFirstFitting();
+                    setFirstFitting(false);
+                }
                 //switch shared table view
                 updateModelInTable(dRInitialController.getTableModel());
                 updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
@@ -356,6 +419,11 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                //in case user skips "initial" subview and goes straight to normalization
+                if (isFirstFitting()) {
+                    initFirstFitting();
+                    setFirstFitting(false);
+                }
                 //switch shared table view
                 updateModelInTable(dRNormalizedController.getTableModel());
                 updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
@@ -364,7 +432,6 @@ public class DoseResponseController {
                  * dataTable.getColumnCount(); columnIndex++) {
                  * GuiUtils.packColumn(dataTable, columnIndex); }
                  */
-                dataTable.setDefaultRenderer(Object.class, new FormatRenderer(areaMainController.getFormat(), SwingConstants.RIGHT));
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
                 //remove other panels
                 dRInitialController.getInitialChartPanel().setChart(null);

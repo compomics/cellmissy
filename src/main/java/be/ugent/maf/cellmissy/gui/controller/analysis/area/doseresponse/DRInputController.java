@@ -138,6 +138,7 @@ public class DRInputController {
         experimentTypeRadioButtonGroup.add(dRInputPanel.getInhibitionRadioButton());
         //select as default first button (Stimulation)
         dRInputPanel.getStimulationRadioButton().setSelected(true);
+        doseResponseController.setStandardHillslope(1);
 
         //initialize treatment choice dialog
         chooseTreatmentDialog = new ChooseTreatmentDialog(doseResponseController.getCellMissyFrame(), true);
@@ -194,7 +195,7 @@ public class DRInputController {
             public void actionPerformed(ActionEvent e) {
                 setTreatment(chooseTreatmentDialog.getTreatmentComboBox().getSelectedItem().toString());
                 chooseTreatmentDialog.setVisible(false);
-                doseResponseController.initFirstFitting();
+                doseResponseController.setFirstFitting(true);
             }
         });
 
@@ -448,7 +449,7 @@ public class DRInputController {
                     analysisGroup.setTreatmentToAnalyse(treatment);
                 }
             }
-            doseResponseController.initFirstFitting();
+            doseResponseController.setFirstFitting(true);
         }
     }
 

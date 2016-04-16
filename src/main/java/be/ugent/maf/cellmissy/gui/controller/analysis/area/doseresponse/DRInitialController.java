@@ -80,7 +80,11 @@ public class DRInitialController {
     public ChartPanel getInitialChartPanel() {
         return initialChartPanel;
     }
-    
+
+    /**
+     * When changing view from input panel: make dataset, do fitting and plot
+     * according to starting parameters.
+     */
     public void initDRInitialData() {
         //Log transform concentrations, keeping slopes the same
         dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
@@ -92,8 +96,8 @@ public class DRInitialController {
         dRInitialPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
         dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
         //Plot fitted data in dose-response curve, along with R² annotation
-        doseResponseController.plotDoseResponse();
-        
+        doseResponseController.plotDoseResponse(initialChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), false);
+
     }
 
     /**
@@ -108,7 +112,7 @@ public class DRInitialController {
         hillslopeRadioButtonGroup.add(dRInitialPlotPanel.getVariableHillslopeRadioButton());
         //select as default first button (standard hillslope)
         dRInitialPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
-        
+
         //init chart panel
         initialChartPanel = new ChartPanel(null);
         initialChartPanel.setOpaque(false);
@@ -181,7 +185,9 @@ public class DRInitialController {
                     topConstrainValue = Double.parseDouble(dRInitialPlotPanel.getTopTextField().getText());
                 }
                 doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
-                doseResponseController.plotDoseResponse();
+                //Plot fitted data in dose-response curve, along with R² annotation
+                doseResponseController.plotDoseResponse(initialChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), false);
+
             }
         });
     }
@@ -210,7 +216,7 @@ public class DRInitialController {
             Double logConcentration = AnalysisUtils.logTransform(concentration, unit);
             allLogConcentrations.add(logConcentration);
         }
-        
+
         Double lowestLogConc = Collections.min(allLogConcentrations, AnalysisUtils.doublesComparator());
         //iterate through conditions
         int x = 0;
