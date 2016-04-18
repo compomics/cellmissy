@@ -35,6 +35,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -137,6 +138,14 @@ public class DoseResponseController {
 
     public void setFirstFitting(boolean firstFitting) {
         this.firstFitting = firstFitting;
+    }
+    
+    public LinkedHashMap<Double, List<Double>> getDataToFit(boolean normalized) {
+        if (normalized) {
+            return dRNormalizedController.getDataToFit();
+        } else {
+            return dRInitialController.getDataToFit();
+        }
     }
 
     /**
@@ -266,8 +275,8 @@ public class DoseResponseController {
         scatterXYSeries.setKey("Experimental data");
         experimentalData.addSeries(scatterXYSeries);
         XYItemRenderer renderer1 = new XYDotRenderer();   // Shapes only
-        ValueAxis domain1 = new NumberAxis("Domain1");
-        ValueAxis range1 = new NumberAxis("Range1");
+        ValueAxis domain1 = new NumberAxis("Log of concentration");
+        ValueAxis range1 = new NumberAxis("Velocity");
         // Set the scatter data, renderer, and axis into plot
         plot.setDataset(0, experimentalData);
         plot.setRenderer(0, renderer1);
@@ -294,6 +303,15 @@ public class DoseResponseController {
         // Map the line to the second Domain and second Range
         plot.mapDatasetToDomainAxis(1, 1);
         plot.mapDatasetToRangeAxis(1, 1);
+
+        // show the r squared value
+        SigmoidFittingResultsHolder resultsholder = null;
+        if (normalized) {
+            resultsholder = analysisGroup.getDoseResponseAnalysisResults().getNormalizedFittingResults();
+        } else {
+            resultsholder = analysisGroup.getDoseResponseAnalysisResults().getInitialFittingResults();
+        }
+        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.computeRSquared(dataToPlot, resultsholder),0.00001,100.0));
 
         // Create the chart with the plot and no legend
         JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);

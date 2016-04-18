@@ -82,6 +82,10 @@ public class DRNormalizedController {
         return normalizedChartPanel;
     }
 
+    public LinkedHashMap<Double, List<Double>> getDataToFit() {
+        return dataToFit;
+    }
+
     /**
      * When changing view from input panel: make dataset, do fitting and plot
      * according to starting parameters.

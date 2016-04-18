@@ -7,7 +7,8 @@ package be.ugent.maf.cellmissy.utils;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -475,7 +476,8 @@ public class AnalysisUtils {
     /**
      * Return a comparator for comparing Doubles. This method can be used to
      * find a max or min value in a list.
-     * @return 
+     *
+     * @return
      */
     public static Comparator doublesComparator() {
         return new Comparator<String>() {
@@ -484,6 +486,45 @@ public class AnalysisUtils {
                 return Double.valueOf(o1).compareTo(Double.valueOf(o2));
             }
         };
+    }
+
+    /**
+     * Compute the R² of a non-linear fitting.
+     * 
+     * @param data Log transformed concentrations mapped to replicate velocities
+     * (normalized or not)
+     * @param resultsholder Contains the best-fit value parameters of the
+     * initial or normalized fitting
+     * @return
+     */
+    public static double computeRSquared(LinkedHashMap<Double, List<Double>> data, SigmoidFittingResultsHolder resultsholder) {
+        double ssReg = 0.0;
+        double ssTot = 0.0;
+        double[] experimentalYS = generateYValues(data);
+        double[] experimentalXS = generateXValues(data);
+        double mean = computeMean(experimentalYS);
+
+        for (int i = 0; i < experimentalYS.length; i++) {
+            ssTot += (experimentalYS[i] - mean) * (experimentalYS[i] - mean);
+            ssReg += (experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder))
+                    * (experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder));
+        }
+
+        return 1 - (ssReg / ssTot);
+    }
+
+    /**
+     * Calculate the Y value of a non-linear fit predicted by the best-fit
+     * parameters.
+     *
+     * @param xValue
+     * @param resultsholder
+     * @return
+     */
+    public static double calculatePredictedValue(double xValue, SigmoidFittingResultsHolder resultsholder) {
+        return (resultsholder.getBottom()
+                + (resultsholder.getTop() - resultsholder.getBottom())
+                / (1 + Math.pow(10, (resultsholder.getLogEC50() - xValue) * resultsholder.getHillslope())));
     }
 
 }

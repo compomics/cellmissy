@@ -61,10 +61,10 @@ public class SigmoidFitterImpl implements SigmoidFitter {
                 double hillslope = parameters[3];
 
                 return new double[]{
-                    1 - (1 / (Math.pow(10, (logEC50 - conc) * hillslope) + 1)),
-                    1 / (Math.pow(10, (logEC50 - conc) * hillslope) + 1),
-                    (hillslope * Math.log(10) * Math.pow(10, hillslope * (conc + logEC50)) * (bottom - top))
-                    / (Math.pow((Math.pow(10, conc * hillslope) + Math.pow(10, logEC50 * hillslope)), 2)),
+                    1 - (1 / ((Math.pow(10, (logEC50 - conc) * hillslope)) + 1)),
+                    1 / ((Math.pow(10, (logEC50 - conc) * hillslope)) + 1),
+                    (hillslope * Math.log(10) * Math.pow(10, hillslope * (logEC50 - conc)) * (top - bottom))
+                    / (Math.pow((Math.pow(10, hillslope * (logEC50 - conc))) + 1, 2)),
                     -((Math.log(10) * (logEC50 - conc) * (top - bottom) * Math.pow(10, (logEC50 - conc) * hillslope))
                     / (Math.pow((Math.pow(10, (logEC50 - conc) * hillslope) + 1), 2)))
 
@@ -76,7 +76,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
 
         double[] params = null;
 
-        params = fitter.fit(function, new double[]{1, 1, 1, 1});
+        params = fitter.fit(function, new double[]{1.0,1.0,1.0,1.0});
 
         double bottom = params[0];
         double top = params[1];

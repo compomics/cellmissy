@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalys
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -116,5 +117,10 @@ public class DRResultsController {
         DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
         SigmoidFittingResultsHolder initialFittingResults = analysisResults.getInitialFittingResults();
         SigmoidFittingResultsHolder normalizedFittingResults = analysisResults.getNormalizedFittingResults();
+        //calculate and set R²
+        analysisResults.setGoodnessOfFitInitial(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(false), initialFittingResults));
+        analysisResults.setGoodnessOfFitNormalized(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(true), normalizedFittingResults));
+        
+        
     }
 }
