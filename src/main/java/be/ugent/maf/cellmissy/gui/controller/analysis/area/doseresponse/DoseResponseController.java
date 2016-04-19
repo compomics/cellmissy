@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
 import be.ugent.maf.cellmissy.analysis.area.doseresponse.SigmoidFitter;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
@@ -21,17 +22,26 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -132,6 +142,14 @@ public class DoseResponseController {
         return areaMainController.getCellMissyFrame();
     }
 
+    public void showMessage(String message, String title, Integer messageType) {
+        areaMainController.showMessage(message, title, messageType);
+    }
+    
+    public Experiment getExperiment() {
+        return areaMainController.getExperiment();
+    }
+
     public boolean isFirstFitting() {
         return firstFitting;
     }
@@ -139,7 +157,7 @@ public class DoseResponseController {
     public void setFirstFitting(boolean firstFitting) {
         this.firstFitting = firstFitting;
     }
-    
+
     public LinkedHashMap<Double, List<Double>> getDataToFit(boolean normalized) {
         if (normalized) {
             return dRNormalizedController.getDataToFit();
@@ -159,11 +177,13 @@ public class DoseResponseController {
     }
 
     /**
-     * Do a fitting according to initial, standard parameters.
+     * Do a fitting according to initial, standard parameters and calculate
+     * statistics.
      */
     public void initFirstFitting() {
         dRInitialController.initDRInitialData();
         dRNormalizedController.initDRNormalizedData();
+        dRResultsController.initDRResultsData();
     }
 
     /**
@@ -206,23 +226,23 @@ public class DoseResponseController {
                 if (standardHillcurve) {
                     sigmoidFitter.fitBotTopHillConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
                 } else {
-                    sigmoidFitter.fitBotTopConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained);
+                    sigmoidFitter.fitBotTopConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
                 }
             } else if (standardHillcurve) {
                 sigmoidFitter.fitBotHillConstrain(dataToFit, resultsHolder, bottomConstrained, getStandardHillslope());
             } else {
-                sigmoidFitter.fitBotConstrain(dataToFit, resultsHolder, bottomConstrained);
+                sigmoidFitter.fitBotConstrain(dataToFit, resultsHolder, bottomConstrained, getStandardHillslope());
             }
         } else if (topConstrained != null) {
             if (standardHillcurve) {
                 sigmoidFitter.fitTopHillConstrain(dataToFit, resultsHolder, topConstrained, getStandardHillslope());
             } else {
-                sigmoidFitter.fitTopConstrain(dataToFit, resultsHolder, topConstrained);
+                sigmoidFitter.fitTopConstrain(dataToFit, resultsHolder, topConstrained, getStandardHillslope());
             }
         } else if (standardHillcurve) {
             sigmoidFitter.fitHillConstrain(dataToFit, resultsHolder, getStandardHillslope());
         } else {
-            sigmoidFitter.fitNoConstrain(dataToFit, resultsHolder);
+            sigmoidFitter.fitNoConstrain(dataToFit, resultsHolder, getStandardHillslope());
         }
     }
 
@@ -311,7 +331,7 @@ public class DoseResponseController {
         } else {
             resultsholder = analysisGroup.getDoseResponseAnalysisResults().getInitialFittingResults();
         }
-        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.computeRSquared(dataToPlot, resultsholder),0.00001,100.0));
+        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.computeRSquared(dataToPlot, resultsholder), 0.00001, 100.0));
 
         // Create the chart with the plot and no legend
         JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
@@ -343,6 +363,30 @@ public class DoseResponseController {
             resultsholder = analysisResults.getNormalizedFittingResults();
         }
         return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50());
+    }
+
+    /**
+     * Ask user to choose for a directory and invoke swing worker for creating
+     * PDF report
+     *
+     * @throws IOException
+     */
+    public void createPdfReport() throws IOException {
+        Experiment experiment = areaMainController.getExperiment();
+        // choose directory to save pdf file
+        JFileChooser chooseDirectory = new JFileChooser();
+        chooseDirectory.setDialogTitle("Choose a directory to save the report");
+        chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooseDirectory.setSelectedFile(new File("Dose Response Report " + experiment.toString() + " - " + experiment.getProject().toString() + ".pdf"));
+        // in response to the button click, show open dialog
+        int returnVal = chooseDirectory.showSaveDialog(areaMainController.getDataAnalysisPanel());
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File directory = chooseDirectory.getCurrentDirectory();
+            DoseResponseReportSwingWorker doseResponseReportSwingWorker = new DoseResponseReportSwingWorker(directory, chooseDirectory.getSelectedFile().getName());
+            doseResponseReportSwingWorker.execute();
+        } else {
+            areaMainController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     /**
@@ -494,6 +538,54 @@ public class DoseResponseController {
      */
     private void updateModelInTable(NonEditableTableModel tableModel) {
         dataTable.setModel(tableModel);
+    }
+
+    /**
+     * Swing Worker to generate PDF report
+     */
+    private class DoseResponseReportSwingWorker extends SwingWorker<File, Void> {
+
+        private final File directory;
+        private final String reportName;
+
+        public DoseResponseReportSwingWorker(File directory, String reportName) {
+            this.directory = directory;
+            this.reportName = reportName;
+        }
+
+        @Override
+        protected File doInBackground() throws Exception {
+            // disable button
+            dRResultsController.getdRResultsPanel().getCreateReportButton().setEnabled(false);
+            //set cursor to waiting one
+            areaMainController.setCursor(Cursor.WAIT_CURSOR);
+            //call the child controller to create report
+            return areaAnalysisReportController.createAnalysisReport(directory, reportName);
+        }
+
+        @Override
+        protected void done() {
+            File file = null;
+            try {
+                file = get();
+            } catch (InterruptedException | CancellationException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                areaMainController.handleUnexpectedError(ex);
+            }
+            try {
+                //if export to PDF was successful, open the PDF file from the desktop
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                }
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                areaMainController.showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
+            }
+            //set cursor back to default
+            areaMainController.setCursor(Cursor.DEFAULT_CURSOR);
+            // enable button
+            dRResultsController.getdRResultsPanel().getCreateReportButton().setEnabled(true);
+        }
     }
 
 }

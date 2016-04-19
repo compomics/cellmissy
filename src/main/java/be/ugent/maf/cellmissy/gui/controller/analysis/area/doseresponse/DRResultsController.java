@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
@@ -12,15 +13,28 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResult
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import be.ugent.maf.cellmissy.utils.PdfUtils;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.pdf.PdfWriter;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
- *
+ * Controller for dose-response analysis statistics and PFD report.
+ * 
  * @author Gwendolien
  */
 @Controller("dRResultsController")
@@ -30,9 +44,16 @@ public class DRResultsController {
 
     //model
     private NonEditableTableModel tableModel;
+    private Experiment experiment;
+    private Document document;
+    private PdfWriter writer;
+    private static final Font bodyFont = new Font(Font.HELVETICA, 8);
+    private static final Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
+    private static final Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
+    private static final int chartWidth = 500;
+    private static final int chartHeight = 450;
     //view
     private DRResultsPanel dRResultsPanel;
-    private ChartPanel resultsChartPanel;
     // parent controller
     @Autowired
     private DoseResponseController doseResponseController;
@@ -65,16 +86,38 @@ public class DRResultsController {
         this.tableModel = tableModel;
     }
 
-    public ChartPanel getResultsChartPanel() {
-        return resultsChartPanel;
-    }
-
     /**
-     * When changing view to results panel, calculate statistics and re-plot
-     * fittings.
+     * When changing view to results panel, calculate statistics, set table
+     * model and re-plot fittings.
      */
     public void initDRResultsData() {
         calculateStatistics(doseResponseController.getdRAnalysisGroup());
+        setTableModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+    }
+    
+    /**
+     * Create the PDF report file.
+     *
+     * @param directory
+     * @param reportName
+     * @return the file created
+     */
+    public File createAnalysisReport(File directory, String reportName) {
+        this.experiment = doseResponseController.getExperiment();
+        File pdfFile = new File(directory, reportName);
+        if (reportName.endsWith(".pdf")) {
+            tryToCreateFile(pdfFile);
+        } else {
+            doseResponseController.showMessage("Please use .pdf extension for the file.", "extension file problem", JOptionPane.WARNING_MESSAGE);
+            // retry to create pdf file
+            try {
+                doseResponseController.createPdfReport();
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                doseResponseController.showMessage("An error occurred: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return pdfFile;
     }
 
     /**
@@ -82,8 +125,6 @@ public class DRResultsController {
      */
     private void initDRResultsPanel() {
         dRResultsPanel = new DRResultsPanel();
-        resultsChartPanel = new ChartPanel(null);
-        resultsChartPanel.setOpaque(false);
 
         /**
          * Action listener for button. Copies the table with statistical values
@@ -105,8 +146,40 @@ public class DRResultsController {
      * @param dataToFit
      * @return the model
      */
-    private NonEditableTableModel createTableModel() {
-        return null;
+    private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
+        DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
+        Object[][] data = new Object[6][3];
+
+        //set fields in first column
+        data[0][0] = "Best-fit bottom";
+        data[1][0] = "Best-fit top";
+        data[2][0] = "Best-fit hillslope";
+        data[3][0] = "Best-fit logEC50";
+        data[4][0] = "EC50";
+        data[5][0] = "R² (goodness of fit)";
+        //set second column (initial fitting results)
+        data[0][1] = analysisResults.getInitialFittingResults().getBottom();
+        data[1][1] = analysisResults.getInitialFittingResults().getTop();
+        data[2][1] = analysisResults.getInitialFittingResults().getHillslope();
+        data[3][1] = analysisResults.getInitialFittingResults().getLogEC50();
+        data[4][1] = analysisResults.getEc50Initial();
+        data[5][1] = analysisResults.getGoodnessOfFitInitial();
+        //set third column (normalized fitting results)
+        data[0][2] = analysisResults.getNormalizedFittingResults().getBottom();
+        data[1][2] = analysisResults.getNormalizedFittingResults().getTop();
+        data[2][2] = analysisResults.getNormalizedFittingResults().getHillslope();
+        data[3][2] = analysisResults.getNormalizedFittingResults().getLogEC50();
+        data[4][2] = analysisResults.getEc50Normalized();
+        data[5][2] = analysisResults.getGoodnessOfFitNormalized();
+
+        String[] columnNames = new String[data[0].length];
+        columnNames[0] = "";
+        columnNames[1] = "Initial fitting";
+        columnNames[3] = "Normalized fitting";
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
     }
 
     /**
@@ -120,7 +193,134 @@ public class DRResultsController {
         //calculate and set R²
         analysisResults.setGoodnessOfFitInitial(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(false), initialFittingResults));
         analysisResults.setGoodnessOfFitNormalized(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(true), normalizedFittingResults));
+        //calculate and set EC50
+        analysisResults.setEc50Initial(Math.pow(10, initialFittingResults.getLogEC50()));
+        analysisResults.setEc50Normalized(Math.pow(10, normalizedFittingResults.getLogEC50()));
+    }
+
+    private void replotInitial() {
+        JFreeChart initialChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), doseResponseController.getdRAnalysisGroup(), false);
+
+    }
+    
+    
+    
+    
+    
+    
+    /**
+     * @param pdfFile
+     */
+    private void tryToCreateFile(File pdfFile) {
+        try {
+            boolean success = pdfFile.createNewFile();
+            if (success) {
+                doseResponseController.showMessage("Pdf Report successfully created!", "Report created", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Object[] options = {"Yes", "No", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                // if YES, user wants to delete existing file and replace it
+                if (showOptionDialog == 0) {
+                    boolean delete = pdfFile.delete();
+                    if (!delete) {
+                        return;
+                    }
+                    // if NO, returns already existing file
+                } else if (showOptionDialog == 1) {
+                    return;
+                }
+            }
+        } catch (IOException ex) {
+            doseResponseController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(pdfFile)) {
+            // actually create PDF file
+            createPdfFile(fileOutputStream);
+        } catch (IOException ex) {
+            doseResponseController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
+     * @param outputStream
+     */
+    private void createPdfFile(FileOutputStream outputStream) {
+        document = null;
+        writer = null;
+        try {
+            // get new instances
+            // the Document is the base layout element
+            document = new Document();
+            // the pdfWriter is actually creating the file
+            writer = PdfWriter.getInstance(document, outputStream);
+            //open document
+            document.open();
+            // add content to document
+            addContent();
+            //dispose resources
+            document.close();
+            document = null;
+            writer.close();
+            writer = null;
+        } catch (DocumentException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
+    
+    /**
+     * Add content to document.
+     */
+    private void addContent() {
+        // overview: title, dataset,  brief summary of the analysis group
+        addOverview();
+        // table with info from analysis group
+        addAnalysisGroupInfoTable();
+        // we go here to a new page
+        document.newPage();
+        // we add the initial fitting information
+        addInitialFittingInfo();
+        // then, we move to next page
+        document.newPage();
+        // we add the normalized fitting information
+        addNormalizedFittingInfo();
         
-        
+    }
+    
+    /**
+     * Overview of Report: experiment and project numbers + some details.
+     */
+    private void addOverview() {
+        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
+        PdfUtils.addTitle(document, title, titleFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add information on dataset (algorithm) and imaging type analyzed
+        List<String> lines = new ArrayList<>();
+        String line = "DATASET: " + areaAnalysisController.getSelectedALgorithm();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add conditions number
+        lines.clear();
+        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + experiment.getPlateConditionList().size();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add conditions info
+        lines.clear();
+        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
+        for (PlateCondition plateCondition : plateConditonsList) {
+            lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
+        }
+        PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add extra info
+        lines.clear();
+        line = "MEASUREAD AREA TYPE: " + areaAnalysisController.getMeasuredAreaType().getStringForType();
+        lines.add(line);
+        String correctedData = useCorrectedData ? "Y" : "N";
+        line = "DATA CORRECTED FOR OUTLIERS? " + correctedData;
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 }

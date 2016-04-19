@@ -38,6 +38,9 @@ public class SigmoidFitterTest {
     public static void setupData() {
         List<Double> list = new ArrayList<>();
         list.add(10.0);
+        dataToFit.put(-8.0, list);
+        list = new ArrayList<>();
+        list.add(10.0);
         dataToFit.put(-7.0, list);
         list = new ArrayList<>();
         list.add(20.0);
@@ -51,14 +54,21 @@ public class SigmoidFitterTest {
         list = new ArrayList<>();
         list.add(50.0);
         dataToFit.put(-3.0, list);
+        list = new ArrayList<>();
+        list.add(50.0);
+        dataToFit.put(-2.0, list);
     }
 
     @Test
     public void testFitNoConstrain() {
-        sigmoidFitter.fitNoConstrain(dataToFit, resultsHolder);
+        sigmoidFitter.fitNoConstrain(dataToFit, resultsHolder,1);
         double logEC50 = resultsHolder.getLogEC50();
         double hillslope = resultsHolder.getHillslope();
+        double top = resultsHolder.getTop();
+        double bottom = resultsHolder.getBottom();
+        assertEquals(10, bottom, 5);
+        assertEquals(50, top, 5);
         assertEquals(-5.0, logEC50, 0.1);
-        assertEquals(1.0, hillslope);
+        assertEquals(0.5, hillslope, 0.15);
     }
 }
