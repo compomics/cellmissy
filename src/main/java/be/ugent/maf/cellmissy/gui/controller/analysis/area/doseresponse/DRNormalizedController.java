@@ -95,17 +95,15 @@ public class DRNormalizedController {
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
         dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
         //set initial parameters
-        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
-        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
+        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
         //LogTransform concentrations and perform initial normalization (mean values)
         dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
         //create and set the table model for the top panel table (dependent on normalization)
         setTableModel(createTableModel(dataToFit));
         //Perform initial curve fitting (standard hillslope, no constraints)
-        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), null, null, true);
-        //Plot fitted data in dose-response curve, along with R² annotation
-        doseResponseController.plotDoseResponse(normalizedChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), true);
-
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), null, null, false);
+        
     }
 
     /**
@@ -162,11 +160,11 @@ public class DRNormalizedController {
                 switch (value) {
                     case "Smallest Mean Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
+                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Smallest Median Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
+                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getBottomTextField().setText("");
@@ -188,11 +186,11 @@ public class DRNormalizedController {
                 switch (choice) {
                     case "Largest Mean Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Largest Median Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()), AnalysisUtils.doublesComparator()).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getTopTextField().setText("");
@@ -259,7 +257,10 @@ public class DRNormalizedController {
         for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
             double[] data = new double[velocities.size()];
             for (int i = 0; i < data.length; i++) {
-                data[i] = velocities.get(i);
+                if (velocities.get(i) != null) {
+                    data[i] = velocities.get(i);
+                }
+                
             }
             allMeans.add(AnalysisUtils.computeMean(data));
         }
@@ -274,7 +275,9 @@ public class DRNormalizedController {
         for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
             double[] data = new double[velocities.size()];
             for (int i = 0; i < data.length; i++) {
-                data[i] = velocities.get(i);
+               if (velocities.get(i) != null) {
+                    data[i] = velocities.get(i);
+                }
             }
             allMedians.add(AnalysisUtils.computeMedian(data));
         }
@@ -304,7 +307,7 @@ public class DRNormalizedController {
             allLogConcentrations.add(logConcentration);
         }
 
-        Double lowestLogConc = Collections.min(allLogConcentrations, AnalysisUtils.doublesComparator());
+        Double lowestLogConc = Collections.min(allLogConcentrations);
         //iterate through conditions
         int x = 0;
         for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
@@ -356,7 +359,14 @@ public class DRNormalizedController {
      * @return the model
      */
     private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
-        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 1];
+        int maxReplicates = 0;
+        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
+            int replicates = entry.getValue().size();
+            if (replicates > maxReplicates) {
+                maxReplicates = replicates;
+            }
+        }
+        Object[][] data = new Object[dataToFit.size()][maxReplicates + 1];
 
         int rowIndex = 0;
         for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {

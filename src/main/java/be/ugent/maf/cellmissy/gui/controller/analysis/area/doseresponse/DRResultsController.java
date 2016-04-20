@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.PdfUtils;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.GridBagConstraints;
@@ -34,7 +35,7 @@ import org.springframework.stereotype.Controller;
 
 /**
  * Controller for dose-response analysis statistics and PFD report.
- * 
+ *
  * @author Gwendolien
  */
 @Controller("dRResultsController")
@@ -44,6 +45,8 @@ public class DRResultsController {
 
     //model
     private NonEditableTableModel tableModel;
+    private ChartPanel dupeInitialChartPanel;
+    private ChartPanel dupeNormalizedChartPanel;
     private Experiment experiment;
     private Document document;
     private PdfWriter writer;
@@ -86,6 +89,14 @@ public class DRResultsController {
         this.tableModel = tableModel;
     }
 
+    public ChartPanel getDupeInitialChartPanel() {
+        return dupeInitialChartPanel;
+    }
+
+    public ChartPanel getDupeNormalizedChartPanel() {
+        return dupeNormalizedChartPanel;
+    }
+
     /**
      * When changing view to results panel, calculate statistics, set table
      * model and re-plot fittings.
@@ -94,7 +105,7 @@ public class DRResultsController {
         calculateStatistics(doseResponseController.getdRAnalysisGroup());
         setTableModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
     }
-    
+
     /**
      * Create the PDF report file.
      *
@@ -125,6 +136,11 @@ public class DRResultsController {
      */
     private void initDRResultsPanel() {
         dRResultsPanel = new DRResultsPanel();
+        //init chart panels
+        dupeInitialChartPanel = new ChartPanel(null);
+        dupeInitialChartPanel.setOpaque(false);
+        dupeNormalizedChartPanel = new ChartPanel(null);
+        dupeNormalizedChartPanel.setOpaque(false);
 
         /**
          * Action listener for button. Copies the table with statistical values
@@ -175,7 +191,7 @@ public class DRResultsController {
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "";
         columnNames[1] = "Initial fitting";
-        columnNames[3] = "Normalized fitting";
+        columnNames[2] = "Normalized fitting";
 
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
         nonEditableTableModel.setDataVector(data, columnNames);
@@ -198,16 +214,19 @@ public class DRResultsController {
         analysisResults.setEc50Normalized(Math.pow(10, normalizedFittingResults.getLogEC50()));
     }
 
-    private void replotInitial() {
+    private void plotCharts() {
         JFreeChart initialChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), doseResponseController.getdRAnalysisGroup(), false);
-
+        JFreeChart normalizedChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), doseResponseController.getdRAnalysisGroup(), true);
+        dupeInitialChartPanel.setChart(initialChart);
+        dupeNormalizedChartPanel.setChart(normalizedChart);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dupeInitialChartPanel, gridBagConstraints);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dupeNormalizedChartPanel, gridBagConstraints);
     }
-    
-    
-    
-    
-    
-    
+
     /**
      * @param pdfFile
      */
@@ -241,7 +260,7 @@ public class DRResultsController {
             doseResponseController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * @param outputStream
      */
@@ -267,7 +286,7 @@ public class DRResultsController {
             LOG.error(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Add content to document.
      */
@@ -284,9 +303,9 @@ public class DRResultsController {
         document.newPage();
         // we add the normalized fitting information
         addNormalizedFittingInfo();
-        
+
     }
-    
+
     /**
      * Overview of Report: experiment and project numbers + some details.
      */
@@ -296,7 +315,7 @@ public class DRResultsController {
         PdfUtils.addEmptyLines(document, 1);
         // add information on dataset (algorithm) and imaging type analyzed
         List<String> lines = new ArrayList<>();
-        String line = "DATASET: " + areaAnalysisController.getSelectedALgorithm();
+        String line = "DATASET: " + doseResponseController.getSelectedALgorithm();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -306,21 +325,27 @@ public class DRResultsController {
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
-        // add conditions info
-        lines.clear();
-        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
-        for (PlateCondition plateCondition : plateConditonsList) {
-            lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
-        }
-        PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
-        PdfUtils.addEmptyLines(document, 1);
-        // add extra info
-        lines.clear();
-        line = "MEASUREAD AREA TYPE: " + areaAnalysisController.getMeasuredAreaType().getStringForType();
-        lines.add(line);
-        String correctedData = useCorrectedData ? "Y" : "N";
-        line = "DATA CORRECTED FOR OUTLIERS? " + correctedData;
-        lines.add(line);
+//        // add conditions info
+//        lines.clear();
+//        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
+//        for (PlateCondition plateCondition : plateConditonsList) {
+//            lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
+//        }
+//        PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
+//        PdfUtils.addEmptyLines(document, 1);
+        
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+    }
+
+    private void addAnalysisGroupInfoTable() {
+
+    }
+
+    private void addInitialFittingInfo() {
+
+    }
+
+    private void addNormalizedFittingInfo() {
+
     }
 }

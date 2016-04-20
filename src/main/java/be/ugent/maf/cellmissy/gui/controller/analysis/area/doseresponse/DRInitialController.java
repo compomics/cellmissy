@@ -95,12 +95,11 @@ public class DRInitialController {
         //create and set the table model for the top panel table
         setTableModel(createTableModel(dataToFit));
         //Fit data according to initial parameters (standard hillslope, no constraints)
-        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), null, null, true);
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), null, null, false);
         //set text field for standard hillslope and make uneditable
         dRInitialPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
         dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
-        //Plot fitted data in dose-response curve, along with R² annotation
-        doseResponseController.plotDoseResponse(initialChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), false);
+        
 
     }
 
@@ -221,7 +220,7 @@ public class DRInitialController {
             allLogConcentrations.add(logConcentration);
         }
 
-        Double lowestLogConc = Collections.min(allLogConcentrations, AnalysisUtils.doublesComparator());
+        Double lowestLogConc = Collections.min(allLogConcentrations);
         //iterate through conditions
         int x = 0;
         for (PlateCondition plateCondition : dRAnalysisGroup.getVelocitiesMap().keySet()) {
@@ -229,7 +228,7 @@ public class DRInitialController {
 
             //check if this platecondition is the control
             for (Treatment treatment : plateCondition.getTreatmentList()) {
-                if (treatment.getTreatmentType().getName().equals("control")) {
+                if (treatment.getTreatmentType().getName().contains("ontrol")) {
                     allLogConcentrations.add(x, lowestLogConc - 1.0);
                 }
             }
@@ -252,7 +251,14 @@ public class DRInitialController {
      * @return the model
      */
     private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
-        Object[][] data = new Object[dataToFit.size()][dataToFit.entrySet().iterator().next().getValue().size() + 1];
+        int maxReplicates = 0;
+        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
+            int replicates = entry.getValue().size();
+            if (replicates > maxReplicates) {
+                maxReplicates = replicates;
+            }
+        }
+        Object[][] data = new Object[dataToFit.size()][maxReplicates + 1];
 
         int rowIndex = 0;
         for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {

@@ -74,7 +74,7 @@ public class DRPanel extends javax.swing.JPanel {
 
         radioButtonsDRPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         radioButtonsDRPanel.setOpaque(false);
-        radioButtonsDRPanel.setPreferredSize(new java.awt.Dimension(436, 90));
+        radioButtonsDRPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         inputDRButton.setText("Input data");
         inputDRButton.setOpaque(false);
@@ -108,7 +108,7 @@ public class DRPanel extends javax.swing.JPanel {
                         .addComponent(normalizedPlotDRButton)
                         .addGap(18, 18, 18)
                         .addComponent(resultsDRButton)))
-                .addContainerGap(318, Short.MAX_VALUE))
+                .addContainerGap(362, Short.MAX_VALUE))
         );
         radioButtonsDRPanelLayout.setVerticalGroup(
             radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -127,35 +127,38 @@ public class DRPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 846;
-        gridBagConstraints.ipady = 37;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 12, 0, 0);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
         add(radioButtonsDRPanel, gridBagConstraints);
 
         datatableDRPanel.setBackground(new java.awt.Color(255, 255, 255));
+        datatableDRPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         datatableDRPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         datatableDRPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipadx = 877;
-        gridBagConstraints.ipady = 229;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 1);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.4;
         add(datatableDRPanel, gridBagConstraints);
 
         graphicsDRParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        graphicsDRParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        graphicsDRParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         graphicsDRParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipadx = 877;
-        gridBagConstraints.ipady = 360;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(7, 12, 0, 1);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
         add(graphicsDRParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 

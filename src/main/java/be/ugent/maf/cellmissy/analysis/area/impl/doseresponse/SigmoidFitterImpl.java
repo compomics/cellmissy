@@ -52,11 +52,8 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
 
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
@@ -138,11 +135,8 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
 
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
@@ -220,11 +214,8 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
 
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
@@ -305,13 +296,10 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
-
+        
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
             /**
              * @param conc The concentration of the drug, log transformed
@@ -370,6 +358,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
 
         //initial parameter values for fitting: middle x and standard hillslope
         double[] xValues = AnalysisUtils.generateXValues(dataToFit);
+        double[] yValues = AnalysisUtils.generateYValues(dataToFit);
         double initialLogEC50;
         double maxX = xValues[0];
         double minX = xValues[0];
@@ -382,11 +371,8 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
 
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
@@ -461,11 +447,8 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
 
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
@@ -538,11 +521,8 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
 
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {
@@ -599,6 +579,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         
         //initial parameter values for fitting: lowest y, highest y, middle x and standard hillslope
         double[] xValues = AnalysisUtils.generateXValues(dataToFit);
+        double[] yValues = AnalysisUtils.generateYValues(dataToFit);
         double initialLogEC50;
         double maxX = xValues[0];
         double minX = xValues[0];
@@ -611,11 +592,8 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         }
         initialLogEC50 = (maxX + minX) / 2;
 
-        for (Double concentration : dataToFit.keySet()) {
-            List<Double> velocities = dataToFit.get(concentration);
-            for (Double velocity : velocities) {
-                fitter.addObservedPoint(concentration, velocity);
-            }
+        for (int i =0; i < xValues.length; i++){
+            fitter.addObservedPoint(xValues[i], yValues[i]);
         }
 
         ParametricUnivariateFunction function = new ParametricUnivariateFunction() {

@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
 
 import be.ugent.maf.cellmissy.analysis.area.doseresponse.SigmoidFitter;
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
@@ -20,6 +21,7 @@ import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.BorderLayout;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -51,6 +53,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -145,9 +148,13 @@ public class DoseResponseController {
     public void showMessage(String message, String title, Integer messageType) {
         areaMainController.showMessage(message, title, messageType);
     }
-    
+
     public Experiment getExperiment() {
         return areaMainController.getExperiment();
+    }
+
+    public Algorithm getSelectedALgorithm() {
+        return areaMainController.getSelectedALgorithm();
     }
 
     public boolean isFirstFitting() {
@@ -203,8 +210,9 @@ public class DoseResponseController {
         JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, analysisGroup, normalized);
         chartPanel.setChart(doseResponseChart);
         //add chartpanel to graphics parent panel and repaint
-        //dRPanel.getGraphicsDRParentPanel().add(chartPanel,gridBagConstraints);
-        //dRPanel.getGraphicsDRParentPanel().repaint();
+        dRPanel.getGraphicsDRParentPanel().add(chartPanel, gridBagConstraints);
+        dRPanel.getGraphicsDRParentPanel().repaint();
+        dRPanel.getGraphicsDRParentPanel().revalidate();
     }
 
     /**
@@ -266,13 +274,14 @@ public class DoseResponseController {
         dRInputController.getdRInputPanel().getSlopesTable().setModel(new DefaultTableModel());
         dRInitialController.getInitialChartPanel().setChart(null);
         dRNormalizedController.getNormalizedChartPanel().setChart(null);
-        dRResultsController.getResultsChartPanel().setChart(null);
+        dRResultsController.getDupeInitialChartPanel().setChart(null);
+        dRResultsController.getDupeNormalizedChartPanel().setChart(null);
         dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
         dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
         dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
         dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
-        dRPanel.getGraphicsDRParentPanel().revalidate();
-        dRPanel.getGraphicsDRParentPanel().repaint();
+        dRPanel.revalidate();
+        dRPanel.repaint();
     }
 
     /**
@@ -294,7 +303,9 @@ public class DoseResponseController {
         XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(AnalysisUtils.generateXValues(dataToPlot), AnalysisUtils.generateYValues(dataToPlot));
         scatterXYSeries.setKey("Experimental data");
         experimentalData.addSeries(scatterXYSeries);
-        XYItemRenderer renderer1 = new XYDotRenderer();   // Shapes only
+        XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();   // Shapes only
+        renderer1.setSeriesLinesVisible(0, false);
+        renderer1.setSeriesShapesVisible(0, true);
         ValueAxis domain1 = new NumberAxis("Log of concentration");
         ValueAxis range1 = new NumberAxis("Velocity");
         // Set the scatter data, renderer, and axis into plot
@@ -313,6 +324,9 @@ public class DoseResponseController {
         fittingData.setKey("Fitting");
         fitting.addSeries(fittingData);
         XYItemRenderer renderer2 = new XYSplineRenderer();   // Lines only
+        XYLineAndShapeRenderer tempRenderer = (XYLineAndShapeRenderer) renderer2;
+        tempRenderer.setSeriesLinesVisible(0, true);
+        tempRenderer.setSeriesShapesVisible(0, false);
         ValueAxis domain2 = new NumberAxis("Domain2");
         ValueAxis range2 = new NumberAxis("Range2");
         // Set the line data, renderer, and axis into plot
@@ -320,9 +334,9 @@ public class DoseResponseController {
         plot.setRenderer(1, renderer2);
         plot.setDomainAxis(1, domain2);
         plot.setRangeAxis(1, range2);
-        // Map the line to the second Domain and second Range
-        plot.mapDatasetToDomainAxis(1, 1);
-        plot.mapDatasetToRangeAxis(1, 1);
+        // Map the line to the first Domain Range
+        plot.mapDatasetToDomainAxis(1, 0);
+        plot.mapDatasetToRangeAxis(1, 0);
 
         // show the r squared value
         SigmoidFittingResultsHolder resultsholder = null;
@@ -416,7 +430,7 @@ public class DoseResponseController {
         //row and column selection must be false
         //dataTable.setColumnSelectionAllowed(false);
         //dataTable.setRowSelectionAllowed(false);
-        dRPanel.getDatatableDRPanel().add(scrollPane);
+        dRPanel.getDatatableDRPanel().add(scrollPane, BorderLayout.CENTER);
 
         /**
          * When button is selected, switch view to corresponding subview
@@ -435,15 +449,13 @@ public class DoseResponseController {
                  */
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
                 //remove other panels
-                dRInitialController.getInitialChartPanel().setChart(null);
-                dRNormalizedController.getNormalizedChartPanel().setChart(null);
-                dRResultsController.getResultsChartPanel().setChart(null);
-//                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
-//                dRPanel.getGraphicsDRParentPanel().repaint();
-//                //add panel to view
-//                dRPanel.getGraphicsDRParentPanel().add(dRInputController.getdRInputPanel(), gridBagConstraints);
+                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
+                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
+                dRPanel.getGraphicsDRParentPanel().revalidate();
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                //add panel to view
+                dRPanel.getGraphicsDRParentPanel().add(dRInputController.getdRInputPanel(), gridBagConstraints);
             }
         });
 
@@ -465,15 +477,15 @@ public class DoseResponseController {
                  */
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
                 //remove other panels
-//                dRNormalizedController.getNormalizedChartPanel().setChart(null);
-//                dRResultsController.getResultsChartPanel().setChart(null);
-//                dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
-//                dRPanel.getGraphicsDRParentPanel().repaint();
-//                dRPanel.getGraphicsDRParentPanel().add(dRInitialController.getDRInitialPlotPanel(), gridBagConstraints);
-                //plot according to 'data to fit' - the plotting method add the panel to the view
-                //plot
+                dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                dRResultsController.getDupeInitialChartPanel().setChart(null);
+                dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().removeAll();
+                dRPanel.getGraphicsDRParentPanel().revalidate();
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                dRPanel.getGraphicsDRParentPanel().add(dRInitialController.getDRInitialPlotPanel(), gridBagConstraints);
+                //Plot fitted data in dose-response curve, along with R² annotation
+                plotDoseResponse(dRInitialController.getInitialChartPanel(), getDataToFit(false), getdRAnalysisGroup(), false);
             }
         });
 
@@ -497,14 +509,14 @@ public class DoseResponseController {
                 dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
                 //remove other panels
                 dRInitialController.getInitialChartPanel().setChart(null);
-//                dRResultsController.getResultsChartPanel().setChart(null);
-//                dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
-//                dRPanel.getGraphicsDRParentPanel().repaint();
-//                dRPanel.getGraphicsDRParentPanel().add(dRNormalizedController.getDRNormalizedPlotPanel(), gridBagConstraints);
-                //plot according to 'data to fit' - the plotting method add the panel to the view
-                //plot
+                dRResultsController.getDupeInitialChartPanel().setChart(null);
+                dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().removeAll();
+                dRPanel.getGraphicsDRParentPanel().revalidate();
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                dRPanel.getGraphicsDRParentPanel().add(dRNormalizedController.getDRNormalizedPlotPanel(), gridBagConstraints);
+                //Plot fitted data in dose-response curve, along with R² annotation
+                plotDoseResponse(dRNormalizedController.getNormalizedChartPanel(), getDataToFit(true), getdRAnalysisGroup(), true);
             }
         });
 
@@ -519,12 +531,10 @@ public class DoseResponseController {
                 //remove other panels
                 dRInitialController.getInitialChartPanel().setChart(null);
                 dRNormalizedController.getNormalizedChartPanel().setChart(null);
-//                dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
-//                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
-//                dRPanel.getGraphicsDRParentPanel().repaint();
-//                dRPanel.getGraphicsDRParentPanel().add(dRResultsController.getdRResultsPanel(), gridBagConstraints);
-                // re-plot both initial and normalized plots
+                dRPanel.getGraphicsDRParentPanel().removeAll();
+                dRPanel.getGraphicsDRParentPanel().revalidate();
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                dRPanel.getGraphicsDRParentPanel().add(dRResultsController.getdRResultsPanel(), gridBagConstraints);
             }
         });
 
@@ -560,7 +570,7 @@ public class DoseResponseController {
             //set cursor to waiting one
             areaMainController.setCursor(Cursor.WAIT_CURSOR);
             //call the child controller to create report
-            return areaAnalysisReportController.createAnalysisReport(directory, reportName);
+            return dRResultsController.createAnalysisReport(directory, reportName);
         }
 
         @Override

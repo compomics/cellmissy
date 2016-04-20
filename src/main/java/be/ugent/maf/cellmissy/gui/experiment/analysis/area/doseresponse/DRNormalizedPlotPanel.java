@@ -102,6 +102,8 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
         leftPanel.setBackground(new java.awt.Color(255, 255, 255));
         leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
         leftPanel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         hillslopeLabel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         hillslopeLabel.setText("Hillslope");
@@ -199,25 +201,29 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
                 .addComponent(topConstrainCheckBox)
                 .addGap(18, 18, 18)
                 .addComponent(plotGraphButton)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipady = 13;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weighty = 1.0;
         add(leftPanel, gridBagConstraints);
 
         doseResponseChartParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        doseResponseChartParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        doseResponseChartParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         doseResponseChartParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 896;
-        gridBagConstraints.ipady = 379;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
         add(doseResponseChartParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 

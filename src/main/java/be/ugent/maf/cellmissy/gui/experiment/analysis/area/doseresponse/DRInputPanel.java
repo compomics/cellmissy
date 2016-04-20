@@ -11,6 +11,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -82,10 +83,14 @@ public class DRInputPanel extends javax.swing.JPanel {
         slopesTable = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(1000, 300));
+        setPreferredSize(new java.awt.Dimension(1421, 401));
         setLayout(new java.awt.GridBagLayout());
 
         leftPanel.setBackground(new java.awt.Color(255, 255, 255));
         leftPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         addConditionButton.setText("Add condition");
 
@@ -152,15 +157,22 @@ public class DRInputPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipady = 12;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weighty = 1.0;
         add(leftPanel, gridBagConstraints);
 
         rightPanel.setBackground(new java.awt.Color(255, 255, 255));
         rightPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+        rightPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         rightPanel.setOpaque(false);
+        rightPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         slopesTableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
+        slopesTableScrollPane.setBorder(null);
+        slopesTableScrollPane.setMinimumSize(new java.awt.Dimension(20, 20));
+        slopesTableScrollPane.setPreferredSize(new java.awt.Dimension(20, 20));
 
         slopesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -173,6 +185,7 @@ public class DRInputPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        slopesTable.setMinimumSize(new java.awt.Dimension(20, 20));
         slopesTableScrollPane.setViewportView(slopesTable);
 
         javax.swing.GroupLayout rightPanelLayout = new javax.swing.GroupLayout(rightPanel);
@@ -181,7 +194,7 @@ public class DRInputPanel extends javax.swing.JPanel {
             rightPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 666, Short.MAX_VALUE)
+                .addComponent(slopesTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 760, Short.MAX_VALUE)
                 .addContainerGap())
         );
         rightPanelLayout.setVerticalGroup(
@@ -195,10 +208,10 @@ public class DRInputPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 639;
-        gridBagConstraints.ipady = 370;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 7, 0, 0);
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
         add(rightPanel, gridBagConstraints);
         rightPanel.getAccessibleContext().setAccessibleName("Conditions included in further analysis");
     }// </editor-fold>//GEN-END:initComponents

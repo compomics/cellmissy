@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import org.jdesktop.beansbinding.AutoBinding;
@@ -114,7 +115,10 @@ public class DRInputController {
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
         dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
-
+        dRInputPanel.getConditionsList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel);
+        doseResponseController.getDRPanel().revalidate();
+        doseResponseController.getDRPanel().repaint();
     }
 
     /**
@@ -248,7 +252,7 @@ public class DRInputController {
         checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
         dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
 
     }
 
@@ -289,13 +293,13 @@ public class DRInputController {
 
             for (Treatment treatment : treatmentList) {
                 //for dose-response treatment category needs to be 1
-                if (treatment.getTreatmentType().getTreatmentCategory() == 1) {
-                    conditionNumberList.add(i);
-                    treatmentNameList.add(treatment.getTreatmentType().getName());
-                    concentrationList.add(treatment.getConcentration());
-                    concentrationUnitList.add(treatment.getConcentrationUnit());
-                    slopesList.add(doseResponseController.getLinearResultsAnalysisMap().get(condition).getSlopes());
-                }
+
+                conditionNumberList.add(i);
+                treatmentNameList.add(treatment.getTreatmentType().getName());
+                concentrationList.add(treatment.getConcentration());
+                concentrationUnitList.add(treatment.getConcentrationUnit());
+                slopesList.add(doseResponseController.getLinearResultsAnalysisMap().get(condition).getSlopes());
+
             }
             i++;
         }
@@ -346,29 +350,64 @@ public class DRInputController {
     private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
         LinkedHashMap<Double, String> concentrationsMap = analysisGroup.getConcentrationsMap().get(analysisGroup.getTreatmentToAnalyse());
         LinkedHashMap<PlateCondition, List<Double>> velocitiesMap = analysisGroup.getVelocitiesMap();
+        int maxReplicates = 0;
+        for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
+            int replicates = entry.getValue().size();
+            if (replicates > maxReplicates) {
+                maxReplicates = replicates;
+            }
+        }
 
-        List<List<Double>> allVelocities = new ArrayList<List<Double>>();
-
-        Object[][] data = new Object[concentrationsMap.size()][velocitiesMap.entrySet().iterator().next().getValue().size() + 2];
+        Object[][] data = new Object[concentrationsMap.size()][maxReplicates + 2];
         int i = 0;
-        int controlIndex = 0;
-        for (PlateCondition plateCondition : velocitiesMap.keySet()) {
-            List<Double> replicateVelocities = analysisGroup.getVelocitiesMap().get(plateCondition);
-            allVelocities.add(replicateVelocities);
+        int controlIndex = 100;
+        int rowIndex = 0;
 
+        for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
             //check if this platecondition is the control, save index for table
-            for (Treatment treatment : plateCondition.getTreatmentList()) {
+            for (Treatment treatment : entry.getKey().getTreatmentList()) {
                 if (treatment.getTreatmentType().getName().equalsIgnoreCase("control")) {
                     controlIndex = i;
                 }
             }
             i++;
+
+            int columnIndex = 2;
+            for (Double velocity : entry.getValue()) {
+
+                if (rowIndex < controlIndex) {
+                    if (velocity != null && !velocity.isNaN()) {
+                        // round to three decimals slopes and coefficients
+                        Double slope = AnalysisUtils.roundThreeDecimals(velocity);
+                        // show in table slope + (coefficient)
+                        data[rowIndex][columnIndex] = slope;
+                    } else if (velocity == null) {
+                        data[rowIndex][columnIndex] = "excluded";
+                    } else if (velocity.isNaN()) {
+                        data[rowIndex][columnIndex] = "NaN";
+                    }
+                } else {
+                    if (velocity != null && !velocity.isNaN()) {
+                        // round to three decimals slopes and coefficients
+                        Double slope = AnalysisUtils.roundThreeDecimals(velocity);
+                        // show in table slope + (coefficient)
+                        data[rowIndex + 1][columnIndex] = slope;
+                    } else if (velocity == null) {
+                        data[rowIndex + 1][columnIndex] = "excluded";
+                    } else if (velocity.isNaN()) {
+                        data[rowIndex + 1][columnIndex] = "NaN";
+                    }
+                }
+                columnIndex++;
+            }
+            rowIndex++;
         }
-        data[controlIndex][0] = 0.0;
-        data[controlIndex][1] = "--";
 
-        int rowIndex = 0;
-
+        if (controlIndex != 100) {
+            data[controlIndex][0] = 0.0;
+            data[controlIndex][1] = "--";
+        }
+        rowIndex = 0;
         for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
             if (rowIndex >= controlIndex) {
                 data[rowIndex + 1][0] = entry.getKey();
@@ -378,37 +417,11 @@ public class DRInputController {
                 data[rowIndex][1] = entry.getValue();
             }
 
-            for (int columnIndex = 2; columnIndex < allVelocities.get(0).size() + 2; columnIndex++) {
-                Double slope = allVelocities.get(rowIndex).get(columnIndex - 2);
-                if (rowIndex < controlIndex) {
-                    if (slope != null && !slope.isNaN()) {
-                        // round to three decimals slopes and coefficients
-                        slope = AnalysisUtils.roundThreeDecimals(allVelocities.get(rowIndex).get(columnIndex - 2));
-                        // show in table slope + (coefficient)
-                        data[rowIndex][columnIndex] = slope;
-                    } else if (slope == null) {
-                        data[rowIndex][columnIndex] = "excluded";
-                    } else if (slope.isNaN()) {
-                        data[rowIndex][columnIndex] = "NaN";
-                    }
-                } else {
-                    if (slope != null && !slope.isNaN()) {
-                        // round to three decimals slopes and coefficients
-                        slope = AnalysisUtils.roundThreeDecimals(allVelocities.get(rowIndex).get(columnIndex - 2));
-                        // show in table slope + (coefficient)
-                        data[rowIndex + 1][columnIndex] = slope;
-                    } else if (slope == null) {
-                        data[rowIndex + 1][columnIndex] = "excluded";
-                    } else if (slope.isNaN()) {
-                        data[rowIndex + 1][columnIndex] = "NaN";
-                    }
-                }
-            }
             rowIndex++;
         }
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
-        columnNames[0] = "Conc of " + analysisGroup.getTreatmentToAnalyse().getTreatmentType().getName();
+        columnNames[0] = "Conc of " + analysisGroup.getTreatmentToAnalyse();
         columnNames[1] = "Unit";
         for (int x = 2; x < columnNames.length; x++) {
             columnNames[x] = "Repl " + (x - 1);
@@ -426,15 +439,14 @@ public class DRInputController {
      * to analyze.
      */
     private void checkTreatments(DoseResponseAnalysisGroup analysisGroup, ChooseTreatmentDialog dialog) {
-        Set<Treatment> treatmentSet = analysisGroup.getConcentrationsMap().keySet();
+        Set<String> treatmentSet = analysisGroup.getConcentrationsMap().keySet();
         //remove all so that items are not duplicated, because this method can be called several times
         dialog.getTreatmentComboBox().removeAllItems();
         if (treatmentSet.size() > 2) {
             //Strings are needed for display
-            for (Treatment treatment : treatmentSet) {
-                String treatmentName = treatment.getTreatmentType().getName();
-                if (!treatmentName.equalsIgnoreCase("control")) {
-                    dialog.getTreatmentComboBox().addItem(treatmentName);
+            for (String treatment : treatmentSet) {
+                if (!treatment.equalsIgnoreCase("control")) {
+                    dialog.getTreatmentComboBox().addItem(treatment);
                 }
             }
             dialog.pack();
@@ -444,8 +456,8 @@ public class DRInputController {
             dialog.setVisible(true);
 
         } else {
-            for (Treatment treatment : treatmentSet) {
-                if (!treatment.getTreatmentType().getName().equalsIgnoreCase("control")) {
+            for (String treatment : treatmentSet) {
+                if (!treatment.equalsIgnoreCase("control")) {
                     analysisGroup.setTreatmentToAnalyse(treatment);
                 }
             }
@@ -460,9 +472,9 @@ public class DRInputController {
      * @param treatmentName The string selected in the dialog combobox
      */
     private void setTreatment(String treatmentName) {
-        Set<Treatment> allTreatments = doseResponseController.getdRAnalysisGroup().getConcentrationsMap().keySet();
-        for (Treatment treatment : allTreatments) {
-            if (treatment.getTreatmentType().getName().equals(treatmentName)) {
+        Set<String> allTreatments = doseResponseController.getdRAnalysisGroup().getConcentrationsMap().keySet();
+        for (String treatment : allTreatments) {
+            if (treatment.equals(treatmentName)) {
                 doseResponseController.getdRAnalysisGroup().setTreatmentToAnalyse(treatment);
             }
         }

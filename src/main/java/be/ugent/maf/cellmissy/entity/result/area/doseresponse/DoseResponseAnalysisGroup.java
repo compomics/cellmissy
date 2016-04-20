@@ -23,13 +23,13 @@ public class DoseResponseAnalysisGroup {
 
     //An experiment might have multiple treatments. Per condition the concentrations for a treatment may vary.
     //The concentration value is mapped to his unit of measurement.
-    private LinkedHashMap<Treatment, LinkedHashMap<Double, String>> concentrationsMap;
+    private LinkedHashMap<String, LinkedHashMap<Double, String>> concentrationsMap;
 
     //A condition can have multiple replicates, each with their own velocity.
     private LinkedHashMap<PlateCondition, List<Double>> velocitiesMap;
 
-    //The treatment to be analyzed
-    private Treatment treatmentToAnalyse;
+    //The name of the treatment to be analyzed
+    private String treatmentToAnalyse;
 
     //The results of the analysis
     private DoseResponseAnalysisResults doseResponseAnalysisResults;
@@ -59,17 +59,15 @@ public class DoseResponseAnalysisGroup {
             List<Treatment> treatmentList = plateCondition.getTreatmentList();
 
             for (Treatment treatment : treatmentList) {
-                //treatment needs to be of type 1 to be analyzable
-                if (treatment.getTreatmentType().getTreatmentCategory() == 1) {
-                    
+                    String treatmentName = treatment.getTreatmentType().getName();
                     Double concentration = treatment.getConcentration();
                     //concentration unit needs to be saved, needed for log-transformation
                     String concentrationUnit = treatment.getConcentrationUnit();
 
                     //put in map
                     nestedMap.put(concentration, concentrationUnit);
-                    concentrationsMap.put(treatment, nestedMap);
-                }
+                    concentrationsMap.put(treatmentName, nestedMap);
+                
 
             }
             this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
@@ -95,11 +93,11 @@ public class DoseResponseAnalysisGroup {
      *
      * @return
      */
-    public LinkedHashMap<Treatment, LinkedHashMap<Double, String>> getConcentrationsMap() {
+    public LinkedHashMap<String, LinkedHashMap<Double, String>> getConcentrationsMap() {
         return concentrationsMap;
     }
 
-    public void setConcentrationsMap(LinkedHashMap<Treatment, LinkedHashMap<Double, String>> concentrationsMap) {
+    public void setConcentrationsMap(LinkedHashMap<String, LinkedHashMap<Double, String>> concentrationsMap) {
         this.concentrationsMap = concentrationsMap;
     }
 
@@ -111,11 +109,11 @@ public class DoseResponseAnalysisGroup {
         this.velocitiesMap = velocitiesMap;
     }
 
-    public Treatment getTreatmentToAnalyse() {
+    public String getTreatmentToAnalyse() {
         return treatmentToAnalyse;
     }
 
-    public void setTreatmentToAnalyse(Treatment treatmentToAnalyse) {
+    public void setTreatmentToAnalyse(String treatmentToAnalyse) {
         this.treatmentToAnalyse = treatmentToAnalyse;
     }
 

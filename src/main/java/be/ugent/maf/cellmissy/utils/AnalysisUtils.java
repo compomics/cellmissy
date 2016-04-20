@@ -430,8 +430,11 @@ public class AnalysisUtils {
     public static double[] generateXValues(LinkedHashMap<Double, List<Double>> data) {
         List<Double> xValues = new ArrayList<>();
         for (Map.Entry<Double, List<Double>> entry : data.entrySet()) {
-            for (int i = 0; i < entry.getValue().size(); i++) {
-                xValues.add(entry.getKey());
+            for (Double value : entry.getValue()) {
+                if (value != null) {
+                    xValues.add(entry.getKey());
+                }
+
             }
         }
         return ArrayUtils.toPrimitive(xValues.toArray(new Double[xValues.size()]));
@@ -447,7 +450,10 @@ public class AnalysisUtils {
         List<Double> yValues = new ArrayList<>();
         for (Map.Entry<Double, List<Double>> entry : data.entrySet()) {
             for (Double yValue : entry.getValue()) {
-                yValues.add(yValue);
+                if (yValue != null) {
+                    yValues.add(yValue);
+                }
+
             }
         }
         return ArrayUtils.toPrimitive(yValues.toArray(new Double[yValues.size()]));
@@ -490,7 +496,7 @@ public class AnalysisUtils {
 
     /**
      * Compute the R² of a non-linear fitting.
-     * 
+     *
      * @param data Log transformed concentrations mapped to replicate velocities
      * (normalized or not)
      * @param resultsholder Contains the best-fit value parameters of the
