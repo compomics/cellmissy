@@ -57,7 +57,7 @@ public class ChooseTreatmentDialog extends javax.swing.JDialog {
         jTextArea1.setText("The conditions you have selected have been\ntreated with more than one compound.\n\nPlease choose the treatment you wish to\nperform a dose-response analysis on.");
         jScrollPane1.setViewportView(jTextArea1);
 
-        selectTreatmentButton.setText("Close");
+        selectTreatmentButton.setText("Select and Close");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

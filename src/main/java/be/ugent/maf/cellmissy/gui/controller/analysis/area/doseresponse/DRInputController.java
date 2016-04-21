@@ -358,7 +358,7 @@ public class DRInputController {
             }
         }
 
-        Object[][] data = new Object[concentrationsMap.size()][maxReplicates + 2];
+        Object[][] data = new Object[concentrationsMap.size() + 1][maxReplicates + 2];
         int i = 0;
         int controlIndex = 100;
         int rowIndex = 0;
@@ -366,7 +366,7 @@ public class DRInputController {
         for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
             //check if this platecondition is the control, save index for table
             for (Treatment treatment : entry.getKey().getTreatmentList()) {
-                if (treatment.getTreatmentType().getName().equalsIgnoreCase("control")) {
+                if (treatment.getTreatmentType().getName().contains("ontrol")) {
                     controlIndex = i;
                 }
             }
@@ -375,29 +375,17 @@ public class DRInputController {
             int columnIndex = 2;
             for (Double velocity : entry.getValue()) {
 
-                if (rowIndex < controlIndex) {
-                    if (velocity != null && !velocity.isNaN()) {
-                        // round to three decimals slopes and coefficients
-                        Double slope = AnalysisUtils.roundThreeDecimals(velocity);
-                        // show in table slope + (coefficient)
-                        data[rowIndex][columnIndex] = slope;
-                    } else if (velocity == null) {
-                        data[rowIndex][columnIndex] = "excluded";
-                    } else if (velocity.isNaN()) {
-                        data[rowIndex][columnIndex] = "NaN";
-                    }
-                } else {
-                    if (velocity != null && !velocity.isNaN()) {
-                        // round to three decimals slopes and coefficients
-                        Double slope = AnalysisUtils.roundThreeDecimals(velocity);
-                        // show in table slope + (coefficient)
-                        data[rowIndex + 1][columnIndex] = slope;
-                    } else if (velocity == null) {
-                        data[rowIndex + 1][columnIndex] = "excluded";
-                    } else if (velocity.isNaN()) {
-                        data[rowIndex + 1][columnIndex] = "NaN";
-                    }
+                if (velocity != null && !velocity.isNaN()) {
+                    // round to three decimals slopes and coefficients
+                    Double slope = AnalysisUtils.roundThreeDecimals(velocity);
+                    // show in table slope + (coefficient)
+                    data[rowIndex][columnIndex] = slope;
+                } else if (velocity == null) {
+                    data[rowIndex][columnIndex] = "excluded";
+                } else if (velocity.isNaN()) {
+                    data[rowIndex][columnIndex] = "NaN";
                 }
+
                 columnIndex++;
             }
             rowIndex++;
@@ -445,7 +433,7 @@ public class DRInputController {
         if (treatmentSet.size() > 2) {
             //Strings are needed for display
             for (String treatment : treatmentSet) {
-                if (!treatment.equalsIgnoreCase("control")) {
+                if (!treatment.contains("ontrol")) {
                     dialog.getTreatmentComboBox().addItem(treatment);
                 }
             }
@@ -457,8 +445,9 @@ public class DRInputController {
 
         } else {
             for (String treatment : treatmentSet) {
-                if (!treatment.equalsIgnoreCase("control")) {
+                if (!treatment.contains("ontrol")) {
                     analysisGroup.setTreatmentToAnalyse(treatment);
+                    break;
                 }
             }
             doseResponseController.setFirstFitting(true);

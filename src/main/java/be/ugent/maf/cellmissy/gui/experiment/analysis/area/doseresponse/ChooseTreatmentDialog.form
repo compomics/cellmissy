@@ -77,7 +77,7 @@
     </Container>
     <Component class="javax.swing.JButton" name="selectTreatmentButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Close"/>
+        <Property name="text" type="java.lang.String" value="Select and Close"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="treatmentComboBox">

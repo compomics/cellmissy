@@ -10,8 +10,10 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This class contains the list of conditions selected by the user for dose-
@@ -50,27 +52,27 @@ public class DoseResponseAnalysisGroup {
 
         //PlateCondition has List<Treatment>, Treatment has double concentration AND concentrationunit
         this.concentrationsMap = new LinkedHashMap<>();
-        //initialize nested map
-        LinkedHashMap<Double, String> nestedMap = new LinkedHashMap<>();
 
+        //make set of all different treatments in selected conditions
+        Set<String> treatmentNames = new HashSet<>();
         for (PlateCondition plateCondition : plateConditions) {
-            //1 platecondition might have multiple treatments
-
-            List<Treatment> treatmentList = plateCondition.getTreatmentList();
-
-            for (Treatment treatment : treatmentList) {
-                    String treatmentName = treatment.getTreatmentType().getName();
-                    Double concentration = treatment.getConcentration();
-                    //concentration unit needs to be saved, needed for log-transformation
-                    String concentrationUnit = treatment.getConcentrationUnit();
-
-                    //put in map
-                    nestedMap.put(concentration, concentrationUnit);
-                    concentrationsMap.put(treatmentName, nestedMap);
-                
-
+            for (Treatment treatment : plateCondition.getTreatmentList()) {
+                treatmentNames.add(treatment.getTreatmentType().getName());
             }
-            this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
+        }
+
+        for (String treatmentName : treatmentNames) {
+            //every treatment will have it's own map of concentrations
+            LinkedHashMap<Double, String> nestedMap = new LinkedHashMap<>();
+            for (PlateCondition plateCondition : plateConditions) {
+
+                for (Treatment treatment : plateCondition.getTreatmentList()) {
+                    if (treatment.getTreatmentType().getName().equals(treatmentName)) {
+                        nestedMap.put(treatment.getConcentration(), treatment.getConcentrationUnit());
+                    }
+                }
+            }
+            concentrationsMap.put(treatmentName, nestedMap);
         }
 
         //setting the velocities from areaAnalysisResults
@@ -85,7 +87,9 @@ public class DoseResponseAnalysisGroup {
 
             //put in map
             velocitiesMap.put(condition, replicateVelocities);
+            this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
         }
+        this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
     }
 
     /**

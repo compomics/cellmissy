@@ -47,14 +47,14 @@ public class DRResultsPanel extends javax.swing.JPanel {
 
         createReportButton.setText("Create & Save PDF Report");
         createReportButton.setToolTipText("Create a PDF report for this analysis and save it");
+        createReportButton.setMinimumSize(new java.awt.Dimension(20, 20));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(7, 757, 13, 0);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         add(createReportButton, gridBagConstraints);
 
         doseResponseChartParentPanel.setBackground(new java.awt.Color(255, 255, 255));

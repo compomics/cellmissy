@@ -39,6 +39,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
@@ -51,7 +52,6 @@ import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
@@ -133,6 +133,10 @@ public class DoseResponseController {
         return dRAnalysisGroup;
     }
 
+    public List<PlateCondition> getProcessedConditions() {
+        return areaMainController.getProcessedConditions();
+    }
+
     public Map<PlateCondition, AreaAnalysisResults> getLinearResultsAnalysisMap() {
         return areaMainController.getLinearResultsAnalysisMap();
     }
@@ -204,13 +208,21 @@ public class DoseResponseController {
     }
 
     /**
+     * When switching to a different subview, change the model for the main
+     * table.
+     */
+    public void updateModelInTable(NonEditableTableModel tableModel) {
+        dataTable.setModel(tableModel);
+    }
+
+    /**
      * Plots the fitted data.
      */
-    public void plotDoseResponse(ChartPanel chartPanel, LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+    public void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, analysisGroup, normalized);
         chartPanel.setChart(doseResponseChart);
         //add chartpanel to graphics parent panel and repaint
-        dRPanel.getGraphicsDRParentPanel().add(chartPanel, gridBagConstraints);
+        subviewPanel.add(chartPanel, gridBagConstraints);
         dRPanel.getGraphicsDRParentPanel().repaint();
         dRPanel.getGraphicsDRParentPanel().revalidate();
     }
@@ -224,46 +236,29 @@ public class DoseResponseController {
      * @param resultsHolder The class that will contain the results from fitting
      * @param bottomConstrained Double if user constrains, otherwise null
      * @param topConstrained Double if user constrains, otherwise null
-     * @param standardHillcurve If true, will use standardHillSlope field to
-     * constrain
+     *
      */
-    public void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained, boolean standardHillcurve) {
-        if (bottomConstrained != null) {
+    public void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
 
-            if (topConstrained != null) {
-                if (standardHillcurve) {
-                    sigmoidFitter.fitBotTopHillConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
-                } else {
-                    sigmoidFitter.fitBotTopConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
-                }
-            } else if (standardHillcurve) {
-                sigmoidFitter.fitBotHillConstrain(dataToFit, resultsHolder, bottomConstrained, getStandardHillslope());
-            } else {
-                sigmoidFitter.fitBotConstrain(dataToFit, resultsHolder, bottomConstrained, getStandardHillslope());
-            }
-        } else if (topConstrained != null) {
-            if (standardHillcurve) {
-                sigmoidFitter.fitTopHillConstrain(dataToFit, resultsHolder, topConstrained, getStandardHillslope());
+        if (topConstrained != null) {
+            if (bottomConstrained != null) {
+                sigmoidFitter.fitBotTopConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
             } else {
                 sigmoidFitter.fitTopConstrain(dataToFit, resultsHolder, topConstrained, getStandardHillslope());
             }
-        } else if (standardHillcurve) {
-            sigmoidFitter.fitHillConstrain(dataToFit, resultsHolder, getStandardHillslope());
+        } else if (bottomConstrained != null) {
+            sigmoidFitter.fitBotConstrain(dataToFit, resultsHolder, bottomConstrained, getStandardHillslope());
         } else {
             sigmoidFitter.fitNoConstrain(dataToFit, resultsHolder, getStandardHillslope());
         }
     }
 
     /**
-     * Gets conditions that were processed in previous area analysis steps. This
-     * is nessesary to populate table when on input panel.
-     *
-     * @return list of all processed conditions viable for dose-response
-     * analysis
+     * Calculate statistics, method from results controller is called by other
+     * child controllers on new fitting.
      */
-    public List<PlateCondition> getProcessedConditions() {
-        List<PlateCondition> processedConditions = areaMainController.getProcessedConditions();
-        return processedConditions;
+    public void calculateStatistics() {
+        dRResultsController.calculateStatistics(dRAnalysisGroup);
     }
 
     /**
@@ -313,6 +308,9 @@ public class DoseResponseController {
         plot.setRenderer(0, renderer1);
         plot.setDomainAxis(0, domain1);
         plot.setRangeAxis(0, range1);
+        domain1.setUpperBound(-3.0);
+        domain1.setLowerBound(-8.0);
+        range1.setLowerBound(-50.0);
         // Map the scatter to the first Domain and first Range
         plot.mapDatasetToDomainAxis(0, 0);
         plot.mapDatasetToRangeAxis(0, 0);
@@ -327,13 +325,11 @@ public class DoseResponseController {
         XYLineAndShapeRenderer tempRenderer = (XYLineAndShapeRenderer) renderer2;
         tempRenderer.setSeriesLinesVisible(0, true);
         tempRenderer.setSeriesShapesVisible(0, false);
-        ValueAxis domain2 = new NumberAxis("Domain2");
-        ValueAxis range2 = new NumberAxis("Range2");
         // Set the line data, renderer, and axis into plot
         plot.setDataset(1, fitting);
         plot.setRenderer(1, renderer2);
-        plot.setDomainAxis(1, domain2);
-        plot.setRangeAxis(1, range2);
+        plot.setDomainAxis(1, domain1);
+        plot.setRangeAxis(1, range1);
         // Map the line to the first Domain Range
         plot.mapDatasetToDomainAxis(1, 0);
         plot.mapDatasetToRangeAxis(1, 0);
@@ -345,7 +341,7 @@ public class DoseResponseController {
         } else {
             resultsholder = analysisGroup.getDoseResponseAnalysisResults().getInitialFittingResults();
         }
-        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.computeRSquared(dataToPlot, resultsholder), 0.00001, 100.0));
+        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.computeRSquared(dataToPlot, resultsholder), -4, 1.0));
 
         // Create the chart with the plot and no legend
         JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
@@ -447,11 +443,13 @@ public class DoseResponseController {
                  * dataTable.getColumnCount(); columnIndex++) {
                  * GuiUtils.packColumn(dataTable, columnIndex); }
                  */
-                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
                 //remove other panels
-                dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
-                dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
-                dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
+                dRInitialController.getInitialChartPanel().setChart(null);
+                dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                dRResultsController.getDupeInitialChartPanel().setChart(null);
+                dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().removeAll();
                 dRPanel.getGraphicsDRParentPanel().revalidate();
                 dRPanel.getGraphicsDRParentPanel().repaint();
                 //add panel to view
@@ -475,7 +473,7 @@ public class DoseResponseController {
                  * dataTable.getColumnCount(); columnIndex++) {
                  * GuiUtils.packColumn(dataTable, columnIndex); }
                  */
-                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
                 //remove other panels
                 dRNormalizedController.getNormalizedChartPanel().setChart(null);
                 dRResultsController.getDupeInitialChartPanel().setChart(null);
@@ -485,7 +483,7 @@ public class DoseResponseController {
                 dRPanel.getGraphicsDRParentPanel().repaint();
                 dRPanel.getGraphicsDRParentPanel().add(dRInitialController.getDRInitialPlotPanel(), gridBagConstraints);
                 //Plot fitted data in dose-response curve, along with R² annotation
-                plotDoseResponse(dRInitialController.getInitialChartPanel(), getDataToFit(false), getdRAnalysisGroup(), false);
+                plotDoseResponse(dRInitialController.getInitialChartPanel(), dRInitialController.getDRInitialPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(false), getdRAnalysisGroup(), false);
             }
         });
 
@@ -506,7 +504,7 @@ public class DoseResponseController {
                  * dataTable.getColumnCount(); columnIndex++) {
                  * GuiUtils.packColumn(dataTable, columnIndex); }
                  */
-                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
                 //remove other panels
                 dRInitialController.getInitialChartPanel().setChart(null);
                 dRResultsController.getDupeInitialChartPanel().setChart(null);
@@ -516,7 +514,7 @@ public class DoseResponseController {
                 dRPanel.getGraphicsDRParentPanel().repaint();
                 dRPanel.getGraphicsDRParentPanel().add(dRNormalizedController.getDRNormalizedPlotPanel(), gridBagConstraints);
                 //Plot fitted data in dose-response curve, along with R² annotation
-                plotDoseResponse(dRNormalizedController.getNormalizedChartPanel(), getDataToFit(true), getdRAnalysisGroup(), true);
+                plotDoseResponse(dRNormalizedController.getNormalizedChartPanel(), dRNormalizedController.getDRNormalizedPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(true), getdRAnalysisGroup(), true);
             }
         });
 
@@ -524,7 +522,9 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //switch shared table view
+                //switch shared table view: create and set new table model with most recent statistical values
+                // (these values get recalculated after each new fitting)
+                dRResultsController.setTableModel(dRResultsController.reCreateTableModel(dRAnalysisGroup));
                 updateModelInTable(dRResultsController.getTableModel());
                 updateTableInfoMessage("Statistical values from the curve fit of the initial and normalized data.");
 
@@ -535,19 +535,13 @@ public class DoseResponseController {
                 dRPanel.getGraphicsDRParentPanel().revalidate();
                 dRPanel.getGraphicsDRParentPanel().repaint();
                 dRPanel.getGraphicsDRParentPanel().add(dRResultsController.getdRResultsPanel(), gridBagConstraints);
+                //plot curves
+                dRResultsController.plotCharts();
             }
         });
 
         //add view to parent panel
         areaMainController.getAreaAnalysisPanel().getDoseResponseParentPanel().add(dRPanel, gridBagConstraints);
-    }
-
-    /**
-     * When switching to a different subview, change the model for the main
-     * table.
-     */
-    private void updateModelInTable(NonEditableTableModel tableModel) {
-        dataTable.setModel(tableModel);
     }
 
     /**

@@ -99,7 +99,7 @@ public class DRPanel extends javax.swing.JPanel {
             .addGroup(radioButtonsDRPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 839, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(radioButtonsDRPanelLayout.createSequentialGroup()
                         .addComponent(inputDRButton)
                         .addGap(18, 18, 18)
@@ -108,7 +108,7 @@ public class DRPanel extends javax.swing.JPanel {
                         .addComponent(normalizedPlotDRButton)
                         .addGap(18, 18, 18)
                         .addComponent(resultsDRButton)))
-                .addContainerGap(362, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         radioButtonsDRPanelLayout.setVerticalGroup(
             radioButtonsDRPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

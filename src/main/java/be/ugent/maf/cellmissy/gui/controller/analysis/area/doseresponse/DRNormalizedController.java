@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,7 +39,6 @@ public class DRNormalizedController {
     //model
     private Double bottomConstrainValue;
     private Double topConstrainValue;
-    private boolean standardHillslope;
     private NonEditableTableModel tableModel;
     private LinkedHashMap<Double, List<Double>> dataToFit;
     //view
@@ -91,19 +89,16 @@ public class DRNormalizedController {
      * according to starting parameters.
      */
     public void initDRNormalizedData() {
-        //set text field for standard hillslope and make uneditable
-        dRNormalizedPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
-        dRNormalizedPlotPanel.getStandardHillslopeTextField().setEditable(false);
         //set initial parameters
-        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
-        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()))).toString());
+        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()))).toString());
         //LogTransform concentrations and perform initial normalization (mean values)
         dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
         //create and set the table model for the top panel table (dependent on normalization)
         setTableModel(createTableModel(dataToFit));
         //Perform initial curve fitting (standard hillslope, no constraints)
-        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), null, null, false);
-        
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), null, null);
+
     }
 
     /**
@@ -111,13 +106,6 @@ public class DRNormalizedController {
      */
     private void initDRNormalizedPanel() {
         dRNormalizedPlotPanel = new DRNormalizedPlotPanel();
-        //create a ButtonGroup for the radioButtons of the hillslope choice
-        ButtonGroup hillslopeRadioButtonGroup = new ButtonGroup();
-        //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        hillslopeRadioButtonGroup.add(dRNormalizedPlotPanel.getStandardHillslopeRadioButton());
-        hillslopeRadioButtonGroup.add(dRNormalizedPlotPanel.getVariableHillslopeRadioButton());
-        //select as default first button (standard hillslope)
-        dRNormalizedPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
         //init chart panel
         normalizedChartPanel = new ChartPanel(null);
         normalizedChartPanel.setOpaque(false);
@@ -125,29 +113,6 @@ public class DRNormalizedController {
         /**
          * Action listeners for buttons
          */
-        /**
-         * Set hillslope to standard for next fitting. Standard is 1 or -1
-         * depending on type of experiment -- see input panel
-         */
-        dRNormalizedPlotPanel.getStandardHillslopeRadioButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                standardHillslope = true;
-            }
-        });
-        /**
-         * Set hillslope to variable for next fitting. Fitting will try to find
-         * the optimal value for the parameter according to the data
-         */
-        dRNormalizedPlotPanel.getVariableHillslopeRadioButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                standardHillslope = false;
-            }
-        });
-
         /**
          * The combo box determines how the normalization is done. Bottom combo
          * box defines what the value for 0% response is.
@@ -160,11 +125,11 @@ public class DRNormalizedController {
                 switch (value) {
                     case "Smallest Mean Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()))).toString());
                         break;
                     case "Smallest Median Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup()))).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getBottomTextField().setText("");
@@ -186,11 +151,11 @@ public class DRNormalizedController {
                 switch (choice) {
                     case "Largest Mean Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()))).toString());
                         break;
                     case "Largest Median Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup())).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()))).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getTopTextField().setText("");
@@ -209,7 +174,7 @@ public class DRNormalizedController {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    bottomConstrainValue = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
+                    bottomConstrainValue = 0.0;
                 } else {
                     bottomConstrainValue = null;
                 }
@@ -221,7 +186,7 @@ public class DRNormalizedController {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    topConstrainValue = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
+                    topConstrainValue = 100.0;
 
                 } else {
                     topConstrainValue = null;
@@ -239,8 +204,11 @@ public class DRNormalizedController {
             public void actionPerformed(ActionEvent e) {
                 dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
                 setTableModel(createTableModel(dataToFit));
-                doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
-                doseResponseController.plotDoseResponse(normalizedChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), true);
+                doseResponseController.updateModelInTable(tableModel);
+                doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getNormalizedFittingResults(), bottomConstrainValue, topConstrainValue);
+                doseResponseController.plotDoseResponse(normalizedChartPanel, dRNormalizedPlotPanel.getDoseResponseChartParentPanel(), dataToFit, doseResponseController.getdRAnalysisGroup(), true);
+                //Calculate new statistics
+                doseResponseController.calculateStatistics();
             }
         });
     }
@@ -255,12 +223,15 @@ public class DRNormalizedController {
     private List<Double> computeMeans(DoseResponseAnalysisGroup doseResponseAnalysisGroup) {
         List<Double> allMeans = new ArrayList();
         for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
-            double[] data = new double[velocities.size()];
-            for (int i = 0; i < data.length; i++) {
-                if (velocities.get(i) != null) {
-                    data[i] = velocities.get(i);
+            List<Double> tempData = new ArrayList();
+            for (Double velocity : velocities) {
+                if (velocity != null) {
+                    tempData.add(velocity);
                 }
-                
+            }
+            double[] data = new double[tempData.size()];
+            for (int i = 0; i < data.length; i++) {
+                data[i] = tempData.get(i);
             }
             allMeans.add(AnalysisUtils.computeMean(data));
         }
@@ -273,11 +244,15 @@ public class DRNormalizedController {
     private List<Double> computeMedians(DoseResponseAnalysisGroup doseResponseAnalysisGroup) {
         List<Double> allMedians = new ArrayList();
         for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
-            double[] data = new double[velocities.size()];
-            for (int i = 0; i < data.length; i++) {
-               if (velocities.get(i) != null) {
-                    data[i] = velocities.get(i);
+            List<Double> tempData = new ArrayList();
+            for (Double velocity : velocities) {
+                if (velocity != null) {
+                    tempData.add(velocity);
                 }
+            }
+            double[] data = new double[tempData.size()];
+            for (int i = 0; i < data.length; i++) {
+                data[i] = tempData.get(i);
             }
             allMedians.add(AnalysisUtils.computeMedian(data));
         }
@@ -320,7 +295,7 @@ public class DRNormalizedController {
             }
             //check if this platecondition is the control
             for (Treatment treatment : plateCondition.getTreatmentList()) {
-                if (treatment.getTreatmentType().getName().equalsIgnoreCase("control")) {
+                if (treatment.getTreatmentType().getName().contains("ontrol")) {
                     allLogConcentrations.add(x, lowestLogConc - 1.0);
                 }
             }
@@ -340,15 +315,15 @@ public class DRNormalizedController {
      */
     private Double normalize(Double velocity) {
         //check which values will become 0% and 100%
-        Double topNormalize = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
-        Double bottomNormalize = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
+        Double bottomNormalize = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
+        Double topNormalize = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
 
         if (velocity == null) {
             return velocity;
         } else if (velocity.isNaN()) {
             return velocity;
         }
-        return (velocity - bottomNormalize) / (topNormalize - bottomNormalize);
+        return 100 * (velocity - bottomNormalize) / (topNormalize - bottomNormalize);
     }
 
     /**
@@ -371,7 +346,8 @@ public class DRNormalizedController {
         int rowIndex = 0;
         for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
             //log concentration is put on 1st column
-            data[rowIndex][0] = entry.getKey();
+            data[rowIndex][0] = AnalysisUtils.roundThreeDecimals(entry.getKey());
+
             for (int columnIndex = 1; columnIndex < entry.getValue().size() + 1; columnIndex++) {
                 Double slope = entry.getValue().get(columnIndex - 1);
                 if (slope != null && !slope.isNaN()) {

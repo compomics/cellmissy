@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -97,6 +98,9 @@ public class DRResultsController {
         return dupeNormalizedChartPanel;
     }
 
+    public NonEditableTableModel reCreateTableModel(DoseResponseAnalysisGroup analysisGroup) {
+        return createTableModel(analysisGroup);
+    }
     /**
      * When changing view to results panel, calculate statistics, set table
      * model and re-plot fittings.
@@ -104,6 +108,37 @@ public class DRResultsController {
     public void initDRResultsData() {
         calculateStatistics(doseResponseController.getdRAnalysisGroup());
         setTableModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+    }
+
+    /**
+     * Calculate statictics and set corresponding fields in analysisResults
+     * class
+     */
+    public void calculateStatistics(DoseResponseAnalysisGroup analysisGroup) {
+        DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
+        SigmoidFittingResultsHolder initialFittingResults = analysisResults.getInitialFittingResults();
+        SigmoidFittingResultsHolder normalizedFittingResults = analysisResults.getNormalizedFittingResults();
+        //calculate and set R²
+        analysisResults.setGoodnessOfFitInitial(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(false), initialFittingResults));
+        analysisResults.setGoodnessOfFitNormalized(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(true), normalizedFittingResults));
+        //calculate and set EC50
+        analysisResults.setEc50Initial(Math.pow(10, initialFittingResults.getLogEC50()));
+        analysisResults.setEc50Normalized(Math.pow(10, normalizedFittingResults.getLogEC50()));
+    }
+
+    public void plotCharts() {
+        JFreeChart initialChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), doseResponseController.getdRAnalysisGroup(), false);
+        JFreeChart normalizedChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), doseResponseController.getdRAnalysisGroup(), true);
+        dupeInitialChartPanel.setChart(initialChart);
+        dupeNormalizedChartPanel.setChart(normalizedChart);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        dRResultsPanel.getDoseResponseChartParentPanel().add(dupeInitialChartPanel, gridBagConstraints);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        dRResultsPanel.getDoseResponseChartParentPanel().add(dupeNormalizedChartPanel, gridBagConstraints);
+        doseResponseController.getDRPanel().revalidate();
+        doseResponseController.getDRPanel().repaint();
     }
 
     /**
@@ -164,6 +199,8 @@ public class DRResultsController {
      */
     private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
         DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
+        //specify decimal format for scientific notation
+        DecimalFormat df = new DecimalFormat("00.00E00");
         Object[][] data = new Object[6][3];
 
         //set fields in first column
@@ -174,19 +211,19 @@ public class DRResultsController {
         data[4][0] = "EC50";
         data[5][0] = "R² (goodness of fit)";
         //set second column (initial fitting results)
-        data[0][1] = analysisResults.getInitialFittingResults().getBottom();
-        data[1][1] = analysisResults.getInitialFittingResults().getTop();
-        data[2][1] = analysisResults.getInitialFittingResults().getHillslope();
-        data[3][1] = analysisResults.getInitialFittingResults().getLogEC50();
-        data[4][1] = analysisResults.getEc50Initial();
-        data[5][1] = analysisResults.getGoodnessOfFitInitial();
+        data[0][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getInitialFittingResults().getBottom());
+        data[1][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getInitialFittingResults().getTop());
+        data[2][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getInitialFittingResults().getHillslope());
+        data[3][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getInitialFittingResults().getLogEC50());
+        data[4][1] = df.format(analysisResults.getEc50Initial());
+        data[5][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getGoodnessOfFitInitial());
         //set third column (normalized fitting results)
-        data[0][2] = analysisResults.getNormalizedFittingResults().getBottom();
-        data[1][2] = analysisResults.getNormalizedFittingResults().getTop();
-        data[2][2] = analysisResults.getNormalizedFittingResults().getHillslope();
-        data[3][2] = analysisResults.getNormalizedFittingResults().getLogEC50();
-        data[4][2] = analysisResults.getEc50Normalized();
-        data[5][2] = analysisResults.getGoodnessOfFitNormalized();
+        data[0][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getNormalizedFittingResults().getBottom());
+        data[1][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getNormalizedFittingResults().getTop());
+        data[2][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getNormalizedFittingResults().getHillslope());
+        data[3][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getNormalizedFittingResults().getLogEC50());
+        data[4][2] = df.format(analysisResults.getEc50Normalized());
+        data[5][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getGoodnessOfFitNormalized());
 
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "";
@@ -196,35 +233,6 @@ public class DRResultsController {
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
         nonEditableTableModel.setDataVector(data, columnNames);
         return nonEditableTableModel;
-    }
-
-    /**
-     * Calculate statictics and set corresponding fields in analysisResults
-     * class
-     */
-    private void calculateStatistics(DoseResponseAnalysisGroup analysisGroup) {
-        DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
-        SigmoidFittingResultsHolder initialFittingResults = analysisResults.getInitialFittingResults();
-        SigmoidFittingResultsHolder normalizedFittingResults = analysisResults.getNormalizedFittingResults();
-        //calculate and set R²
-        analysisResults.setGoodnessOfFitInitial(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(false), initialFittingResults));
-        analysisResults.setGoodnessOfFitNormalized(AnalysisUtils.computeRSquared(doseResponseController.getDataToFit(true), normalizedFittingResults));
-        //calculate and set EC50
-        analysisResults.setEc50Initial(Math.pow(10, initialFittingResults.getLogEC50()));
-        analysisResults.setEc50Normalized(Math.pow(10, normalizedFittingResults.getLogEC50()));
-    }
-
-    private void plotCharts() {
-        JFreeChart initialChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), doseResponseController.getdRAnalysisGroup(), false);
-        JFreeChart normalizedChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), doseResponseController.getdRAnalysisGroup(), true);
-        dupeInitialChartPanel.setChart(initialChart);
-        dupeNormalizedChartPanel.setChart(normalizedChart);
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dupeInitialChartPanel, gridBagConstraints);
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dupeNormalizedChartPanel, gridBagConstraints);
     }
 
     /**
@@ -333,7 +341,7 @@ public class DRResultsController {
 //        }
 //        PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
 //        PdfUtils.addEmptyLines(document, 1);
-        
+
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 

@@ -722,6 +722,13 @@ public class JFreeChartUtils {
      * Create a dataset corresponding a sigmoid model according to the
      * parameters given. This method is used when putting the fitted
      * dose-response model on a chart.
+     *
+     * @param top Best-fit parameter
+     * @param bottom Best-fit parameter
+     * @param hillslope Best-fit parameter
+     * @param logEC50 Best-fit parameter
+     * @return 1000 X-Y couples that follow the fitted function (ranging between
+     * x= -8 and x=-3)
      */
     public static XYSeries createFittedDataset(final double top, final double bottom, final double hillslope, final double logEC50) {
         Function2D fittedFunction = new Function2D() {
@@ -731,7 +738,7 @@ public class JFreeChartUtils {
                 return (bottom + (top - bottom) / (1 + Math.pow(10, (logEC50 - conc) * hillslope)));
             }
         };
-        return DatasetUtilities.sampleFunction2DToSeries(fittedFunction, -10, -2, 1000, "fittedfunction");
+        return DatasetUtilities.sampleFunction2DToSeries(fittedFunction, -8, -3, 1000, "fittedfunction");
     }
 
     /**

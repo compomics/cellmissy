@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,7 +38,6 @@ public class DRInitialController {
     //model
     private Double bottomConstrainValue;
     private Double topConstrainValue;
-    private boolean standardHillslope;
     private NonEditableTableModel tableModel;
     private LinkedHashMap<Double, List<Double>> dataToFit;
     //view
@@ -95,11 +93,7 @@ public class DRInitialController {
         //create and set the table model for the top panel table
         setTableModel(createTableModel(dataToFit));
         //Fit data according to initial parameters (standard hillslope, no constraints)
-        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), null, null, false);
-        //set text field for standard hillslope and make uneditable
-        dRInitialPlotPanel.getStandardHillslopeTextField().setText(String.valueOf(doseResponseController.getStandardHillslope()));
-        dRInitialPlotPanel.getStandardHillslopeTextField().setEditable(false);
-        
+        doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), null, null);
 
     }
 
@@ -108,13 +102,6 @@ public class DRInitialController {
      */
     private void initDRInitialPanel() {
         dRInitialPlotPanel = new DRInitialPlotPanel();
-        //create a ButtonGroup for the radioButtons of the hillslope choice
-        ButtonGroup hillslopeRadioButtonGroup = new ButtonGroup();
-        //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        hillslopeRadioButtonGroup.add(dRInitialPlotPanel.getStandardHillslopeRadioButton());
-        hillslopeRadioButtonGroup.add(dRInitialPlotPanel.getVariableHillslopeRadioButton());
-        //select as default first button (standard hillslope)
-        dRInitialPlotPanel.getStandardHillslopeRadioButton().setSelected(true);
 
         //init chart panel
         initialChartPanel = new ChartPanel(null);
@@ -122,28 +109,6 @@ public class DRInitialController {
         /**
          * Action listeners for buttons
          */
-        /**
-         * Set hillslope to standard for next fitting. Standard is 1 or -1
-         * depending on type of experiment -- see input panel
-         */
-        dRInitialPlotPanel.getStandardHillslopeRadioButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                standardHillslope = true;
-            }
-        });
-        /**
-         * Set hillslope to variable for next fitting. Fitting will try to find
-         * the optimal value for the parameter according to the data
-         */
-        dRInitialPlotPanel.getVariableHillslopeRadioButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                standardHillslope = false;
-            }
-        });
 
         /**
          * If selected, text field to enter value for parameter constraining
@@ -187,10 +152,11 @@ public class DRInitialController {
                 if (topConstrainValue != null) {
                     topConstrainValue = Double.parseDouble(dRInitialPlotPanel.getTopTextField().getText());
                 }
-                doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue, standardHillslope);
+                doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getInitialFittingResults(), bottomConstrainValue, topConstrainValue);
                 //Plot fitted data in dose-response curve, along with R² annotation
-                doseResponseController.plotDoseResponse(initialChartPanel, dataToFit, doseResponseController.getdRAnalysisGroup(), false);
-
+                doseResponseController.plotDoseResponse(initialChartPanel, dRInitialPlotPanel.getDoseResponseChartParentPanel(), dataToFit, doseResponseController.getdRAnalysisGroup(), false);
+                //Calculate new statistics
+                doseResponseController.calculateStatistics();
             }
         });
     }
@@ -214,6 +180,7 @@ public class DRInitialController {
         //put concentrations of treatment to analyze (control not included!) in list
         LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
         for (Double concentration : nestedMap.keySet()) {
+            //what happens if one concentration is mapped to more than 1 unit?
             String unit = nestedMap.get(concentration);
 
             Double logConcentration = AnalysisUtils.logTransform(concentration, unit);
@@ -263,7 +230,8 @@ public class DRInitialController {
         int rowIndex = 0;
         for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
             //log concentration is put on 1st column
-            data[rowIndex][0] = entry.getKey();
+            data[rowIndex][0] = AnalysisUtils.roundThreeDecimals(entry.getKey());
+
             for (int columnIndex = 1; columnIndex < entry.getValue().size() + 1; columnIndex++) {
                 Double slope = entry.getValue().get(columnIndex - 1);
                 if (slope != null && !slope.isNaN()) {
