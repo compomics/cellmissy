@@ -317,6 +317,7 @@ public class DRResultsController {
     /**
      * Overview of Report: experiment and project numbers + some details.
      */
+    //STILL NEEDS TO BE EDITED/ADJUSTED FOR DOSE-RESPONSE!!
     private void addOverview() {
         String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
         PdfUtils.addTitle(document, title, titleFont);
@@ -331,17 +332,6 @@ public class DRResultsController {
         lines.clear();
         line = "NUMBER OF BIOLOGICAL CONDITIONS: " + experiment.getPlateConditionList().size();
         lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
-        PdfUtils.addEmptyLines(document, 1);
-//        // add conditions info
-//        lines.clear();
-//        List<PlateCondition> plateConditonsList = experiment.getPlateConditionList();
-//        for (PlateCondition plateCondition : plateConditonsList) {
-//            lines.add("Condition " + (plateConditonsList.indexOf(plateCondition) + 1) + ": " + plateCondition.toString());
-//        }
-//        PdfUtils.addText(document, lines, true, Element.ALIGN_JUSTIFIED, bodyFont);
-//        PdfUtils.addEmptyLines(document, 1);
-
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 

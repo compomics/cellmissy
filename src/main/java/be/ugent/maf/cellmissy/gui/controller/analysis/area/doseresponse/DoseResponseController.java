@@ -461,29 +461,31 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (isFirstFitting()) {
-                    initFirstFitting();
-                    setFirstFitting(false);
+                if (dRAnalysisGroup != null) {
+                    if (isFirstFitting()) {
+                        initFirstFitting();
+                        setFirstFitting(false);
+                    }
+                    //switch shared table view
+                    updateModelInTable(dRInitialController.getTableModel());
+                    updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
+                    /**
+                     * for (int columnIndex = 0; columnIndex <
+                     * dataTable.getColumnCount(); columnIndex++) {
+                     * GuiUtils.packColumn(dataTable, columnIndex); }
+                     */
+                    dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+                    //remove other panels
+                    dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                    dRResultsController.getDupeInitialChartPanel().setChart(null);
+                    dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                    dRPanel.getGraphicsDRParentPanel().removeAll();
+                    dRPanel.getGraphicsDRParentPanel().revalidate();
+                    dRPanel.getGraphicsDRParentPanel().repaint();
+                    dRPanel.getGraphicsDRParentPanel().add(dRInitialController.getDRInitialPlotPanel(), gridBagConstraints);
+                    //Plot fitted data in dose-response curve, along with R² annotation
+                    plotDoseResponse(dRInitialController.getInitialChartPanel(), dRInitialController.getDRInitialPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(false), getdRAnalysisGroup(), false);
                 }
-                //switch shared table view
-                updateModelInTable(dRInitialController.getTableModel());
-                updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
-                /**
-                 * for (int columnIndex = 0; columnIndex <
-                 * dataTable.getColumnCount(); columnIndex++) {
-                 * GuiUtils.packColumn(dataTable, columnIndex); }
-                 */
-                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
-                //remove other panels
-                dRNormalizedController.getNormalizedChartPanel().setChart(null);
-                dRResultsController.getDupeInitialChartPanel().setChart(null);
-                dRResultsController.getDupeNormalizedChartPanel().setChart(null);
-                dRPanel.getGraphicsDRParentPanel().removeAll();
-                dRPanel.getGraphicsDRParentPanel().revalidate();
-                dRPanel.getGraphicsDRParentPanel().repaint();
-                dRPanel.getGraphicsDRParentPanel().add(dRInitialController.getDRInitialPlotPanel(), gridBagConstraints);
-                //Plot fitted data in dose-response curve, along with R² annotation
-                plotDoseResponse(dRInitialController.getInitialChartPanel(), dRInitialController.getDRInitialPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(false), getdRAnalysisGroup(), false);
             }
         });
 
@@ -491,30 +493,32 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                //in case user skips "initial" subview and goes straight to normalization
-                if (isFirstFitting()) {
-                    initFirstFitting();
-                    setFirstFitting(false);
+                if (dRAnalysisGroup != null) {
+                    //in case user skips "initial" subview and goes straight to normalization
+                    if (isFirstFitting()) {
+                        initFirstFitting();
+                        setFirstFitting(false);
+                    }
+                    //switch shared table view
+                    updateModelInTable(dRNormalizedController.getTableModel());
+                    updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
+                    /**
+                     * for (int columnIndex = 0; columnIndex <
+                     * dataTable.getColumnCount(); columnIndex++) {
+                     * GuiUtils.packColumn(dataTable, columnIndex); }
+                     */
+                    dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+                    //remove other panels
+                    dRInitialController.getInitialChartPanel().setChart(null);
+                    dRResultsController.getDupeInitialChartPanel().setChart(null);
+                    dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                    dRPanel.getGraphicsDRParentPanel().removeAll();
+                    dRPanel.getGraphicsDRParentPanel().revalidate();
+                    dRPanel.getGraphicsDRParentPanel().repaint();
+                    dRPanel.getGraphicsDRParentPanel().add(dRNormalizedController.getDRNormalizedPlotPanel(), gridBagConstraints);
+                    //Plot fitted data in dose-response curve, along with R² annotation
+                    plotDoseResponse(dRNormalizedController.getNormalizedChartPanel(), dRNormalizedController.getDRNormalizedPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(true), getdRAnalysisGroup(), true);
                 }
-                //switch shared table view
-                updateModelInTable(dRNormalizedController.getTableModel());
-                updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
-                /**
-                 * for (int columnIndex = 0; columnIndex <
-                 * dataTable.getColumnCount(); columnIndex++) {
-                 * GuiUtils.packColumn(dataTable, columnIndex); }
-                 */
-                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
-                //remove other panels
-                dRInitialController.getInitialChartPanel().setChart(null);
-                dRResultsController.getDupeInitialChartPanel().setChart(null);
-                dRResultsController.getDupeNormalizedChartPanel().setChart(null);
-                dRPanel.getGraphicsDRParentPanel().removeAll();
-                dRPanel.getGraphicsDRParentPanel().revalidate();
-                dRPanel.getGraphicsDRParentPanel().repaint();
-                dRPanel.getGraphicsDRParentPanel().add(dRNormalizedController.getDRNormalizedPlotPanel(), gridBagConstraints);
-                //Plot fitted data in dose-response curve, along with R² annotation
-                plotDoseResponse(dRNormalizedController.getNormalizedChartPanel(), dRNormalizedController.getDRNormalizedPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(true), getdRAnalysisGroup(), true);
             }
         });
 
@@ -522,21 +526,23 @@ public class DoseResponseController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (dRAnalysisGroup != null) {
                 //switch shared table view: create and set new table model with most recent statistical values
-                // (these values get recalculated after each new fitting)
-                dRResultsController.setTableModel(dRResultsController.reCreateTableModel(dRAnalysisGroup));
-                updateModelInTable(dRResultsController.getTableModel());
-                updateTableInfoMessage("Statistical values from the curve fit of the initial and normalized data.");
+                    // (these values get recalculated after each new fitting)
+                    dRResultsController.setTableModel(dRResultsController.reCreateTableModel(dRAnalysisGroup));
+                    updateModelInTable(dRResultsController.getTableModel());
+                    updateTableInfoMessage("Statistical values from the curve fit of the initial and normalized data.");
 
-                //remove other panels
-                dRInitialController.getInitialChartPanel().setChart(null);
-                dRNormalizedController.getNormalizedChartPanel().setChart(null);
-                dRPanel.getGraphicsDRParentPanel().removeAll();
-                dRPanel.getGraphicsDRParentPanel().revalidate();
-                dRPanel.getGraphicsDRParentPanel().repaint();
-                dRPanel.getGraphicsDRParentPanel().add(dRResultsController.getdRResultsPanel(), gridBagConstraints);
-                //plot curves
-                dRResultsController.plotCharts();
+                    //remove other panels
+                    dRInitialController.getInitialChartPanel().setChart(null);
+                    dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                    dRPanel.getGraphicsDRParentPanel().removeAll();
+                    dRPanel.getGraphicsDRParentPanel().revalidate();
+                    dRPanel.getGraphicsDRParentPanel().repaint();
+                    dRPanel.getGraphicsDRParentPanel().add(dRResultsController.getdRResultsPanel(), gridBagConstraints);
+                    //plot curves
+                    dRResultsController.plotCharts();
+                }
             }
         });
 
