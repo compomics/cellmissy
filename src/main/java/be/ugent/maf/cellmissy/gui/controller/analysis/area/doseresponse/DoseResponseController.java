@@ -265,7 +265,9 @@ public class DoseResponseController {
      * Reset views on cancel
      */
     public void resetOnCancel() {
+        dRAnalysisGroup = new DoseResponseAnalysisGroup();
         dataTable.setModel(new DefaultTableModel());
+        dRInputController.onCancel();
         dRInputController.getdRInputPanel().getSlopesTable().setModel(new DefaultTableModel());
         dRInitialController.getInitialChartPanel().setChart(null);
         dRNormalizedController.getNormalizedChartPanel().setChart(null);

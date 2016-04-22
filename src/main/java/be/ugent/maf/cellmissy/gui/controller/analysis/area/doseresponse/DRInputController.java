@@ -71,11 +71,21 @@ public class DRInputController {
      */
     public void init() {
         plateConditionsList = new ArrayList<>();
+        areaAnalysisResultsList = new ArrayList<>();
         bindingGroup = new BindingGroup();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         sharedTableModel = new NonEditableTableModel();
         //init view
         initDRInputPanel();
+    }
+    
+    /**
+     * Reset on cancel
+     */
+    public void onCancel() {
+        plateConditionsList = new ArrayList<>();
+        areaAnalysisResultsList = new ArrayList<>();
+        
     }
 
     /**
@@ -126,8 +136,6 @@ public class DRInputController {
      */
     private void initDRInputPanel() {
         dRInputPanel = new DRInputPanel();
-        plateConditionsList = new ArrayList<>();
-        areaAnalysisResultsList = new ArrayList<>();
         // control opaque property of bottom table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         JTable slopesTable = dRInputPanel.getSlopesTable();
@@ -214,23 +222,25 @@ public class DRInputController {
     private void addToDRAnalysis() {
         //selected conditions
         List<PlateCondition> selectedConditions = getSelectedConditions();
-        for (PlateCondition selectedCondition : selectedConditions) {
-            //only add to list if list does not contain this condition already
-            if (!plateConditionsList.contains(selectedCondition)) {
-                plateConditionsList.add(selectedCondition);
-                AreaAnalysisResults areaAnalysisResults = doseResponseController.getLinearResultsAnalysisMap().get(selectedCondition);
-                areaAnalysisResultsList.add(areaAnalysisResults);
+        if (selectedConditions != null) {
+            for (PlateCondition selectedCondition : selectedConditions) {
+                //only add to list if list does not contain this condition already
+                if (!plateConditionsList.contains(selectedCondition)) {
+                    plateConditionsList.add(selectedCondition);
+                    AreaAnalysisResults areaAnalysisResults = doseResponseController.getLinearResultsAnalysisMap().get(selectedCondition);
+                    areaAnalysisResultsList.add(areaAnalysisResults);
+                }
             }
-        }
-        // make a new analysis group, with those conditions and those results
-        // override variable if one existed already
-        doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
-        // check treatments, dialog pops up if necessary
-        checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
-        // populate bottom table with the analysis group
-        dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+            // make a new analysis group, with those conditions and those results
+            // override variable if one existed already
+            doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
 
+            // check treatments, dialog pops up if necessary
+            checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
+            // populate bottom table with the analysis group
+            dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+            dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        }
     }
 
     /**
@@ -350,6 +360,11 @@ public class DRInputController {
     private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
         LinkedHashMap<Double, String> concentrationsMap = analysisGroup.getConcentrationsMap().get(analysisGroup.getTreatmentToAnalyse());
         LinkedHashMap<PlateCondition, List<Double>> velocitiesMap = analysisGroup.getVelocitiesMap();
+        //when removing all conditions
+        if (velocitiesMap.size() == 0) {
+            return new NonEditableTableModel();
+        }
+        
         int maxReplicates = 0;
         for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
             int replicates = entry.getValue().size();
@@ -358,7 +373,7 @@ public class DRInputController {
             }
         }
 
-        Object[][] data = new Object[concentrationsMap.size() + 1][maxReplicates + 2];
+        Object[][] data = new Object[velocitiesMap.size()][maxReplicates + 2];
         int i = 0;
         int controlIndex = 100;
         int rowIndex = 0;
@@ -396,16 +411,19 @@ public class DRInputController {
             data[controlIndex][1] = "--";
         }
         rowIndex = 0;
-        for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
-            if (rowIndex >= controlIndex) {
-                data[rowIndex + 1][0] = entry.getKey();
-                data[rowIndex + 1][1] = entry.getValue();
-            } else {
-                data[rowIndex][0] = entry.getKey();
-                data[rowIndex][1] = entry.getValue();
-            }
+        //if user only selects control, the concentrationsmap is null
+        if (concentrationsMap != null) {
+            for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
+                if (rowIndex >= controlIndex) {
+                    data[rowIndex + 1][0] = entry.getKey();
+                    data[rowIndex + 1][1] = entry.getValue();
+                } else {
+                    data[rowIndex][0] = entry.getKey();
+                    data[rowIndex][1] = entry.getValue();
+                }
 
-            rowIndex++;
+                rowIndex++;
+            }
         }
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
