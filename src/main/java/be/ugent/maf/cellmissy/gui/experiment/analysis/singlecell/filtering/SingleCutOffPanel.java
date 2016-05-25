@@ -5,6 +5,10 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering;
 
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 /**
  *
  * @author Paola
@@ -16,6 +20,26 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
      */
     public SingleCutOffPanel() {
         initComponents();
+    }
+
+    public JButton getApplyCutOffButton() {
+        return applyCutOffButton;
+    }
+
+    public JTextField getCutOffTextField() {
+        return cutOffTextField;
+    }
+
+    public JPanel getFilteredPlotParentPanel() {
+        return filteredPlotParentPanel;
+    }
+
+    public JTextField getMeanDisplacTextField() {
+        return meanDisplacTextField;
+    }
+
+    public JPanel getRawPlotParentPanel() {
+        return rawPlotParentPanel;
     }
 
     /**

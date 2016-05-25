@@ -15,8 +15,11 @@ import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
 import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.TimeInterval;
+import be.ugent.maf.cellmissy.exception.TwoOrMoreObservationsException;
 import be.ugent.maf.cellmissy.gui.view.table.model.DistanceMatrixTableModel;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.stereotype.Component;
 
 /**
@@ -172,8 +175,13 @@ public class CellCoveredAreaPreProcessor implements AreaPreProcessor {
 
     @Override
     public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
-        KernelDensityEstimator kernelDensityEstimator = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimator(kernelDensityEstimatorBeanName);
-        return kernelDensityEstimator.estimateDensityFunction(data);
+        try {
+            KernelDensityEstimator kernelDensityEstimator = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimator(kernelDensityEstimatorBeanName);
+            return kernelDensityEstimator.estimateDensityFunction(data);
+        } catch (TwoOrMoreObservationsException ex) {
+            Logger.getLogger(CellCoveredAreaPreProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /**

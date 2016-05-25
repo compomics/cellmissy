@@ -20,6 +20,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPane
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.FilteringPanel;
 import be.ugent.maf.cellmissy.gui.plate.AnalysisPlatePanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
@@ -275,9 +276,64 @@ public class SingleCellPreProcessingController {
         return preProcessingMap;
     }
 
-//    public void plotRawKde(PlateCondition plateCondition) {
-//        filteringController.plotRawKde(plateCondition);
-//    }
+    public void plotRawKde(PlateCondition plateCondition) {
+        filteringController.plotRawKde(plateCondition);
+    }
+
+    public FilteringPanel getFilteringPanel() {
+        return filteringController.getFilteringPanel();
+    }
+
+    public void setMeanDisplForCondition(PlateCondition plateCondition) {
+        filteringController.setMeanDisplForCondition(plateCondition);
+    }
+
+    public void setMeanDisplForExperiment() {
+        filteringController.setMeanDisplForExperiment();
+    }
+
+    /**
+     *
+     * @param plateCondition
+     */
+    public void computeCondition(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder singleCellConditionDataHolder = preProcessingMap.get(plateCondition);
+        LOG.info("****************");
+        LOG.info("Operating now on: " + singleCellConditionDataHolder);
+        LOG.info("operating on steps and cells...");
+        singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
+        LOG.info("generating instantaneous displacements...");
+        singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
+        LOG.info("generating directionality ratios...");
+        singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating track displacements...");
+        singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating median directionality ratios...");
+        singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+        LOG.info("generating cumulative distances...");
+        singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
+        LOG.info("generating euclidean distances...");
+        singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
+        LOG.info("generating track speeds...");
+        singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+        LOG.info("generating track end-point directionality ratios...");
+        singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating turning angles...");
+        singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
+        LOG.info("generating median turning angles...");
+        singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+//        LOG.info("generating mean-squared displacement...");
+//        singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
+//        LOG.info("generating convex hulls...");
+//        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+//        LOG.info("generating track displacements...");
+//        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+//        LOG.info("generating outreach ratios...");
+//        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+//        LOG.info("computing for interpolated tracks...");
+//        singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
+        plateCondition.setComputed(true);
+    }
 
     /**
      * Show track data in a table.
@@ -687,49 +743,6 @@ public class SingleCellPreProcessingController {
                 singleCellMainController.handleUnexpectedError(ex);
             }
         }
-    }
-
-    /**
-     *
-     * @param plateCondition
-     */
-    private void computeCondition(PlateCondition plateCondition) {
-        SingleCellConditionDataHolder singleCellConditionDataHolder = preProcessingMap.get(plateCondition);
-        LOG.info("****************");
-        LOG.info("Operating now on: " + singleCellConditionDataHolder);
-        LOG.info("operating on steps and cells...");
-        singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
-        LOG.info("generating instantaneous displacements...");
-        singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
-        LOG.info("generating directionality ratios...");
-        singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
-        LOG.info("generating track displacements...");
-        singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
-        LOG.info("generating median directionality ratios...");
-        singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-        LOG.info("generating cumulative distances...");
-        singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
-        LOG.info("generating euclidean distances...");
-        singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
-        LOG.info("generating track speeds...");
-        singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
-        LOG.info("generating track end-point directionality ratios...");
-        singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
-        LOG.info("generating turning angles...");
-        singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
-        LOG.info("generating median turning angles...");
-        singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
-//        LOG.info("generating mean-squared displacement...");
-//        singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
-//        LOG.info("generating convex hulls...");
-//        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
-//        LOG.info("generating track displacements...");
-//        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-//        LOG.info("generating outreach ratios...");
-//        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
-//        LOG.info("computing for interpolated tracks...");
-//        singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
-        plateCondition.setComputed(true);
     }
 
     /**

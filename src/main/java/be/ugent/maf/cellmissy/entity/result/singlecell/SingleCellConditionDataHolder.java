@@ -65,8 +65,6 @@ public class SingleCellConditionDataHolder {
     private Double[] medianTurningAnglesVector;
     // array with the median direction autocorrelations
     private Double[] medianDirectionAutocorrelationsVector;
-    // a string for the computation process
-    private String info;
 
     /**
      * Empty Constructor.

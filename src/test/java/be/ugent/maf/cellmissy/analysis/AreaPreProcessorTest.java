@@ -4,7 +4,10 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import be.ugent.maf.cellmissy.exception.TwoOrMoreObservationsException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,10 +44,14 @@ public class AreaPreProcessorTest {
      */
     @Test
     public void testKernelDensityEstimation() {
-        List<double[]> estimateDensityFunction = normal_Kernel.estimateDensityFunction(data);
-        double[] randomSamples = estimateDensityFunction.get(0);
-        double[] estimatedValues = estimateDensityFunction.get(1);
-        Assert.assertTrue(randomSamples.length == 4096);
-        Assert.assertTrue(estimatedValues.length == 4096);
+        try {
+            List<double[]> estimateDensityFunction = normal_Kernel.estimateDensityFunction(data);
+            double[] randomSamples = estimateDensityFunction.get(0);
+            double[] estimatedValues = estimateDensityFunction.get(1);
+            Assert.assertTrue(randomSamples.length == 4096);
+            Assert.assertTrue(estimatedValues.length == 4096);
+        } catch (TwoOrMoreObservationsException ex) {
+            Logger.getLogger(AreaPreProcessorTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.analysis;
 
+import be.ugent.maf.cellmissy.exception.TwoOrMoreObservationsException;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public interface KernelDensityEstimator {
      *
      * @param data
      * @return a List of double arrays (x and y values of density Function)
+     * @throws be.ugent.maf.cellmissy.exception.TwoOrMoreObservationsException
      */
-    List<double[]> estimateDensityFunction(Double[] data);
+    List<double[]> estimateDensityFunction(Double[] data) throws TwoOrMoreObservationsException;
 }

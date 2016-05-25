@@ -68,9 +68,6 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         return filteredPlotParentPanel;
     }
 
-    public JPanel getTablePanel() {
-        return tablePanel;
-    }
 
     public JTextField getTopLimTextField() {
         return topLimTextField;
@@ -92,6 +89,8 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         filteringPanel = new javax.swing.JPanel();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        upPanel = new javax.swing.JPanel();
         infoInputPanel = new javax.swing.JPanel();
         infoPanel = new javax.swing.JPanel();
         meanDisplacReplTextField = new javax.swing.JTextField();
@@ -122,14 +121,21 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         filterTrackTable = new javax.swing.JTable();
-        plotsPanel = new javax.swing.JPanel();
+        bottomPanel = new javax.swing.JPanel();
         rawPlotParentPanel = new javax.swing.JPanel();
         filteredPlotParentPanel = new javax.swing.JPanel();
         summaryPanel = new javax.swing.JPanel();
 
-        filteringPanel.setLayout(new java.awt.GridBagLayout());
+        filteringPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        filteringPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        infoInputPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        jSplitPane1.setDividerLocation(80);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        upPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        upPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        upPanel.setLayout(new java.awt.GridBagLayout());
+
         infoInputPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         infoInputPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -173,7 +179,7 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
                                 .addComponent(meanDisplacCondTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel4)))
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,7 +239,7 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         jLabel12.setText("%");
 
         filterButton1.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
-        filterButton1.setText("Apply selected cut-off to all conditions");
+        filterButton1.setText("Apply specific cut-off to all conditions");
 
         javax.swing.GroupLayout inputPanelLayout = new javax.swing.GroupLayout(inputPanel);
         inputPanel.setLayout(inputPanelLayout);
@@ -273,13 +279,12 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
                         .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
                             .addComponent(jLabel12)))
-                    .addComponent(filterButton)
-                    .addComponent(filterButton1))
+                    .addGroup(inputPanelLayout.createSequentialGroup()
+                        .addComponent(filterButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(filterButton1)))
                 .addContainerGap())
         );
-
-        inputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {bottomLimTextField, conversionFactorTextField, percentageMotileStepsTextField, topLimTextField, translocationStepTextField});
-
         inputPanelLayout.setVerticalGroup(
             inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(inputPanelLayout.createSequentialGroup()
@@ -308,9 +313,9 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
                             .addComponent(jLabel8)
                             .addComponent(translocationStepTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(filterButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(filterButton1))
+                        .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(filterButton)
+                            .addComponent(filterButton1)))
                     .addGroup(inputPanelLayout.createSequentialGroup()
                         .addGap(78, 78, 78)
                         .addComponent(jLabel12)))
@@ -329,11 +334,11 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.6;
-        gridBagConstraints.weighty = 0.5;
-        filteringPanel.add(infoInputPanel, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        upPanel.add(infoInputPanel, gridBagConstraints);
 
-        tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
         tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         filterTrackTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -355,28 +360,32 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.4;
-        gridBagConstraints.weighty = 0.5;
-        filteringPanel.add(tablePanel, gridBagConstraints);
+        gridBagConstraints.weighty = 1.0;
+        upPanel.add(tablePanel, gridBagConstraints);
 
-        plotsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        plotsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        plotsPanel.setLayout(new java.awt.GridBagLayout());
+        jSplitPane1.setLeftComponent(upPanel);
+
+        bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        bottomPanel.setLayout(new java.awt.GridBagLayout());
 
         rawPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         rawPlotParentPanel.setLayout(new java.awt.GridBagLayout());
@@ -387,7 +396,7 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.4;
         gridBagConstraints.weighty = 1.0;
-        plotsPanel.add(rawPlotParentPanel, gridBagConstraints);
+        bottomPanel.add(rawPlotParentPanel, gridBagConstraints);
 
         filteredPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         filteredPlotParentPanel.setLayout(new java.awt.GridBagLayout());
@@ -398,17 +407,26 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 1.0;
-        plotsPanel.add(filteredPlotParentPanel, gridBagConstraints);
+        bottomPanel.add(filteredPlotParentPanel, gridBagConstraints);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.5;
-        filteringPanel.add(plotsPanel, gridBagConstraints);
+        jSplitPane1.setRightComponent(bottomPanel);
+
+        javax.swing.GroupLayout filteringPanelLayout = new javax.swing.GroupLayout(filteringPanel);
+        filteringPanel.setLayout(filteringPanelLayout);
+        filteringPanelLayout.setHorizontalGroup(
+            filteringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(filteringPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSplitPane1)
+                .addContainerGap())
+        );
+        filteringPanelLayout.setVerticalGroup(
+            filteringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(filteringPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         jTabbedPane1.addTab("filtering", filteringPanel);
 
@@ -450,6 +468,7 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField bottomLimTextField;
+    private javax.swing.JPanel bottomPanel;
     private javax.swing.JTextField conversionFactorTextField;
     private javax.swing.JButton filterButton;
     private javax.swing.JButton filterButton1;
@@ -473,17 +492,18 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField meanDisplacCondTextField;
     private javax.swing.JTextField meanDisplacReplTextField;
     private javax.swing.JRadioButton microMeterRadioButton;
     private javax.swing.JTextField percentageMotileStepsTextField;
     private javax.swing.JRadioButton pixelRadioButton;
-    private javax.swing.JPanel plotsPanel;
     private javax.swing.JPanel rawPlotParentPanel;
     private javax.swing.JPanel summaryPanel;
     private javax.swing.JPanel tablePanel;
     private javax.swing.JTextField topLimTextField;
     private javax.swing.JTextField translocationStepTextField;
+    private javax.swing.JPanel upPanel;
     // End of variables declaration//GEN-END:variables
 }

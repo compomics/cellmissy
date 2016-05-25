@@ -14,9 +14,12 @@ import be.ugent.maf.cellmissy.analysis.factory.OutliersHandlerFactory;
 import be.ugent.maf.cellmissy.entity.result.area.AreaPreProcessingResults;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.TimeInterval;
+import be.ugent.maf.cellmissy.exception.TwoOrMoreObservationsException;
 import be.ugent.maf.cellmissy.gui.view.table.model.DistanceMatrixTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.stereotype.Component;
 
 /**
@@ -132,7 +135,12 @@ public class OpenAreaPreProcessor implements AreaPreProcessor {
     @Override
     public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
         KernelDensityEstimator kernelDensityEstimator = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimator(kernelDensityEstimatorBeanName);
-        return kernelDensityEstimator.estimateDensityFunction(data);
+        try {
+            return kernelDensityEstimator.estimateDensityFunction(data);
+        } catch (TwoOrMoreObservationsException ex) {
+            Logger.getLogger(OpenAreaPreProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override

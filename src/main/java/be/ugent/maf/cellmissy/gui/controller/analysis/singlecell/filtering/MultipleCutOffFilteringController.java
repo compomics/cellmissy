@@ -30,7 +30,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,15 +71,19 @@ public class MultipleCutOffFilteringController {
         initOtherViews();
     }
 
+    public MultipleCutOffPanel getMultipleCutOffPanel() {
+        return multipleCutOffPanel;
+    }
+
     /**
      * Plot the raw KDE for track displacements.
      *
      * @param plateCondition
      */
-    public void plotRawKde(PlateCondition plateCondition) {
+    public void plotRawKdeMultipleCutOff(PlateCondition plateCondition) {
         SingleCellConditionDataHolder conditionDataHolder = filteringController.getConditionDataHolder(plateCondition);
-        List<List<double[]>> estimateRawDensityFunction = estimateRawDensityFunction(conditionDataHolder);
-        XYSeriesCollection densityFunction = generateDensityFunction(conditionDataHolder, estimateRawDensityFunction);
+        List<List<double[]>> estimateRawDensityFunction = filteringController.estimateRawDensityFunction(conditionDataHolder);
+        XYSeriesCollection densityFunction = filteringController.generateDensityFunction(conditionDataHolder, estimateRawDensityFunction);
         JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, densityFunction, "raw KDE track displ", "track displ", true);
         rawKdeChartPanel.setChart(densityChart);
     }
@@ -171,26 +174,6 @@ public class MultipleCutOffFilteringController {
     }
 
     /**
-     * Estimate the raw density functions for the replicates of a single cell
-     * condition data holder.
-     *
-     * @param singleCellConditionDataHolder
-     * @return a list of a list of double containing the estimated density
-     * functions.
-     */
-    private List<List<double[]>> estimateRawDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        String kernelDensityEstimatorBeanName = filteringController.getKernelDensityEstimatorBeanName();
-        List<List<double[]>> densityFunction = new ArrayList<>();
-        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder)
-                -> filteringController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
-                        kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackDisplDensityFunction) -> {
-                    densityFunction.add(oneReplicateTrackDisplDensityFunction);
-                });
-
-        return densityFunction;
-    }
-
-    /**
      * Estimate the filtered density functions for the replicates of a single
      * cell condition data holder and given a motile step.
      *
@@ -207,8 +190,8 @@ public class MultipleCutOffFilteringController {
             Double[] retainedDisplacements = getRetainedDisplacements(retainedTrackMap, singleCellWellDataHolder);
             List<double[]> oneReplicateTrackDisplDensityFunction
                     = filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName);
-            densityFunction.add(oneReplicateTrackDisplDensityFunction);
-        }
+                densityFunction.add(oneReplicateTrackDisplDensityFunction);
+            }
         return densityFunction;
     }
 
@@ -268,7 +251,7 @@ public class MultipleCutOffFilteringController {
         List<XYSeriesCollection> xYSeriesCollections = new ArrayList<>();
         for (int i = 0; i < motileSteps.size(); i++) {
             List<List<double[]>> estimateFilteredDensityFunction = estimateFilteredDensityFunction(conditionDataHolder, i);
-            XYSeriesCollection densityFunction = generateDensityFunction(conditionDataHolder, estimateFilteredDensityFunction);
+            XYSeriesCollection densityFunction = filteringController.generateDensityFunction(conditionDataHolder, estimateFilteredDensityFunction);
             xYSeriesCollections.add(densityFunction);
         }
         return xYSeriesCollections;
@@ -302,53 +285,6 @@ public class MultipleCutOffFilteringController {
             multipleCutOffPanel.getFilteredPlotParentPanel().revalidate();
             multipleCutOffPanel.getFilteredPlotParentPanel().repaint();
         }
-    }
-
-    /**
-     *
-     * @param singleCellConditionDataHolder
-     * @return
-     */
-    private XYSeriesCollection generateDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, List<List<double[]>> densityFunctions) {
-        XYSeriesCollection collection = new XYSeriesCollection();
-        int counter = 0;
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSingleCellAnalyzedSamplesPerWell(singleCellWellDataHolder.getWell());
-            if (numberOfSamplesPerWell == 1) {
-                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
-                    // x values
-                    double[] xValues = densityFunctions.get(i).get(0);
-                    // y values
-                    double[] yValues = densityFunctions.get(i).get(1);
-                    XYSeries series = new XYSeries("" + singleCellWellDataHolder.getWell(), false);
-                    for (int j = 0; j < xValues.length; j++) {
-                        double x = xValues[j];
-                        double y = yValues[j];
-                        series.add(x, y);
-                    }
-                    collection.addSeries(series);
-                }
-                counter += numberOfSamplesPerWell;
-            } else {
-                int label = 0;
-                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
-                    // x values
-                    double[] xValues = densityFunctions.get(i).get(0);
-                    // y values
-                    double[] yValues = densityFunctions.get(i).get(1);
-                    XYSeries series = new XYSeries("" + (singleCellWellDataHolder.getWell()) + ", " + (label + 1), false);
-                    for (int j = 0; j < xValues.length; j++) {
-                        double x = xValues[j];
-                        double y = yValues[j];
-                        series.add(x, y);
-                    }
-                    collection.addSeries(series);
-                    label++;
-                }
-                counter += numberOfSamplesPerWell;
-            }
-        }
-        return collection;
     }
 
     /**

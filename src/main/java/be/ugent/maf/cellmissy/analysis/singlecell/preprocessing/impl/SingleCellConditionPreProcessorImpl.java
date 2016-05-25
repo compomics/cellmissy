@@ -15,11 +15,14 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHo
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
+import be.ugent.maf.cellmissy.exception.TwoOrMoreObservationsException;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,22 +43,24 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
         List<SingleCellWellDataHolder> singleCellWellDataHolders = new ArrayList<>();
         List<TrackDataHolder> trackDataHolders = new ArrayList<>();
         List<Well> singleCellAnalyzedWells = singleCellConditionDataHolder.getPlateCondition().getSingleCellAnalyzedWells();
-        for (Well well : singleCellAnalyzedWells) {
+        singleCellAnalyzedWells.stream().forEach((well) -> {
             singleCellWellDataHolders.add(new SingleCellWellDataHolder(well));
-        }
+        });
         singleCellConditionDataHolder.setSingleCellWellDataHolders(singleCellWellDataHolders);
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder) -> {
             singleCellWellPreProcessor.generateTrackDataHolders(singleCellWellDataHolder);
+            return singleCellWellDataHolder;
+        }).forEach((singleCellWellDataHolder) -> {
             trackDataHolders.addAll(singleCellWellDataHolder.getTrackDataHolders());
-        }
+        });
         singleCellConditionDataHolder.setTrackDataHolders(trackDataHolders);
     }
 
     @Override
     public void generateDataStructure(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellPreProcessor.generateDataStructure(singleCellWellDataHolder);
-        }
+        });
         // for a single condition, compute first the total number of track points
         int trackPointsNumber = computeTotalTrackPointsNumber(singleCellConditionDataHolder);
         Object[][] dataStructure = new Object[trackPointsNumber][3];
@@ -81,9 +86,9 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
 
     @Override
     public void generateRawTrackCoordinatesMatrix(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellPreProcessor.generateRawTrackCoordinatesMatrix(singleCellWellDataHolder);
-        }
+        });
         Double[][] rawTrackCoordinatesMatrix = new Double[singleCellConditionDataHolder.getDataStructure().length][2];
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
@@ -99,9 +104,9 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
 
     @Override
     public void generateShiftedTrackCoordinatesMatrix(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellWellDataHolder);
-        }
+        });
         Double[][] shiftedTrackCoordinatesMatrix = new Double[singleCellConditionDataHolder.getDataStructure().length][2];
         int counter = 0;
         for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
@@ -117,9 +122,9 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
 
     @Override
     public void generateRawCoordinatesRanges(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellPreProcessor.generateRawCoordinatesRanges(singleCellWellDataHolder);
-        }
+        });
         Double[][] transposedMatrix = AnalysisUtils.transpose2DArray(singleCellConditionDataHolder.getRawTrackCoordinatesMatrix());
         // compute the min and the max coordinates
         Double xMin = Collections.min(Arrays.asList(transposedMatrix[0]));
@@ -134,9 +139,9 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
 
     @Override
     public void generateShiftedCoordinatesRanges(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().forEach((singleCellWellDataHolder) -> {
             singleCellWellPreProcessor.generateShiftedCoordinatesRanges(singleCellWellDataHolder);
-        }
+        });
         Double[][] transposedMatrix = AnalysisUtils.transpose2DArray(singleCellConditionDataHolder.getShiftedTrackCoordinatesMatrix());
         // compute the min and the max coordinates
         Double xMin = Collections.min(Arrays.asList(transposedMatrix[0]));
@@ -152,7 +157,12 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
     @Override
     public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
         KernelDensityEstimator kernelDensityEstimator = KernelDensityEstimatorFactory.getInstance().getKernelDensityEstimator(kernelDensityEstimatorBeanName);
-        return kernelDensityEstimator.estimateDensityFunction(data);
+        try {
+            return kernelDensityEstimator.estimateDensityFunction(data);
+        } catch (TwoOrMoreObservationsException ex) {
+            Logger.getLogger(SingleCellConditionPreProcessorImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     /**
@@ -163,9 +173,8 @@ public class SingleCellConditionPreProcessorImpl implements SingleCellConditionP
      */
     private int computeTotalTrackPointsNumber(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         int trackPointsNumber = 0;
-        for (TrackDataHolder trackDataHolder : singleCellConditionDataHolder.getTrackDataHolders()) {
-            trackPointsNumber += trackDataHolder.getTrack().getTrackPointList().size();
-        }
+        trackPointsNumber = singleCellConditionDataHolder.getTrackDataHolders().stream().map((trackDataHolder)
+                -> trackDataHolder.getTrack().getTrackPointList().size()).reduce(trackPointsNumber, Integer::sum);
         return trackPointsNumber;
     }
 }

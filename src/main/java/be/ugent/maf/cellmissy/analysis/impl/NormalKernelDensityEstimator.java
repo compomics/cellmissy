@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.analysis.impl;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.analysis.KernelDensityEstimator;
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
+import be.ugent.maf.cellmissy.exception.TwoOrMoreObservationsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +46,7 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
     private KernelDensityGen kernelDensityGen;
 
     /**
-     * This method initialise the KDE, i.e. sort values in ascending order,
+     * This method initialize the KDE, i.e. sort values in ascending order,
      * compute an empirical distribution out of it, makes use of a NormalGen to
      * generate random variates from the normal distribution, and then use these
      * variates to generate a kernel density generator of the empirical
@@ -53,8 +54,11 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
      *
      * @param data
      */
-    private void init(double[] data) {
+    private void init(double[] data) throws TwoOrMoreObservationsException {
         Arrays.sort(data);
+        if (data.length < 2) {
+            throw new TwoOrMoreObservationsException("KDE needs at least 2 obs!");
+        }
         empiricalDist = new EmpiricalDist(data);
         //new Stream to randomly generate numbers
         //combined multiple recursive generator (CMRG)
@@ -64,7 +68,7 @@ public class NormalKernelDensityEstimator implements KernelDensityEstimator {
     }
 
     @Override
-    public List estimateDensityFunction(Double[] data) {
+    public List estimateDensityFunction(Double[] data) throws TwoOrMoreObservationsException {
         // Number Of Density Points to be used
         // This is a measurements of the estimation precision
         // usually, this is set to a default of 512, as in most KDE algorithms default values, i.e. R "density"function, OmicSoft, Matlab algorithms.
