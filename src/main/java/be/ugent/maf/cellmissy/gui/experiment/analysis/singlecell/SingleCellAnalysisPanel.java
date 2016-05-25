@@ -80,8 +80,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return analysisLabel;
     }
 
-    public JPanel getMinTranslParentPanel() {
-        return minTranslParentPanel;
+    public JPanel getFilteringParentPanel() {
+        return filteringParentPanel;
     }
 
     /**
@@ -122,9 +122,6 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         displSpeedParentPanel = new javax.swing.JPanel();
         angleDirectParentPanel = new javax.swing.JPanel();
         filteringParentPanel = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        minTranslParentPanel = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
         analysisParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -334,34 +331,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
 
         filteringParentPanel.setName("filteringParentPanel"); // NOI18N
         filteringParentPanel.setOpaque(false);
-
-        minTranslParentPanel.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("min translocation filtering", minTranslParentPanel);
-
-        jPanel3.setLayout(new java.awt.GridBagLayout());
-        jTabbedPane1.addTab("filtering summary - review", jPanel3);
-
-        javax.swing.GroupLayout filteringParentPanelLayout = new javax.swing.GroupLayout(filteringParentPanel);
-        filteringParentPanel.setLayout(filteringParentPanelLayout);
-        filteringParentPanelLayout.setHorizontalGroup(
-            filteringParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1037, Short.MAX_VALUE)
-            .addGroup(filteringParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(filteringParentPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jTabbedPane1)
-                    .addContainerGap()))
-        );
-        filteringParentPanelLayout.setVerticalGroup(
-            filteringParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 703, Short.MAX_VALUE)
-            .addGroup(filteringParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(filteringParentPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(jTabbedPane1)
-                    .addContainerGap()))
-        );
-
+        filteringParentPanel.setLayout(new java.awt.GridBagLayout());
         bottomPanel.add(filteringParentPanel, "filteringParentPanel");
         filteringParentPanel.getAccessibleContext().setAccessibleName("filteringParentPanel");
 
@@ -397,11 +367,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel inspectingDataPanel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea logTextArea;
-    private javax.swing.JPanel minTranslParentPanel;
     private javax.swing.JPanel topPanel;
     private javax.swing.JScrollPane trackPointsScrollPane;
     private javax.swing.JTable trackPointsTable;

@@ -462,7 +462,7 @@ public class SingleCellMainController {
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
                 showInfoMessage("Conditions-based filtering-quality control");
-                singleCellPreProcessingController.plotRawKde(selectedCondition);
+//                singleCellPreProcessingController.plotRawKde(selectedCondition);
                 break;
             case "analysisParentPanel":
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
@@ -482,11 +482,7 @@ public class SingleCellMainController {
                     singleCellPreProcessingController.enableAnalysis();
                 }
                 // check which button is actually selected
-                if (singleCellAnalysisController.getAnalysisPanel().getFilteringRadioButton().isSelected()) {
 
-                } else if (singleCellAnalysisController.getAnalysisPanel().getMsdRadioButton().isSelected()) {
-                    singleCellAnalysisController.showMSD();
-                }
                 break;
 
         }

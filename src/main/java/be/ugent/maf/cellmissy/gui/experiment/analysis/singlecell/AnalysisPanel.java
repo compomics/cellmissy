@@ -6,8 +6,6 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 /**
  *
@@ -22,28 +20,8 @@ public class AnalysisPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JRadioButton getFdAnalysisRadioButton() {
-        return fdAnalysisRadioButton;
-    }
-
-    public JRadioButton getFilteringRadioButton() {
-        return filteringRadioButton;
-    }
-
     public JLabel getInfoLabel() {
         return infoLabel;
-    }
-
-    public JPanel getMsdParentPanel() {
-        return msdParentPanel;
-    }
-
-    public JRadioButton getMsdRadioButton() {
-        return msdRadioButton;
-    }
-
-    public JRadioButton getRsAnalysisRadioButton() {
-        return rsAnalysisRadioButton;
     }
 
     /**
@@ -57,11 +35,10 @@ public class AnalysisPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         radioButtonsPanel = new javax.swing.JPanel();
-        filteringRadioButton = new javax.swing.JRadioButton();
         infoLabel = new javax.swing.JLabel();
-        msdRadioButton = new javax.swing.JRadioButton();
-        rsAnalysisRadioButton = new javax.swing.JRadioButton();
-        fdAnalysisRadioButton = new javax.swing.JRadioButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
         bottomPanel = new javax.swing.JPanel();
         msdParentPanel = new javax.swing.JPanel();
 
@@ -69,17 +46,15 @@ public class AnalysisPanel extends javax.swing.JPanel {
 
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        filteringRadioButton.setText("filtering/quality control");
-
         infoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
         infoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         infoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        msdRadioButton.setText("MSD analysis");
+        jRadioButton1.setText("jRadioButton1");
 
-        rsAnalysisRadioButton.setText("R/S analysis");
+        jRadioButton2.setText("jRadioButton2");
 
-        fdAnalysisRadioButton.setText("FD analysis");
+        jRadioButton3.setText("jRadioButton3");
 
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
         radioButtonsPanel.setLayout(radioButtonsPanelLayout);
@@ -89,27 +64,25 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(filteringRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(msdRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(rsAnalysisRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(fdAnalysisRadioButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE))
-                .addGap(533, 533, 533))
+                        .addComponent(jRadioButton1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jRadioButton2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jRadioButton3)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(radioButtonsPanelLayout.createSequentialGroup()
+                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
+                        .addGap(533, 533, 533))))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(filteringRadioButton)
-                    .addComponent(msdRadioButton)
-                    .addComponent(rsAnalysisRadioButton)
-                    .addComponent(fdAnalysisRadioButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jRadioButton1)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jRadioButton3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -143,12 +116,11 @@ public class AnalysisPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JRadioButton fdAnalysisRadioButton;
-    private javax.swing.JRadioButton filteringRadioButton;
     private javax.swing.JLabel infoLabel;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JPanel msdParentPanel;
-    private javax.swing.JRadioButton msdRadioButton;
     private javax.swing.JPanel radioButtonsPanel;
-    private javax.swing.JRadioButton rsAnalysisRadioButton;
     // End of variables declaration//GEN-END:variables
 }

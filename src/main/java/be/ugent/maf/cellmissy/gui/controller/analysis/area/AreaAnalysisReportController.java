@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
@@ -474,7 +475,7 @@ class AreaAnalysisReportController {
     private void addConditionsCharts() {
         for (PlateCondition plateCondition : conditionsToPlotMap.keySet()) {
             // if the user has decided to put the conditions in the report, this Boolean is TRUES
-            if (conditionsToPlotMap.get(plateCondition) == Boolean.TRUE) {
+            if (Objects.equals(conditionsToPlotMap.get(plateCondition), Boolean.TRUE)) {
                 // add first a title with the description of the condition
                 PdfUtils.addTitle(document, plateCondition + " - raw (normalized) and corrected (normalized) area plots", titleFont);
                 // create the raw area chart and add the image to the document

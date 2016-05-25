@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering;
 
 /**
  *
@@ -39,7 +39,7 @@ public class FilteringInfoDialog extends javax.swing.JDialog {
 
         infoEditorPane.setEditable(false);
         infoEditorPane.setContentType("text/html"); // NOI18N
-        infoEditorPane.setText("<html>\n   <head>\n      <TITLE></TITLE>\n   </head>\n   <body>\n      <a name=\"#top\"/>\n      <i>Filtering on single-cell trajectories ...</i>\n      <hr>\n      <br>\n      <p align=\"left\">\n        In this module you can filter/quality control single-cell trajectories.\n\tFirst, a \"motile step criterion\" is applied: insert top and bottom limit for translocation values, together with a translocation step.\n\t\tIf you choose µm as unit of measurement, nothing happens; if you choose pixels, please insert an appropriate conversion factor in the correspondent field.\n\tSecond, only cell trajectories that meet this first criterion in - at minimum - a specific percentage of steps of their total lenght can be retained. The other trajectories will be therefore discarded.\n         </br>\n      </p>\n   </body>\n</html>");
+        infoEditorPane.setText("<html>\n   <head>\n      <TITLE></TITLE>\n   </head>\n   <body>\n      <a name=\"#top\"/>\n      <i>Filtering on single-cell trajectories ...</i>\n      <hr>\n      <br>\n      <p align=\"left\">\n        In this module you can filter/quality control single-cell trajectories.\n\nYou can select between two filtering methods: single cut-off criterium, and multiple cut-off checks.\n\tSINGLE CUT-OFF: a unique threshold value is set on the cell displacement, and trajectories that show a displacement smaller than this threshold are discarded.\n\tMULTIPLE CUT-OFF:\n\tFirst, a \"motile step criterion\" is applied: insert top and bottom limit for translocation values, together with a translocation step.\n\t\tIf you choose µm as unit of measurement, nothing happens; if you choose pixels, please insert an appropriate conversion factor in the correspondent field.\n\tSecond, only cell trajectories that meet this first criterion in - at minimum - a specific percentage of steps of their total lenght can be retained. The other trajectories will be therefore discarded.\n         </br>\n      </p>\n   </body>\n</html>");
         infoEditorPane.setFocusable(false);
         infoEditorPane.setPreferredSize(new java.awt.Dimension(2964, 370));
         infoScrollPane.setViewportView(infoEditorPane);

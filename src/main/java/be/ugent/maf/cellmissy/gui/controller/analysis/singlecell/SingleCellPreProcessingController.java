@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.filtering.FilteringController;
 import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
@@ -52,7 +53,7 @@ import java.util.concurrent.ExecutionException;
  * @author Paola Masuzzo <paola.masuzzo@ugent.be>
  */
 @Controller("singleCellPreProcessingController")
-class SingleCellPreProcessingController {
+public class SingleCellPreProcessingController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SingleCellPreProcessingController.class);
     // model
@@ -234,7 +235,7 @@ class SingleCellPreProcessingController {
         displSpeedController.showMsdInTable(plateCondition);
     }
 
-    CellMissyFrame getMainFrame() {
+    public CellMissyFrame getMainFrame() {
         return singleCellMainController.getCellMissyFrame();
     }
 
@@ -274,9 +275,9 @@ class SingleCellPreProcessingController {
         return preProcessingMap;
     }
 
-    public void plotRawKde(PlateCondition plateCondition) {
-        filteringController.plotRawKde(plateCondition);
-    }
+//    public void plotRawKde(PlateCondition plateCondition) {
+//        filteringController.plotRawKde(plateCondition);
+//    }
 
     /**
      * Show track data in a table.
@@ -714,20 +715,20 @@ class SingleCellPreProcessingController {
         singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
         LOG.info("generating track end-point directionality ratios...");
         singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
-        LOG.info("generating mean-squared displacement...");
-        singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
-        LOG.info("generating convex hulls...");
-        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
-        LOG.info("generating track displacements...");
-        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-        LOG.info("generating outreach ratios...");
-        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
         LOG.info("generating turning angles...");
         singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
         LOG.info("generating median turning angles...");
         singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
-        LOG.info("computing for interpolated tracks...");
-        singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
+//        LOG.info("generating mean-squared displacement...");
+//        singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
+//        LOG.info("generating convex hulls...");
+//        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+//        LOG.info("generating track displacements...");
+//        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+//        LOG.info("generating outreach ratios...");
+//        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+//        LOG.info("computing for interpolated tracks...");
+//        singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
         plateCondition.setComputed(true);
     }
 

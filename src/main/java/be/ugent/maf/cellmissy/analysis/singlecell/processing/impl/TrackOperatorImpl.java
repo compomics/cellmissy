@@ -33,14 +33,14 @@ public class TrackOperatorImpl implements TrackOperator {
         stepCentricOperator.computeInstantaneousDisplacements(stepCentricDataHolder);
         stepCentricOperator.computeTurningAngles(stepCentricDataHolder);
         stepCentricOperator.computeDirectionalityRatios(stepCentricDataHolder);
-        stepCentricOperator.computeMSD(stepCentricDataHolder);
-        stepCentricOperator.computeDirectionAutocorrelations(stepCentricDataHolder);
-        stepCentricOperator.computeMeanDirectionAutocorrelations(stepCentricDataHolder);
-        stepCentricOperator.interpolateTrack(stepCentricDataHolder);
-        stepCentricOperator.init2Dtrees(stepCentricDataHolder);
-        stepCentricOperator.computeXYEnclosingBalls(stepCentricDataHolder);
-        stepCentricOperator.computeXTEnclosingBalls(stepCentricDataHolder);
-        stepCentricOperator.computeYTEnclosingBalls(stepCentricDataHolder);
+//        stepCentricOperator.computeMSD(stepCentricDataHolder);
+//        stepCentricOperator.computeDirectionAutocorrelations(stepCentricDataHolder);
+//        stepCentricOperator.computeMeanDirectionAutocorrelations(stepCentricDataHolder);
+//        stepCentricOperator.interpolateTrack(stepCentricDataHolder);
+//        stepCentricOperator.init2Dtrees(stepCentricDataHolder);
+//        stepCentricOperator.computeXYEnclosingBalls(stepCentricDataHolder);
+//        stepCentricOperator.computeXTEnclosingBalls(stepCentricDataHolder);
+//        stepCentricOperator.computeYTEnclosingBalls(stepCentricDataHolder);
     }
 
     @Override
@@ -53,14 +53,14 @@ public class TrackOperatorImpl implements TrackOperator {
         cellCentricOperator.computeMedianSpeed(cellCentricDataHolder);
         cellCentricOperator.computeEndPointDirectionalityRatio(cellCentricDataHolder);
         cellCentricOperator.computeMedianDirectionalityRatio(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeConvexHull(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeDisplacementRatio(cellCentricDataHolder);
-        cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);
         cellCentricOperator.computeMedianTurningAngle(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeXYFD(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeXTFD(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeYTFD(stepCentricDataHolder, cellCentricDataHolder);
-        cellCentricOperator.computeMedianDirectionAutocorrelation(stepCentricDataHolder, cellCentricDataHolder);
+//        cellCentricOperator.computeConvexHull(stepCentricDataHolder, cellCentricDataHolder);
+//        cellCentricOperator.computeDisplacementRatio(cellCentricDataHolder);
+//        cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);
+//        cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
+//        cellCentricOperator.computeXYFD(stepCentricDataHolder, cellCentricDataHolder);
+//        cellCentricOperator.computeXTFD(stepCentricDataHolder, cellCentricDataHolder);
+//        cellCentricOperator.computeYTFD(stepCentricDataHolder, cellCentricDataHolder);
+//        cellCentricOperator.computeMedianDirectionAutocorrelation(stepCentricDataHolder, cellCentricDataHolder);
     }
 }

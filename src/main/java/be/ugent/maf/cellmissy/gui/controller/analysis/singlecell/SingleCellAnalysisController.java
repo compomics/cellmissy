@@ -11,7 +11,6 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AnalysisPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
 import java.util.Map;
 import javax.swing.ButtonGroup;
 import org.jfree.chart.ChartFactory;
@@ -72,24 +71,10 @@ public class SingleCellAnalysisController {
 
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup radioButtonGroup = new ButtonGroup();
-        //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
-        radioButtonGroup.add(analysisPanel.getFilteringRadioButton());
-        radioButtonGroup.add(analysisPanel.getMsdRadioButton());
-        radioButtonGroup.add(analysisPanel.getRsAnalysisRadioButton());
-        radioButtonGroup.add(analysisPanel.getFdAnalysisRadioButton());
 
-        analysisPanel.getMsdParentPanel().add(msdChartPanel, gridBagConstraints);
-
-        analysisPanel.getFilteringRadioButton().setSelected(true);
         /**
          * Add action listeners
          */
-        // show MSD values for the condition
-        analysisPanel.getMsdRadioButton().addActionListener((ActionEvent e) -> {
-            // show MSD analysis
-            showMSD();
-        });
-
         // add view to parent panel
         singleCellMainController.getSingleCellAnalysisPanel().getAnalysisParentPanel().add(analysisPanel, gridBagConstraints);
     }
@@ -117,12 +102,14 @@ public class SingleCellAnalysisController {
     private XYSeriesCollection createMsdCollection() {
         XYSeriesCollection collection = new XYSeriesCollection();
         Map<PlateCondition, SingleCellConditionDataHolder> preProcessingMap = singleCellMainController.getPreProcessingMap();
-        for (SingleCellConditionDataHolder cellConditionDataHolder : preProcessingMap.values()) {
+        preProcessingMap.values().stream().map((cellConditionDataHolder) -> {
             double[][] msdArray = cellConditionDataHolder.getMsdArray();
             XYSeries xYSeries = JFreeChartUtils.generateXYSeries(msdArray);
             xYSeries.setKey(cellConditionDataHolder.getPlateCondition().toString());
+            return xYSeries;
+        }).forEach((xYSeries) -> {
             collection.addSeries(xYSeries);
-        }
+        });
         return collection;
     }
 }

@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
+package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.filtering;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.FilteringInfoDialog;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MinTranslocationFilteringPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.MultipleCutOffPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.FilterTrackTableModel;
@@ -26,64 +25,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
-import javax.swing.UIManager;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 /**
- * A controller to take care of filtering/quality control - on single cell
- * trajectories.
+ * This controller takes care of the logic for multiple cut-off filtering for
+ * single-cell trajectories.
  *
  * @author Paola
  */
-@Component("filteringController")
-class FilteringController {
+@Controller("multipleCutOffFilteringController")
+public class MultipleCutOffFilteringController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(FilteringController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(MultipleCutOffFilteringController.class);
     // model
     private List<Double> motileSteps;
     private double percentageMotile;
     private Map<SingleCellConditionDataHolder, Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>>> filterMap;
-    // view
-    private MinTranslocationFilteringPanel minTranslFilteringPanel;
-    private FilteringInfoDialog filteringInfoDialog;
+    // view 
+    private MultipleCutOffPanel multipleCutOffPanel;
     private ChartPanel rawKdeChartPanel;
     private ChartPanel filteredKdeChartPanel;
     // parent controller
     @Autowired
-    private SingleCellPreProcessingController singleCellPreProcessingController;
+    private FilteringController filteringController;
     // child controllers
-    // parent controller
     // services
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * Initialize controller
+     * Initialize the controller
      */
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         filterMap = new LinkedHashMap<>();
-        // init views
-        filteringInfoDialog = new FilteringInfoDialog(singleCellPreProcessingController.getMainFrame(), true);
-        // int main view
-        initFilteringPanel();
+        // initialize the main view
+        initMainView();
+        // initialize the other views
         initOtherViews();
     }
 
     /**
      * Plot the raw KDE for track displacements.
+     *
+     * @param plateCondition
      */
     public void plotRawKde(PlateCondition plateCondition) {
-        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        SingleCellConditionDataHolder conditionDataHolder = filteringController.getConditionDataHolder(plateCondition);
         List<List<double[]>> estimateRawDensityFunction = estimateRawDensityFunction(conditionDataHolder);
         XYSeriesCollection densityFunction = generateDensityFunction(conditionDataHolder, estimateRawDensityFunction);
         JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, densityFunction, "raw KDE track displ", "track displ", true);
@@ -91,60 +86,56 @@ class FilteringController {
     }
 
     /**
-     * Private classes and methods.
+     * Private methods and classes
      */
-    /**
-     * Initialize the main view
-     */
-    private void initFilteringPanel() {
+    // initialize the main view
+    private void initMainView() {
         // make a new view
-        minTranslFilteringPanel = new MinTranslocationFilteringPanel();
+        multipleCutOffPanel = new MultipleCutOffPanel();
         // make a new radio button group for the radio buttons
         ButtonGroup radioButtonGroup = new ButtonGroup();
-        radioButtonGroup.add(minTranslFilteringPanel.getPixelRadioButton());
-        radioButtonGroup.add(minTranslFilteringPanel.getMicroMeterRadioButton());
-
-        // set icon for question button
-        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
-        ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
-        minTranslFilteringPanel.getQuestionButton().setIcon(scaledQuestionIcon);
-        // action listeners
-        // info button
-        minTranslFilteringPanel.getQuestionButton().addActionListener((ActionEvent e) -> {
-            // pack and show info dialog
-            GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), filteringInfoDialog);
-            filteringInfoDialog.setVisible(true);
-        });
+        radioButtonGroup.add(multipleCutOffPanel.getPixelRadioButton());
+        radioButtonGroup.add(multipleCutOffPanel.getMicroMeterRadioButton());
 
         // pixels or µm?
-        minTranslFilteringPanel.getPixelRadioButton().addActionListener((ActionEvent e) -> {
-            // pixel: we need a conversion factor
-            minTranslFilteringPanel.getConversionFactorTextField().setEnabled(true);
+        multipleCutOffPanel.getPixelRadioButton().addActionListener((ActionEvent e) -> {
+            multipleCutOffPanel.getConversionFactorTextField().setEnabled(true);
         });
 
-        minTranslFilteringPanel.getMicroMeterRadioButton().addActionListener((ActionEvent e) -> {
+        multipleCutOffPanel.getMicroMeterRadioButton().addActionListener((ActionEvent e) -> {
             // µm: we do not need a conversion factor
-            minTranslFilteringPanel.getConversionFactorTextField().setEnabled(false);
+            multipleCutOffPanel.getConversionFactorTextField().setEnabled(false);
         });
+
+        // set default to micrometer
+        multipleCutOffPanel.getMicroMeterRadioButton().setSelected(true);
+        // and therefore no need for the conversion factor
+        multipleCutOffPanel.getConversionFactorTextField().setEnabled(false);
+        // set some default values for the top and bottom translocaton limits
+        multipleCutOffPanel.getBottomLimTextField().setText("0.4");
+        multipleCutOffPanel.getTopLimTextField().setText("2.8");
+        multipleCutOffPanel.getTranslocationStepTextField().setText("0.8");
+        multipleCutOffPanel.getPercentageMotileStepsTextField().setText("30");
+        percentageMotile = 30;
 
         // actually do the filtering
-        minTranslFilteringPanel.getFilterButton().addActionListener((ActionEvent e) -> {
+        multipleCutOffPanel.getFilterButton().addActionListener((ActionEvent e) -> {
 
             // try to read the user-inserted values for up and down limit
             // check for number format exception
             try {
-                if (minTranslFilteringPanel.getPixelRadioButton().isSelected()) {
-                    double conversionFactor = Double.parseDouble(minTranslFilteringPanel.getConversionFactorTextField().getText());
-                    minTranslFilteringPanel.getBottomLimTextField().setText(""
-                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(minTranslFilteringPanel.getBottomLimTextField().getText()) / conversionFactor));
-                    minTranslFilteringPanel.getTopLimTextField().setText(""
-                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(minTranslFilteringPanel.getTopLimTextField().getText()) / conversionFactor));
+                if (multipleCutOffPanel.getPixelRadioButton().isSelected()) {
+                    double conversionFactor = Double.parseDouble(multipleCutOffPanel.getConversionFactorTextField().getText());
+                    multipleCutOffPanel.getBottomLimTextField().setText(""
+                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(multipleCutOffPanel.getBottomLimTextField().getText()) / conversionFactor));
+                    multipleCutOffPanel.getTopLimTextField().setText(""
+                            + AnalysisUtils.roundTwoDecimals(Double.parseDouble(multipleCutOffPanel.getTopLimTextField().getText()) / conversionFactor));
                 }
 
-                int topLimit = (int) (Double.parseDouble(minTranslFilteringPanel.getTopLimTextField().getText()) * 10);
-                int bottomLimit = (int) (Double.parseDouble(minTranslFilteringPanel.getBottomLimTextField().getText()) * 10);
-                double step = Double.parseDouble(minTranslFilteringPanel.getTranslocationStepTextField().getText());
-                percentageMotile = Double.parseDouble(minTranslFilteringPanel.getPercentageMotileStepsTextField().getText());
+                int topLimit = (int) (Double.parseDouble(multipleCutOffPanel.getTopLimTextField().getText()) * 10);
+                int bottomLimit = (int) (Double.parseDouble(multipleCutOffPanel.getBottomLimTextField().getText()) * 10);
+                double step = Double.parseDouble(multipleCutOffPanel.getTranslocationStepTextField().getText());
+                percentageMotile = Double.parseDouble(multipleCutOffPanel.getPercentageMotileStepsTextField().getText());
 
                 int numberSteps = (int) ((topLimit - bottomLimit) / (10 * step)) + 1;
                 motileSteps = new ArrayList<>();
@@ -155,7 +146,7 @@ class FilteringController {
 
             } catch (NumberFormatException ex) {
                 // warn the user and log the error for info
-                singleCellPreProcessingController.showMessage("Please insert valid numbers!" + "\n " + ex.getMessage(),
+                filteringController.showMessage("Please insert valid numbers!" + "\n " + ex.getMessage(),
                         "number format exception", JOptionPane.ERROR_MESSAGE);
                 LOG.error(ex.getMessage());
             }
@@ -163,24 +154,11 @@ class FilteringController {
             filterSwingWorker.execute();
         });
 
-        // set default to micrometer
-        minTranslFilteringPanel.getMicroMeterRadioButton().setSelected(true);
-        // and therefore no need for the conversion factor
-        minTranslFilteringPanel.getConversionFactorTextField().setEnabled(false);
-        // set some default values for the top and bottom translocaton limits
-        minTranslFilteringPanel.getBottomLimTextField().setText("0.4");
-        minTranslFilteringPanel.getTopLimTextField().setText("2.8");
-        minTranslFilteringPanel.getTranslocationStepTextField().setText("0.8");
-        minTranslFilteringPanel.getPercentageMotileStepsTextField().setText("30");
-        percentageMotile = 30;
-
         // add view to parent component
-        singleCellPreProcessingController.getSingleCellAnalysisPanel().getMinTranslParentPanel().add(minTranslFilteringPanel, gridBagConstraints);
+        filteringController.getFilteringPanel().getMultipleCutOffParentPanel().add(multipleCutOffPanel, gridBagConstraints);
     }
 
-    /**
-     * Initialize the other views of the controller.
-     */
+    // initialize the other views
     private void initOtherViews() {
         rawKdeChartPanel = new ChartPanel(null);
         rawKdeChartPanel.setOpaque(false);
@@ -188,8 +166,8 @@ class FilteringController {
         filteredKdeChartPanel.setOpaque(false);
 
         // add chart panels to parent containers
-        minTranslFilteringPanel.getRawPlotParentPanel().add(rawKdeChartPanel, gridBagConstraints);
-        minTranslFilteringPanel.getFilteredPlotParentPanel().add(filteredKdeChartPanel, gridBagConstraints);
+        multipleCutOffPanel.getRawPlotParentPanel().add(rawKdeChartPanel, gridBagConstraints);
+        multipleCutOffPanel.getFilteredPlotParentPanel().add(filteredKdeChartPanel, gridBagConstraints);
     }
 
     /**
@@ -201,10 +179,10 @@ class FilteringController {
      * functions.
      */
     private List<List<double[]>> estimateRawDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
+        String kernelDensityEstimatorBeanName = filteringController.getKernelDensityEstimatorBeanName();
         List<List<double[]>> densityFunction = new ArrayList<>();
         singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder)
-                -> singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
+                -> filteringController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
                         kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackDisplDensityFunction) -> {
                     densityFunction.add(oneReplicateTrackDisplDensityFunction);
                 });
@@ -221,14 +199,14 @@ class FilteringController {
      * @return
      */
     private List<List<double[]>> estimateFilteredDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, int motileStepIndex) {
-        String kernelDensityEstimatorBeanName = singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
+        String kernelDensityEstimatorBeanName = filteringController.getKernelDensityEstimatorBeanName();
         List<List<double[]>> densityFunction = new ArrayList<>();
         Map<SingleCellWellDataHolder, List<TrackDataHolder>> retainedTrackMap = getRetainedTracks(singleCellConditionDataHolder, motileStepIndex);
 
         for (SingleCellWellDataHolder singleCellWellDataHolder : retainedTrackMap.keySet()) {
             Double[] retainedDisplacements = getRetainedDisplacements(retainedTrackMap, singleCellWellDataHolder);
             List<double[]> oneReplicateTrackDisplDensityFunction
-                    = singleCellPreProcessingController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName);
+                    = filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName);
             densityFunction.add(oneReplicateTrackDisplDensityFunction);
         }
         return densityFunction;
@@ -286,7 +264,7 @@ class FilteringController {
      * @param plateCondition
      */
     private List<XYSeriesCollection> getRetainedKdeDatasets(PlateCondition plateCondition) {
-        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        SingleCellConditionDataHolder conditionDataHolder = filteringController.getConditionDataHolder(plateCondition);
         List<XYSeriesCollection> xYSeriesCollections = new ArrayList<>();
         for (int i = 0; i < motileSteps.size(); i++) {
             List<List<double[]>> estimateFilteredDensityFunction = estimateFilteredDensityFunction(conditionDataHolder, i);
@@ -303,11 +281,11 @@ class FilteringController {
      */
     private void plotRetainedKde(PlateCondition plateCondition, int nCols) {
         // reset the logic first
-        minTranslFilteringPanel.getFilteredPlotParentPanel().removeAll();
-        minTranslFilteringPanel.getFilteredPlotParentPanel().revalidate();
-        minTranslFilteringPanel.getFilteredPlotParentPanel().repaint();
+        multipleCutOffPanel.getFilteredPlotParentPanel().removeAll();
+        multipleCutOffPanel.getFilteredPlotParentPanel().revalidate();
+        multipleCutOffPanel.getFilteredPlotParentPanel().repaint();
 
-        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        SingleCellConditionDataHolder conditionDataHolder = filteringController.getConditionDataHolder(plateCondition);
         // create the datasets for the plot logic
         List<XYSeriesCollection> filteredKdeDatasets = getRetainedKdeDatasets(plateCondition);
         // the number of plots needed
@@ -319,10 +297,10 @@ class FilteringController {
 
             ChartPanel filteredChartPanel = new ChartPanel(densityChart);
             GridBagConstraints tempBagConstraints = GuiUtils.getTempBagConstraints(nPlots, i, nCols);
-            minTranslFilteringPanel.getFilteredPlotParentPanel().add(filteredChartPanel, tempBagConstraints);
+            multipleCutOffPanel.getFilteredPlotParentPanel().add(filteredChartPanel, tempBagConstraints);
 
-            minTranslFilteringPanel.getFilteredPlotParentPanel().revalidate();
-            minTranslFilteringPanel.getFilteredPlotParentPanel().repaint();
+            multipleCutOffPanel.getFilteredPlotParentPanel().revalidate();
+            multipleCutOffPanel.getFilteredPlotParentPanel().repaint();
         }
     }
 
@@ -442,13 +420,13 @@ class FilteringController {
      */
     private void updateFilterTable(SingleCellConditionDataHolder singleCellConditionDataHolder) {
         Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> map = filterMap.get(singleCellConditionDataHolder);
-        minTranslFilteringPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(map, motileSteps));
+        multipleCutOffPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(map, motileSteps));
 
         AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
-        for (int i = 0; i < minTranslFilteringPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
-            minTranslFilteringPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+        for (int i = 0; i < multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
+            multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
         }
-        minTranslFilteringPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        multipleCutOffPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
     }
 
     /**
@@ -460,11 +438,11 @@ class FilteringController {
         @Override
         protected Void doInBackground() throws Exception {
             // show waiting dialog
-            singleCellPreProcessingController.showWaitingDialog("Filtering: " + singleCellPreProcessingController.getCurrentCondition());
+            filteringController.showWaitingDialog("Filtering: " + filteringController.getCurrentCondition());
             // show a waiting cursor, disable GUI components
-            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            singleCellPreProcessingController.controlGuiComponents(false);
-            updateFilterMap(singleCellPreProcessingController.getConditionDataHolder(singleCellPreProcessingController.getCurrentCondition()));
+            filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            filteringController.controlGuiComponents(false);
+            updateFilterMap(filteringController.getConditionDataHolder(filteringController.getCurrentCondition()));
             return null;
         }
 
@@ -473,16 +451,16 @@ class FilteringController {
             try {
                 get();
                 // update the table
-                updateFilterTable(singleCellPreProcessingController.getConditionDataHolder(singleCellPreProcessingController.getCurrentCondition()));
+                updateFilterTable(filteringController.getConditionDataHolder(filteringController.getCurrentCondition()));
                 // plot the filtered KDE plots
-                plotRetainedKde(singleCellPreProcessingController.getCurrentCondition(), 2);
+                plotRetainedKde(filteringController.getCurrentCondition(), 2);
                 // recontrol GUI
-                singleCellPreProcessingController.hideWaitingDialog();
-                singleCellPreProcessingController.controlGuiComponents(true);
-                singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                filteringController.hideWaitingDialog();
+                filteringController.controlGuiComponents(true);
+                filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
-                singleCellPreProcessingController.handleUnexpectedError(ex);
+                filteringController.handleUnexpectedError(ex);
             }
         }
 

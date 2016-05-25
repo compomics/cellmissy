@@ -19,16 +19,32 @@ import be.ugent.maf.cellmissy.gui.view.table.model.InstantaneousDataTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import be.ugent.maf.cellmissy.utils.PdfUtils;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.Image;
+import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartFactory;
@@ -57,7 +73,10 @@ public class AngleDirectController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AngleDirectController.class);
     // model
     private JTable dataTable;
+    private Document document;
+    private PdfWriter writer;
     // view
+    private List<ChartPanel> rosePlotChartPanels;
     // the main view
     private AngleDirectPanel angleDirectPanel;
     private TurningAnglePanel turningAnglePanel;
@@ -74,6 +93,7 @@ public class AngleDirectController {
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         turningAnglePanel = new TurningAnglePanel();
+        rosePlotChartPanels = new ArrayList<>();
         // initialize main view
         initAngleDirectPanel();
     }
@@ -208,6 +228,23 @@ public class AngleDirectController {
             }
         });
 
+        /**
+         *
+         */
+        angleDirectPanel.getSaveChartToPdfButton().addActionListener((ActionEvent e) -> {
+
+            ChartPanel chartPanel = rosePlotChartPanels.get(2);
+            JFreeChart chart = chartPanel.getChart();
+            if (chart != null) {
+                try {
+                    // create the PDF report file
+                    createPdf(chart);
+                } catch (IOException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
+            }
+        });
+
         // show dynamic directionality ratios
         angleDirectPanel.getDynamicDirectRatioRadioButton().addActionListener((ActionEvent e) -> {
             PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
@@ -232,6 +269,174 @@ public class AngleDirectController {
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getAngleDirectParentPanel().add(angleDirectPanel, gridBagConstraints);
         angleDirectPanel.getTurningAngleParentPanel().add(turningAnglePanel, gridBagConstraints);
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    private void createPdf(JFreeChart chart) throws IOException {
+        // choose directory to save pdf file
+        JFileChooser chooseDirectory = new JFileChooser();
+        chooseDirectory.setDialogTitle("Choose a directory to save the report");
+        chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooseDirectory.setSelectedFile(new File("chart rose plot" + ".pdf"));
+        // in response to the button click, show open dialog
+        int returnVal = chooseDirectory.showSaveDialog(angleDirectPanel);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File directory = chooseDirectory.getCurrentDirectory();
+            PdfSwingWorker pdfSwingWorker = new PdfSwingWorker(directory, chooseDirectory.getSelectedFile().getName(), chart);
+            pdfSwingWorker.execute();
+        } else {
+            singleCellPreProcessingController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
+     * Swing Worker to generate PDF report
+     */
+    private class PdfSwingWorker extends SwingWorker<File, Void> {
+
+        private final File directory;
+        private final String fileName;
+        private final JFreeChart chart;
+
+        public PdfSwingWorker(File directory, String fileName, JFreeChart chart) {
+            this.directory = directory;
+            this.fileName = fileName;
+            this.chart = chart;
+        }
+
+        @Override
+        protected File doInBackground() throws Exception {
+            // disable button
+            angleDirectPanel.getSaveChartToPdfButton().setEnabled(false);
+            //set cursor to waiting one
+            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //call the child controller to create report
+            return createPdfFile(directory, fileName, chart);
+        }
+
+        @Override
+        protected void done() {
+            File file = null;
+            try {
+                file = get();
+            } catch (InterruptedException | CancellationException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                singleCellPreProcessingController.handleUnexpectedError(ex);
+            }
+            try {
+                //if export to PDF was successful, open the PDF file from the desktop
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                }
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                singleCellPreProcessingController.showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
+            }
+            //set cursor back to default
+            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            // enable button
+            angleDirectPanel.getSaveChartToPdfButton().setEnabled(true);
+        }
+    }
+
+    /**
+     *
+     * @param directory
+     * @param reportName
+     * @return
+     */
+    private File createPdfFile(File directory, String fileName, JFreeChart chart) {
+        File pdfFile = new File(directory, fileName);
+        if (fileName.endsWith(".pdf")) {
+            tryToCreateFile(pdfFile, chart);
+        } else {
+            singleCellPreProcessingController.showMessage("Please use .pdf extension for the file.", "extension file problem", JOptionPane.WARNING_MESSAGE);
+            // retry to create pdf file
+            try {
+                createPdf(chart);
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                singleCellPreProcessingController.showMessage("An error occurred: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return pdfFile;
+    }
+
+    /**
+     * @param pdfFile
+     */
+    private void tryToCreateFile(File pdfFile, JFreeChart chart) {
+        try {
+            boolean success = pdfFile.createNewFile();
+            if (success) {
+                singleCellPreProcessingController.showMessage("Chart saved to file!", "chart saved OK", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Object[] options = {"Yes", "No", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                // if YES, user wants to delete existing file and replace it
+                if (showOptionDialog == 0) {
+                    boolean delete = pdfFile.delete();
+                    if (!delete) {
+                        return;
+                    }
+                    // if NO, returns already existing file
+                } else if (showOptionDialog == 1) {
+                    return;
+                }
+            }
+        } catch (IOException ex) {
+            singleCellPreProcessingController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(pdfFile)) {
+            // actually create PDF file
+            createPdfFile(fileOutputStream, chart);
+        } catch (IOException ex) {
+            singleCellPreProcessingController.showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * @param outputStream
+     */
+    private void createPdfFile(FileOutputStream outputStream, JFreeChart chart) {
+        document = null;
+        writer = null;
+        try {
+            // get new instances
+            // the Document is the base layout element
+            document = new Document();
+            // the pdfWriter is actually creating the file
+            writer = PdfWriter.getInstance(document, outputStream);
+            //open document
+            document.open();
+            // add content to document
+            addChart(chart);
+            //dispose resources
+            document.close();
+            document = null;
+            writer.close();
+            writer = null;
+        } catch (DocumentException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     */
+    private void addChart(JFreeChart chart) {
+        Image imageFromChart = PdfUtils.getImageFromJFreeChart(writer, chart, 400, 400);
+        // put image in the center
+        imageFromChart.setAlignment(Element.ALIGN_CENTER);
+        try {
+            document.add(imageFromChart);
+        } catch (DocumentException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -298,15 +503,17 @@ public class AngleDirectController {
      * @param datasets
      */
     private void renderRosePlots(List<XYSeriesCollection> datasets) {
+        rosePlotChartPanels.clear();
         turningAnglePanel.getRosePlotParentPanel().removeAll();
         for (int i = 0; i < datasets.size(); i++) {
             XYSeriesCollection dataset = datasets.get(i);
             // create a new polar plot with this dataset, and set the custom renderer
             PolarPlot rosePlot = new PolarPlot(dataset, new NumberAxis(), new AngularHistogramRenderer(i, 5));
             // create a new chart with this plot
-            JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, rosePlot, true);
+            JFreeChart chart = new JFreeChart("", JFreeChart.DEFAULT_TITLE_FONT, rosePlot, false);
             JFreeChartUtils.setupPolarChart(chart, i);
             ChartPanel rosePlotChartPanel = new ChartPanel(chart);
+            rosePlotChartPanels.add(rosePlotChartPanel);
             // compute the constraints
             GridBagConstraints tempConstraints = getGridBagConstraints(datasets.size(), i);
             turningAnglePanel.getRosePlotParentPanel().add(rosePlotChartPanel, tempConstraints);

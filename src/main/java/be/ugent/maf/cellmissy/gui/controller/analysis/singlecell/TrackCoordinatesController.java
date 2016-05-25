@@ -21,6 +21,13 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackCoordinatesTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import be.ugent.maf.cellmissy.utils.PdfUtils;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.Image;
+
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BeanProperty;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -48,9 +55,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -63,6 +74,8 @@ public class TrackCoordinatesController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(TrackCoordinatesController.class);
     // model
+    private Document document;
+    private PdfWriter writer;
     private BindingGroup bindingGroup;
     private ObservableList<Well> wellBindingList;
     private JTable coordinatesTable;
@@ -596,6 +609,21 @@ public class TrackCoordinatesController {
             }
         });
 
+        // save the current chart to a PDF file (necessary to obtain high resolution!)
+        trackCoordinatesPanel.getSaveChartToPdfButton().addActionListener((ActionEvent e) -> {
+            // get the current chart from the panel and check that it is not null
+            // i.e. something is plotted
+            JFreeChart chart = coordinatesChartPanel.getChart();
+            if (chart != null) {
+                try {
+                    // create the PDF report file
+                    createPdf(chart);
+                } catch (IOException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
+            }
+        });
+
         /**
          * Change Listener to the Tabbed Pane
          */
@@ -612,6 +640,174 @@ public class TrackCoordinatesController {
         trackCoordinatesPanel.getPlotSettingsPanel().add(plotSettingsMenuBar, BorderLayout.CENTER);
         // add view to parent panel
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getCellTracksParentPanel().add(trackCoordinatesPanel, gridBagConstraints);
+    }
+
+    /**
+     * @param outputStream
+     */
+    private void createPdfFile(FileOutputStream outputStream, JFreeChart chart) {
+        document = null;
+        writer = null;
+        try {
+            // get new instances
+            // the Document is the base layout element
+            document = new Document();
+            // the pdfWriter is actually creating the file
+            writer = PdfWriter.getInstance(document, outputStream);
+            //open document
+            document.open();
+            // add content to document
+            addChart(chart);
+            //dispose resources
+            document.close();
+            document = null;
+            writer.close();
+            writer = null;
+        } catch (DocumentException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     *
+     */
+    private void addChart(JFreeChart chart) {
+        Image imageFromChart = PdfUtils.getImageFromJFreeChart(writer, chart, 600, 500);
+        // put image in the center
+        imageFromChart.setAlignment(Element.ALIGN_CENTER);
+        try {
+            document.add(imageFromChart);
+        } catch (DocumentException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * @param pdfFile
+     */
+    private void tryToCreateFile(File pdfFile, JFreeChart chart) {
+        try {
+            boolean success = pdfFile.createNewFile();
+            if (success) {
+                showMessage("Chart saved to file!", "chart saved OK", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                Object[] options = {"Yes", "No", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "File already exists. Do you want to replace it?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                // if YES, user wants to delete existing file and replace it
+                if (showOptionDialog == 0) {
+                    boolean delete = pdfFile.delete();
+                    if (!delete) {
+                        return;
+                    }
+                    // if NO, returns already existing file
+                } else if (showOptionDialog == 1) {
+                    return;
+                }
+            }
+        } catch (IOException ex) {
+            showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try (FileOutputStream fileOutputStream = new FileOutputStream(pdfFile)) {
+            // actually create PDF file
+            createPdfFile(fileOutputStream, chart);
+        } catch (IOException ex) {
+            showMessage("Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     *
+     * @param directory
+     * @param reportName
+     * @return
+     */
+    private File createPdfFile(File directory, String fileName, JFreeChart chart) {
+        File pdfFile = new File(directory, fileName);
+        if (fileName.endsWith(".pdf")) {
+            tryToCreateFile(pdfFile, chart);
+        } else {
+            showMessage("Please use .pdf extension for the file.", "extension file problem", JOptionPane.WARNING_MESSAGE);
+            // retry to create pdf file
+            try {
+                createPdf(chart);
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                showMessage("An error occurred: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return pdfFile;
+    }
+
+    /**
+     *
+     * @throws IOException
+     */
+    private void createPdf(JFreeChart chart) throws IOException {
+        // choose directory to save pdf file
+        JFileChooser chooseDirectory = new JFileChooser();
+        chooseDirectory.setDialogTitle("Choose a directory to save the report");
+        chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        chooseDirectory.setSelectedFile(new File("chart track" + ".pdf"));
+        // in response to the button click, show open dialog
+        int returnVal = chooseDirectory.showSaveDialog(trackCoordinatesPanel);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File directory = chooseDirectory.getCurrentDirectory();
+            PdfSwingWorker pdfSwingWorker = new PdfSwingWorker(directory, chooseDirectory.getSelectedFile().getName(), chart);
+            pdfSwingWorker.execute();
+        } else {
+            showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    /**
+     * Swing Worker to generate PDF report
+     */
+    private class PdfSwingWorker extends SwingWorker<File, Void> {
+
+        private final File directory;
+        private final String fileName;
+        private final JFreeChart chart;
+
+        public PdfSwingWorker(File directory, String fileName, JFreeChart chart) {
+            this.directory = directory;
+            this.fileName = fileName;
+            this.chart = chart;
+        }
+
+        @Override
+        protected File doInBackground() throws Exception {
+            // disable button
+            trackCoordinatesPanel.getSaveChartToPdfButton().setEnabled(false);
+            //set cursor to waiting one
+            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            //call the child controller to create report
+            return createPdfFile(directory, fileName, chart);
+        }
+
+        @Override
+        protected void done() {
+            File file = null;
+            try {
+                file = get();
+            } catch (InterruptedException | CancellationException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                singleCellPreProcessingController.handleUnexpectedError(ex);
+            }
+            try {
+                //if export to PDF was successful, open the PDF file from the desktop
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                }
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+                showMessage("Cannot open the file!" + "\n" + ex.getMessage(), "error while opening file", JOptionPane.ERROR_MESSAGE);
+            }
+            //set cursor back to default
+            singleCellPreProcessingController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            // enable button
+            trackCoordinatesPanel.getSaveChartToPdfButton().setEnabled(true);
+        }
     }
 
     /**
