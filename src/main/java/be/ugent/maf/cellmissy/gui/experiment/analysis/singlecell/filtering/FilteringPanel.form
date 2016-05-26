@@ -39,13 +39,13 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="singleCutOffRadioButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
                                   <Component id="multipleCutOffRadioButton" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="singleCutOffRadioButton" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                           <Component id="questionButton" min="-2" pref="25" max="-2" attributes="0"/>
@@ -57,17 +57,17 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="singleCutOffRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="multipleCutOffRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="singleCutOffRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Component id="questionButton" min="-2" pref="25" max="-2" attributes="0"/>
@@ -91,14 +91,14 @@
             <Property name="text" type="java.lang.String" value="(click on the ? if you need more info about this filtering module)"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JRadioButton" name="singleCutOffRadioButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="single cut-off criterium"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JRadioButton" name="multipleCutOffRadioButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="multiple cut-off check"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="singleCutOffRadioButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="single cut-off criterium"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="questionButton">
@@ -127,21 +127,6 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignCardLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="singleCutOffParentPanel">
-          <Properties>
-            <Property name="name" type="java.lang.String" value="singleCutOffParentPanel" noResource="true"/>
-          </Properties>
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="singleCutOffParentPanel"/>
-          </AccessibilityProperties>
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="singleCutOffParentPanel"/>
-            </Constraint>
-          </Constraints>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
-        </Container>
         <Container class="javax.swing.JPanel" name="multipleCutOffParentPanel">
           <Properties>
             <Property name="name" type="java.lang.String" value="multipleCutOffParentPanel" noResource="true"/>
@@ -155,6 +140,21 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
               <CardConstraints cardName="multipleCutOffParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+        </Container>
+        <Container class="javax.swing.JPanel" name="singleCutOffParentPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="singleCutOffParentPanel" noResource="true"/>
+          </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="singleCutOffParentPanel"/>
+          </AccessibilityProperties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="singleCutOffParentPanel"/>
             </Constraint>
           </Constraints>
 

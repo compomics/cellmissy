@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.filtering;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellPreProcessingController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.FilteringInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.FilteringPanel;
@@ -21,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JList;
 import javax.swing.UIManager;
 import org.apache.commons.lang.ArrayUtils;
 import org.jfree.data.xy.XYSeries;
@@ -41,6 +44,7 @@ public class FilteringController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(FilteringController.class);
     // model
+    private Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
     // view
     private FilteringPanel filteringPanel;
     private FilteringInfoDialog filteringInfoDialog;
@@ -115,7 +119,34 @@ public class FilteringController {
 
     public void plotRawKde(PlateCondition plateCondition) {
         multipleCutOffFilteringController.plotRawKdeMultipleCutOff(plateCondition);
-        singleCutOffFilteringController.plotRawKdeSingleCutOff(plateCondition);
+    }
+
+    public void showMeanDisplInList() {
+        singleCutOffFilteringController.showMeanDisplInList();
+    }
+
+    public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
+        return filteringMap;
+    }
+
+    public void setFilteringMap(Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap) {
+        this.filteringMap = filteringMap;
+    }
+
+    public Map<PlateCondition, SingleCellConditionDataHolder> getPreProcessingMap() {
+        return singleCellPreProcessingController.getPreProcessingMap();
+    }
+
+    /**
+     * Get the mean displacement for a condition.
+     *
+     * @param plateCondition
+     * @return
+     */
+    public Double getMeanDisplForCondition(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        Double[] instantaneousDisplacementsVector = conditionDataHolder.getInstantaneousDisplacementsVector();
+        return AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(instantaneousDisplacementsVector)));
     }
 
     public void setMeanDisplForCondition(PlateCondition plateCondition) {
@@ -128,6 +159,14 @@ public class FilteringController {
                 setText("" + AnalysisUtils.roundThreeDecimals(getMeanDisplForExp()));
         singleCutOffFilteringController.getSingleCutOffPanel().getMeanDisplacTextField().
                 setText("" + AnalysisUtils.roundThreeDecimals(getMeanDisplForExp()));
+    }
+
+    public List<PlateCondition> getPlateConditions() {
+        return singleCellPreProcessingController.getPlateConditionList();
+    }
+
+    public JList getConditionsList() {
+        return singleCellPreProcessingController.getConditionsList();
     }
 
     /**
@@ -202,6 +241,36 @@ public class FilteringController {
     }
 
     /**
+     *
+     * @param densityFunctions
+     * @return
+     */
+    public XYSeriesCollection generateDensityFunction(List<List<double[]>> densityFunctions) {
+        XYSeriesCollection collection = new XYSeriesCollection();
+        List<SingleCellConditionDataHolder> list = new ArrayList<SingleCellConditionDataHolder>(filteringMap.keySet());
+
+//        for (SingleCellConditionDataHolder singleCellConditionDataHolder : filteringMap.keySet()) {
+        for (int i = 0; i < densityFunctions.size(); i++) {
+            if (densityFunctions.get(i) != null) {
+                // x values
+                double[] xValues = densityFunctions.get(i).get(0);
+                // y values
+                double[] yValues = densityFunctions.get(i).get(1);
+                XYSeries series = new XYSeries("" + list.get(i) + " ", false);
+                for (int j = 0; j < xValues.length; j++) {
+                    double x = xValues[j];
+                    double y = yValues[j];
+                    series.add(x, y);
+                }
+                collection.addSeries(series);
+            }
+
+        }
+//        }
+        return collection;
+    }
+
+    /**
      * Private classes and methods.
      */
     /**
@@ -216,7 +285,7 @@ public class FilteringController {
         radioButtonGroup.add(filteringPanel.getSingleCutOffRadioButton());
         radioButtonGroup.add(filteringPanel.getMultipleCutOffRadioButton());
         // select the first one as default
-        filteringPanel.getSingleCutOffRadioButton().setSelected(true);
+        filteringPanel.getMultipleCutOffRadioButton().setSelected(true);
 
         // set icon for question button
         Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
@@ -232,36 +301,42 @@ public class FilteringController {
         });
 
         // which criterium for the filtering?
-        filteringPanel.getSingleCutOffRadioButton().addActionListener((ActionEvent e) -> {
-            // get the layout from the bottom panel and show the appropriate one
-            CardLayout layout = (CardLayout) filteringPanel.getBottomPanel().getLayout();
-            layout.show(filteringPanel.getBottomPanel(), filteringPanel.getSingleCutOffParentPanel().getName());
-            setMeanDisplForExperiment();
-        });
-
         filteringPanel.getMultipleCutOffRadioButton().addActionListener((ActionEvent e) -> {
+            // need to reset the conditions list back to active
+            singleCellPreProcessingController.getConditionsList().setEnabled(true);
+            // set as the current condition the first one in the list
+            singleCellPreProcessingController.setCurrentCondition(singleCellPreProcessingController.getPlateConditionList().get(0));
+            singleCellPreProcessingController.getAnalysisPlatePanel().setCurrentCondition(singleCellPreProcessingController.getPlateConditionList().get(0));
+            singleCellPreProcessingController.getAnalysisPlatePanel().repaint();
+
             // get the layout from the bottom panel and show the appropriate one
             CardLayout layout = (CardLayout) filteringPanel.getBottomPanel().getLayout();
             layout.show(filteringPanel.getBottomPanel(), filteringPanel.getMultipleCutOffParentPanel().getName());
+
             multipleCutOffFilteringController.plotRawKdeMultipleCutOff(getCurrentCondition());
             setMeanDisplForCondition(getCurrentCondition());
             setMeanDisplForExperiment();
         });
 
+        filteringPanel.getSingleCutOffRadioButton().addActionListener((ActionEvent e) -> {
+            // need to disable the conditions list
+            singleCellPreProcessingController.getConditionsList().clearSelection();
+            singleCellPreProcessingController.getConditionsList().setEnabled(false);
+            singleCellPreProcessingController.setCurrentCondition(null);
+            singleCellPreProcessingController.getAnalysisPlatePanel().setCurrentCondition(null);
+            singleCellPreProcessingController.getAnalysisPlatePanel().repaint();
+            // get the layout from the bottom panel and show the appropriate one
+            CardLayout layout = (CardLayout) filteringPanel.getBottomPanel().getLayout();
+            layout.show(filteringPanel.getBottomPanel(), filteringPanel.getSingleCutOffParentPanel().getName());
+            setMeanDisplForExperiment();
+            DefaultListModel model = (DefaultListModel) singleCutOffFilteringController.getSingleCutOffPanel().getMeanDisplList().getModel();
+            if (model.isEmpty()) {
+                singleCutOffFilteringController.showMeanDisplInList();
+            }
+        });
+
         // add view to parent container
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getFilteringParentPanel().add(filteringPanel, gridBagConstraints);
-    }
-
-    /**
-     * Get the mean displacement for a condition.
-     *
-     * @param plateCondition
-     * @return
-     */
-    private Double getMeanDisplForCondition(PlateCondition plateCondition) {
-        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
-        Double[] instantaneousDisplacementsVector = conditionDataHolder.getInstantaneousDisplacementsVector();
-        return AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(instantaneousDisplacementsVector)));
     }
 
     /**

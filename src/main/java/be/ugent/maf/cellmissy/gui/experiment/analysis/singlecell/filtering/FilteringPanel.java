@@ -59,12 +59,12 @@ public class FilteringPanel extends javax.swing.JPanel {
         optionInfoPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        singleCutOffRadioButton = new javax.swing.JRadioButton();
         multipleCutOffRadioButton = new javax.swing.JRadioButton();
+        singleCutOffRadioButton = new javax.swing.JRadioButton();
         questionButton = new javax.swing.JButton();
         bottomPanel = new javax.swing.JPanel();
-        singleCutOffParentPanel = new javax.swing.JPanel();
         multipleCutOffParentPanel = new javax.swing.JPanel();
+        singleCutOffParentPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -76,9 +76,9 @@ public class FilteringPanel extends javax.swing.JPanel {
 
         jLabel2.setText("(click on the ? if you need more info about this filtering module)");
 
-        singleCutOffRadioButton.setText("single cut-off criterium");
-
         multipleCutOffRadioButton.setText("multiple cut-off check");
+
+        singleCutOffRadioButton.setText("single cut-off criterium");
 
         questionButton.setBorderPainted(false);
         questionButton.setContentAreaFilled(false);
@@ -92,12 +92,12 @@ public class FilteringPanel extends javax.swing.JPanel {
                 .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(optionInfoPanelLayout.createSequentialGroup()
-                        .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, optionInfoPanelLayout.createSequentialGroup()
-                                .addComponent(singleCutOffRadioButton)
+                        .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(optionInfoPanelLayout.createSequentialGroup()
+                                .addComponent(multipleCutOffRadioButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(multipleCutOffRadioButton))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addComponent(singleCutOffRadioButton)))
                         .addGap(28, 28, 28)
                         .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(749, Short.MAX_VALUE))
@@ -111,10 +111,10 @@ public class FilteringPanel extends javax.swing.JPanel {
                 .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(optionInfoPanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(singleCutOffRadioButton)
-                            .addComponent(multipleCutOffRadioButton)))
+                            .addComponent(multipleCutOffRadioButton)
+                            .addComponent(singleCutOffRadioButton)))
                     .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -133,16 +133,16 @@ public class FilteringPanel extends javax.swing.JPanel {
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         bottomPanel.setLayout(new java.awt.CardLayout());
 
-        singleCutOffParentPanel.setName("singleCutOffParentPanel"); // NOI18N
-        singleCutOffParentPanel.setLayout(new java.awt.GridBagLayout());
-        bottomPanel.add(singleCutOffParentPanel, "singleCutOffParentPanel");
-        singleCutOffParentPanel.getAccessibleContext().setAccessibleName("singleCutOffParentPanel");
-
         multipleCutOffParentPanel.setName("multipleCutOffParentPanel"); // NOI18N
         multipleCutOffParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         multipleCutOffParentPanel.setLayout(new java.awt.GridBagLayout());
         bottomPanel.add(multipleCutOffParentPanel, "multipleCutOffParentPanel");
         multipleCutOffParentPanel.getAccessibleContext().setAccessibleName("multipleCutOffParentPanel");
+
+        singleCutOffParentPanel.setName("singleCutOffParentPanel"); // NOI18N
+        singleCutOffParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(singleCutOffParentPanel, "singleCutOffParentPanel");
+        singleCutOffParentPanel.getAccessibleContext().setAccessibleName("singleCutOffParentPanel");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

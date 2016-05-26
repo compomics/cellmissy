@@ -292,6 +292,10 @@ public class SingleCellPreProcessingController {
         filteringController.setMeanDisplForExperiment();
     }
 
+    public void showMeanDisplInList() {
+        filteringController.showMeanDisplInList();
+    }
+
     /**
      *
      * @param plateCondition

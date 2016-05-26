@@ -200,6 +200,44 @@ public class JFreeChartUtils {
     }
 
     /**
+     * 
+     * @param xYSeriesCollection
+     * @param chartTitle
+     * @param xLabel
+     * @param legend
+     * @return 
+     */
+    public static JFreeChart generateDensityFunctionChart(XYSeriesCollection xYSeriesCollection, String chartTitle, String xLabel, boolean legend) {
+        String specificChartTitle = chartTitle + " - " + " (conditions)";
+        JFreeChart densityChart = ChartFactory.createXYLineChart(specificChartTitle, xLabel, "Density",
+                xYSeriesCollection, PlotOrientation.VERTICAL, legend, true, false);
+        densityChart.getTitle().setFont(chartFont);
+        //XYplot
+        XYPlot xYPlot = densityChart.getXYPlot();
+        //disable autorange for the axes
+        xYPlot.getDomainAxis().setAutoRange(false);
+        xYPlot.getRangeAxis().setAutoRange(false);
+        setupXYPlot(xYPlot);
+        //set ranges for x and y axes
+        xYPlot.getDomainAxis().setRange(xYSeriesCollection.getDomainLowerBound(true) - 0.05, xYSeriesCollection
+                .getDomainUpperBound(true) + 0.05);
+        xYPlot.getRangeAxis().setUpperBound(computeMaxY(xYSeriesCollection) + 0.05);
+        xYPlot.setBackgroundPaint(Color.white);
+        //renderer for wide line
+        XYItemRenderer renderer = xYPlot.getRenderer();
+
+        for (int i = 0; i < xYSeriesCollection.getSeriesCount(); i++) {
+            // wide line
+            renderer.setSeriesStroke(i, normalLine);
+            int length = GuiUtils.getAvailableColors().length;
+            int colorIndex = i % length;
+            renderer.setSeriesPaint(i, GuiUtils.getAvailableColors()[colorIndex]);
+        }
+
+        return densityChart;
+    }
+
+    /**
      * Control shadow of JFreeChart
      *
      * @param chart
@@ -394,11 +432,11 @@ public class JFreeChartUtils {
     }
 
     /**
-     * 
+     *
      * @param chart
      * @param conditions
      * @param plotLines
-     * @param plotPoints 
+     * @param plotPoints
      */
     public static void setupConditionsChart(JFreeChart chart, List<PlateCondition> conditions, boolean plotLines, boolean plotPoints) {
         // set title font

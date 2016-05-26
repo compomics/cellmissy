@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering;
 
 import javax.swing.JButton;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -38,8 +39,8 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         return meanDisplacTextField;
     }
 
-    public JPanel getRawPlotParentPanel() {
-        return rawPlotParentPanel;
+    public JList getMeanDisplList() {
+        return meanDisplList;
     }
 
     /**
@@ -64,7 +65,11 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         applyCutOffButton = new javax.swing.JButton();
         plotsPanel = new javax.swing.JPanel();
-        rawPlotParentPanel = new javax.swing.JPanel();
+        meanDisplListPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        meanDisplList = new javax.swing.JList();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         filteredPlotParentPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.GridBagLayout());
@@ -101,7 +106,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel1))
                     .addComponent(jLabel13))
-                .addContainerGap(81, Short.MAX_VALUE))
+                .addContainerGap(123, Short.MAX_VALUE))
         );
         infoPanelLayout.setVerticalGroup(
             infoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -151,7 +156,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel3))
                     .addComponent(applyCutOffButton))
-                .addContainerGap(221, Short.MAX_VALUE))
+                .addContainerGap(263, Short.MAX_VALUE))
         );
         inputPanelLayout.setVerticalGroup(
             inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,16 +184,47 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         plotsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         plotsPanel.setLayout(new java.awt.GridBagLayout());
 
-        rawPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        rawPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        meanDisplListPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        meanDisplList.setEnabled(false);
+        jScrollPane2.setViewportView(meanDisplList);
+
+        jLabel4.setText("The following list reports the mean displacement");
+
+        jLabel5.setText("for each plate condition (in µm).");
+
+        javax.swing.GroupLayout meanDisplListPanelLayout = new javax.swing.GroupLayout(meanDisplListPanel);
+        meanDisplListPanel.setLayout(meanDisplListPanelLayout);
+        meanDisplListPanelLayout.setHorizontalGroup(
+            meanDisplListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(meanDisplListPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(meanDisplListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jScrollPane2)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
+                .addContainerGap())
+        );
+        meanDisplListPanelLayout.setVerticalGroup(
+            meanDisplListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(meanDisplListPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 1.0;
-        plotsPanel.add(rawPlotParentPanel, gridBagConstraints);
+        plotsPanel.add(meanDisplListPanel, gridBagConstraints);
 
         filteredPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         filteredPlotParentPanel.setLayout(new java.awt.GridBagLayout());
@@ -197,7 +233,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weightx = 0.7;
         gridBagConstraints.weighty = 1.0;
         plotsPanel.add(filteredPlotParentPanel, gridBagConstraints);
 
@@ -222,10 +258,14 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JList meanDisplList;
+    private javax.swing.JPanel meanDisplListPanel;
     private javax.swing.JTextField meanDisplacTextField;
     private javax.swing.JPanel plotsPanel;
-    private javax.swing.JPanel rawPlotParentPanel;
     // End of variables declaration//GEN-END:variables
 }

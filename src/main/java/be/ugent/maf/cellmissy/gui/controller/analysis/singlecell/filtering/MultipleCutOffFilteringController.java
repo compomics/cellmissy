@@ -106,7 +106,7 @@ public class MultipleCutOffFilteringController {
         });
 
         multipleCutOffPanel.getMicroMeterRadioButton().addActionListener((ActionEvent e) -> {
-            // µm: we do not need a conversion factor
+            // Âµm: we do not need a conversion factor
             multipleCutOffPanel.getConversionFactorTextField().setEnabled(false);
         });
 
@@ -119,7 +119,7 @@ public class MultipleCutOffFilteringController {
         multipleCutOffPanel.getTopLimTextField().setText("2.8");
         multipleCutOffPanel.getTranslocationStepTextField().setText("0.8");
         multipleCutOffPanel.getPercentageMotileStepsTextField().setText("30");
-        percentageMotile = 30;
+        percentageMotile = 33;
 
         // actually do the filtering
         multipleCutOffPanel.getFilterButton().addActionListener((ActionEvent e) -> {

@@ -462,10 +462,12 @@ public class SingleCellMainController {
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
                 showInfoMessage("Single-cell trajectories filtering - Quality Control");
-                singleCellPreProcessingController.plotRawKde(selectedCondition);
                 singleCellPreProcessingController.setMeanDisplForExperiment();
                 if (singleCellPreProcessingController.getFilteringPanel().getMultipleCutOffRadioButton().isSelected()) {
+                    singleCellPreProcessingController.plotRawKde(selectedCondition);
                     singleCellPreProcessingController.setMeanDisplForCondition(selectedCondition);
+                } else {
+                    singleCellPreProcessingController.showMeanDisplInList();
                 }
                 break;
             case "analysisParentPanel":
