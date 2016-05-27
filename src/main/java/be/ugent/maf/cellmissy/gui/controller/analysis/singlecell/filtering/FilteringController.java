@@ -119,6 +119,7 @@ public class FilteringController {
 
     public void plotRawKde(PlateCondition plateCondition) {
         multipleCutOffFilteringController.plotRawKdeMultipleCutOff(plateCondition);
+        singleCutOffFilteringController.plotRawKdeSingleCutOff();
     }
 
     public void showMeanDisplInList() {
@@ -190,10 +191,28 @@ public class FilteringController {
     }
 
     /**
+     * Estimate the raw density functions for all conditions.
+     *
+     * @return a list of a list of double containing the estimated density
+     * functions.
+     */
+    public List<List<double[]>> estimateRawDensityFunction() {
+        String kernelDensityEstimatorBeanName = getKernelDensityEstimatorBeanName();
+        List<List<double[]>> densityFunction = new ArrayList<>();
+        getPreProcessingMap().values().stream().map((conditionDataHolder)
+                -> conditionDataHolder.getInstantaneousDisplacementsVector()).map((instantaneousDisplacementsVector) -> estimateDensityFunction(instantaneousDisplacementsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                    densityFunction.add(oneConditionDensityFunction);
+                });
+        return densityFunction;
+    }
+
+    /**
+     * Generate the density function for a specific condition: takes the wells
+     * in consideration.
      *
      * @param singleCellConditionDataHolder
      * @param densityFunctions
-     * @return
+     * @return the dataset
      */
     public XYSeriesCollection generateDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, List<List<double[]>> densityFunctions) {
         XYSeriesCollection collection = new XYSeriesCollection();
@@ -241,16 +260,17 @@ public class FilteringController {
     }
 
     /**
+     * Generate density function for the overall experiment: takes conditions in
+     * consideration.
      *
      * @param densityFunctions
-     * @return
+     * @return the dataset
      */
     public XYSeriesCollection generateDensityFunction(List<List<double[]>> densityFunctions) {
         XYSeriesCollection collection = new XYSeriesCollection();
-        List<SingleCellConditionDataHolder> list = new ArrayList<SingleCellConditionDataHolder>(filteringMap.keySet());
-
-//        for (SingleCellConditionDataHolder singleCellConditionDataHolder : filteringMap.keySet()) {
+        List<SingleCellConditionDataHolder> list = new ArrayList<>(getPreProcessingMap().values());
         for (int i = 0; i < densityFunctions.size(); i++) {
+
             if (densityFunctions.get(i) != null) {
                 // x values
                 double[] xValues = densityFunctions.get(i).get(0);
@@ -266,7 +286,6 @@ public class FilteringController {
             }
 
         }
-//        }
         return collection;
     }
 
@@ -328,6 +347,8 @@ public class FilteringController {
             // get the layout from the bottom panel and show the appropriate one
             CardLayout layout = (CardLayout) filteringPanel.getBottomPanel().getLayout();
             layout.show(filteringPanel.getBottomPanel(), filteringPanel.getSingleCutOffParentPanel().getName());
+
+            singleCutOffFilteringController.plotRawKdeSingleCutOff();
             setMeanDisplForExperiment();
             DefaultListModel model = (DefaultListModel) singleCutOffFilteringController.getSingleCutOffPanel().getMeanDisplList().getModel();
             if (model.isEmpty()) {

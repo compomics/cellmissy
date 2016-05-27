@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTable;
@@ -68,6 +69,9 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         return filteredPlotParentPanel;
     }
 
+    public JButton getApplyCutOffToConditionsButton() {
+        return applyCutOffToConditionsButton;
+    }
 
     public JTextField getTopLimTextField() {
         return topLimTextField;
@@ -75,6 +79,18 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
 
     public JTextField getTranslocationStepTextField() {
         return translocationStepTextField;
+    }
+
+    public JComboBox getCutOffValuesComboBox() {
+        return cutOffValuesComboBox;
+    }
+
+    public JPanel getFilteredKDEParentPanel() {
+        return filteredKDEParentPanel;
+    }
+
+    public JPanel getRawKDEparentPanel() {
+        return rawKDEparentPanel;
     }
 
     /**
@@ -117,7 +133,9 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         filterButton = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        filterButton1 = new javax.swing.JButton();
+        applyCutOffToConditionsButton = new javax.swing.JButton();
+        cutOffValuesComboBox = new javax.swing.JComboBox();
+        applyCutOffToConditionsButton1 = new javax.swing.JButton();
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         filterTrackTable = new javax.swing.JTable();
@@ -125,11 +143,22 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         rawPlotParentPanel = new javax.swing.JPanel();
         filteredPlotParentPanel = new javax.swing.JPanel();
         summaryPanel = new javax.swing.JPanel();
+        recapPanel = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        percentageTextField = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jLabel17 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jList2 = new javax.swing.JList();
+        rawKDEparentPanel = new javax.swing.JPanel();
+        filteredKDEParentPanel = new javax.swing.JPanel();
 
         filteringPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         filteringPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jSplitPane1.setDividerLocation(80);
+        jSplitPane1.setDividerLocation(350);
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         upPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -238,8 +267,11 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
 
         jLabel12.setText("%");
 
-        filterButton1.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
-        filterButton1.setText("Apply specific cut-off to all conditions");
+        applyCutOffToConditionsButton.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        applyCutOffToConditionsButton.setText("Apply cut-off to all conditions");
+
+        applyCutOffToConditionsButton1.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        applyCutOffToConditionsButton1.setText("Select cut-off for this condition");
 
         javax.swing.GroupLayout inputPanelLayout = new javax.swing.GroupLayout(inputPanel);
         inputPanel.setLayout(inputPanelLayout);
@@ -282,8 +314,12 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
                     .addGroup(inputPanelLayout.createSequentialGroup()
                         .addComponent(filterButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(filterButton1)))
-                .addContainerGap())
+                        .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(applyCutOffToConditionsButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(applyCutOffToConditionsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cutOffValuesComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         inputPanelLayout.setVerticalGroup(
             inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -315,10 +351,13 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(inputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(filterButton)
-                            .addComponent(filterButton1)))
+                            .addComponent(applyCutOffToConditionsButton)
+                            .addComponent(cutOffValuesComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(inputPanelLayout.createSequentialGroup()
                         .addGap(78, 78, 78)
                         .addComponent(jLabel12)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(applyCutOffToConditionsButton1)
                 .addContainerGap())
         );
 
@@ -360,14 +399,14 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                 .addContainerGap())
         );
         tablePanelLayout.setVerticalGroup(
             tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -424,22 +463,112 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
             filteringPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(filteringPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jTabbedPane1.addTab("filtering", filteringPanel);
 
-        javax.swing.GroupLayout summaryPanelLayout = new javax.swing.GroupLayout(summaryPanel);
-        summaryPanel.setLayout(summaryPanelLayout);
-        summaryPanelLayout.setHorizontalGroup(
-            summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1048, Short.MAX_VALUE)
+        summaryPanel.setLayout(new java.awt.GridBagLayout());
+
+        recapPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        recapPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel15.setText("Current used % of motile steps:");
+
+        percentageTextField.setEditable(false);
+
+        jLabel16.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel16.setText("Number of retained tracks per condition:");
+
+        jScrollPane2.setBorder(null);
+
+        jList1.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jList1.setEnabled(false);
+        jScrollPane2.setViewportView(jList1);
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel17.setText("Selected cut-off per condition:");
+
+        jScrollPane3.setBorder(null);
+
+        jList2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jList2.setEnabled(false);
+        jScrollPane3.setViewportView(jList2);
+
+        javax.swing.GroupLayout recapPanelLayout = new javax.swing.GroupLayout(recapPanel);
+        recapPanel.setLayout(recapPanelLayout);
+        recapPanelLayout.setHorizontalGroup(
+            recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(recapPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(recapPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(percentageTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(recapPanelLayout.createSequentialGroup()
+                        .addGroup(recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(18, 18, 18)
+                        .addGroup(recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16))))
+                .addContainerGap(742, Short.MAX_VALUE))
         );
-        summaryPanelLayout.setVerticalGroup(
-            summaryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 746, Short.MAX_VALUE)
+
+        recapPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jScrollPane2, jScrollPane3});
+
+        recapPanelLayout.setVerticalGroup(
+            recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(recapPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(percentageTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel16)
+                    .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(recapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
+                .addContainerGap())
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.4;
+        summaryPanel.add(recapPanel, gridBagConstraints);
+
+        rawKDEparentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        rawKDEparentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        rawKDEparentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.6;
+        summaryPanel.add(rawKDEparentPanel, gridBagConstraints);
+
+        filteredKDEParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        filteredKDEParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.7;
+        summaryPanel.add(filteredKDEParentPanel, gridBagConstraints);
 
         jTabbedPane1.addTab("summary", summaryPanel);
 
@@ -447,7 +576,7 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1073, Short.MAX_VALUE)
+            .addGap(0, 1252, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
@@ -456,7 +585,7 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 796, Short.MAX_VALUE)
+            .addGap(0, 901, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
@@ -467,12 +596,15 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton applyCutOffToConditionsButton;
+    private javax.swing.JButton applyCutOffToConditionsButton1;
     private javax.swing.JTextField bottomLimTextField;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JTextField conversionFactorTextField;
+    private javax.swing.JComboBox cutOffValuesComboBox;
     private javax.swing.JButton filterButton;
-    private javax.swing.JButton filterButton1;
     private javax.swing.JTable filterTrackTable;
+    private javax.swing.JPanel filteredKDEParentPanel;
     private javax.swing.JPanel filteredPlotParentPanel;
     private javax.swing.JPanel filteringPanel;
     private javax.swing.JPanel infoInputPanel;
@@ -483,6 +615,9 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -491,15 +626,22 @@ public class MultipleCutOffPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JList jList1;
+    private javax.swing.JList jList2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField meanDisplacCondTextField;
     private javax.swing.JTextField meanDisplacReplTextField;
     private javax.swing.JRadioButton microMeterRadioButton;
     private javax.swing.JTextField percentageMotileStepsTextField;
+    private javax.swing.JTextField percentageTextField;
     private javax.swing.JRadioButton pixelRadioButton;
+    private javax.swing.JPanel rawKDEparentPanel;
     private javax.swing.JPanel rawPlotParentPanel;
+    private javax.swing.JPanel recapPanel;
     private javax.swing.JPanel summaryPanel;
     private javax.swing.JPanel tablePanel;
     private javax.swing.JTextField topLimTextField;

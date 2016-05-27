@@ -35,6 +35,10 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         return filteredPlotParentPanel;
     }
 
+    public JPanel getRawPlotParentPanel() {
+        return rawPlotParentPanel;
+    }
+
     public JTextField getMeanDisplacTextField() {
         return meanDisplacTextField;
     }
@@ -70,6 +74,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         meanDisplList = new javax.swing.JList();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        rawPlotParentPanel = new javax.swing.JPanel();
         filteredPlotParentPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.GridBagLayout());
@@ -186,12 +191,13 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
 
         meanDisplListPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        meanDisplList.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         meanDisplList.setEnabled(false);
         jScrollPane2.setViewportView(meanDisplList);
 
-        jLabel4.setText("The following list reports the mean displacement");
+        jLabel4.setText("The following list reports the mean");
 
-        jLabel5.setText("for each plate condition (in µm).");
+        jLabel5.setText("displacement for each plate condition.");
 
         javax.swing.GroupLayout meanDisplListPanelLayout = new javax.swing.GroupLayout(meanDisplListPanel);
         meanDisplListPanel.setLayout(meanDisplListPanelLayout);
@@ -199,11 +205,11 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
             meanDisplListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(meanDisplListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(meanDisplListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane2)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING))
-                .addContainerGap())
+                .addGroup(meanDisplListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         meanDisplListPanelLayout.setVerticalGroup(
             meanDisplListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,18 +228,29 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 1.0;
         plotsPanel.add(meanDisplListPanel, gridBagConstraints);
 
-        filteredPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        filteredPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        rawPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        rawPlotParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.weighty = 1.0;
+        plotsPanel.add(rawPlotParentPanel, gridBagConstraints);
+
+        filteredPlotParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        filteredPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        filteredPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.4;
         gridBagConstraints.weighty = 1.0;
         plotsPanel.add(filteredPlotParentPanel, gridBagConstraints);
 
@@ -267,5 +284,6 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
     private javax.swing.JPanel meanDisplListPanel;
     private javax.swing.JTextField meanDisplacTextField;
     private javax.swing.JPanel plotsPanel;
+    private javax.swing.JPanel rawPlotParentPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,7 +5,6 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.filtering;
 
-import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.SingleCutOffPanel;
@@ -15,7 +14,6 @@ import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +40,11 @@ public class SingleCutOffFilteringController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SingleCutOffFilteringController.class);
     // model
     private double cutOff;
+    List<List<double[]>> rawDensityFunction;
     // view
     private SingleCutOffPanel singleCutOffPanel;
     private ChartPanel filteredKdeChartPanel;
+    private ChartPanel rawKdeChartPanel;
     // parent controller
     @Autowired
     private FilteringController filteringController;
@@ -79,6 +79,25 @@ public class SingleCutOffFilteringController {
     }
 
     /**
+     * Plot the raw KDE for track displacements.
+     *
+     */
+    public void plotRawKdeSingleCutOff() {
+        // estimate the raw density function
+        // check if the estimation has already taken place
+        // if not, launch a swing worker
+        if (rawDensityFunction == null) {
+            DensityFunctionSwingWorker densityFunctionSwingWorker = new DensityFunctionSwingWorker();
+            densityFunctionSwingWorker.execute();
+        } else {
+            XYSeriesCollection densityFunction = filteringController.generateDensityFunction(rawDensityFunction);
+            JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "raw KDE track displ", "track displ", false);
+            rawKdeChartPanel.setChart(densityChart);
+        }
+
+    }
+
+    /**
      * Initialize the main view.
      */
     private void initMainView() {
@@ -91,14 +110,14 @@ public class SingleCutOffFilteringController {
             // check for number format exception
             try {
                 cutOff = Double.parseDouble(singleCutOffPanel.getCutOffTextField().getText());
+                FilterSwingWorker filterSwingWorker = new FilterSwingWorker();
+                filterSwingWorker.execute();
             } catch (NumberFormatException ex) {
                 // warn the user and log the error for info
                 filteringController.showMessage("Please insert a valid number for the cut-off!" + "\n " + ex.getMessage(),
                         "number format exception", JOptionPane.ERROR_MESSAGE);
                 LOG.error(ex.getMessage());
             }
-            FilterSwingWorker filterSwingWorker = new FilterSwingWorker();
-            filterSwingWorker.execute();
         });
 
         // add view to parent container
@@ -110,26 +129,29 @@ public class SingleCutOffFilteringController {
         filteredKdeChartPanel = new ChartPanel(null);
         filteredKdeChartPanel.setOpaque(false);
 
-        // add chart panel to parent container
+        rawKdeChartPanel = new ChartPanel(null);
+        rawKdeChartPanel.setOpaque(false);
+
+        // add chart panels to parent containers
         singleCutOffPanel.getFilteredPlotParentPanel().add(filteredKdeChartPanel, gridBagConstraints);
+        singleCutOffPanel.getRawPlotParentPanel().add(rawKdeChartPanel, gridBagConstraints);
     }
 
     /**
-     *
+     * Plot the KDE of the retained tracks.
      */
     private void plotRetainedKde() {
         // create the dataset for the plot logic
         XYSeriesCollection retainedKdeDataset = getRetainedKdeDataset();
-
         JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(retainedKdeDataset,
                 "cut-off: " + AnalysisUtils.roundTwoDecimals(cutOff) + " filtered KDE track displ", "track displ", false);
-
         filteredKdeChartPanel.setChart(densityChart);
         singleCutOffPanel.getFilteredPlotParentPanel().revalidate();
         singleCutOffPanel.getFilteredPlotParentPanel().repaint();
     }
 
     /**
+     * Get KDE datasets for the retained tracks.
      *
      * @return
      */
@@ -140,6 +162,7 @@ public class SingleCutOffFilteringController {
     }
 
     /**
+     * Estimate the density function for the retained data.
      *
      * @return
      */
@@ -148,17 +171,16 @@ public class SingleCutOffFilteringController {
         List<List<double[]>> densityFunction = new ArrayList<>();
 
         Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = filteringController.getFilteringMap();
-        for (SingleCellConditionDataHolder conditionDataHolder : filteringMap.keySet()) {
-            Double[] retainedDisplacements = getRetainedDisplacements(conditionDataHolder);
-            List<double[]> oneConditionTrackDisplDensityFunction
-                    = filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName);
-            densityFunction.add(oneConditionTrackDisplDensityFunction);
-        }
+        filteringMap.keySet().stream().map((conditionDataHolder)
+                -> getRetainedDisplacements(conditionDataHolder)).map((retainedDisplacements) -> filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackDisplDensityFunction) -> {
+                    densityFunction.add(oneConditionTrackDisplDensityFunction);
+                });
 
         return densityFunction;
     }
 
     /**
+     * Get the retained displacements.
      *
      * @param cellConditionDataHolder
      * @return
@@ -175,28 +197,26 @@ public class SingleCutOffFilteringController {
     }
 
     /**
-     *
+     * Do the actual filter: for each condition, check the tracks, if mean
+     * displacement < cut-off, exclude, else retain >. Put results in a map and
+     * pass it to the parent controller.
      */
     private void filter() {
         Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = new HashMap<>();
-        // for each condition, check the tracks, if mean displ < cut-off, exclude, else retain
-        // put results in a map and pass it to the parent controller
-        for (PlateCondition plateCondition : filteringController.getPreProcessingMap().keySet()) {
+        filteringController.getPreProcessingMap().keySet().stream().forEach((plateCondition) -> {
             List<TrackDataHolder> retainedTrackDataHolders = new ArrayList<>();
             SingleCellConditionDataHolder conditionDataHolder = filteringController.getPreProcessingMap().get(plateCondition);
-            for (TrackDataHolder trackDataHolder : conditionDataHolder.getTrackDataHolders()) {
-                if (trackDataHolder.getCellCentricDataHolder().getMedianDisplacement() >= cutOff) {
-                    retainedTrackDataHolders.add(trackDataHolder);
-                }
-            }
+            conditionDataHolder.getTrackDataHolders().stream().filter((trackDataHolder)
+                    -> (trackDataHolder.getCellCentricDataHolder().getMedianDisplacement() >= cutOff)).forEach((trackDataHolder) -> {
+                        retainedTrackDataHolders.add(trackDataHolder);
+                    });
             filteringMap.put(conditionDataHolder, retainedTrackDataHolders);
-        }
+        });
         filteringController.setFilteringMap(filteringMap);
     }
 
     /**
-     * A swing worker that filters cell tracks based on a set of motile step
-     * values and a percentage of motility for a cell trajectory.
+     * A swing worker that simply calls the filter method in the background.
      */
     private class FilterSwingWorker extends SwingWorker<Void, Void> {
 
@@ -217,6 +237,45 @@ public class SingleCutOffFilteringController {
                 get();
                 // plot the filtered KDE plots
                 plotRetainedKde();
+                // recontrol GUI
+                filteringController.hideWaitingDialog();
+                filteringController.controlGuiComponents(true);
+                filteringController.getConditionsList().setEnabled(false);
+                filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                filteringController.handleUnexpectedError(ex);
+            }
+        }
+
+    }
+
+    /**
+     * A swing worker that estimates the raw density function (only once!).
+     */
+    private class DensityFunctionSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            // show waiting dialog
+            filteringController.showWaitingDialog("Please wait, estimating KDE for the experiment");
+            // show a waiting cursor, disable GUI components
+            filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            filteringController.controlGuiComponents(false);
+            rawDensityFunction = filteringController.estimateRawDensityFunction();
+
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+
+                XYSeriesCollection densityFunction = filteringController.generateDensityFunction(rawDensityFunction);
+                JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "raw KDE track displ", "track displ", false);
+                rawKdeChartPanel.setChart(densityChart);
+
                 // recontrol GUI
                 filteringController.hideWaitingDialog();
                 filteringController.controlGuiComponents(true);

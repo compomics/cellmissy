@@ -47,7 +47,8 @@ public class MultipleCutOffFilteringController {
     // model
     private List<Double> motileSteps;
     private double percentageMotile;
-    private Map<SingleCellConditionDataHolder, Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>>> filterMap;
+    private Map<SingleCellConditionDataHolder, Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>>> motileStepsFilterMap;
+    private Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
     // view 
     private MultipleCutOffPanel multipleCutOffPanel;
     private ChartPanel rawKdeChartPanel;
@@ -56,6 +57,8 @@ public class MultipleCutOffFilteringController {
     @Autowired
     private FilteringController filteringController;
     // child controllers
+    @Autowired
+    private SummaryMultipleCutOffController summaryMultipleCutOffController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -64,15 +67,34 @@ public class MultipleCutOffFilteringController {
      */
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        filterMap = new LinkedHashMap<>();
+        motileStepsFilterMap = new LinkedHashMap<>();
+        filteringMap = new LinkedHashMap<>();
         // initialize the main view
         initMainView();
         // initialize the other views
         initOtherViews();
+        // init child controllers
+        summaryMultipleCutOffController.init();
     }
 
     public MultipleCutOffPanel getMultipleCutOffPanel() {
         return multipleCutOffPanel;
+    }
+
+    public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
+        return filteringMap;
+    }
+
+    public String getKernelDensityEstimatorBeanName() {
+        return filteringController.getKernelDensityEstimatorBeanName();
+    }
+
+    public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
+        return filteringController.estimateDensityFunction(data, kernelDensityEstimatorBeanName);
+    }
+
+    public List<List<double[]>> estimateRawDensityFunction() {
+        return filteringController.estimateRawDensityFunction();
     }
 
     /**
@@ -84,8 +106,12 @@ public class MultipleCutOffFilteringController {
         SingleCellConditionDataHolder conditionDataHolder = filteringController.getConditionDataHolder(plateCondition);
         List<List<double[]>> estimateRawDensityFunction = filteringController.estimateRawDensityFunction(conditionDataHolder);
         XYSeriesCollection densityFunction = filteringController.generateDensityFunction(conditionDataHolder, estimateRawDensityFunction);
-        JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, densityFunction, "raw KDE track displ", "track displ", true);
+        JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(conditionDataHolder, densityFunction, "raw KDE track displ", "track displ", false);
         rawKdeChartPanel.setChart(densityChart);
+    }
+
+    public XYSeriesCollection generateDensityFunction(List<List<double[]>> densityFunctions) {
+        return filteringController.generateDensityFunction(densityFunctions);
     }
 
     /**
@@ -146,6 +172,8 @@ public class MultipleCutOffFilteringController {
                 for (int i = 0; i < numberSteps; i++) {
                     motileSteps.add(((double) bottomLimit / 10) + (step * i));
                 }
+                FilterSwingWorker filterSwingWorker = new FilterSwingWorker();
+                filterSwingWorker.execute();
 
             } catch (NumberFormatException ex) {
                 // warn the user and log the error for info
@@ -153,8 +181,15 @@ public class MultipleCutOffFilteringController {
                         "number format exception", JOptionPane.ERROR_MESSAGE);
                 LOG.error(ex.getMessage());
             }
-            FilterSwingWorker filterSwingWorker = new FilterSwingWorker();
-            filterSwingWorker.execute();
+
+        });
+
+        // apply a specific cut-off value to all the conditions at once
+        multipleCutOffPanel.getApplyCutOffToConditionsButton().addActionListener((ActionEvent e) -> {
+            // get the cut-off from the list (sure this is a Double)
+            Double value = (Double) multipleCutOffPanel.getCutOffValuesComboBox().getSelectedItem();
+            FilterConditionSwingWorker filterConditionSwingWorker = new FilterConditionSwingWorker(value);
+            filterConditionSwingWorker.execute();
         });
 
         // add view to parent component
@@ -186,12 +221,10 @@ public class MultipleCutOffFilteringController {
         List<List<double[]>> densityFunction = new ArrayList<>();
         Map<SingleCellWellDataHolder, List<TrackDataHolder>> retainedTrackMap = getRetainedTracks(singleCellConditionDataHolder, motileStepIndex);
 
-        for (SingleCellWellDataHolder singleCellWellDataHolder : retainedTrackMap.keySet()) {
-            Double[] retainedDisplacements = getRetainedDisplacements(retainedTrackMap, singleCellWellDataHolder);
-            List<double[]> oneReplicateTrackDisplDensityFunction
-                    = filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName);
-                densityFunction.add(oneReplicateTrackDisplDensityFunction);
-            }
+        retainedTrackMap.keySet().stream().map((singleCellWellDataHolder)
+                -> getRetainedDisplacements(retainedTrackMap, singleCellWellDataHolder)).map((retainedDisplacements) -> filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackDisplDensityFunction) -> {
+                    densityFunction.add(oneReplicateTrackDisplDensityFunction);
+                });
         return densityFunction;
     }
 
@@ -207,7 +240,7 @@ public class MultipleCutOffFilteringController {
      */
     private Map<SingleCellWellDataHolder, List<TrackDataHolder>> getRetainedTracks(SingleCellConditionDataHolder singleCellConditionDataHolder, int motileStepIndex) {
         Map<SingleCellWellDataHolder, List<TrackDataHolder>> map = new LinkedHashMap<>();
-        Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> tempMap = filterMap.get(singleCellConditionDataHolder);
+        Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> tempMap = motileStepsFilterMap.get(singleCellConditionDataHolder);
         tempMap.keySet().stream().forEach((singleCellWellDataHolder) -> {
             List<TrackDataHolder> retainedTracks = new ArrayList<>();
 
@@ -348,14 +381,24 @@ public class MultipleCutOffFilteringController {
             });
             tempMap2.put(singleCellWellDataHolder, tempMap);
         });
-        filterMap.put(conditionDataHolder, tempMap2);
+        motileStepsFilterMap.put(conditionDataHolder, tempMap2);
+    }
+
+    /**
+     * Update the ComboBox with the cutoff values.
+     */
+    private void updateCutOffComboBox() {
+        multipleCutOffPanel.getCutOffValuesComboBox().removeAllItems();
+        motileSteps.stream().forEach((step) -> {
+            multipleCutOffPanel.getCutOffValuesComboBox().addItem(AnalysisUtils.roundTwoDecimals(step));
+        });
     }
 
     /**
      * Update the table with the right elements.
      */
     private void updateFilterTable(SingleCellConditionDataHolder singleCellConditionDataHolder) {
-        Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> map = filterMap.get(singleCellConditionDataHolder);
+        Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> map = motileStepsFilterMap.get(singleCellConditionDataHolder);
         multipleCutOffPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(map, motileSteps));
 
         AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
@@ -363,6 +406,37 @@ public class MultipleCutOffFilteringController {
             multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
         }
         multipleCutOffPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+    }
+
+    /**
+     * Filter all the conditions with a specific cut-off value.
+     *
+     * @param value
+     */
+    private void filterConditionsForAValue(Double value) {
+        filteringController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {
+            filterConditionForAValue(conditionDataHolder, value);
+        });
+        filteringController.setFilteringMap(filteringMap); //???? also to other controller?
+    }
+
+    /**
+     * Filter one condition with a specific value
+     *
+     * @param conditionDataHolder
+     * @param value
+     */
+    private void filterConditionForAValue(SingleCellConditionDataHolder conditionDataHolder, Double value) {
+        List<TrackDataHolder> retainedTracks = new ArrayList<>();
+        conditionDataHolder.getSingleCellWellDataHolders().stream().forEach((wellDataHolder) -> {
+            wellDataHolder.getTrackDataHolders().stream().forEach((trackDataHolder) -> {
+                boolean filterSingleTrack = filterSingleTrack(trackDataHolder, value);
+                if (filterSingleTrack) {
+                    retainedTracks.add(trackDataHolder);
+                }
+            });
+        });
+        filteringMap.put(conditionDataHolder, retainedTracks);
     }
 
     /**
@@ -378,6 +452,7 @@ public class MultipleCutOffFilteringController {
             // show a waiting cursor, disable GUI components
             filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             filteringController.controlGuiComponents(false);
+            updateCutOffComboBox();
             updateFilterMap(filteringController.getConditionDataHolder(filteringController.getCurrentCondition()));
             return null;
         }
@@ -401,4 +476,53 @@ public class MultipleCutOffFilteringController {
         }
 
     }
+
+    /**
+     * A swing worker that filters all the conditions with a given cut-off
+     * selected from the user.
+     */
+    private class FilterConditionSwingWorker extends SwingWorker<Void, Void> {
+
+        // the selected cut-off value
+        private final Double value;
+
+        public FilterConditionSwingWorker(Double value) {
+            this.value = value;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            // show waiting dialog
+            filteringController.showWaitingDialog("Filtering experiment with cut-off: " + value + "and % motile steps: " + percentageMotile);
+            // show a waiting cursor, disable GUI components
+            filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            filteringController.controlGuiComponents(false);
+
+            // filter all conditions for this specific value
+            // get a filtering map and pass it to the parent/child controllers
+            filterConditionsForAValue(value);
+            summaryMultipleCutOffController.setCutOff(value);
+            // plot raw and KDE plots in the summary panel - child controller
+            summaryMultipleCutOffController.plotKDEs();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                // recontrol GUI
+                filteringController.hideWaitingDialog();
+                filteringController.controlGuiComponents(true);
+                filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                // show an info dialog: go to the summary view and have a look there
+                JOptionPane.showMessageDialog(multipleCutOffPanel, "Done! Go to the summary tab!", "info", JOptionPane.INFORMATION_MESSAGE);
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                filteringController.handleUnexpectedError(ex);
+            }
+        }
+
+    }
+
 }
