@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -49,6 +50,8 @@ public class MultipleCutOffFilteringController {
     private double percentageMotile;
     private Map<SingleCellConditionDataHolder, Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>>> motileStepsFilterMap;
     private Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
+    private Map<SingleCellConditionDataHolder, Double> cutOffMap;
+
     // view 
     private MultipleCutOffPanel multipleCutOffPanel;
     private ChartPanel rawKdeChartPanel;
@@ -69,6 +72,7 @@ public class MultipleCutOffFilteringController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         motileStepsFilterMap = new LinkedHashMap<>();
         filteringMap = new LinkedHashMap<>();
+        cutOffMap = new LinkedHashMap<>();
         // initialize the main view
         initMainView();
         // initialize the other views
@@ -95,6 +99,18 @@ public class MultipleCutOffFilteringController {
 
     public List<List<double[]>> estimateRawDensityFunction() {
         return filteringController.estimateRawDensityFunction();
+    }
+
+    public double getPercentageMotile() {
+        return percentageMotile;
+    }
+
+    public Map<SingleCellConditionDataHolder, Double> getCutOffMap() {
+        return cutOffMap;
+    }
+
+    public void setCutOffMap(Map<SingleCellConditionDataHolder, Double> cutOffMap) {
+        this.cutOffMap = cutOffMap;
     }
 
     /**
@@ -192,6 +208,14 @@ public class MultipleCutOffFilteringController {
             filterConditionSwingWorker.execute();
         });
 
+        // select cut-off for a condition
+        multipleCutOffPanel.getSelectCutOffForConditionButton().addActionListener((ActionEvent e) -> {
+            SelectCutOffConditionSwingWorker selectCutOffConditionSwingWorker = new SelectCutOffConditionSwingWorker();
+            selectCutOffConditionSwingWorker.execute();
+        });
+
+        multipleCutOffPanel.getRetainedTracksList().setModel(new DefaultListModel());
+        multipleCutOffPanel.getCutOffList().setModel(new DefaultListModel());
         // add view to parent component
         filteringController.getFilteringPanel().getMultipleCutOffParentPanel().add(multipleCutOffPanel, gridBagConstraints);
     }
@@ -478,6 +502,16 @@ public class MultipleCutOffFilteringController {
     }
 
     /**
+     * Update the cut off map.
+     *
+     * @param cellConditionDataHolder
+     * @param value
+     */
+    private void updateCutOffMap(SingleCellConditionDataHolder cellConditionDataHolder, Double value) {
+        cutOffMap.put(cellConditionDataHolder, value);
+    }
+
+    /**
      * A swing worker that filters all the conditions with a given cut-off
      * selected from the user.
      */
@@ -493,7 +527,7 @@ public class MultipleCutOffFilteringController {
         @Override
         protected Void doInBackground() throws Exception {
             // show waiting dialog
-            filteringController.showWaitingDialog("Filtering experiment with cut-off: " + value + "and % motile steps: " + percentageMotile);
+            filteringController.showWaitingDialog("Filtering experiment with cut-off: " + value + " and % motile steps: " + percentageMotile);
             // show a waiting cursor, disable GUI components
             filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             filteringController.controlGuiComponents(false);
@@ -502,8 +536,13 @@ public class MultipleCutOffFilteringController {
             // get a filtering map and pass it to the parent/child controllers
             filterConditionsForAValue(value);
             summaryMultipleCutOffController.setCutOff(value);
+
+            filteringMap.keySet().stream().forEach((conditionDataHolder) -> {
+                updateCutOffMap(conditionDataHolder, value);
+            });
             // plot raw and KDE plots in the summary panel - child controller
             summaryMultipleCutOffController.plotKDEs();
+            summaryMultipleCutOffController.updateInfo();
             return null;
         }
 
@@ -517,6 +556,51 @@ public class MultipleCutOffFilteringController {
                 filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // show an info dialog: go to the summary view and have a look there
                 JOptionPane.showMessageDialog(multipleCutOffPanel, "Done! Go to the summary tab!", "info", JOptionPane.INFORMATION_MESSAGE);
+            } catch (InterruptedException | ExecutionException ex) {
+                LOG.error(ex.getMessage(), ex);
+                filteringController.handleUnexpectedError(ex);
+            }
+        }
+
+    }
+
+    /**
+     * A swing worker that filters all the conditions with a given cut-off
+     * selected from the user.
+     */
+    private class SelectCutOffConditionSwingWorker extends SwingWorker<Void, Void> {
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            SingleCellConditionDataHolder conditionDataHolder = filteringController.getConditionDataHolder(filteringController.getCurrentCondition());
+            Double value = (Double) multipleCutOffPanel.getCutOffValuesComboBox().getSelectedItem();
+            // show waiting dialog
+            filteringController.showWaitingDialog("Filtering condition: " + conditionDataHolder.getPlateCondition()
+                    + " with cut-off: " + value + " and % motile steps: " + percentageMotile);
+            // show a waiting cursor, disable GUI components
+            filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            filteringController.controlGuiComponents(false);
+
+            filterConditionForAValue(conditionDataHolder, value);
+
+            cutOffMap.put(conditionDataHolder, value);
+            summaryMultipleCutOffController.updateInfo();
+            summaryMultipleCutOffController.plotKDEs();
+
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                get();
+                // recontrol GUI
+                filteringController.hideWaitingDialog();
+                filteringController.controlGuiComponents(true);
+                filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                // show an info dialog: go to the summary view and have a look there
+                JOptionPane.showMessageDialog(multipleCutOffPanel,
+                        "Done! Summary is updated!", "info", JOptionPane.INFORMATION_MESSAGE);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 filteringController.handleUnexpectedError(ex);

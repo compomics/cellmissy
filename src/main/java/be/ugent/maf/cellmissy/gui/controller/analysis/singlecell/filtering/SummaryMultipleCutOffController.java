@@ -14,6 +14,7 @@ import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.DefaultListModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -60,6 +61,31 @@ public class SummaryMultipleCutOffController {
     public void plotKDEs() {
         plotRawKde();
         plotRetainedKde();
+    }
+
+    /**
+     * Update the information on the number of tracks retained, and also on the
+     * cut-off values used for each condition.
+     */
+    public void updateInfo() {
+        multipleCutOffFilteringController.getMultipleCutOffPanel().getPercentageTextField().
+                setText(multipleCutOffFilteringController.getPercentageMotile() + " %");
+        // update number of retained tracks for each condition
+        DefaultListModel modelList = (DefaultListModel) multipleCutOffFilteringController.getMultipleCutOffPanel().getRetainedTracksList().getModel();
+        modelList.clear();
+        multipleCutOffFilteringController.getFilteringMap().keySet().stream().forEach((conditionDataHolder) -> {
+            List<TrackDataHolder> retainedTracks = multipleCutOffFilteringController.getFilteringMap().get(conditionDataHolder);
+
+            modelList.addElement(conditionDataHolder.getPlateCondition() + ": " + retainedTracks.size());
+        });
+        // update cut-off values for each condition
+        DefaultListModel model = (DefaultListModel) multipleCutOffFilteringController.getMultipleCutOffPanel().getCutOffList().getModel();
+        model.clear();
+        multipleCutOffFilteringController.getCutOffMap().keySet().stream().forEach((conditionDataHolder) -> {
+            Double value = multipleCutOffFilteringController.getCutOffMap().get(conditionDataHolder);
+
+            model.addElement(conditionDataHolder.getPlateCondition() + ": " + value);
+        });
     }
 
     // initialize the main view
