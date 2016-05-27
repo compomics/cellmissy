@@ -10,6 +10,7 @@ import be.ugent.maf.cellmissy.analysis.singlecell.TrackCoordinatesUnitOfMeasurem
 import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.*;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
@@ -46,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jfree.chart.JFreeChart;
 
 /**
  * Main Controller for single cell analysis.
@@ -190,6 +192,14 @@ public class SingleCellMainController {
 
     public Map<PlateCondition, SingleCellConditionDataHolder> getPreProcessingMap() {
         return singleCellPreProcessingController.getPreProcessingMap();
+    }
+
+    public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
+        return singleCellPreProcessingController.getFilteringMap();
+    }
+
+    public void scaleAxesToExperiment(JFreeChart chart, boolean useRawData) {
+        singleCellPreProcessingController.scaleAxesToExperiment(chart, useRawData);
     }
 
     /**
@@ -354,6 +364,7 @@ public class SingleCellMainController {
             case "inspectingDataPanel":
                 // disable previous button
                 analysisExperimentPanel.getPreviousButton().setEnabled(false);
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
                 // enable next button
                 analysisExperimentPanel.getNextButton().setEnabled(true);
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
@@ -371,6 +382,7 @@ public class SingleCellMainController {
                 singleCellPreProcessingController.showTracksInTable();
                 break;
             case "cellTracksParentPanel":
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
@@ -398,6 +410,7 @@ public class SingleCellMainController {
                 singleCellPreProcessingController.renderConditionGlobalView(selectedCondition);
                 break;
             case "displSpeedParentPanel":
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getDisplSpeedLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
@@ -411,6 +424,7 @@ public class SingleCellMainController {
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
                 showInfoMessage("Single Cell Displacements and Speeds");
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getDisplSpeedPanel().getInstantaneousDisplRadioButton().isSelected()) {
                     singleCellPreProcessingController.showInstantaneousSpeedsInTable(selectedCondition);
@@ -427,6 +441,7 @@ public class SingleCellMainController {
                 }
                 break;
             case "angleDirectParentPanel":
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getAngleDirectLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getDisplSpeedLabel());
@@ -450,6 +465,7 @@ public class SingleCellMainController {
                 singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
                 break;
             case "filteringParentPanel":
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
                 GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
@@ -483,12 +499,30 @@ public class SingleCellMainController {
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
                 showInfoMessage("Conditions-based analysis");
+                analysisPlatePanel.setCurrentCondition(null);
+                analysisPlatePanel.repaint();
+                analysisPlatePanel.revalidate();
+                dataAnalysisPanel.getConditionsList().setEnabled(false);
                 // see if some conditions still need to be processed
                 if (!proceedToAnalysis()) {
                     singleCellPreProcessingController.enableAnalysis();
                 }
+                // check if the user wants to proceed with filtered data or not
+                Object[] options = {"Yes", "No"};
+                int choice = JOptionPane.showOptionDialog(null, "Proceed with filtered data? If NO, raw data will be used.", "", JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+                // if choice is 0 -- filtered data
+                if (choice == 0) {
+                    singleCellAnalysisController.setFilteredData(Boolean.TRUE);
+                } else {
+                    singleCellAnalysisController.setFilteredData(Boolean.FALSE);
+                }
                 // check which button is actually selected
+                if (singleCellAnalysisController.getAnalysisPanel().getCellTracksRadioButton().isSelected()) {
+                    singleCellAnalysisController.plotCellTracks();
+                } else if (singleCellAnalysisController.getAnalysisPanel().getCellSpeedsRadioButton().isSelected()) {
 
+                }
                 break;
 
         }
@@ -499,12 +533,7 @@ public class SingleCellMainController {
      * @return
      */
     private boolean proceedToAnalysis() {
-        for (PlateCondition plateCondition : plateConditionList) {
-            if (!plateCondition.isComputed()) {
-                return false;
-            }
-        }
-        return true;
+        return plateConditionList.stream().noneMatch((plateCondition) -> (!plateCondition.isComputed()));
     }
 
     /**

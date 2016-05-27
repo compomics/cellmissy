@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
@@ -350,10 +349,8 @@ public class FilteringController {
 
             singleCutOffFilteringController.plotRawKdeSingleCutOff();
             setMeanDisplForExperiment();
-            DefaultListModel model = (DefaultListModel) singleCutOffFilteringController.getSingleCutOffPanel().getMeanDisplList().getModel();
-            if (model.isEmpty()) {
-                singleCutOffFilteringController.showMeanDisplInList();
-            }
+            singleCutOffFilteringController.showMeanDisplInList();
+
         });
 
         // add view to parent container

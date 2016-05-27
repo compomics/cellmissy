@@ -71,9 +71,10 @@ public class SingleCutOffFilteringController {
      *
      */
     public void showMeanDisplInList() {
+        DefaultListModel model = (DefaultListModel) singleCutOffPanel.getMeanDisplList().getModel();
+        model.clear();
         filteringController.getPlateConditions().stream().map((condition)
                 -> filteringController.getMeanDisplForCondition(condition)).forEach((meanDisplForCondition) -> {
-                    DefaultListModel model = (DefaultListModel) singleCutOffPanel.getMeanDisplList().getModel();
                     model.addElement(meanDisplForCondition);
                 });
     }

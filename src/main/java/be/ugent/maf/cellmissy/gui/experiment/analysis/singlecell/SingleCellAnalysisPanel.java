@@ -152,7 +152,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         filteringLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         analysisLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        analysisLabel.setText("6. Conditions analysis");
+        analysisLabel.setText("6. Conditions Analysis");
         analysisLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
@@ -172,7 +172,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addComponent(filteringLabel)
                 .addGap(18, 18, 18)
                 .addComponent(analysisLabel)
-                .addContainerGap(289, Short.MAX_VALUE))
+                .addContainerGap(287, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

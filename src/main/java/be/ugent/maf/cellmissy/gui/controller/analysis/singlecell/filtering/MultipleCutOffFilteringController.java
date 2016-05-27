@@ -11,6 +11,7 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.MultipleCutOffPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.FilterTrackTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.FilterTrackTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -210,8 +211,13 @@ public class MultipleCutOffFilteringController {
 
         // select cut-off for a condition
         multipleCutOffPanel.getSelectCutOffForConditionButton().addActionListener((ActionEvent e) -> {
-            SelectCutOffConditionSwingWorker selectCutOffConditionSwingWorker = new SelectCutOffConditionSwingWorker();
-            selectCutOffConditionSwingWorker.execute();
+            if (multipleCutOffPanel.getCutOffValuesComboBox().getSelectedItem() != null) {
+                SelectCutOffConditionSwingWorker selectCutOffConditionSwingWorker = new SelectCutOffConditionSwingWorker();
+                selectCutOffConditionSwingWorker.execute();
+            } else {
+                filteringController.showMessage("Please select a cut-off!", "ingo", JOptionPane.WARNING_MESSAGE);
+            }
+
         });
 
         multipleCutOffPanel.getRetainedTracksList().setModel(new DefaultListModel());
@@ -430,6 +436,10 @@ public class MultipleCutOffFilteringController {
             multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
         }
         multipleCutOffPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+
+        for (int i = 2; i < multipleCutOffPanel.getFilterTrackTable().getColumnCount(); i++) {
+            multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(new FilterTrackTableRenderer());
+        }
     }
 
     /**

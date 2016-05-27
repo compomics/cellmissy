@@ -47,6 +47,7 @@ import java.text.Format;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import org.jfree.chart.JFreeChart;
 
 /**
  * Controller for single cell pre processing
@@ -294,6 +295,14 @@ public class SingleCellPreProcessingController {
 
     public void showMeanDisplInList() {
         filteringController.showMeanDisplInList();
+    }
+
+    public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
+        return filteringController.getFilteringMap();
+    }
+    
+    public void scaleAxesToExperiment(JFreeChart chart, boolean useRawData) {
+        trackCoordinatesController.scaleAxesToExperiment(chart, useRawData);
     }
 
     /**

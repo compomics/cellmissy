@@ -69,10 +69,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         return questionButton;
     }
 
-    public JComboBox getDistanceMetricsComboBox() {
-        return distanceMetricsComboBox;
-    }
-
     public JComboBox getKernelDensityEstimatorsComboBox() {
         return kernelDensityEstimatorsComboBox;
     }
@@ -127,8 +123,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
         analysisPreferencesPanel = new javax.swing.JPanel();
         jLabel16 = new javax.swing.JLabel();
         outliersAlgorithmsComboBox = new javax.swing.JComboBox();
-        jLabel17 = new javax.swing.JLabel();
-        distanceMetricsComboBox = new javax.swing.JComboBox();
         jLabel18 = new javax.swing.JLabel();
         kernelDensityEstimatorsComboBox = new javax.swing.JComboBox();
 
@@ -348,8 +342,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
 
         jLabel16.setText("Outliers Detection Algorithm");
 
-        jLabel17.setText("Distance Metric");
-
         jLabel18.setText("Kernel Density Estimation");
 
         javax.swing.GroupLayout analysisPreferencesPanelLayout = new javax.swing.GroupLayout(analysisPreferencesPanel);
@@ -359,30 +351,26 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
             .addGroup(analysisPreferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel18)
-                    .addComponent(jLabel17)
-                    .addComponent(jLabel16))
-                .addGap(18, 18, 18)
-                .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(outliersAlgorithmsComboBox, 0, 184, Short.MAX_VALUE)
-                    .addComponent(kernelDensityEstimatorsComboBox, 0, 184, Short.MAX_VALUE)
-                    .addComponent(distanceMetricsComboBox, 0, 184, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(analysisPreferencesPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel18)
+                        .addGap(18, 18, 18)
+                        .addComponent(kernelDensityEstimatorsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(analysisPreferencesPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel16)
+                        .addGap(18, 18, 18)
+                        .addComponent(outliersAlgorithmsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        analysisPreferencesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel16, jLabel17, jLabel18});
+        analysisPreferencesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel16, jLabel18});
 
         analysisPreferencesPanelLayout.setVerticalGroup(
             analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, analysisPreferencesPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addContainerGap(55, Short.MAX_VALUE)
+                .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel16)
                     .addComponent(outliersAlgorithmsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(distanceMetricsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(analysisPreferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
@@ -426,7 +414,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
     private javax.swing.JPanel analysisPreferencesPanel;
     private javax.swing.JComboBox coordinatesUnitOfMeasurementComboBox;
     private javax.swing.JPanel detailsPanel;
-    private javax.swing.JComboBox distanceMetricsComboBox;
     private javax.swing.JList experimentsList;
     private javax.swing.JComboBox imagingTypeComboBox;
     private javax.swing.JLabel infoLabel1;
@@ -438,7 +425,6 @@ public class MetadataSingleCellPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;

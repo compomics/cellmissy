@@ -386,6 +386,7 @@ public class TrackCoordinatesController {
      * Scale the axes to the experiment coordinates ranges.
      *
      * @param chart
+     * @param useRawData
      */
     public void scaleAxesToExperiment(JFreeChart chart, boolean useRawData) {
         Double[][] coordinatesRanges;

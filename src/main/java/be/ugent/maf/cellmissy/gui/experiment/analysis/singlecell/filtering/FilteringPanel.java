@@ -90,31 +90,30 @@ public class FilteringPanel extends javax.swing.JPanel {
             .addGroup(optionInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
                     .addGroup(optionInfoPanelLayout.createSequentialGroup()
-                        .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addGroup(optionInfoPanelLayout.createSequentialGroup()
-                                .addComponent(multipleCutOffRadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(singleCutOffRadioButton)))
-                        .addGap(28, 28, 28)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2))
+                    .addGroup(optionInfoPanelLayout.createSequentialGroup()
+                        .addComponent(multipleCutOffRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(singleCutOffRadioButton)
+                        .addGap(67, 67, 67)
                         .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(749, Short.MAX_VALUE))
+                .addContainerGap(583, Short.MAX_VALUE))
         );
         optionInfoPanelLayout.setVerticalGroup(
             optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(optionInfoPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(multipleCutOffRadioButton)
-                            .addComponent(singleCutOffRadioButton)))
+                    .addGroup(optionInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(multipleCutOffRadioButton)
+                        .addComponent(singleCutOffRadioButton))
                     .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -125,7 +124,7 @@ public class FilteringPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.07;
         add(optionInfoPanel, gridBagConstraints);
 
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -150,7 +149,7 @@ public class FilteringPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.93;
         add(bottomPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 

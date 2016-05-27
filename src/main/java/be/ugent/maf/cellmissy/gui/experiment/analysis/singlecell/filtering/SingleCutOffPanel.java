@@ -191,6 +191,8 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
 
         meanDisplListPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jScrollPane2.setBorder(null);
+
         meanDisplList.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         meanDisplList.setEnabled(false);
         jScrollPane2.setViewportView(meanDisplList);

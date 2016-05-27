@@ -5,7 +5,10 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 /**
  *
@@ -20,8 +23,32 @@ public class AnalysisPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    public JRadioButton getAngleRadioButton() {
+        return angleRadioButton;
+    }
+
+    public JRadioButton getCellSpeedsRadioButton() {
+        return cellSpeedsRadioButton;
+    }
+
+    public JRadioButton getCellTracksRadioButton() {
+        return cellTracksRadioButton;
+    }
+
+    public JRadioButton getStatisticsRadioButton() {
+        return statisticsRadioButton;
+    }
+
     public JLabel getInfoLabel() {
         return infoLabel;
+    }
+
+    public JPanel getCellTracksParentPanel() {
+        return cellTracksParentPanel;
+    }
+
+    public JPanel getPlotOptionsParentPanel() {
+        return plotOptionsParentPanel;
     }
 
     /**
@@ -36,11 +63,14 @@ public class AnalysisPanel extends javax.swing.JPanel {
 
         radioButtonsPanel = new javax.swing.JPanel();
         infoLabel = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
+        cellTracksRadioButton = new javax.swing.JRadioButton();
+        cellSpeedsRadioButton = new javax.swing.JRadioButton();
+        angleRadioButton = new javax.swing.JRadioButton();
+        statisticsRadioButton = new javax.swing.JRadioButton();
         bottomPanel = new javax.swing.JPanel();
-        msdParentPanel = new javax.swing.JPanel();
+        cellTracksParentPanel = new javax.swing.JPanel();
+        cellSpeedsParentPanel = new javax.swing.JPanel();
+        plotOptionsParentPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -50,11 +80,13 @@ public class AnalysisPanel extends javax.swing.JPanel {
         infoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         infoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jRadioButton1.setText("jRadioButton1");
+        cellTracksRadioButton.setText("Cell Tracks");
 
-        jRadioButton2.setText("jRadioButton2");
+        cellSpeedsRadioButton.setText("Cell Speeds");
 
-        jRadioButton3.setText("jRadioButton3");
+        angleRadioButton.setText("Angle/Directionality");
+
+        statisticsRadioButton.setText("Statistics");
 
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
         radioButtonsPanel.setLayout(radioButtonsPanelLayout);
@@ -64,14 +96,16 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(jRadioButton1)
+                        .addComponent(cellTracksRadioButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jRadioButton2)
+                        .addComponent(cellSpeedsRadioButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jRadioButton3)
+                        .addComponent(angleRadioButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(statisticsRadioButton)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
+                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(533, 533, 533))))
         );
         radioButtonsPanelLayout.setVerticalGroup(
@@ -79,9 +113,10 @@ public class AnalysisPanel extends javax.swing.JPanel {
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton3))
+                    .addComponent(cellTracksRadioButton)
+                    .addComponent(cellSpeedsRadioButton)
+                    .addComponent(angleRadioButton)
+                    .addComponent(statisticsRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -92,35 +127,54 @@ public class AnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.08;
         add(radioButtonsPanel, gridBagConstraints);
 
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         bottomPanel.setLayout(new java.awt.CardLayout());
 
-        msdParentPanel.setName("msdParentPanel"); // NOI18N
-        msdParentPanel.setLayout(new java.awt.GridBagLayout());
-        bottomPanel.add(msdParentPanel, "msdParentPanel");
-        msdParentPanel.getAccessibleContext().setAccessibleName("msdParentPanel");
+        cellTracksParentPanel.setName("cellTracksParentPanel"); // NOI18N
+        cellTracksParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(cellTracksParentPanel, "cellTracksParentPanel");
+        cellTracksParentPanel.getAccessibleContext().setAccessibleName("cellTracksParentPanel");
+
+        cellSpeedsParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(cellSpeedsParentPanel, "cellSpeedsParentPanel");
+        cellSpeedsParentPanel.getAccessibleContext().setAccessibleName("cellSpeedsParentPanel");
+        cellSpeedsParentPanel.getAccessibleContext().setAccessibleDescription("cellSpeedsParentPanel");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.92;
         add(bottomPanel, gridBagConstraints);
+
+        plotOptionsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        plotOptionsParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.08;
+        add(plotOptionsParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton angleRadioButton;
     private javax.swing.JPanel bottomPanel;
+    private javax.swing.JPanel cellSpeedsParentPanel;
+    private javax.swing.JRadioButton cellSpeedsRadioButton;
+    private javax.swing.JPanel cellTracksParentPanel;
+    private javax.swing.JRadioButton cellTracksRadioButton;
     private javax.swing.JLabel infoLabel;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JPanel msdParentPanel;
+    private javax.swing.JPanel plotOptionsParentPanel;
     private javax.swing.JPanel radioButtonsPanel;
+    private javax.swing.JRadioButton statisticsRadioButton;
     // End of variables declaration//GEN-END:variables
 }
