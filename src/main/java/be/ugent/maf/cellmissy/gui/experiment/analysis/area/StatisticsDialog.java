@@ -235,7 +235,7 @@ public class StatisticsDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        correctionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, jLabel2, jLabel4);
+        correctionPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel2, jLabel4});
 
         correctionPanelLayout.setVerticalGroup(
             correctionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

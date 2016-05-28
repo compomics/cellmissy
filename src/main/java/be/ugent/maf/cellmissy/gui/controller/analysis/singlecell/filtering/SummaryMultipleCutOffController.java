@@ -83,7 +83,6 @@ public class SummaryMultipleCutOffController {
         model.clear();
         multipleCutOffFilteringController.getCutOffMap().keySet().stream().forEach((conditionDataHolder) -> {
             Double value = multipleCutOffFilteringController.getCutOffMap().get(conditionDataHolder);
-
             model.addElement(conditionDataHolder.getPlateCondition() + ": " + value);
         });
     }
@@ -118,7 +117,7 @@ public class SummaryMultipleCutOffController {
         // create the dataset for the plot logic
         XYSeriesCollection retainedKdeDataset = getRetainedKdeDataset();
         JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(retainedKdeDataset,
-                "cut-off: " + AnalysisUtils.roundTwoDecimals(cutOff) + " filtered KDE track displ", "track displ", false);
+                " filtered KDE track displ", "track displ", false);
         filteredChartPanel.setChart(densityChart);
         multipleCutOffFilteringController.getMultipleCutOffPanel().getFilteredKDEParentPanel().revalidate();
         multipleCutOffFilteringController.getMultipleCutOffPanel().getFilteredKDEParentPanel().repaint();

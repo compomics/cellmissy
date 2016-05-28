@@ -259,7 +259,7 @@ public class SingleCutOffFilteringController {
         @Override
         protected Void doInBackground() throws Exception {
             // show waiting dialog
-            filteringController.showWaitingDialog("Please wait, estimating KDE for the experiment");
+            filteringController.showWaitingDialog("Please wait, estimating KDE for the experiment (all conditions)...");
             // show a waiting cursor, disable GUI components
             filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             filteringController.controlGuiComponents(false);

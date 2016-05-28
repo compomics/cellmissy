@@ -5,10 +5,14 @@
  */
 package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  *
@@ -23,12 +27,8 @@ public class AnalysisPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JRadioButton getAngleRadioButton() {
-        return angleRadioButton;
-    }
-
-    public JRadioButton getCellSpeedsRadioButton() {
-        return cellSpeedsRadioButton;
+    public JRadioButton getCellSpeedRadioButton() {
+        return cellSpeedRadioButton;
     }
 
     public JRadioButton getCellTracksRadioButton() {
@@ -39,16 +39,100 @@ public class AnalysisPanel extends javax.swing.JPanel {
         return statisticsRadioButton;
     }
 
-    public JLabel getInfoLabel() {
-        return infoLabel;
-    }
-
-    public JPanel getCellTracksParentPanel() {
-        return cellTracksParentPanel;
+    public JPanel getTrackPlotParentPanel() {
+        return trackPlotParentPanel;
     }
 
     public JPanel getPlotOptionsParentPanel() {
         return plotOptionsParentPanel;
+    }
+
+    public JTable getDataTable() {
+        return dataTable;
+    }
+
+    public JLabel getCurrentGroupName() {
+        return currentGroupName;
+    }
+
+    public JPanel getSpeedPlotParentPanel() {
+        return speedPlotParentPanel;
+    }
+
+    public JPanel getBottomPanel() {
+        return bottomPanel;
+    }
+
+    public JPanel getCellSpeedsPanel() {
+        return cellSpeedsPanel;
+    }
+
+    public JPanel getCellTracksPanel() {
+        return cellTracksPanel;
+    }
+
+    public JPanel getAnglePlotParentPanel() {
+        return anglePlotParentPanel;
+    }
+
+    public JPanel getDirectPlotParentPanel() {
+        return directPlotParentPanel;
+    }
+
+    public JPanel getRosePlotParentPanel() {
+        return rosePlotParentPanel;
+    }
+
+    public JButton getAddGroupButton() {
+        return addGroupButton;
+    }
+
+    public JList getAnalysisGroupList() {
+        return analysisGroupList;
+    }
+
+    public JTable getComparisonTable() {
+        return comparisonTable;
+    }
+
+    public JList getConditionList() {
+        return conditionList;
+    }
+
+    public JComboBox getCorrectionComboBox() {
+        return correctionComboBox;
+    }
+
+    public JComboBox getParameterComboBox() {
+        return parameterComboBox;
+    }
+
+    public JButton getPerformStatButton() {
+        return performStatButton;
+    }
+
+    public JButton getRemoveGroupButton() {
+        return removeGroupButton;
+    }
+
+    public JComboBox getSignLevelComboBox() {
+        return signLevelComboBox;
+    }
+
+    public JTable getStatTable() {
+        return statTable;
+    }
+
+    public JComboBox getStatTestComboBox() {
+        return statTestComboBox;
+    }
+
+    public JTextField getGroupNameTextField() {
+        return groupNameTextField;
+    }
+
+    public JPanel getStatisticsParentPanel() {
+        return statisticsParentPanel;
     }
 
     /**
@@ -62,29 +146,60 @@ public class AnalysisPanel extends javax.swing.JPanel {
         java.awt.GridBagConstraints gridBagConstraints;
 
         radioButtonsPanel = new javax.swing.JPanel();
-        infoLabel = new javax.swing.JLabel();
         cellTracksRadioButton = new javax.swing.JRadioButton();
-        cellSpeedsRadioButton = new javax.swing.JRadioButton();
-        angleRadioButton = new javax.swing.JRadioButton();
+        cellSpeedRadioButton = new javax.swing.JRadioButton();
         statisticsRadioButton = new javax.swing.JRadioButton();
         bottomPanel = new javax.swing.JPanel();
-        cellTracksParentPanel = new javax.swing.JPanel();
-        cellSpeedsParentPanel = new javax.swing.JPanel();
+        cellTracksPanel = new javax.swing.JPanel();
         plotOptionsParentPanel = new javax.swing.JPanel();
+        trackPlotParentPanel = new javax.swing.JPanel();
+        cellSpeedsPanel = new javax.swing.JPanel();
+        dataPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        dataTable = new javax.swing.JTable();
+        graphicParentPanel = new javax.swing.JPanel();
+        speedPlotParentPanel = new javax.swing.JPanel();
+        directPlotParentPanel = new javax.swing.JPanel();
+        rosePlotParentPanel = new javax.swing.JPanel();
+        anglePlotParentPanel = new javax.swing.JPanel();
+        statisticsParentPanel = new javax.swing.JPanel();
+        inputPanel = new javax.swing.JPanel();
+        conditionListPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        conditionList = new javax.swing.JList();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        analysisGroupList = new javax.swing.JList();
+        jLabel5 = new javax.swing.JLabel();
+        addGroupButton = new javax.swing.JButton();
+        removeGroupButton = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        groupNameTextField = new javax.swing.JTextField();
+        otherInputPanel = new javax.swing.JPanel();
+        statTestComboBox = new javax.swing.JComboBox();
+        signLevelComboBox = new javax.swing.JComboBox();
+        correctionComboBox = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        parameterComboBox = new javax.swing.JComboBox();
+        performStatButton = new javax.swing.JButton();
+        statisticsPanel = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        statTable = new javax.swing.JTable();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        comparisonTable = new javax.swing.JTable();
+        jLabel8 = new javax.swing.JLabel();
+        currentGroupName = new javax.swing.JLabel();
 
         setLayout(new java.awt.GridBagLayout());
 
         radioButtonsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        infoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
-        infoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
-        infoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
-
         cellTracksRadioButton.setText("Cell Tracks");
 
-        cellSpeedsRadioButton.setText("Cell Speeds");
-
-        angleRadioButton.setText("Angle/Directionality");
+        cellSpeedRadioButton.setText("Cell Speeds/Angle/Directionality");
 
         statisticsRadioButton.setText("Statistics");
 
@@ -94,19 +209,12 @@ public class AnalysisPanel extends javax.swing.JPanel {
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(cellTracksRadioButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(cellSpeedsRadioButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(angleRadioButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(statisticsRadioButton)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(533, 533, 533))))
+                .addComponent(cellTracksRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(cellSpeedRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(statisticsRadioButton)
+                .addContainerGap(797, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,11 +222,8 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addGap(12, 12, 12)
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cellTracksRadioButton)
-                    .addComponent(cellSpeedsRadioButton)
-                    .addComponent(angleRadioButton)
+                    .addComponent(cellSpeedRadioButton)
                     .addComponent(statisticsRadioButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -128,21 +233,392 @@ public class AnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.08;
+        gridBagConstraints.weighty = 0.06;
         add(radioButtonsPanel, gridBagConstraints);
 
         bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         bottomPanel.setLayout(new java.awt.CardLayout());
 
-        cellTracksParentPanel.setName("cellTracksParentPanel"); // NOI18N
-        cellTracksParentPanel.setLayout(new java.awt.GridBagLayout());
-        bottomPanel.add(cellTracksParentPanel, "cellTracksParentPanel");
-        cellTracksParentPanel.getAccessibleContext().setAccessibleName("cellTracksParentPanel");
+        cellTracksPanel.setName("cellTracksPanel"); // NOI18N
+        cellTracksPanel.setLayout(new java.awt.GridBagLayout());
 
-        cellSpeedsParentPanel.setLayout(new java.awt.GridBagLayout());
-        bottomPanel.add(cellSpeedsParentPanel, "cellSpeedsParentPanel");
-        cellSpeedsParentPanel.getAccessibleContext().setAccessibleName("cellSpeedsParentPanel");
-        cellSpeedsParentPanel.getAccessibleContext().setAccessibleDescription("cellSpeedsParentPanel");
+        plotOptionsParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        plotOptionsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        plotOptionsParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
+        cellTracksPanel.add(plotOptionsParentPanel, gridBagConstraints);
+
+        trackPlotParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        trackPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        trackPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.9;
+        cellTracksPanel.add(trackPlotParentPanel, gridBagConstraints);
+
+        bottomPanel.add(cellTracksPanel, "cellTracksPanel");
+        cellTracksPanel.getAccessibleContext().setAccessibleName("cellTracksPanel");
+
+        cellSpeedsPanel.setName("cellSpeedsPanel"); // NOI18N
+        cellSpeedsPanel.setLayout(new java.awt.GridBagLayout());
+
+        dataPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        dataPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        dataTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(dataTable);
+
+        javax.swing.GroupLayout dataPanelLayout = new javax.swing.GroupLayout(dataPanel);
+        dataPanel.setLayout(dataPanelLayout);
+        dataPanelLayout.setHorizontalGroup(
+            dataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dataPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1142, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        dataPanelLayout.setVerticalGroup(
+            dataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dataPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.3;
+        cellSpeedsPanel.add(dataPanel, gridBagConstraints);
+
+        graphicParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        graphicParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        graphicParentPanel.setLayout(new java.awt.GridBagLayout());
+
+        speedPlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Speed"));
+        speedPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        speedPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.5;
+        graphicParentPanel.add(speedPlotParentPanel, gridBagConstraints);
+
+        directPlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Directionality"));
+        directPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        directPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.5;
+        graphicParentPanel.add(directPlotParentPanel, gridBagConstraints);
+
+        rosePlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Rose Plot"));
+        rosePlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        rosePlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.5;
+        graphicParentPanel.add(rosePlotParentPanel, gridBagConstraints);
+
+        anglePlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Turning Angle"));
+        anglePlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        anglePlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.5;
+        graphicParentPanel.add(anglePlotParentPanel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.7;
+        cellSpeedsPanel.add(graphicParentPanel, gridBagConstraints);
+
+        bottomPanel.add(cellSpeedsPanel, "cellSpeedsPanel");
+        cellSpeedsPanel.getAccessibleContext().setAccessibleName("cellSpeedsPanel");
+        cellSpeedsPanel.getAccessibleContext().setAccessibleDescription("cellSpeedsPanel");
+
+        statisticsParentPanel.setName("statisticsParentPanel"); // NOI18N
+        statisticsParentPanel.setLayout(new java.awt.GridBagLayout());
+
+        inputPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        inputPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        inputPanel.setLayout(new java.awt.GridBagLayout());
+
+        conditionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Input"));
+        conditionListPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        conditionListPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jScrollPane1.setViewportView(conditionList);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("Choose conditions to add to group:");
+
+        jScrollPane3.setViewportView(analysisGroupList);
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setText("Current Analysis Groups:");
+
+        addGroupButton.setText("Add Group >>");
+
+        removeGroupButton.setText("<< Remove Group");
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel7.setText("name for the group");
+
+        javax.swing.GroupLayout conditionListPanelLayout = new javax.swing.GroupLayout(conditionListPanel);
+        conditionListPanel.setLayout(conditionListPanelLayout);
+        conditionListPanelLayout.setHorizontalGroup(
+            conditionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(conditionListPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(conditionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(conditionListPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(conditionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(groupNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(removeGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(addGroupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel7)))
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(conditionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        conditionListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addGroupButton, groupNameTextField, removeGroupButton});
+
+        conditionListPanelLayout.setVerticalGroup(
+            conditionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, conditionListPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(conditionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(conditionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(conditionListPanelLayout.createSequentialGroup()
+                        .addComponent(addGroupButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(removeGroupButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(groupNameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        inputPanel.add(conditionListPanel, gridBagConstraints);
+
+        otherInputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Statistics Option"));
+        otherInputPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        otherInputPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        jLabel2.setText("Statistical test");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        jLabel3.setText("Significance level");
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        jLabel4.setText("Multiple comparisons correction");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        jLabel6.setText("Parameter to test for");
+
+        performStatButton.setText("Perform Statistics");
+
+        javax.swing.GroupLayout otherInputPanelLayout = new javax.swing.GroupLayout(otherInputPanel);
+        otherInputPanel.setLayout(otherInputPanelLayout);
+        otherInputPanelLayout.setHorizontalGroup(
+            otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(otherInputPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addGroup(otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(correctionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(signLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(statTestComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(parameterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(performStatButton))
+                .addContainerGap())
+        );
+
+        otherInputPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {correctionComboBox, parameterComboBox, performStatButton, signLevelComboBox, statTestComboBox});
+
+        otherInputPanelLayout.setVerticalGroup(
+            otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, otherInputPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(parameterComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(18, 18, 18)
+                .addGroup(otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(statTestComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(signLevelComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(otherInputPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(correctionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(performStatButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 1.0;
+        inputPanel.add(otherInputPanel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.4;
+        statisticsParentPanel.add(inputPanel, gridBagConstraints);
+
+        statisticsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        statisticsPanel.setName("statisticsPanel"); // NOI18N
+        statisticsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Statistics"));
+
+        statTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane4.setViewportView(statTable);
+
+        jScrollPane5.setBorder(javax.swing.BorderFactory.createTitledBorder("Pairwise Comparisons"));
+
+        comparisonTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane5.setViewportView(comparisonTable);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
+        jLabel8.setText("Current Group Analyzed");
+
+        javax.swing.GroupLayout statisticsPanelLayout = new javax.swing.GroupLayout(statisticsPanel);
+        statisticsPanel.setLayout(statisticsPanelLayout);
+        statisticsPanelLayout.setHorizontalGroup(
+            statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statisticsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 978, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4))
+                .addGap(18, 18, 18)
+                .addGroup(statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(currentGroupName, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        statisticsPanelLayout.setVerticalGroup(
+            statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statisticsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(statisticsPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(18, 18, 18)
+                        .addComponent(currentGroupName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 31, Short.MAX_VALUE))
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.6;
+        statisticsParentPanel.add(statisticsPanel, gridBagConstraints);
+        statisticsPanel.getAccessibleContext().setAccessibleName("statisticsPanel");
+
+        bottomPanel.add(statisticsParentPanel, "statisticsParentPanel");
+        statisticsParentPanel.getAccessibleContext().setAccessibleName("statisticsParentPanel");
+        statisticsParentPanel.getAccessibleContext().setAccessibleDescription("statisticsParentPanel");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -150,31 +626,58 @@ public class AnalysisPanel extends javax.swing.JPanel {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.92;
+        gridBagConstraints.weighty = 0.94;
         add(bottomPanel, gridBagConstraints);
-
-        plotOptionsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        plotOptionsParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.08;
-        add(plotOptionsParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton angleRadioButton;
+    private javax.swing.JButton addGroupButton;
+    private javax.swing.JList analysisGroupList;
+    private javax.swing.JPanel anglePlotParentPanel;
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JPanel cellSpeedsParentPanel;
-    private javax.swing.JRadioButton cellSpeedsRadioButton;
-    private javax.swing.JPanel cellTracksParentPanel;
+    private javax.swing.JRadioButton cellSpeedRadioButton;
+    private javax.swing.JPanel cellSpeedsPanel;
+    private javax.swing.JPanel cellTracksPanel;
     private javax.swing.JRadioButton cellTracksRadioButton;
-    private javax.swing.JLabel infoLabel;
+    private javax.swing.JTable comparisonTable;
+    private javax.swing.JList conditionList;
+    private javax.swing.JPanel conditionListPanel;
+    private javax.swing.JComboBox correctionComboBox;
+    private javax.swing.JLabel currentGroupName;
+    private javax.swing.JPanel dataPanel;
+    private javax.swing.JTable dataTable;
+    private javax.swing.JPanel directPlotParentPanel;
+    private javax.swing.JPanel graphicParentPanel;
+    private javax.swing.JTextField groupNameTextField;
+    private javax.swing.JPanel inputPanel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JPanel otherInputPanel;
+    private javax.swing.JComboBox parameterComboBox;
+    private javax.swing.JButton performStatButton;
     private javax.swing.JPanel plotOptionsParentPanel;
     private javax.swing.JPanel radioButtonsPanel;
+    private javax.swing.JButton removeGroupButton;
+    private javax.swing.JPanel rosePlotParentPanel;
+    private javax.swing.JComboBox signLevelComboBox;
+    private javax.swing.JPanel speedPlotParentPanel;
+    private javax.swing.JTable statTable;
+    private javax.swing.JComboBox statTestComboBox;
+    private javax.swing.JPanel statisticsPanel;
+    private javax.swing.JPanel statisticsParentPanel;
     private javax.swing.JRadioButton statisticsRadioButton;
+    private javax.swing.JPanel trackPlotParentPanel;
     // End of variables declaration//GEN-END:variables
 }

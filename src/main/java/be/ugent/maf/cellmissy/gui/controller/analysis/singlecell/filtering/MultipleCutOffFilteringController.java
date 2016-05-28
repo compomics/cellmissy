@@ -215,10 +215,16 @@ public class MultipleCutOffFilteringController {
                 SelectCutOffConditionSwingWorker selectCutOffConditionSwingWorker = new SelectCutOffConditionSwingWorker();
                 selectCutOffConditionSwingWorker.execute();
             } else {
-                filteringController.showMessage("Please select a cut-off!", "ingo", JOptionPane.WARNING_MESSAGE);
+                filteringController.showMessage("Please select a cut-off!", "info", JOptionPane.WARNING_MESSAGE);
             }
 
         });
+
+        AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.LEFT);
+        for (int i = 0; i < multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
+            multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+        }
+        multipleCutOffPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
 
         multipleCutOffPanel.getRetainedTracksList().setModel(new DefaultListModel());
         multipleCutOffPanel.getCutOffList().setModel(new DefaultListModel());
@@ -431,12 +437,6 @@ public class MultipleCutOffFilteringController {
         Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>> map = motileStepsFilterMap.get(singleCellConditionDataHolder);
         multipleCutOffPanel.getFilterTrackTable().setModel(new FilterTrackTableModel(map, motileSteps));
 
-        AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);
-        for (int i = 0; i < multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
-            multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
-        }
-        multipleCutOffPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
-
         for (int i = 2; i < multipleCutOffPanel.getFilterTrackTable().getColumnCount(); i++) {
             multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(new FilterTrackTableRenderer());
         }
@@ -596,7 +596,6 @@ public class MultipleCutOffFilteringController {
             cutOffMap.put(conditionDataHolder, value);
             summaryMultipleCutOffController.updateInfo();
             summaryMultipleCutOffController.plotKDEs();
-
             return null;
         }
 
@@ -604,13 +603,14 @@ public class MultipleCutOffFilteringController {
         protected void done() {
             try {
                 get();
+
                 // recontrol GUI
                 filteringController.hideWaitingDialog();
                 filteringController.controlGuiComponents(true);
                 filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                 // show an info dialog: go to the summary view and have a look there
                 JOptionPane.showMessageDialog(multipleCutOffPanel,
-                        "Done! Summary is updated!", "info", JOptionPane.INFORMATION_MESSAGE);
+                        "Done! Summary is updated, please proceed with the other conditions!", "info", JOptionPane.INFORMATION_MESSAGE);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 filteringController.handleUnexpectedError(ex);

@@ -32,7 +32,7 @@ import org.jfree.ui.RectangleEdge;
 
 /**
  * A class that extends the BoxAndWhiskerRenderer. It makes sure boxes are drawn
- * and filled with the right colors, and that shapes for outliers and farouters
+ * and filled with the right colors, and that shapes for outliers and far-outer
  * points are not too big!
  *
  * @author Paola
@@ -71,7 +71,7 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
      */
     @Override
     public void drawVerticalItem(Graphics2D g2, CategoryItemRendererState state, Rectangle2D dataArea, CategoryPlot plot,
-              CategoryAxis domainAxis, ValueAxis rangeAxis, CategoryDataset dataset, int row, int column) {
+            CategoryAxis domainAxis, ValueAxis rangeAxis, CategoryDataset dataset, int row, int column) {
 
         // do nothing if item is not visible
         if (!getItemVisible(row, column)) {
@@ -89,7 +89,6 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
 
         rangeAxis.setUpperMargin(0.3);
         rangeAxis.setLowerMargin(0.3);
-        rangeAxis.setLowerBound(-0.5);
 
         double xx = categoryStart;
         int seriesCount = getRowCount();
@@ -285,7 +284,7 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
      * Creates a triangle to indicate the presence of far-out values when the
      * plot orientation is vertical.
      *
-     * @param foRadius the farout radius.
+     * @param foRadius the far-out radius.
      * @param point the location.
      */
     private Shape createTriangleVertical(Point2D point, double foRadius) {

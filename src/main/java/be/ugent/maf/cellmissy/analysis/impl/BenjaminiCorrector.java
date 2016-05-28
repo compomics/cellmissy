@@ -6,6 +6,7 @@ package be.ugent.maf.cellmissy.analysis.impl;
 
 import be.ugent.maf.cellmissy.analysis.MultipleComparisonsCorrector;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellAnalysisGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -94,6 +95,24 @@ public class BenjaminiCorrector implements MultipleComparisonsCorrector {
             }
         }
         return ArrayUtils.toPrimitive(list.toArray(new Double[list.size()]));
+    }
+
+    @Override
+    public void correctForMultipleComparisons(SingleCellAnalysisGroup singleCellAnalysisGroup) {
+        Double[][] pValuesMatrix = singleCellAnalysisGroup.getpValuesMatrix();
+        Double[][] adjustedPValuesMatrix = new Double[pValuesMatrix.length][pValuesMatrix.length];
+        double[] adjustedPValues = adjustPValues(pValuesMatrix);
+        // put back pvalues in a matrix
+        int counter = 0;
+        for (int rowIndex = 0; rowIndex < adjustedPValuesMatrix.length; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < adjustedPValuesMatrix[0].length; columnIndex++) {
+                if (pValuesMatrix[rowIndex][columnIndex] != null) {
+                    adjustedPValuesMatrix[rowIndex][columnIndex] = adjustedPValues[counter];
+                    counter++;
+                }
+            }
+        }
+        singleCellAnalysisGroup.setAdjustedPValuesMatrix(adjustedPValuesMatrix);
     }
 
     /**

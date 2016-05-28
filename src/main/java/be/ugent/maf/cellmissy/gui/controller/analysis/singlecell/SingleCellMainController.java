@@ -520,7 +520,9 @@ public class SingleCellMainController {
                 // check which button is actually selected
                 if (singleCellAnalysisController.getAnalysisPanel().getCellTracksRadioButton().isSelected()) {
                     singleCellAnalysisController.plotCellTracks();
-                } else if (singleCellAnalysisController.getAnalysisPanel().getCellSpeedsRadioButton().isSelected()) {
+                } else if (singleCellAnalysisController.getAnalysisPanel().getCellSpeedRadioButton().isSelected()) {
+//                    singleCellAnalysisController.plotData();
+                } else if (singleCellAnalysisController.getAnalysisPanel().getStatisticsRadioButton().isSelected()) {
 
                 }
                 break;
