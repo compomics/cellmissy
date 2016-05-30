@@ -196,8 +196,8 @@ public class AngleDirectController {
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
         radioButtonGroup.add(angleDirectPanel.getInstTurnAngleRadioButton());
         radioButtonGroup.add(angleDirectPanel.getTrackTurnAngleRadioButton());
-        radioButtonGroup.add(angleDirectPanel.getDynamicDirectRatioRadioButton());
-        radioButtonGroup.add(angleDirectPanel.getEndPointDirectRatioRadioButton());
+//        radioButtonGroup.add(angleDirectPanel.getDynamicDirectRatioRadioButton());
+//        radioButtonGroup.add(angleDirectPanel.getEndPointDirectRatioRadioButton());
 
         /**
          * Add action listeners
@@ -245,24 +245,23 @@ public class AngleDirectController {
             }
         });
 
-        // show dynamic directionality ratios
-        angleDirectPanel.getDynamicDirectRatioRadioButton().addActionListener((ActionEvent e) -> {
-            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-            //check that a condition is selected
-            if (currentCondition != null) {
-
-            }
-        });
-
-        // show end-point directionality ratios
-        angleDirectPanel.getEndPointDirectRatioRadioButton().addActionListener((ActionEvent e) -> {
-            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
-            //check that a condition is selected
-            if (currentCondition != null) {
-
-            }
-        });
-
+//        // show dynamic directionality ratios
+//        angleDirectPanel.getDynamicDirectRatioRadioButton().addActionListener((ActionEvent e) -> {
+//            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+//            //check that a condition is selected
+//            if (currentCondition != null) {
+//
+//            }
+//        });
+//
+//        // show end-point directionality ratios
+//        angleDirectPanel.getEndPointDirectRatioRadioButton().addActionListener((ActionEvent e) -> {
+//            PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
+//            //check that a condition is selected
+//            if (currentCondition != null) {
+//
+//            }
+//        });
         //select as default first button 
         angleDirectPanel.getInstTurnAngleRadioButton().setSelected(true);
 
@@ -886,7 +885,12 @@ public class AngleDirectController {
      */
     private GridBagConstraints getGridBagConstraints(int nPlots, int index) {
         GridBagConstraints tempConstraints = new GridBagConstraints();
-        int nRows = (int) Math.ceil(nPlots / 3);
+        int nRows;
+        if (nPlots > 2) {
+            nRows = (int) Math.ceil(nPlots / 3);
+        } else {
+            nRows = 1;
+        }
         tempConstraints.fill = GridBagConstraints.BOTH;
         tempConstraints.weightx = 1.0 / 3;
         tempConstraints.weighty = 1.0 / nRows;

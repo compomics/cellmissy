@@ -22,9 +22,11 @@ public class FilterTrackTableRenderer extends DefaultTableCellRenderer {
         super.getTableCellRendererComponent(table, value, false, false, row, column);
 
         if (value.equals(Boolean.TRUE)) {
+            setText("YES");
             setForeground(new Color(34, 139, 34));
             setFont(new Font("Tahoma", Font.BOLD, 11));
         } else {
+            setText("NO");
             setForeground(new Color(255, 51, 51));
             setFont(new Font("Tahoma", Font.PLAIN, 11));
         }

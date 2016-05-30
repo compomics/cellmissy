@@ -27,24 +27,12 @@ public class AngleDirectPanel extends javax.swing.JPanel {
         return dataTablePanel;
     }
 
-    public JRadioButton getDynamicDirectRatioRadioButton() {
-        return dynamicDirectRatioRadioButton;
-    }
-
-    public JRadioButton getEndPointDirectRatioRadioButton() {
-        return endPointDirectRatioRadioButton;
-    }
-
     public JRadioButton getInstTurnAngleRadioButton() {
         return instTurnAngleRadioButton;
     }
 
     public JRadioButton getTrackTurnAngleRadioButton() {
         return trackTurnAngleRadioButton;
-    }
-
-    public JRadioButton getDirectionAutocorrelationRadioButton() {
-        return directionAutocorrelationRadioButton;
     }
 
     public JPanel getTurningAngleParentPanel() {
@@ -73,9 +61,6 @@ public class AngleDirectPanel extends javax.swing.JPanel {
         tableInfoLabel = new javax.swing.JLabel();
         instTurnAngleRadioButton = new javax.swing.JRadioButton();
         trackTurnAngleRadioButton = new javax.swing.JRadioButton();
-        dynamicDirectRatioRadioButton = new javax.swing.JRadioButton();
-        endPointDirectRatioRadioButton = new javax.swing.JRadioButton();
-        directionAutocorrelationRadioButton = new javax.swing.JRadioButton();
         saveChartToPdfButton = new javax.swing.JButton();
         bottomSplitPane = new javax.swing.JSplitPane();
         dataTablePanel = new javax.swing.JPanel();
@@ -96,12 +81,6 @@ public class AngleDirectPanel extends javax.swing.JPanel {
 
         trackTurnAngleRadioButton.setText("track TA (cell-centric)");
 
-        dynamicDirectRatioRadioButton.setText("dynamic directionality ratios");
-
-        endPointDirectRatioRadioButton.setText("end-point directionality ratios");
-
-        directionAutocorrelationRadioButton.setText("direction autocorrelation");
-
         saveChartToPdfButton.setText("Save Chart To PDF");
 
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
@@ -112,19 +91,13 @@ public class AngleDirectPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                        .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 812, Short.MAX_VALUE)
+                        .addComponent(tableInfoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 830, Short.MAX_VALUE)
                         .addGap(199, 199, 199))
                     .addGroup(radioButtonsPanelLayout.createSequentialGroup()
                         .addComponent(instTurnAngleRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(trackTurnAngleRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dynamicDirectRatioRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(endPointDirectRatioRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(directionAutocorrelationRadioButton)))
-                .addGap(18, 18, 18)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addComponent(saveChartToPdfButton)
                 .addContainerGap())
         );
@@ -134,10 +107,7 @@ public class AngleDirectPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(instTurnAngleRadioButton)
-                    .addComponent(endPointDirectRatioRadioButton)
-                    .addComponent(dynamicDirectRatioRadioButton)
-                    .addComponent(trackTurnAngleRadioButton)
-                    .addComponent(directionAutocorrelationRadioButton))
+                    .addComponent(trackTurnAngleRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -179,9 +149,6 @@ public class AngleDirectPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSplitPane bottomSplitPane;
     private javax.swing.JPanel dataTablePanel;
-    private javax.swing.JRadioButton directionAutocorrelationRadioButton;
-    private javax.swing.JRadioButton dynamicDirectRatioRadioButton;
-    private javax.swing.JRadioButton endPointDirectRatioRadioButton;
     private javax.swing.JRadioButton instTurnAngleRadioButton;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JButton saveChartToPdfButton;

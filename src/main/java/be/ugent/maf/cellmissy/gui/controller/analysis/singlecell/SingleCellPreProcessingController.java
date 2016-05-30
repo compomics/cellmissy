@@ -48,6 +48,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  * Controller for single cell pre processing
@@ -286,15 +287,19 @@ public class SingleCellPreProcessingController {
     }
 
     public void setMeanDisplForCondition(PlateCondition plateCondition) {
-        filteringController.setMeanDisplForCondition(plateCondition);
+        filteringController.setMedianDisplForCondition(plateCondition);
     }
 
     public void setMeanDisplForExperiment() {
-        filteringController.setMeanDisplForExperiment();
+        filteringController.setMedianDisplForExperiment();
+    }
+    
+    public void setPercentileDispl(PlateCondition plateCondition){
+        filteringController.setPercentileDispl(plateCondition);
     }
 
     public void showMeanDisplInList() {
-        filteringController.showMeanDisplInList();
+        filteringController.showMedianDisplInList();
     }
 
     public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
@@ -303,6 +308,10 @@ public class SingleCellPreProcessingController {
     
     public void scaleAxesToExperiment(JFreeChart chart, boolean useRawData) {
         trackCoordinatesController.scaleAxesToExperiment(chart, useRawData);
+    }
+    
+    public XYSeriesCollection generateDensityFunction(List<List<double[]>> densityFunctions) {
+        return filteringController.generateDensityFunction(densityFunctions);
     }
 
     /**

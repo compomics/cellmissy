@@ -38,10 +38,6 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         return tableInfoLabel;
     }
 
-    public JRadioButton getMsdRadioButton() {
-        return msdRadioButton;
-    }
-
     /**
      * Creates new form DisplacementsPanel
      */
@@ -64,7 +60,6 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         tableInfoLabel = new javax.swing.JLabel();
         trackDisplRadioButton = new javax.swing.JRadioButton();
         trackSpeedsRadioButton = new javax.swing.JRadioButton();
-        msdRadioButton = new javax.swing.JRadioButton();
         bottomSplitPane = new javax.swing.JSplitPane();
         dataTablePanel = new javax.swing.JPanel();
         plotPanel = new javax.swing.JPanel();
@@ -90,8 +85,6 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
         trackSpeedsRadioButton.setText("track speeds (cell-centric)");
         trackSpeedsRadioButton.setOpaque(false);
 
-        msdRadioButton.setText("MSD");
-
         javax.swing.GroupLayout radioButtonsPanelLayout = new javax.swing.GroupLayout(radioButtonsPanel);
         radioButtonsPanel.setLayout(radioButtonsPanelLayout);
         radioButtonsPanelLayout.setHorizontalGroup(
@@ -105,10 +98,8 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(trackDisplRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(trackSpeedsRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(msdRadioButton)))
-                .addContainerGap(464, Short.MAX_VALUE))
+                        .addComponent(trackSpeedsRadioButton)))
+                .addContainerGap(498, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,8 +108,7 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(instantaneousDisplRadioButton)
                     .addComponent(trackDisplRadioButton)
-                    .addComponent(trackSpeedsRadioButton)
-                    .addComponent(msdRadioButton))
+                    .addComponent(trackSpeedsRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tableInfoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -157,7 +147,6 @@ public class DisplSpeedPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane bottomSplitPane;
     private javax.swing.JPanel dataTablePanel;
     private javax.swing.JRadioButton instantaneousDisplRadioButton;
-    private javax.swing.JRadioButton msdRadioButton;
     private javax.swing.JPanel plotPanel;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JLabel tableInfoLabel;

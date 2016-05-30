@@ -241,7 +241,7 @@ class DisplSpeedController {
         radioButtonGroup.add(displSpeedPanel.getInstantaneousDisplRadioButton());
         radioButtonGroup.add(displSpeedPanel.getTrackDisplRadioButton());
         radioButtonGroup.add(displSpeedPanel.getTrackSpeedsRadioButton());
-        radioButtonGroup.add(displSpeedPanel.getMsdRadioButton());
+//        radioButtonGroup.add(displSpeedPanel.getMsdRadioButton());
 
         /**
          * Add action listeners
@@ -273,14 +273,14 @@ class DisplSpeedController {
             }
         });
 
-        // show MSD mean-squared-displacement
-        displSpeedPanel.getMsdRadioButton().addActionListener((ActionEvent e) -> {
-            //check that a condition is selected
-            if (singleCellPreProcessingController.getCurrentCondition() != null) {
-                showMsdInTable(singleCellPreProcessingController.getCurrentCondition()); // show the data
-                plotMsdData(singleCellPreProcessingController.getCurrentCondition()); // plot the data
-            }
-        });
+//        // show MSD mean-squared-displacement
+//        displSpeedPanel.getMsdRadioButton().addActionListener((ActionEvent e) -> {
+//            //check that a condition is selected
+//            if (singleCellPreProcessingController.getCurrentCondition() != null) {
+//                showMsdInTable(singleCellPreProcessingController.getCurrentCondition()); // show the data
+//                plotMsdData(singleCellPreProcessingController.getCurrentCondition()); // plot the data
+//            }
+//        });
 
         //select as default first button 
         displSpeedPanel.getInstantaneousDisplRadioButton().setSelected(true);

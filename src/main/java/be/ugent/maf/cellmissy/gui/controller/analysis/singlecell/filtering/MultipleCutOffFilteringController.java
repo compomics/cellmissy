@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -98,8 +97,12 @@ public class MultipleCutOffFilteringController {
         return filteringController.estimateDensityFunction(data, kernelDensityEstimatorBeanName);
     }
 
-    public List<List<double[]>> estimateRawDensityFunction() {
-        return filteringController.estimateRawDensityFunction();
+    public List<List<double[]>> estimateRawDisplKDE() {
+        return filteringController.estimateRawDisplKDE();
+    }
+    
+    public List<List<double[]>> estimateRawSpeedKDE() {
+        return filteringController.estimateRawSpeedKDE();
     }
 
     public double getPercentageMotile() {
@@ -113,6 +116,7 @@ public class MultipleCutOffFilteringController {
     public void setCutOffMap(Map<SingleCellConditionDataHolder, Double> cutOffMap) {
         this.cutOffMap = cutOffMap;
     }
+
 
     /**
      * Plot the raw KDE for track displacements.
@@ -223,11 +227,11 @@ public class MultipleCutOffFilteringController {
         AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.LEFT);
         for (int i = 0; i < multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumnCount(); i++) {
             multipleCutOffPanel.getFilterTrackTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+            multipleCutOffPanel.getSummaryTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
         }
         multipleCutOffPanel.getFilterTrackTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        multipleCutOffPanel.getSummaryTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
 
-        multipleCutOffPanel.getRetainedTracksList().setModel(new DefaultListModel());
-        multipleCutOffPanel.getCutOffList().setModel(new DefaultListModel());
         // add view to parent component
         filteringController.getFilteringPanel().getMultipleCutOffParentPanel().add(multipleCutOffPanel, gridBagConstraints);
     }
@@ -552,7 +556,7 @@ public class MultipleCutOffFilteringController {
             });
             // plot raw and KDE plots in the summary panel - child controller
             summaryMultipleCutOffController.plotKDEs();
-            summaryMultipleCutOffController.updateInfo();
+            summaryMultipleCutOffController.updateSummaryTable();
             return null;
         }
 
@@ -594,7 +598,7 @@ public class MultipleCutOffFilteringController {
             filterConditionForAValue(conditionDataHolder, value);
 
             cutOffMap.put(conditionDataHolder, value);
-            summaryMultipleCutOffController.updateInfo();
+            summaryMultipleCutOffController.updateSummaryTable();
             summaryMultipleCutOffController.plotKDEs();
             return null;
         }

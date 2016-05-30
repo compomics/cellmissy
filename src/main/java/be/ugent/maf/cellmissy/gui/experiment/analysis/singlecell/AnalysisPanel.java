@@ -55,10 +55,6 @@ public class AnalysisPanel extends javax.swing.JPanel {
         return currentGroupName;
     }
 
-    public JPanel getSpeedPlotParentPanel() {
-        return speedPlotParentPanel;
-    }
-
     public JPanel getBottomPanel() {
         return bottomPanel;
     }
@@ -71,8 +67,12 @@ public class AnalysisPanel extends javax.swing.JPanel {
         return cellTracksPanel;
     }
 
-    public JPanel getAnglePlotParentPanel() {
-        return anglePlotParentPanel;
+    public JPanel getSpeedBoxPlotPlotParentPanel() {
+        return speedBoxPlotPlotParentPanel;
+    }
+
+    public JPanel getSpeedKDEParentPanel() {
+        return speedKDEParentPanel;
     }
 
     public JPanel getDirectPlotParentPanel() {
@@ -158,10 +158,10 @@ public class AnalysisPanel extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         dataTable = new javax.swing.JTable();
         graphicParentPanel = new javax.swing.JPanel();
-        speedPlotParentPanel = new javax.swing.JPanel();
+        speedBoxPlotPlotParentPanel = new javax.swing.JPanel();
+        speedKDEParentPanel = new javax.swing.JPanel();
         directPlotParentPanel = new javax.swing.JPanel();
         rosePlotParentPanel = new javax.swing.JPanel();
-        anglePlotParentPanel = new javax.swing.JPanel();
         statisticsParentPanel = new javax.swing.JPanel();
         inputPanel = new javax.swing.JPanel();
         conditionListPanel = new javax.swing.JPanel();
@@ -318,23 +318,34 @@ public class AnalysisPanel extends javax.swing.JPanel {
         graphicParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         graphicParentPanel.setLayout(new java.awt.GridBagLayout());
 
-        speedPlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Speed"));
-        speedPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        speedPlotParentPanel.setLayout(new java.awt.GridBagLayout());
+        speedBoxPlotPlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Speed BoxPlot"));
+        speedBoxPlotPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        speedBoxPlotPlotParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.5;
-        graphicParentPanel.add(speedPlotParentPanel, gridBagConstraints);
+        graphicParentPanel.add(speedBoxPlotPlotParentPanel, gridBagConstraints);
+
+        speedKDEParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Speed KDE"));
+        speedKDEParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        speedKDEParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.weighty = 0.5;
+        graphicParentPanel.add(speedKDEParentPanel, gridBagConstraints);
 
         directPlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Directionality"));
         directPlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         directPlotParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.5;
@@ -344,23 +355,12 @@ public class AnalysisPanel extends javax.swing.JPanel {
         rosePlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         rosePlotParentPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.5;
-        graphicParentPanel.add(rosePlotParentPanel, gridBagConstraints);
-
-        anglePlotParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Turning Angle"));
-        anglePlotParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
-        anglePlotParentPanel.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.5;
-        graphicParentPanel.add(anglePlotParentPanel, gridBagConstraints);
+        graphicParentPanel.add(rosePlotParentPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -634,7 +634,6 @@ public class AnalysisPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addGroupButton;
     private javax.swing.JList analysisGroupList;
-    private javax.swing.JPanel anglePlotParentPanel;
     private javax.swing.JPanel bottomPanel;
     private javax.swing.JRadioButton cellSpeedRadioButton;
     private javax.swing.JPanel cellSpeedsPanel;
@@ -672,7 +671,8 @@ public class AnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JButton removeGroupButton;
     private javax.swing.JPanel rosePlotParentPanel;
     private javax.swing.JComboBox signLevelComboBox;
-    private javax.swing.JPanel speedPlotParentPanel;
+    private javax.swing.JPanel speedBoxPlotPlotParentPanel;
+    private javax.swing.JPanel speedKDEParentPanel;
     private javax.swing.JTable statTable;
     private javax.swing.JComboBox statTestComboBox;
     private javax.swing.JPanel statisticsPanel;

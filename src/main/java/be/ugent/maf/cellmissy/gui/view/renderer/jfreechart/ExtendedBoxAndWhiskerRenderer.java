@@ -148,9 +148,9 @@ public class ExtendedBoxAndWhiskerRenderer extends BoxAndWhiskerRenderer {
             box = new Rectangle2D.Double(xx, Math.min(yyQ1, yyQ3), state.getBarWidth(), Math.abs(yyQ1 - yyQ3));
             g2.setPaint(new Color(color.getRed(), color.getGreen(), color.getBlue(), 175));
 
-            if (getFillBox()) {
-                g2.fill(box);
-            }
+//            if (getFillBox()) {
+//                g2.fill(box);
+//            }
             g2.draw(box);
         }
 

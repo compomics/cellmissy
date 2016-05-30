@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYSeriesCollection;
 
 /**
  * Main Controller for single cell analysis.
@@ -200,6 +201,18 @@ public class SingleCellMainController {
 
     public void scaleAxesToExperiment(JFreeChart chart, boolean useRawData) {
         singleCellPreProcessingController.scaleAxesToExperiment(chart, useRawData);
+    }
+
+    public String getKernelDensityEstimatorBeanName() {
+        return singleCellPreProcessingController.getKernelDensityEstimatorBeanName();
+    }
+
+    public List<double[]> estimateDensityFunction(Double[] data, String kernelDensityEstimatorBeanName) {
+        return singleCellPreProcessingController.estimateDensityFunction(data, kernelDensityEstimatorBeanName);
+    }
+
+    public XYSeriesCollection generateDensityFunction(List<List<double[]>> densityFunctions) {
+        return singleCellPreProcessingController.generateDensityFunction(densityFunctions);
     }
 
     /**
@@ -435,10 +448,11 @@ public class SingleCellMainController {
                 } else if (singleCellPreProcessingController.getDisplSpeedPanel().getTrackSpeedsRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackSpeedsInTable(selectedCondition);
                     singleCellPreProcessingController.plotDisplAndSpeedData(selectedCondition);
-                } else if (singleCellPreProcessingController.getDisplSpeedPanel().getMsdRadioButton().isSelected()) {
-                    singleCellPreProcessingController.showMsdInTable(selectedCondition);
-                    singleCellPreProcessingController.plotMsdData(selectedCondition);
                 }
+//                else if (singleCellPreProcessingController.getDisplSpeedPanel().getMsdRadioButton().isSelected()) {
+//                    singleCellPreProcessingController.showMsdInTable(selectedCondition);
+//                    singleCellPreProcessingController.plotMsdData(selectedCondition);
+//                }
                 break;
             case "angleDirectParentPanel":
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
@@ -459,9 +473,10 @@ public class SingleCellMainController {
                     singleCellPreProcessingController.showInstAngleInTable(selectedCondition);
                 } else if (singleCellPreProcessingController.getAngleDirectPanel().getTrackTurnAngleRadioButton().isSelected()) {
                     singleCellPreProcessingController.showTrackAngleInTable(selectedCondition);
-                } else if (singleCellPreProcessingController.getAngleDirectPanel().getDynamicDirectRatioRadioButton().isSelected()) {
-
                 }
+//                else if (singleCellPreProcessingController.getAngleDirectPanel().getDynamicDirectRatioRadioButton().isSelected()) {
+//
+//                }
                 singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
                 break;
             case "filteringParentPanel":
@@ -482,6 +497,7 @@ public class SingleCellMainController {
                 if (singleCellPreProcessingController.getFilteringPanel().getMultipleCutOffRadioButton().isSelected()) {
                     singleCellPreProcessingController.plotRawKde(selectedCondition);
                     singleCellPreProcessingController.setMeanDisplForCondition(selectedCondition);
+                    singleCellPreProcessingController.setPercentileDispl(selectedCondition);
                 } else {
                     singleCellPreProcessingController.showMeanDisplInList();
                 }

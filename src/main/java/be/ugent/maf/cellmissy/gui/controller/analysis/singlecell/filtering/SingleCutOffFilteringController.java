@@ -40,11 +40,14 @@ public class SingleCutOffFilteringController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(SingleCutOffFilteringController.class);
     // model
     private double cutOff;
-    List<List<double[]>> rawDensityFunction;
+    List<List<double[]>> rawDisplKDE;
+    List<List<double[]>> rawSpeedKDE;
     // view
     private SingleCutOffPanel singleCutOffPanel;
-    private ChartPanel filteredKdeChartPanel;
-    private ChartPanel rawKdeChartPanel;
+    private ChartPanel rawDisplChartPanel;
+    private ChartPanel filteredDisplChartPanel;
+    private ChartPanel rawSpeedChartPanel;
+    private ChartPanel filteredSpeedChartPanel;
     // parent controller
     @Autowired
     private FilteringController filteringController;
@@ -70,12 +73,12 @@ public class SingleCutOffFilteringController {
      * Plot the raw KDE for track displacements.
      *
      */
-    public void showMeanDisplInList() {
-        DefaultListModel model = (DefaultListModel) singleCutOffPanel.getMeanDisplList().getModel();
+    public void showMedianDisplInList() {
+        DefaultListModel model = (DefaultListModel) singleCutOffPanel.getMedianDisplList().getModel();
         model.clear();
         filteringController.getPlateConditions().stream().map((condition)
-                -> filteringController.getMeanDisplForCondition(condition)).forEach((meanDisplForCondition) -> {
-                    model.addElement(meanDisplForCondition);
+                -> filteringController.getMedianDisplAcrossReplicates(condition)).forEach((medianDisplForCondition) -> {
+                    model.addElement(medianDisplForCondition);
                 });
     }
 
@@ -87,13 +90,16 @@ public class SingleCutOffFilteringController {
         // estimate the raw density function
         // check if the estimation has already taken place
         // if not, launch a swing worker
-        if (rawDensityFunction == null) {
+        if (rawDisplKDE == null) {
             DensityFunctionSwingWorker densityFunctionSwingWorker = new DensityFunctionSwingWorker();
             densityFunctionSwingWorker.execute();
         } else {
-            XYSeriesCollection densityFunction = filteringController.generateDensityFunction(rawDensityFunction);
-            JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "raw KDE track displ", "track displ", false);
-            rawKdeChartPanel.setChart(densityChart);
+            XYSeriesCollection densityFunction = filteringController.generateDensityFunction(rawDisplKDE);
+            JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "raw KDE track displ", "track speed", false);
+            rawDisplChartPanel.setChart(densityChart);
+            densityFunction = filteringController.generateDensityFunction(rawSpeedKDE);
+            densityChart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "raw KDE track speed", "track speed", false);
+            rawSpeedChartPanel.setChart(densityChart);
         }
 
     }
@@ -104,7 +110,7 @@ public class SingleCutOffFilteringController {
     private void initMainView() {
         // make a new view
         singleCutOffPanel = new SingleCutOffPanel();
-        singleCutOffPanel.getMeanDisplList().setModel(new DefaultListModel());
+        singleCutOffPanel.getMedianDisplList().setModel(new DefaultListModel());
         // action listeners
         singleCutOffPanel.getApplyCutOffButton().addActionListener((ActionEvent e) -> {
             // try to read the user-inserted values for up and down limit
@@ -127,28 +133,42 @@ public class SingleCutOffFilteringController {
 
     // initialize the other views
     private void initOtherViews() {
-        filteredKdeChartPanel = new ChartPanel(null);
-        filteredKdeChartPanel.setOpaque(false);
-
-        rawKdeChartPanel = new ChartPanel(null);
-        rawKdeChartPanel.setOpaque(false);
+        rawDisplChartPanel = new ChartPanel(null);
+        filteredDisplChartPanel = new ChartPanel(null);
+        rawSpeedChartPanel = new ChartPanel(null);
+        filteredSpeedChartPanel = new ChartPanel(null);
 
         // add chart panels to parent containers
-        singleCutOffPanel.getFilteredPlotParentPanel().add(filteredKdeChartPanel, gridBagConstraints);
-        singleCutOffPanel.getRawPlotParentPanel().add(rawKdeChartPanel, gridBagConstraints);
+        singleCutOffPanel.getRawDisplKDEParentPanel().add(rawDisplChartPanel, gridBagConstraints);
+        singleCutOffPanel.getFilteredDisplKDEParentPanel().add(filteredDisplChartPanel, gridBagConstraints);
+        singleCutOffPanel.getRawSpeedKDEParentPanel().add(rawSpeedChartPanel, gridBagConstraints);
+        singleCutOffPanel.getFilteredSpeedKDEParentPanel().add(filteredSpeedChartPanel, gridBagConstraints);
     }
 
     /**
      * Plot the KDE of the retained tracks.
      */
-    private void plotRetainedKde() {
+    private void plotRetainedDisplKDE() {
         // create the dataset for the plot logic
-        XYSeriesCollection retainedKdeDataset = getRetainedKdeDataset();
+        XYSeriesCollection retainedKdeDataset = getRetainedDisplKDE();
         JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(retainedKdeDataset,
                 "cut-off: " + AnalysisUtils.roundTwoDecimals(cutOff) + " filtered KDE track displ", "track displ", false);
-        filteredKdeChartPanel.setChart(densityChart);
-        singleCutOffPanel.getFilteredPlotParentPanel().revalidate();
-        singleCutOffPanel.getFilteredPlotParentPanel().repaint();
+        filteredDisplChartPanel.setChart(densityChart);
+        singleCutOffPanel.getFilteredDisplKDEParentPanel().revalidate();
+        singleCutOffPanel.getFilteredDisplKDEParentPanel().repaint();
+    }
+
+    /**
+     * Plot the KDE of the retained tracks.
+     */
+    private void plotRetainedSpeedKDE() {
+        // create the dataset for the plot logic
+        XYSeriesCollection retainedKdeDataset = getFilteredSpeedKDEDataset();
+        JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(retainedKdeDataset,
+                " filtered KDE track speed", "track speed", false);
+        filteredSpeedChartPanel.setChart(densityChart);
+        singleCutOffPanel.getFilteredSpeedKDEParentPanel().revalidate();
+        singleCutOffPanel.getFilteredSpeedKDEParentPanel().repaint();
     }
 
     /**
@@ -156,8 +176,14 @@ public class SingleCutOffFilteringController {
      *
      * @return
      */
-    private XYSeriesCollection getRetainedKdeDataset() {
-        List<List<double[]>> estimateFilteredDensityFunction = estimateFilteredDensityFunction();
+    private XYSeriesCollection getRetainedDisplKDE() {
+        List<List<double[]>> estimateFilteredDensityFunction = estimateFilteredDisplKDE();
+        XYSeriesCollection densityFunction = filteringController.generateDensityFunction(estimateFilteredDensityFunction);
+        return densityFunction;
+    }
+
+    private XYSeriesCollection getFilteredSpeedKDEDataset() {
+        List<List<double[]>> estimateFilteredDensityFunction = estimateFilteredSpeedKDE();
         XYSeriesCollection densityFunction = filteringController.generateDensityFunction(estimateFilteredDensityFunction);
         return densityFunction;
     }
@@ -167,14 +193,28 @@ public class SingleCutOffFilteringController {
      *
      * @return
      */
-    private List<List<double[]>> estimateFilteredDensityFunction() {
+    private List<List<double[]>> estimateFilteredDisplKDE() {
         String kernelDensityEstimatorBeanName = filteringController.getKernelDensityEstimatorBeanName();
         List<List<double[]>> densityFunction = new ArrayList<>();
 
         Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = filteringController.getFilteringMap();
         filteringMap.keySet().stream().map((conditionDataHolder)
-                -> getRetainedDisplacements(conditionDataHolder)).map((retainedDisplacements) -> filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackDisplDensityFunction) -> {
+                -> getRetainedDisplacements(conditionDataHolder)).map((retainedDisplacements)
+                        -> filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackDisplDensityFunction) -> {
                     densityFunction.add(oneConditionTrackDisplDensityFunction);
+                });
+
+        return densityFunction;
+    }
+
+    private List<List<double[]>> estimateFilteredSpeedKDE() {
+        String kernelDensityEstimatorBeanName = filteringController.getKernelDensityEstimatorBeanName();
+        List<List<double[]>> densityFunction = new ArrayList<>();
+        Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = filteringController.getFilteringMap();
+        filteringMap.keySet().stream().map((conditionDataHolder)
+                -> getRetainedSpeeds(conditionDataHolder)).map((retainedSpeeds)
+                        -> filteringController.estimateDensityFunction(retainedSpeeds, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackSpeedDensityFunction) -> {
+                    densityFunction.add(oneConditionTrackSpeedDensityFunction);
                 });
 
         return densityFunction;
@@ -195,6 +235,17 @@ public class SingleCutOffFilteringController {
             trackDisplacementsVector[i] = trackMeanDisplacement;
         }
         return trackDisplacementsVector;
+    }
+
+    private Double[] getRetainedSpeeds(SingleCellConditionDataHolder cellConditionDataHolder) {
+        List<TrackDataHolder> retainedTracks = filteringController.getFilteringMap().get(cellConditionDataHolder);
+        Double[] trackSpeedsVector = new Double[retainedTracks.size()];
+        for (int i = 0; i < trackSpeedsVector.length; i++) {
+            TrackDataHolder retainedTrack = retainedTracks.get(i);
+            double trackMedianSpeed = retainedTrack.getCellCentricDataHolder().getMedianSpeed();
+            trackSpeedsVector[i] = trackMedianSpeed;
+        }
+        return trackSpeedsVector;
     }
 
     /**
@@ -237,7 +288,8 @@ public class SingleCutOffFilteringController {
             try {
                 get();
                 // plot the filtered KDE plots
-                plotRetainedKde();
+                plotRetainedDisplKDE();
+                plotRetainedSpeedKDE();
                 // recontrol GUI
                 filteringController.hideWaitingDialog();
                 filteringController.controlGuiComponents(true);
@@ -263,8 +315,8 @@ public class SingleCutOffFilteringController {
             // show a waiting cursor, disable GUI components
             filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             filteringController.controlGuiComponents(false);
-            rawDensityFunction = filteringController.estimateRawDensityFunction();
-
+            rawDisplKDE = filteringController.estimateRawDisplKDE();
+            rawSpeedKDE = filteringController.estimateRawSpeedKDE();
             return null;
         }
 
@@ -273,9 +325,12 @@ public class SingleCutOffFilteringController {
             try {
                 get();
 
-                XYSeriesCollection densityFunction = filteringController.generateDensityFunction(rawDensityFunction);
+                XYSeriesCollection densityFunction = filteringController.generateDensityFunction(rawDisplKDE);
                 JFreeChart densityChart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "raw KDE track displ", "track displ", false);
-                rawKdeChartPanel.setChart(densityChart);
+                rawDisplChartPanel.setChart(densityChart);
+                densityFunction = filteringController.generateDensityFunction(rawSpeedKDE);
+                densityChart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "raw KDE track speed", "track speed", false);
+                rawSpeedChartPanel.setChart(densityChart);
 
                 // recontrol GUI
                 filteringController.hideWaitingDialog();

@@ -55,11 +55,9 @@
                           <Component id="trackDisplRadioButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="trackSpeedsRadioButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="msdRadioButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="464" max="32767" attributes="0"/>
+                  <EmptySpace pref="498" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -71,7 +69,6 @@
                       <Component id="instantaneousDisplRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="trackDisplRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="trackSpeedsRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="msdRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="tableInfoLabel" min="-2" max="-2" attributes="0"/>
@@ -110,11 +107,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="track speeds (cell-centric)"/>
             <Property name="opaque" type="boolean" value="false"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JRadioButton" name="msdRadioButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="MSD"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -121,8 +121,8 @@ public class FilteringController {
         singleCutOffFilteringController.plotRawKdeSingleCutOff();
     }
 
-    public void showMeanDisplInList() {
-        singleCutOffFilteringController.showMeanDisplInList();
+    public void showMedianDisplInList() {
+        singleCutOffFilteringController.showMedianDisplInList();
     }
 
     public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
@@ -143,22 +143,29 @@ public class FilteringController {
      * @param plateCondition
      * @return
      */
-    public Double getMeanDisplForCondition(PlateCondition plateCondition) {
+    public Double getMedianDisplAcrossReplicates(PlateCondition plateCondition) {
         SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         Double[] instantaneousDisplacementsVector = conditionDataHolder.getInstantaneousDisplacementsVector();
-        return AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(instantaneousDisplacementsVector)));
+        return AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(instantaneousDisplacementsVector)));
     }
 
-    public void setMeanDisplForCondition(PlateCondition plateCondition) {
-        multipleCutOffFilteringController.getMultipleCutOffPanel().getMeanDisplacReplTextField().
-                setText("" + AnalysisUtils.roundThreeDecimals(getMeanDisplForCondition(plateCondition)));
+    public void setMedianDisplForCondition(PlateCondition plateCondition) {
+        multipleCutOffFilteringController.getMultipleCutOffPanel().getMedianDisplacReplTextField().
+                setText("" + AnalysisUtils.roundThreeDecimals(getMedianDisplAcrossReplicates(plateCondition)));
     }
 
-    public void setMeanDisplForExperiment() {
-        multipleCutOffFilteringController.getMultipleCutOffPanel().getMeanDisplacCondTextField().
-                setText("" + AnalysisUtils.roundThreeDecimals(getMeanDisplForExp()));
+    public void setPercentileDispl(PlateCondition plateCondition) {
+        SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
+        multipleCutOffFilteringController.getMultipleCutOffPanel().getPercentileDisplTextField().
+                setText("" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeQuantile(
+                                        ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditionDataHolder.getTrackDisplacementsVector())), 5)));
+    }
+
+    public void setMedianDisplForExperiment() {
+        multipleCutOffFilteringController.getMultipleCutOffPanel().getMedianDisplacCondTextField().
+                setText("" + AnalysisUtils.roundThreeDecimals(getMedianDisplAcrossCondition()));
         singleCutOffFilteringController.getSingleCutOffPanel().getMeanDisplacTextField().
-                setText("" + AnalysisUtils.roundThreeDecimals(getMeanDisplForExp()));
+                setText("" + AnalysisUtils.roundThreeDecimals(getMedianDisplAcrossCondition()));
     }
 
     public List<PlateCondition> getPlateConditions() {
@@ -195,11 +202,23 @@ public class FilteringController {
      * @return a list of a list of double containing the estimated density
      * functions.
      */
-    public List<List<double[]>> estimateRawDensityFunction() {
+    public List<List<double[]>> estimateRawDisplKDE() {
         String kernelDensityEstimatorBeanName = getKernelDensityEstimatorBeanName();
         List<List<double[]>> densityFunction = new ArrayList<>();
         getPreProcessingMap().values().stream().map((conditionDataHolder)
-                -> conditionDataHolder.getInstantaneousDisplacementsVector()).map((instantaneousDisplacementsVector) -> estimateDensityFunction(instantaneousDisplacementsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                -> conditionDataHolder.getInstantaneousDisplacementsVector()).map((instantaneousDisplacementsVector)
+                        -> estimateDensityFunction(instantaneousDisplacementsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                    densityFunction.add(oneConditionDensityFunction);
+                });
+        return densityFunction;
+    }
+
+    public List<List<double[]>> estimateRawSpeedKDE() {
+        String kernelDensityEstimatorBeanName = getKernelDensityEstimatorBeanName();
+        List<List<double[]>> densityFunction = new ArrayList<>();
+        getPreProcessingMap().values().stream().map((conditionDataHolder)
+                -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
+                        -> estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
                     densityFunction.add(oneConditionDensityFunction);
                 });
         return densityFunction;
@@ -332,8 +351,8 @@ public class FilteringController {
             layout.show(filteringPanel.getBottomPanel(), filteringPanel.getMultipleCutOffParentPanel().getName());
 
             multipleCutOffFilteringController.plotRawKdeMultipleCutOff(getCurrentCondition());
-            setMeanDisplForCondition(getCurrentCondition());
-            setMeanDisplForExperiment();
+            setMedianDisplForCondition(getCurrentCondition());
+            setMedianDisplForExperiment();
         });
 
         filteringPanel.getSingleCutOffRadioButton().addActionListener((ActionEvent e) -> {
@@ -348,8 +367,8 @@ public class FilteringController {
             layout.show(filteringPanel.getBottomPanel(), filteringPanel.getSingleCutOffParentPanel().getName());
 
             singleCutOffFilteringController.plotRawKdeSingleCutOff();
-            setMeanDisplForExperiment();
-            singleCutOffFilteringController.showMeanDisplInList();
+            setMedianDisplForExperiment();
+            singleCutOffFilteringController.showMedianDisplInList();
 
         });
 
@@ -362,17 +381,17 @@ public class FilteringController {
      *
      * @return
      */
-    private Double getMeanDisplForExp() {
+    private Double getMedianDisplAcrossCondition() {
         Map<PlateCondition, SingleCellConditionDataHolder> preProcessingMap = singleCellPreProcessingController.getPreProcessingMap();
-        Double[] meanValues = new Double[preProcessingMap.size()];
-        for (int i = 0; i < meanValues.length; i++) {
+        Double[] medianValues = new Double[preProcessingMap.size()];
+        for (int i = 0; i < medianValues.length; i++) {
             PlateCondition condition = singleCellPreProcessingController.getPlateConditionList().get(i);
             if (!condition.isComputed()) {
                 singleCellPreProcessingController.computeCondition(condition);
             }
-            meanValues[i] = getMeanDisplForCondition(singleCellPreProcessingController.getPlateConditionList().get(i));
+            medianValues[i] = getMedianDisplAcrossReplicates(singleCellPreProcessingController.getPlateConditionList().get(i));
         }
-        return AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(meanValues)));
+        return AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(medianValues)));
     }
 
 }

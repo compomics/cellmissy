@@ -66,9 +66,9 @@ public class SingleCellAnalysisController {
     // view
     private AnalysisPanel analysisPanel;
     private List<ChartPanel> cellTracksChartPanels;
-    private ChartPanel cellSpeedChartPanel;
-    private ChartPanel cellDirectChartPanel;
-    private ChartPanel cellAngleChartPanel;
+    private ChartPanel speedBoxPlotChartPanel;
+    private ChartPanel speedKDEChartPanel;
+    private ChartPanel directPlotChartPanel;
     private List<ChartPanel> rosePlotChartPanels;
     private PlotOptionsPanel plotOptionsPanel;
     // parent controller
@@ -119,9 +119,9 @@ public class SingleCellAnalysisController {
      */
     public void plotData() {
         updateDataTable();
-        plotCellSpeeds();
-        plotCellDirectionalities();
-        plotCellAngles();
+        plotSpeedBoxPlot();
+        plotSpeedKDE();
+        plotDirectBoxPlot();
         plotRosePlots();
     }
 
@@ -275,16 +275,16 @@ public class SingleCellAnalysisController {
 
     // initialize other views
     private void initOtherViews() {
-        cellSpeedChartPanel = new ChartPanel(null);
-        cellSpeedChartPanel.setOpaque(false);
-        cellDirectChartPanel = new ChartPanel(null);
-        cellDirectChartPanel.setOpaque(false);
-        cellAngleChartPanel = new ChartPanel(null);
-        cellAngleChartPanel.setOpaque(false);
+        speedBoxPlotChartPanel = new ChartPanel(null);
+        speedBoxPlotChartPanel.setOpaque(false);
+        directPlotChartPanel = new ChartPanel(null);
+        directPlotChartPanel.setOpaque(false);
+        speedKDEChartPanel = new ChartPanel(null);
+        speedKDEChartPanel.setOpaque(false);
         // add panels to parent containers
-        analysisPanel.getSpeedPlotParentPanel().add(cellSpeedChartPanel, gridBagConstraints);
-        analysisPanel.getDirectPlotParentPanel().add(cellDirectChartPanel, gridBagConstraints);
-        analysisPanel.getAnglePlotParentPanel().add(cellAngleChartPanel, gridBagConstraints);
+        analysisPanel.getSpeedBoxPlotPlotParentPanel().add(speedBoxPlotChartPanel, gridBagConstraints);
+        analysisPanel.getSpeedKDEParentPanel().add(speedKDEChartPanel, gridBagConstraints);
+        analysisPanel.getDirectPlotParentPanel().add(directPlotChartPanel, gridBagConstraints);
     }
 
     /**
@@ -310,7 +310,7 @@ public class SingleCellAnalysisController {
      *
      * @return a DefaultBoxAndWhiskerCategoryDataset
      */
-    private DefaultBoxAndWhiskerCategoryDataset getTrackSpeedBoxPlotDataset() {
+    private DefaultBoxAndWhiskerCategoryDataset getSpeedBoxPlotDataset() {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
         singleCellMainController.getFilteringMap().keySet().stream().forEach((singleCellConditionDataHolder) -> {
             dataset.add(Arrays.asList(singleCellConditionDataHolder.getTrackSpeedsVector()), singleCellConditionDataHolder.getPlateCondition().toString(), "");
@@ -324,7 +324,7 @@ public class SingleCellAnalysisController {
      *
      * @return a DefaultBoxAndWhiskerCategoryDataset
      */
-    private DefaultBoxAndWhiskerCategoryDataset getTrackDirectBoxPlotDataset() {
+    private DefaultBoxAndWhiskerCategoryDataset getDirecBoxPlotDataset() {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
         singleCellMainController.getFilteringMap().keySet().stream().forEach((singleCellConditionDataHolder) -> {
             dataset.add(Arrays.asList(singleCellConditionDataHolder.getEndPointDirectionalityRatios()),
@@ -334,45 +334,56 @@ public class SingleCellAnalysisController {
     }
 
     /**
-     * Generate the dataset for the box plot with the track directionality
-     * values.
-     *
-     * @return a DefaultBoxAndWhiskerCategoryDataset
-     */
-    private DefaultBoxAndWhiskerCategoryDataset getTrackAngleBoxPlotDataset() {
-        DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        singleCellMainController.getFilteringMap().keySet().stream().forEach((singleCellConditionDataHolder) -> {
-            dataset.add(Arrays.asList(singleCellConditionDataHolder.getTurningAnglesVector()),
-                    singleCellConditionDataHolder.getPlateCondition().toString(), "");
-        });
-        return dataset;
-    }
-
-    /**
      * Render the BoxPlot for the cell speeds.
      */
-    private void plotCellSpeeds() {
-        DefaultBoxAndWhiskerCategoryDataset trackSpeedBoxPlotDataset = getTrackSpeedBoxPlotDataset();
-        JFreeChart chart = generateBoxPlotChart(trackSpeedBoxPlotDataset, "cell speed (µm/min)", "cell speed");
-        cellSpeedChartPanel.setChart(chart);
+    private void plotSpeedBoxPlot() {
+        DefaultBoxAndWhiskerCategoryDataset speedDataset = getSpeedBoxPlotDataset();
+        JFreeChart chart = generateBoxPlotChart(speedDataset, "cell speed (µm/min)", "cell speed");
+        speedBoxPlotChartPanel.setChart(chart);
     }
 
     /**
      * Render the BoxPlot for the cell directionality.
      */
-    private void plotCellDirectionalities() {
-        DefaultBoxAndWhiskerCategoryDataset trackDirectBoxPlotDataset = getTrackDirectBoxPlotDataset();
-        JFreeChart chart = generateBoxPlotChart(trackDirectBoxPlotDataset, "cell directionality values", "end-point directionality");
-        cellDirectChartPanel.setChart(chart);
+    private void plotDirectBoxPlot() {
+        DefaultBoxAndWhiskerCategoryDataset directDataset = getDirecBoxPlotDataset();
+        JFreeChart chart = generateBoxPlotChart(directDataset, "cell directionality values", "end-point directionality");
+        directPlotChartPanel.setChart(chart);
     }
 
     /**
      * Render the BoxPlot for the cell angles.
      */
-    private void plotCellAngles() {
-        DefaultBoxAndWhiskerCategoryDataset trackAngleBoxPlotDataset = getTrackAngleBoxPlotDataset();
-        JFreeChart chart = generateBoxPlotChart(trackAngleBoxPlotDataset, "cell angles (deg)", "cell turning angles");
-        cellAngleChartPanel.setChart(chart);
+    private void plotSpeedKDE() {
+        List<List<double[]>> speedKDE = estimateSpeedKDE();
+        XYSeriesCollection densityFunction = singleCellMainController.generateDensityFunction(speedKDE);
+        JFreeChart chart = JFreeChartUtils.generateDensityFunctionChart(densityFunction, "KDE track speed", "track speed", false);
+        speedKDEChartPanel.setChart(chart);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private List<List<double[]>> estimateSpeedKDE() {
+        String kernelDensityEstimatorBeanName = singleCellMainController.getKernelDensityEstimatorBeanName();
+        List<List<double[]>> densityFunction = new ArrayList<>();
+
+        if (!filteredData) {
+            getPreProcessingMap().values().stream().map((conditionDataHolder)
+                    -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
+                            -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                        densityFunction.add(oneConditionDensityFunction);
+                    });
+        } else {
+            getFilteringMap().keySet().stream().map((conditionDataHolder)
+                    -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
+                            -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                        densityFunction.add(oneConditionDensityFunction);
+                    });
+        }
+
+        return densityFunction;
     }
 
     /**
@@ -425,7 +436,12 @@ public class SingleCellAnalysisController {
      */
     private GridBagConstraints getGridBagConstraints(int nPlots, int index) {
         GridBagConstraints tempConstraints = new GridBagConstraints();
-        int nRows = (int) Math.ceil(nPlots / 3);
+        int nRows;
+        if (nPlots > 2) {
+            nRows = (int) Math.ceil(nPlots / 3);
+        } else {
+            nRows = 1;
+        }
         tempConstraints.fill = GridBagConstraints.BOTH;
         tempConstraints.weightx = 1.0 / 3;
         tempConstraints.weighty = 1.0 / nRows;

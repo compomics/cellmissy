@@ -50,7 +50,8 @@ public class SingleCellConditionDataTableModel extends AbstractTableModel {
      * define structure for table
      */
     private void initTable() {
-        columnNames = new String[]{"condition", "mean speed", "mean end-point dir", "mean turn angle"};
+        columnNames = new String[]{"condition", "mean speed", "median speed", "mean direct", "median direct",
+            "mean turn angle", "median turn angle"};
 
         data = new Object[conditions.size()][columnNames.length];
 
@@ -60,10 +61,15 @@ public class SingleCellConditionDataTableModel extends AbstractTableModel {
             data[row][1] = AnalysisUtils.roundThreeDecimals(
                     AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getTrackSpeedsVector()))));
             data[row][2] = AnalysisUtils.roundThreeDecimals(
-                    AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getEndPointDirectionalityRatios()))));
+                    AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getTrackSpeedsVector()))));
             data[row][3] = AnalysisUtils.roundThreeDecimals(
+                    AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getEndPointDirectionalityRatios()))));
+            data[row][4] = AnalysisUtils.roundThreeDecimals(
+                    AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getEndPointDirectionalityRatios()))));
+            data[row][5] = AnalysisUtils.roundThreeDecimals(
                     AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getTurningAnglesVector()))));
-
+            data[row][6] = AnalysisUtils.roundThreeDecimals(
+                    AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getTurningAnglesVector()))));
         }
     }
 }
