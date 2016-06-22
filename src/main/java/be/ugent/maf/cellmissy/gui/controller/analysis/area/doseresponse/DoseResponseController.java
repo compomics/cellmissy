@@ -293,49 +293,22 @@ public class DoseResponseController {
      * @return
      */
     public JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
-        //a single plot contains both scatter data and fitted line
-        XYPlot plot = new XYPlot();
+        
         //setup scatter data of experimental concentrations/slopes, renderer and axis
         XYSeriesCollection experimentalData = new XYSeriesCollection();
         XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(AnalysisUtils.generateXValues(dataToPlot), AnalysisUtils.generateYValues(dataToPlot));
         scatterXYSeries.setKey("Experimental data");
         experimentalData.addSeries(scatterXYSeries);
-        XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();   // Shapes only
-        renderer1.setSeriesLinesVisible(0, false);
-        renderer1.setSeriesShapesVisible(0, true);
-        ValueAxis domain1 = new NumberAxis("Log of concentration");
-        ValueAxis range1 = new NumberAxis("Velocity");
-        // Set the scatter data, renderer, and axis into plot
-        plot.setDataset(0, experimentalData);
-        plot.setRenderer(0, renderer1);
-        plot.setDomainAxis(0, domain1);
-        plot.setRangeAxis(0, range1);
-        domain1.setUpperBound(-3.0);
-        domain1.setLowerBound(-8.0);
-        range1.setLowerBound(-50.0);
-        // Map the scatter to the first Domain and first Range
-        plot.mapDatasetToDomainAxis(0, 0);
-        plot.mapDatasetToRangeAxis(0, 0);
-
+        
         // Create the line data, renderer, and axis
         XYSeriesCollection fitting = new XYSeriesCollection();
         // create xy series of simulated data from the parameters from the fitting
         XYSeries fittingData = simulateData(analysisGroup, normalized);
         fittingData.setKey("Fitting");
         fitting.addSeries(fittingData);
-        XYItemRenderer renderer2 = new XYSplineRenderer();   // Lines only
-        XYLineAndShapeRenderer tempRenderer = (XYLineAndShapeRenderer) renderer2;
-        tempRenderer.setSeriesLinesVisible(0, true);
-        tempRenderer.setSeriesShapesVisible(0, false);
-        // Set the line data, renderer, and axis into plot
-        plot.setDataset(1, fitting);
-        plot.setRenderer(1, renderer2);
-        plot.setDomainAxis(1, domain1);
-        plot.setRangeAxis(1, range1);
-        // Map the line to the first Domain Range
-        plot.mapDatasetToDomainAxis(1, 0);
-        plot.mapDatasetToRangeAxis(1, 0);
-
+        
+        XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, normalized);
+        
         // show the r squared value
         SigmoidFittingResultsHolder resultsholder = null;
         if (normalized) {
@@ -343,7 +316,7 @@ public class DoseResponseController {
         } else {
             resultsholder = analysisGroup.getDoseResponseAnalysisResults().getInitialFittingResults();
         }
-        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.computeRSquared(dataToPlot, resultsholder), -4, 1.0));
+        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsholder)), -4, 1.0));
 
         // Create the chart with the plot and no legend
         JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);

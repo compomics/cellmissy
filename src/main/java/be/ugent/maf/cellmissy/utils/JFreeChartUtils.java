@@ -27,6 +27,13 @@ import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.renderer.DefaultPolarItemRenderer;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
@@ -34,6 +41,7 @@ import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.function.Function2D;
 import org.jfree.data.general.DatasetUtilities;
@@ -495,6 +503,48 @@ public class JFreeChartUtils {
         Range maxRange = computeMaxRange(xYPlot);
         xYPlot.getDomainAxis().setRange(maxRange);
         xYPlot.getRangeAxis().setRange(maxRange);
+    }
+
+    public static XYPlot setupDoseResponseDatasets(XYSeriesCollection dataset1, XYSeriesCollection dataset2, boolean normalized) {
+        //a single plot contains both scatter data and fitted line
+        XYPlot plot = new XYPlot();
+
+        XYLineAndShapeRenderer renderer1 = new XYLineAndShapeRenderer();   // Shapes only
+        renderer1.setSeriesLinesVisible(0, false);
+        renderer1.setSeriesShapesVisible(0, true);
+        XYItemRenderer renderer2 = new XYSplineRenderer();   // Lines only
+        XYLineAndShapeRenderer tempRenderer = (XYLineAndShapeRenderer) renderer2;
+        tempRenderer.setSeriesLinesVisible(0, true);
+        tempRenderer.setSeriesShapesVisible(0, false);
+
+        ValueAxis domain1 = new NumberAxis("Log of concentration");
+        if (!normalized) {
+            ValueAxis range1 = new NumberAxis("Velocity (ÂµMÂ²/min)");
+        } else {
+            ValueAxis range1 = new NumberAxis("Response (%)");
+        }
+        domain1.setUpperBound(-3.0);
+        domain1.setLowerBound(-8.0);
+        //range1.setLowerBound(-50.0);
+        // Set the scatter data, renderer, and axis into plot
+        plot.setDataset(0, dataset1);
+        plot.setRenderer(0, renderer1);
+        plot.setDomainAxis(0, domain1);
+        //plot.setRangeAxis(0, range1);
+        // Map the scatter to the first Domain and first Range
+        plot.mapDatasetToDomainAxis(0, 0);
+        plot.mapDatasetToRangeAxis(0, 0);
+        
+        // Set the line data, renderer, and axis into plot
+        plot.setDataset(1, dataset2);
+        plot.setRenderer(1, renderer2);
+        plot.setDomainAxis(1, domain1);
+        //plot.setRangeAxis(1, range1);
+        // Map the line to the first Domain and Range
+//        plot.mapDatasetToDomainAxis(1, 0);
+//        plot.mapDatasetToRangeAxis(1, 0);
+
+        return plot;
     }
 
     public static void setupDoseResponseChart(JFreeChart chart, String title) {
