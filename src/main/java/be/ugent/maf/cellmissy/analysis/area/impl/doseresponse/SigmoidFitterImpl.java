@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.area.impl.doseresponse;
 
+import be.ugent.maf.cellmissy.analysis.area.doseresponse.DoseResponseAbstractCurveFitter;
 import be.ugent.maf.cellmissy.analysis.area.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -103,7 +104,7 @@ public class SigmoidFitterImpl extends AbstractCurveFitter implements SigmoidFit
         };
 
         //set up the fitter with the observations and function created above
-        AbstractCurveFitter fitter = new AbstractCurveFitter() {
+        DoseResponseAbstractCurveFitter fitter = new DoseResponseAbstractCurveFitter() {
 
             @Override
             protected LeastSquaresProblem getProblem(Collection<WeightedObservedPoint> observations) {
@@ -134,7 +135,7 @@ public class SigmoidFitterImpl extends AbstractCurveFitter implements SigmoidFit
             }
         };
 
-        double[] params = fitter.fit(observations);
+        double[] params = fitter.fit(observations, resultsHolder);
         double bottom = params[0];
         double top = params[1];
         double logEC50 = params[2];
