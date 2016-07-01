@@ -28,26 +28,44 @@ public class DoseResponseAnalysisResults {
     private double goodnessOfFitInitial;
     private double goodnessOfFitNormalized;
 
-//    //standard error of the logEC50
-//    private double standardErrorLogEC50Initial;
-//
-//    //array with lower and upper values of 95% confidence interval of logEC50
-//    private Double[] confidenceIntervalLogEC50Initial;
-//
-//    //lower and upper values of 95% confidence interval of EC50
-//    private Double[] confidenceIntervalEC50Initial;
-//
-//    //lower and upper values of 95% confidence interval of hillslope (if fitted)
-//    private Double[] confidenceIntervalHillslopeInitial;
-//
-//    //same variables as above, only this time from fitting the normalized data
-//    private double standardErrorLogEC50Normalized;
-//
-//    private Double[] confidenceIntervalLogEC50Normalized;
-//
-//    private Double[] confidenceIntervalEC50Normalized;
-//
-//    private Double[] confidenceIntervalHillslopeNormalized;
+    // standard error of bottom
+    private double stdErrBottomInitial;
+
+    // standard error of top
+    private double stdErrTopInitial;
+
+    //standard error of the logEC50
+    private double stdErrLogEC50Initial;
+
+    // standard error of the hillslope
+    private double stdErrHillslopeInitial;
+
+    //array with lower and upper values of 95% confidence interval of bottom
+    private Double[] cIBottomInitial;
+
+    //array with lower and upper values of 95% confidence interval of top
+    private Double[] cITopInitial;
+
+    //array with lower and upper values of 95% confidence interval of logEC50
+    private Double[] cILogEC50Initial;
+
+    //lower and upper values of 95% confidence interval of EC50
+    private Double[] cIEC50Initial;
+
+    //lower and upper values of 95% confidence interval of hillslope (if fitted)
+    private Double[] cIHillslopeInitial;
+
+    //same variables as above, only this time from fitting the normalized data
+    private double stdErrBottomNormalized;
+    private double stdErrTopNormalized;
+    private double stdErrLogEC50Normalized;
+    private double stdErrHillslopeNormalized;
+    private Double[] cIBottomNormalized;
+    private Double[] cITopNormalized;
+    private Double[] cILogEC50Normalized;
+    private Double[] cIEC50Normalized;
+    private Double[] cIHillslopeNormalized;
+
     public DoseResponseAnalysisResults() {
         this.initialFittingResults = new SigmoidFittingResultsHolder();
         this.normalizedFittingResults = new SigmoidFittingResultsHolder();
@@ -82,37 +100,77 @@ public class DoseResponseAnalysisResults {
         this.goodnessOfFitInitial = goodnessOfFitInitial;
     }
 
-//    public double getStandardErrorLogEC50Initial() {
-//        return standardErrorLogEC50Initial;
-//    }
-//
-//    public void setStandardErrorLogEC50Initial(double standardErrorLogEC50Initial) {
-//        this.standardErrorLogEC50Initial = standardErrorLogEC50Initial;
-//    }
-//
-//    public Double[] getConfidenceIntervalLogEC50Initial() {
-//        return confidenceIntervalLogEC50Initial;
-//    }
-//
-//    public void setConfidenceIntervalLogEC50Initial(Double[] confidenceIntervalLogEC50Initial) {
-//        this.confidenceIntervalLogEC50Initial = confidenceIntervalLogEC50Initial;
-//    }
-//
-//    public Double[] getConfidenceIntervalEC50Initial() {
-//        return confidenceIntervalEC50Initial;
-//    }
-//
-//    public void setConfidenceIntervalEC50Initial(Double[] confidenceIntervalEC50Initial) {
-//        this.confidenceIntervalEC50Initial = confidenceIntervalEC50Initial;
-//    }
-//
-//    public Double[] getConfidenceIntervalHillslopeInitial() {
-//        return confidenceIntervalHillslopeInitial;
-//    }
-//
-//    public void setConfidenceIntervalHillslopeInitial(Double[] confidenceIntervalHillslopeInitial) {
-//        this.confidenceIntervalHillslopeInitial = confidenceIntervalHillslopeInitial;
-//    }
+    public double getStdErrBottomInitial() {
+        return stdErrBottomInitial;
+    }
+
+    public void setStdErrBottomInitial(double stdErrBottomInitial) {
+        this.stdErrBottomInitial = stdErrBottomInitial;
+    }
+
+    public double getStdErrTopInitial() {
+        return stdErrTopInitial;
+    }
+
+    public void setStdErrTopInitial(double stdErrTopInitial) {
+        this.stdErrTopInitial = stdErrTopInitial;
+    }
+
+    public double getStdErrLogEC50Initial() {
+        return stdErrLogEC50Initial;
+    }
+
+    public void setStdErrLogEC50Initial(double stdErrLogEC50Initial) {
+        this.stdErrLogEC50Initial = stdErrLogEC50Initial;
+    }
+
+    public double getStdErrHillslopeInitial() {
+        return stdErrHillslopeInitial;
+    }
+
+    public void setStdErrHillslopeInitial(double stdErrHillslopeInitial) {
+        this.stdErrHillslopeInitial = stdErrHillslopeInitial;
+    }
+
+    public Double[] getcIBottomInitial() {
+        return cIBottomInitial;
+    }
+
+    public void setcIBottomInitial(Double[] cIBottomInitial) {
+        this.cIBottomInitial = cIBottomInitial;
+    }
+
+    public Double[] getcITopInitial() {
+        return cITopInitial;
+    }
+
+    public void setcITopInitial(Double[] cITopInitial) {
+        this.cITopInitial = cITopInitial;
+    }
+
+    public Double[] getcILogEC50Initial() {
+        return cILogEC50Initial;
+    }
+
+    public void setcILogEC50Initial(Double[] cILogEC50Initial) {
+        this.cILogEC50Initial = cILogEC50Initial;
+    }
+
+    public Double[] getcIEC50Initial() {
+        return cIEC50Initial;
+    }
+
+    public void setcIEC50Initial(Double[] cIEC50Initial) {
+        this.cIEC50Initial = cIEC50Initial;
+    }
+
+    public Double[] getcIHillslopeInitial() {
+        return cIHillslopeInitial;
+    }
+
+    public void setcIHillslopeInitial(Double[] cIHillslopeInitial) {
+        this.cIHillslopeInitial = cIHillslopeInitial;
+    }
 
     public double getEc50Normalized() {
         return ec50Normalized;
@@ -130,36 +188,76 @@ public class DoseResponseAnalysisResults {
         this.goodnessOfFitNormalized = goodnessOfFitNormalized;
     }
 
-//    public double getStandardErrorLogEC50Normalized() {
-//        return standardErrorLogEC50Normalized;
-//    }
-//
-//    public void setStandardErrorLogEC50Normalized(double standardErrorLogEC50Normalized) {
-//        this.standardErrorLogEC50Normalized = standardErrorLogEC50Normalized;
-//    }
-//
-//    public Double[] getConfidenceIntervalLogEC50Normalized() {
-//        return confidenceIntervalLogEC50Normalized;
-//    }
-//
-//    public void setConfidenceIntervalLogEC50Normalized(Double[] confidenceIntervalLogEC50Normalized) {
-//        this.confidenceIntervalLogEC50Normalized = confidenceIntervalLogEC50Normalized;
-//    }
-//
-//    public Double[] getConfidenceIntervalEC50Normalized() {
-//        return confidenceIntervalEC50Normalized;
-//    }
-//
-//    public void setConfidenceIntervalEC50Normalized(Double[] confidenceIntervalEC50Normalized) {
-//        this.confidenceIntervalEC50Normalized = confidenceIntervalEC50Normalized;
-//    }
-//
-//    public Double[] getConfidenceIntervalHillslopeNormalized() {
-//        return confidenceIntervalHillslopeNormalized;
-//    }
-//
-//    public void setConfidenceIntervalHillslopeNormalized(Double[] confidenceIntervalHillslopeNormalized) {
-//        this.confidenceIntervalHillslopeNormalized = confidenceIntervalHillslopeNormalized;
-//    }
+    public double getStdErrBottomNormalized() {
+        return stdErrBottomNormalized;
+    }
+
+    public void setStdErrBottomNormalized(double stdErrBottomNormalized) {
+        this.stdErrBottomNormalized = stdErrBottomNormalized;
+    }
+
+    public double getStdErrTopNormalized() {
+        return stdErrTopNormalized;
+    }
+
+    public void setStdErrTopNormalized(double stdErrTopNormalized) {
+        this.stdErrTopNormalized = stdErrTopNormalized;
+    }
+
+    public double getStdErrLogEC50Normalized() {
+        return stdErrLogEC50Normalized;
+    }
+
+    public void setStdErrLogEC50Normalized(double stdErrLogEC50Normalized) {
+        this.stdErrLogEC50Normalized = stdErrLogEC50Normalized;
+    }
+
+    public double getStdErrHillslopeNormalized() {
+        return stdErrHillslopeNormalized;
+    }
+
+    public void setStdErrHillslopeNormalized(double stdErrHillslopeNormalized) {
+        this.stdErrHillslopeNormalized = stdErrHillslopeNormalized;
+    }
+
+    public Double[] getcIBottomNormalized() {
+        return cIBottomNormalized;
+    }
+
+    public void setcIBottomNormalized(Double[] cIBottomNormalized) {
+        this.cIBottomNormalized = cIBottomNormalized;
+    }
+
+    public Double[] getcITopNormalized() {
+        return cITopNormalized;
+    }
+
+    public void setcITopNormalized(Double[] cITopNormalized) {
+        this.cITopNormalized = cITopNormalized;
+    }
+
+    public Double[] getcILogEC50Normalized() {
+        return cILogEC50Normalized;
+    }
+
+    public void setcILogEC50Normalized(Double[] cILogEC50Normalized) {
+        this.cILogEC50Normalized = cILogEC50Normalized;
+    }
+
+    public Double[] getcIEC50Normalized() {
+        return cIEC50Normalized;
+    }
+
+    public void setcIEC50Normalized(Double[] cIEC50Normalized) {
+        this.cIEC50Normalized = cIEC50Normalized;
+    }
+
+    public Double[] getcIHillslopeNormalized() {
+        return cIHillslopeNormalized;
+    }
+
+    public void setcIHillslopeNormalized(Double[] cIHillslopeNormalized) {
+        this.cIHillslopeNormalized = cIHillslopeNormalized;
+    }
 
 }

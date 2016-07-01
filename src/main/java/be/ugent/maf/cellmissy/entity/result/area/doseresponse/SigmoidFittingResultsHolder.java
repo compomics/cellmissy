@@ -5,12 +5,16 @@
  */
 package be.ugent.maf.cellmissy.entity.result.area.doseresponse;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
- *This class keeps information of the fitting to a dose-response model.
+ * This class keeps information of the fitting to a dose-response model.
+ *
  * @author Gwendolien
  */
 public class SigmoidFittingResultsHolder {
-    
+
     //minimum response, best-fit value or constrained by user
     private double bottom;
 
@@ -19,14 +23,17 @@ public class SigmoidFittingResultsHolder {
 
     //best-fit value or standard hillslope of curve
     private double hillslope;
-    
+
     //log of 50% effective concentration
     private double logEC50;
-    
-    
+
+    //contains parameter estimates from every fitter iteration
+    private HashMap<String, List<Double>> parameterDistributions;
+
     /**
      * Getters and setters
-     * @return 
+     *
+     * @return
      */
     public double getBottom() {
         return bottom;
@@ -59,6 +66,13 @@ public class SigmoidFittingResultsHolder {
     public void setLogEC50(double logEC50) {
         this.logEC50 = logEC50;
     }
-    
-    
+
+    public HashMap<String, List<Double>> getParameterDistributions() {
+        return parameterDistributions;
+    }
+
+    public void setParameterDistributions(HashMap<String, List<Double>> parameterDistributions) {
+        this.parameterDistributions = parameterDistributions;
+    }
+
 }
