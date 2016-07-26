@@ -22,8 +22,12 @@
 ----
 
 ## News
+**June 2016**
+[CellMissy 1.1.0](http://genesis.ugent.be/uvpublicdata/cellmissy/CellMissy-1.1.0.zip) is now available! Single-cell migration analysis implemented!
+
 **November 30, 2013**: 
 [CellMissy 1.0.4](http://genesis.ugent.be/uvpublicdata/cellmissy/CellMissy-1.0.4.zip) is now available!
+
 
 **CellMissy**: DB schema has been modified to take into account users privileges in relation to projects and experiments. Download the new SQL script to create your *CellMissy* DB (see more in the [downloads section](#downloads)).
 
