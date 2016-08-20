@@ -41,30 +41,30 @@ public class DoseResponseAnalysisResults {
     private double stdErrHillslopeInitial;
 
     //array with lower and upper values of 95% confidence interval of bottom
-    private Double[] cIBottomInitial;
+    private double[] cIBottomInitial;
 
     //array with lower and upper values of 95% confidence interval of top
-    private Double[] cITopInitial;
+    private double[] cITopInitial;
 
     //array with lower and upper values of 95% confidence interval of logEC50
-    private Double[] cILogEC50Initial;
+    private double[] cILogEC50Initial;
 
     //lower and upper values of 95% confidence interval of EC50
-    private Double[] cIEC50Initial;
+    private double[] cIEC50Initial;
 
     //lower and upper values of 95% confidence interval of hillslope (if fitted)
-    private Double[] cIHillslopeInitial;
+    private double[] cIHillslopeInitial;
 
     //same variables as above, only this time from fitting the normalized data
     private double stdErrBottomNormalized;
     private double stdErrTopNormalized;
     private double stdErrLogEC50Normalized;
     private double stdErrHillslopeNormalized;
-    private Double[] cIBottomNormalized;
-    private Double[] cITopNormalized;
-    private Double[] cILogEC50Normalized;
-    private Double[] cIEC50Normalized;
-    private Double[] cIHillslopeNormalized;
+    private double[] cIBottomNormalized;
+    private double[] cITopNormalized;
+    private double[] cILogEC50Normalized;
+    private double[] cIEC50Normalized;
+    private double[] cIHillslopeNormalized;
 
     public DoseResponseAnalysisResults() {
         this.initialFittingResults = new SigmoidFittingResultsHolder();
@@ -132,43 +132,43 @@ public class DoseResponseAnalysisResults {
         this.stdErrHillslopeInitial = stdErrHillslopeInitial;
     }
 
-    public Double[] getcIBottomInitial() {
+    public double[] getcIBottomInitial() {
         return cIBottomInitial;
     }
 
-    public void setcIBottomInitial(Double[] cIBottomInitial) {
+    public void setcIBottomInitial(double[] cIBottomInitial) {
         this.cIBottomInitial = cIBottomInitial;
     }
 
-    public Double[] getcITopInitial() {
+    public double[] getcITopInitial() {
         return cITopInitial;
     }
 
-    public void setcITopInitial(Double[] cITopInitial) {
+    public void setcITopInitial(double[] cITopInitial) {
         this.cITopInitial = cITopInitial;
     }
 
-    public Double[] getcILogEC50Initial() {
+    public double[] getcILogEC50Initial() {
         return cILogEC50Initial;
     }
 
-    public void setcILogEC50Initial(Double[] cILogEC50Initial) {
+    public void setcILogEC50Initial(double[] cILogEC50Initial) {
         this.cILogEC50Initial = cILogEC50Initial;
     }
 
-    public Double[] getcIEC50Initial() {
+    public double[] getcIEC50Initial() {
         return cIEC50Initial;
     }
 
-    public void setcIEC50Initial(Double[] cIEC50Initial) {
+    public void setcIEC50Initial(double[] cIEC50Initial) {
         this.cIEC50Initial = cIEC50Initial;
     }
 
-    public Double[] getcIHillslopeInitial() {
+    public double[] getcIHillslopeInitial() {
         return cIHillslopeInitial;
     }
 
-    public void setcIHillslopeInitial(Double[] cIHillslopeInitial) {
+    public void setcIHillslopeInitial(double[] cIHillslopeInitial) {
         this.cIHillslopeInitial = cIHillslopeInitial;
     }
 
@@ -220,43 +220,43 @@ public class DoseResponseAnalysisResults {
         this.stdErrHillslopeNormalized = stdErrHillslopeNormalized;
     }
 
-    public Double[] getcIBottomNormalized() {
+    public double[] getcIBottomNormalized() {
         return cIBottomNormalized;
     }
 
-    public void setcIBottomNormalized(Double[] cIBottomNormalized) {
+    public void setcIBottomNormalized(double[] cIBottomNormalized) {
         this.cIBottomNormalized = cIBottomNormalized;
     }
 
-    public Double[] getcITopNormalized() {
+    public double[] getcITopNormalized() {
         return cITopNormalized;
     }
 
-    public void setcITopNormalized(Double[] cITopNormalized) {
+    public void setcITopNormalized(double[] cITopNormalized) {
         this.cITopNormalized = cITopNormalized;
     }
 
-    public Double[] getcILogEC50Normalized() {
+    public double[] getcILogEC50Normalized() {
         return cILogEC50Normalized;
     }
 
-    public void setcILogEC50Normalized(Double[] cILogEC50Normalized) {
+    public void setcILogEC50Normalized(double[] cILogEC50Normalized) {
         this.cILogEC50Normalized = cILogEC50Normalized;
     }
 
-    public Double[] getcIEC50Normalized() {
+    public double[] getcIEC50Normalized() {
         return cIEC50Normalized;
     }
 
-    public void setcIEC50Normalized(Double[] cIEC50Normalized) {
+    public void setcIEC50Normalized(double[] cIEC50Normalized) {
         this.cIEC50Normalized = cIEC50Normalized;
     }
 
-    public Double[] getcIHillslopeNormalized() {
+    public double[] getcIHillslopeNormalized() {
         return cIHillslopeNormalized;
     }
 
-    public void setcIHillslopeNormalized(Double[] cIHillslopeNormalized) {
+    public void setcIHillslopeNormalized(double[] cIHillslopeNormalized) {
         this.cIHillslopeNormalized = cIHillslopeNormalized;
     }
 

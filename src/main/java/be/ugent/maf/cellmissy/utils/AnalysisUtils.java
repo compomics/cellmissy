@@ -533,4 +533,49 @@ public class AnalysisUtils {
                 / (1 + Math.pow(10, (resultsholder.getLogEC50() - xValue) * resultsholder.getHillslope())));
     }
 
+    /**
+     * Calculate the standard deviation of a parameter given the estimated value
+     * and a distibution of values.
+     *
+     * @param parameter Best-fit value estimated by a fitter
+     * @param parameterDistribution Intermediate parameter estimations from
+     * fitting
+     * @return How the distribution values differ from the best-fit estimation
+     */
+    public static double calculateStandardDeviationOfParameter(double parameter, List<Double> parameterDistribution) {
+        double sum = 0;
+        for (double sample : parameterDistribution) {
+            double diff = sample - parameter;
+            sum += diff * diff;
+        }
+        return Math.sqrt(sum / parameterDistribution.size());
+    }
+
+    /**
+     *
+     * @param parameter Best-fit value estimated by a fitter
+     * @param parameterDistribution Intermediate parameter estimations from
+     * fitting
+     * @return The standard error of the best-fit estimation
+     */
+    public static double calculateStandardError(double parameter, List<Double> parameterDistribution) {
+        return (calculateStandardDeviationOfParameter(parameter, parameterDistribution) / Math.sqrt(parameterDistribution.size()));
+    }
+
+    /**
+     * Calculate a confidence interval given an estimated value, it's standard
+     * error and the quantile which determines the confidence level.
+     *
+     * @param value
+     * @param standardError
+     * @param quantile of the normal distribution. This is 1.96 for a standard
+     * 95% confidence interval
+     * @return The lower and upper boundaries of the confidence interval.
+     */
+    public static double[] calculateConfidenceIntervalBoundaries(double value, double standardError, double quantile) {
+        double[] result = new double[2];
+        result[0] = value - (standardError * quantile);
+        result[1] = value + (standardError * quantile);
+        return result;
+    }
 }
