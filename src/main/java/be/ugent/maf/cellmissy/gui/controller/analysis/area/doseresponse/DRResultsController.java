@@ -296,7 +296,7 @@ public class DRResultsController {
         data[14][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcITopInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcITopInitial()[1]);
         data[15][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeInitial()[1]);
         data[16][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Initial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Initial()[1]);
-        data[17][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIEC50Initial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIEC50Initial()[1]);
+        data[17][1] = df.format(analysisResults.getcIEC50Initial()[0]) + " to " + df.format(analysisResults.getcIEC50Initial()[1]);
         //set third column (normalized fitting results)
         data[1][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getNormalizedFittingResults().getBottom());
         data[2][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getNormalizedFittingResults().getTop());
@@ -312,7 +312,7 @@ public class DRResultsController {
         data[14][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[1]);
         data[15][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeNormalized()[1]);
         data[16][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Normalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Normalized()[1]);
-        data[17][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIEC50Normalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIEC50Normalized()[1]);
+        data[17][2] = df.format(analysisResults.getcIEC50Normalized()[0]) + " to " + df.format(analysisResults.getcIEC50Normalized()[1]);
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "";
         columnNames[1] = "Initial fitting";
