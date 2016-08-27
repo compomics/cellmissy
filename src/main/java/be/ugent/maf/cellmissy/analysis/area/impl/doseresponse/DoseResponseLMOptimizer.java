@@ -208,7 +208,13 @@ public class DoseResponseLMOptimizer extends LevenbergMarquardtOptimizer {
                 currentPoint = current.getPoint().toArray();
                 //put new parameter estimates in collection
                 for (int i = 0; i < currentPoint.length; i++) {
-                    parameterDistr.get(i).add(currentPoint[i]);
+                    if (parameterDistr.get(i) != null) {
+                        parameterDistr.get(i).add(currentPoint[i]);
+                    } else {
+                        parameterDistr.put(i, new ArrayList<Double>());
+                        parameterDistr.get(i).add(currentPoint[i]);
+                    }
+                    
                 }
 
                 // compute the scaled actual reduction

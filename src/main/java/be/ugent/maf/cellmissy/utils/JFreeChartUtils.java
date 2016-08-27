@@ -519,9 +519,11 @@ public class JFreeChartUtils {
 
         ValueAxis domain1 = new NumberAxis("Log of concentration");
         if (!normalized) {
-            ValueAxis range1 = new NumberAxis("Velocity (ÂµMÂ²/min)");
+            ValueAxis range1 = new NumberAxis("Velocity (µM²/min)");
+            plot.setRangeAxis(0, range1);
         } else {
             ValueAxis range1 = new NumberAxis("Response (%)");
+            plot.setRangeAxis(0, range1);
         }
         domain1.setUpperBound(-3.0);
         domain1.setLowerBound(-8.0);
@@ -530,7 +532,6 @@ public class JFreeChartUtils {
         plot.setDataset(0, dataset1);
         plot.setRenderer(0, renderer1);
         plot.setDomainAxis(0, domain1);
-        //plot.setRangeAxis(0, range1);
         // Map the scatter to the first Domain and first Range
         plot.mapDatasetToDomainAxis(0, 0);
         plot.mapDatasetToRangeAxis(0, 0);

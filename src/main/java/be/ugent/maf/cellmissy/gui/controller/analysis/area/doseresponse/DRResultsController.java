@@ -130,29 +130,54 @@ public class DRResultsController {
         analysisResults.setEc50Normalized(Math.pow(10, normalizedFittingResults.getLogEC50()));
 
         //calculate and set statistics per parameter
+        //check if parameter was constrained (no distribution): set stats to 0/null
         //"bottom"
         double parameter = initialFittingResults.getBottom();
-        double stdErr = AnalysisUtils.calculateStandardError(parameter, initialFittingResults.getParameterDistributions().get("bottom"));
-        analysisResults.setStdErrBottomInitial(stdErr);
-        analysisResults.setcIBottomInitial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        List<Double> distribution = initialFittingResults.getParameterDistributions().get("bottom");
+        if (distribution == null) {
+            analysisResults.setStdErrBottomInitial(0);
+            analysisResults.setcIBottomInitial(null);
+        } else {
+            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
+            analysisResults.setStdErrBottomInitial(stdErr);
+            analysisResults.setcIBottomInitial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        }
         parameter = normalizedFittingResults.getBottom();
-        stdErr = AnalysisUtils.calculateStandardError(parameter, normalizedFittingResults.getParameterDistributions().get("bottom"));
-        analysisResults.setStdErrBottomNormalized(stdErr);
-        analysisResults.setcIBottomNormalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        distribution = normalizedFittingResults.getParameterDistributions().get("bottom");
+        if (distribution == null) {
+            analysisResults.setStdErrBottomNormalized(0);
+            analysisResults.setcIBottomNormalized(null);
+        } else {
+            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
+            analysisResults.setStdErrBottomNormalized(stdErr);
+            analysisResults.setcIBottomNormalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        }
 
         //"top"
         parameter = initialFittingResults.getTop();
-        stdErr = AnalysisUtils.calculateStandardError(parameter, initialFittingResults.getParameterDistributions().get("top"));
-        analysisResults.setStdErrTopInitial(stdErr);
-        analysisResults.setcITopInitial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        distribution = initialFittingResults.getParameterDistributions().get("top");
+        if (distribution == null) {
+            analysisResults.setStdErrTopInitial(0);
+            analysisResults.setcITopInitial(null);
+        } else {
+            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
+            analysisResults.setStdErrTopInitial(stdErr);
+            analysisResults.setcITopInitial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        }
         parameter = normalizedFittingResults.getTop();
-        stdErr = AnalysisUtils.calculateStandardError(parameter, normalizedFittingResults.getParameterDistributions().get("top"));
-        analysisResults.setStdErrTopNormalized(stdErr);
-        analysisResults.setcITopNormalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        distribution = normalizedFittingResults.getParameterDistributions().get("top");
+        if (distribution == null) {
+            analysisResults.setStdErrTopNormalized(0);
+            analysisResults.setcITopNormalized(null);
+        } else {
+            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
+            analysisResults.setStdErrTopNormalized(stdErr);
+            analysisResults.setcITopNormalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
+        }
 
         //"logEC50"
         parameter = initialFittingResults.getLogEC50();
-        stdErr = AnalysisUtils.calculateStandardError(parameter, initialFittingResults.getParameterDistributions().get("logec50"));
+        double stdErr = AnalysisUtils.calculateStandardError(parameter, initialFittingResults.getParameterDistributions().get("logec50"));
         analysisResults.setStdErrLogEC50Initial(stdErr);
         analysisResults.setcILogEC50Initial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
         parameter = normalizedFittingResults.getLogEC50();
@@ -288,12 +313,28 @@ public class DRResultsController {
         data[4][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getInitialFittingResults().getLogEC50());
         data[5][1] = df.format(analysisResults.getEc50Initial());
         data[6][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getGoodnessOfFitInitial());
-        data[8][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrBottomInitial());
-        data[9][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrTopInitial());
+        if (analysisResults.getStdErrBottomInitial() != 0) {
+            data[8][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrBottomInitial());
+        } else {
+            data[8][1] = "--";
+        }
+        if (analysisResults.getStdErrTopInitial() != 0) {
+            data[9][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrTopInitial());
+        } else {
+            data[9][1] = "--";
+        }
         data[10][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrHillslopeInitial());
         data[11][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrLogEC50Initial());
-        data[13][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomInitial()[1]);
-        data[14][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcITopInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcITopInitial()[1]);
+        if (analysisResults.getcIBottomInitial() != null){
+            data[13][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomInitial()[1]);
+        } else {
+            data[13][1] = "--";
+        }
+        if (analysisResults.getcITopInitial() != null) {
+            data[14][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcITopInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcITopInitial()[1]);
+        } else {
+            data[14][1] = "--";
+        }
         data[15][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeInitial()[1]);
         data[16][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Initial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Initial()[1]);
         data[17][1] = df.format(analysisResults.getcIEC50Initial()[0]) + " to " + df.format(analysisResults.getcIEC50Initial()[1]);
@@ -304,12 +345,28 @@ public class DRResultsController {
         data[4][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getNormalizedFittingResults().getLogEC50());
         data[5][2] = df.format(analysisResults.getEc50Normalized());
         data[6][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getGoodnessOfFitNormalized());
-        data[8][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrBottomNormalized());
-        data[9][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrTopNormalized());
+        if (analysisResults.getStdErrBottomNormalized() != 0) {
+            data[8][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrBottomNormalized());
+        } else {
+            data[8][2] = "--";
+        }
+        if (analysisResults.getStdErrTopNormalized() != 0) {
+            data[9][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrTopNormalized());
+        } else {
+            data[9][2] = "--";
+        }
         data[10][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrHillslopeNormalized());
         data[11][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrLogEC50Normalized());
-        data[13][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomNormalized()[1]);
-        data[14][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[1]);
+        if (analysisResults.getcIBottomNormalized() != null) {
+            data[13][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomNormalized()[1]);
+        } else {
+            data[13][2] = "--";
+        }
+        if (analysisResults.getcITopNormalized() != null){
+            data[14][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[1]);
+        } else {
+            data[14][2] = "--";
+        }
         data[15][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIHillslopeNormalized()[1]);
         data[16][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Normalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcILogEC50Normalized()[1]);
         data[17][2] = df.format(analysisResults.getcIEC50Normalized()[0]) + " to " + df.format(analysisResults.getcIEC50Normalized()[1]);
