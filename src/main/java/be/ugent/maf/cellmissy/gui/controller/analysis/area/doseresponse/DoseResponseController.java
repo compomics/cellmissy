@@ -191,7 +191,7 @@ public class DoseResponseController {
      * Do a fitting according to initial, standard parameters and calculate
      * statistics.
      */
-    public void initFirstFitting() {
+    private void initFirstFitting() {
         dRInitialController.initDRInitialData();
         dRNormalizedController.initDRNormalizedData();
         dRResultsController.initDRResultsData();
@@ -203,7 +203,7 @@ public class DoseResponseController {
      *
      * @param messageToShow
      */
-    public void updateTableInfoMessage(String messageToShow) {
+    private void updateTableInfoMessage(String messageToShow) {
         dRPanel.getTableInfoLabel().setText(messageToShow);
     }
 
@@ -211,14 +211,14 @@ public class DoseResponseController {
      * When switching to a different subview, change the model for the main
      * table.
      */
-    public void updateModelInTable(NonEditableTableModel tableModel) {
+    protected void updateModelInTable(NonEditableTableModel tableModel) {
         dataTable.setModel(tableModel);
     }
 
     /**
      * Plots the fitted data.
      */
-    public void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+    protected void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, analysisGroup, normalized);
         chartPanel.setChart(doseResponseChart);
         //add chartpanel to graphics parent panel and repaint
@@ -238,7 +238,7 @@ public class DoseResponseController {
      * @param topConstrained Double if user constrains, otherwise null
      *
      */
-    public void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
+    protected void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
 
         if (topConstrained != null) {
             if (bottomConstrained != null) {
@@ -257,7 +257,7 @@ public class DoseResponseController {
      * Calculate statistics, method from results controller is called by other
      * child controllers on new fitting.
      */
-    public void calculateStatistics() {
+    protected void calculateStatistics() {
         dRResultsController.calculateStatistics(dRAnalysisGroup);
     }
 
@@ -268,6 +268,7 @@ public class DoseResponseController {
         dRAnalysisGroup = new DoseResponseAnalysisGroup();
         dataTable.setModel(new DefaultTableModel());
         dRInputController.onCancel();
+        //remove tables, graphs and subpanels
         dRInputController.getdRInputPanel().getSlopesTable().setModel(new DefaultTableModel());
         dRInitialController.getInitialChartPanel().setChart(null);
         dRNormalizedController.getNormalizedChartPanel().setChart(null);
@@ -277,6 +278,8 @@ public class DoseResponseController {
         dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
         dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
         dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
+        //set view back to first one
+        dRPanel.getInputDRButton().setSelected(true);
         dRPanel.revalidate();
         dRPanel.repaint();
     }
@@ -292,7 +295,7 @@ public class DoseResponseController {
      * @param normalized Whether the data is normalized or not
      * @return
      */
-    public JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+    protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         
         //setup scatter data of experimental concentrations/slopes, renderer and axis
         XYSeriesCollection experimentalData = new XYSeriesCollection();
@@ -339,7 +342,7 @@ public class DoseResponseController {
      * @param normalized Whether the method takes the fitted parameters from the
      * normalized or initial fitting
      */
-    public XYSeries simulateData(DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+    protected XYSeries simulateData(DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
         SigmoidFittingResultsHolder resultsholder = null;
         if (!normalized) {
@@ -356,7 +359,7 @@ public class DoseResponseController {
      *
      * @throws IOException
      */
-    public void createPdfReport() throws IOException {
+    protected void createPdfReport() throws IOException {
         Experiment experiment = areaMainController.getExperiment();
         // choose directory to save pdf file
         JFileChooser chooseDirectory = new JFileChooser();
