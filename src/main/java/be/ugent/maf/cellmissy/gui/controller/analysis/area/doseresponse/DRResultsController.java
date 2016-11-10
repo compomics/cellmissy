@@ -129,72 +129,30 @@ public class DRResultsController {
         analysisResults.setEc50Initial(Math.pow(10, initialFittingResults.getLogEC50()));
         analysisResults.setEc50Normalized(Math.pow(10, normalizedFittingResults.getLogEC50()));
 
-        //calculate and set statistics per parameter
-        //check if parameter was constrained (no distribution): set stats to 0/null
-        //"bottom"
-        double parameter = initialFittingResults.getBottom();
-        List<Double> distribution = initialFittingResults.getParameterDistributions().get("bottom");
-        if (distribution == null) {
-            analysisResults.setStdErrBottomInitial(0);
-            analysisResults.setcIBottomInitial(null);
-        } else {
-            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
-            analysisResults.setStdErrBottomInitial(stdErr);
-            analysisResults.setcIBottomInitial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-        }
-        parameter = normalizedFittingResults.getBottom();
-        distribution = normalizedFittingResults.getParameterDistributions().get("bottom");
-        if (distribution == null) {
-            analysisResults.setStdErrBottomNormalized(0);
-            analysisResults.setcIBottomNormalized(null);
-        } else {
-            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
-            analysisResults.setStdErrBottomNormalized(stdErr);
-            analysisResults.setcIBottomNormalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-        }
-
-        //"top"
-        parameter = initialFittingResults.getTop();
-        distribution = initialFittingResults.getParameterDistributions().get("top");
-        if (distribution == null) {
-            analysisResults.setStdErrTopInitial(0);
-            analysisResults.setcITopInitial(null);
-        } else {
-            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
-            analysisResults.setStdErrTopInitial(stdErr);
-            analysisResults.setcITopInitial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-        }
-        parameter = normalizedFittingResults.getTop();
-        distribution = normalizedFittingResults.getParameterDistributions().get("top");
-        if (distribution == null) {
-            analysisResults.setStdErrTopNormalized(0);
-            analysisResults.setcITopNormalized(null);
-        } else {
-            double stdErr = AnalysisUtils.calculateStandardError(parameter, distribution);
-            analysisResults.setStdErrTopNormalized(stdErr);
-            analysisResults.setcITopNormalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-        }
-
-        //"logEC50"
-        parameter = initialFittingResults.getLogEC50();
-        double stdErr = AnalysisUtils.calculateStandardError(parameter, initialFittingResults.getParameterDistributions().get("logec50"));
-        analysisResults.setStdErrLogEC50Initial(stdErr);
-        analysisResults.setcILogEC50Initial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-        parameter = normalizedFittingResults.getLogEC50();
-        stdErr = AnalysisUtils.calculateStandardError(parameter, normalizedFittingResults.getParameterDistributions().get("logec50"));
-        analysisResults.setStdErrLogEC50Normalized(stdErr);
-        analysisResults.setcILogEC50Normalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-
-        //"hillslope"
-        parameter = initialFittingResults.getHillslope();
-        stdErr = AnalysisUtils.calculateStandardError(parameter, initialFittingResults.getParameterDistributions().get("hillslope"));
-        analysisResults.setStdErrHillslopeInitial(stdErr);
-        analysisResults.setcIHillslopeInitial(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-        parameter = normalizedFittingResults.getLogEC50();
-        stdErr = AnalysisUtils.calculateStandardError(parameter, normalizedFittingResults.getParameterDistributions().get("hillslope"));
-        analysisResults.setStdErrHillslopeNormalized(stdErr);
-        analysisResults.setcIHillslopeNormalized(AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, stdErr, 1.96));
-
+        //calculate and set statistics of the parameters
+        //statistics of the initial fitting
+        double[] standardErrors = AnalysisUtils.calculateStandardErrors(doseResponseController.getDataToFit(false), initialFittingResults);
+        analysisResults.setStdErrBottomInitial(standardErrors[0]);
+        analysisResults.setcIBottomInitial(checkAndGetCI(initialFittingResults.getBottom(), standardErrors[0]));
+        analysisResults.setStdErrTopInitial(standardErrors[1]);
+        analysisResults.setcITopInitial(checkAndGetCI(initialFittingResults.getTop(), standardErrors[1]));
+        analysisResults.setStdErrLogEC50Initial(standardErrors[2]);
+        analysisResults.setcILogEC50Initial(checkAndGetCI(initialFittingResults.getLogEC50(), standardErrors[2]));
+        analysisResults.setStdErrHillslopeInitial(standardErrors[3]);
+        analysisResults.setcIHillslopeInitial(checkAndGetCI(initialFittingResults.getHillslope(), standardErrors[3]));
+        
+        //statistics of the normalized fitting
+        standardErrors = AnalysisUtils.calculateStandardErrors(doseResponseController.getDataToFit(true), normalizedFittingResults);
+        analysisResults.setStdErrBottomNormalized(standardErrors[0]);
+        analysisResults.setcIBottomNormalized(checkAndGetCI(normalizedFittingResults.getBottom(), standardErrors[0]));
+        analysisResults.setStdErrTopNormalized(standardErrors[1]);
+        analysisResults.setcITopNormalized(checkAndGetCI(normalizedFittingResults.getTop(), standardErrors[1]));
+        analysisResults.setStdErrLogEC50Normalized(standardErrors[2]);
+        analysisResults.setcILogEC50Normalized(checkAndGetCI(normalizedFittingResults.getLogEC50(), standardErrors[2]));
+        analysisResults.setStdErrHillslopeNormalized(standardErrors[3]);
+        analysisResults.setcIHillslopeNormalized(checkAndGetCI(normalizedFittingResults.getHillslope(), standardErrors[3]));
+                
+      
         //confidence interval for ec50 (antilog of logec50 ci bounds)
         double[] cILogEc50initial = analysisResults.getcILogEC50Initial();
         double[] cILogEc50normalized = analysisResults.getcILogEC50Normalized();
@@ -271,6 +229,14 @@ public class DRResultsController {
 
             }
         });
+    }
+    
+    private double[] checkAndGetCI(double parameter, double standardError) {
+        if (standardError != 0.0) {
+            return AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, standardError);
+        } else {
+            return null;
+        }
     }
 
     /**

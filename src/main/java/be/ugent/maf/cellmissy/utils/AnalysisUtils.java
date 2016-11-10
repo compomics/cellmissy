@@ -80,7 +80,7 @@ public class AnalysisUtils {
         }
         return transposed;
     }
-    
+
     /**
      * Transpose a 2D array of double
      *
@@ -557,18 +557,19 @@ public class AnalysisUtils {
 
     /**
      * Calculate a confidence interval given an estimated value, it's standard
-     * error and the quantile which determines the confidence level.
+     * error and the quantile which determines the confidence level. A possible
+     * extra param is the quantile of the normal distribution. This is 1.96 for a
+     * standard 95% confidence interval
      *
      * @param value
      * @param standardError
-     * @param quantile of the normal distribution. This is 1.96 for a standard
-     * 95% confidence interval
+     *
      * @return The lower and upper boundaries of the confidence interval.
      */
-    public static double[] calculateConfidenceIntervalBoundaries(double value, double standardError, double quantile) {
+    public static double[] calculateConfidenceIntervalBoundaries(double value, double standardError) {
         double[] result = new double[2];
-        result[0] = value - (standardError * quantile);
-        result[1] = value + (standardError * quantile);
+        result[0] = value - (standardError * 1.96);
+        result[1] = value + (standardError * 1.96);
         return result;
     }
 
@@ -614,10 +615,11 @@ public class AnalysisUtils {
      * parameter name
      * @return
      */
-    public static double[] calculateStandardErrors(LinkedHashMap<Double, List<Double>> data, SigmoidFittingResultsHolder resultsholder, HashMap<String, List<Double>> parameterDistributions) {
+    public static double[] calculateStandardErrors(LinkedHashMap<Double, List<Double>> data, SigmoidFittingResultsHolder resultsholder) {
         //lenght of the result array is always 4, for the max amount of parameters possible to be estimated in a dose-response fit.
         double[] result = new double[4];
         List<String> constrainedParameters = new ArrayList<>();
+        HashMap<String, List<Double>> parameterDistributions = resultsholder.getParameterDistributions();
         //calculate residual sum of squares
         double ssRes = 0.0;
         double[] experimentalYS = generateYValues(data);
@@ -678,8 +680,8 @@ public class AnalysisUtils {
     private static double[][] convertParameterDistributions(HashMap<String, List<Double>> parameterDistributions, List<String> contrainedParameters) {
         double[][] result = new double[parameterDistributions.size()][];
         //Intermediate array to help convert from Double to double
-        Double [] tempArray = new Double[parameterDistributions.get("logec50").size()];
-        
+        Double[] tempArray = new Double[parameterDistributions.get("logec50").size()];
+
         if (contrainedParameters.isEmpty()) {
             parameterDistributions.get("bottom").toArray(tempArray);
             result[0] = ArrayUtils.toPrimitive(tempArray.clone());
