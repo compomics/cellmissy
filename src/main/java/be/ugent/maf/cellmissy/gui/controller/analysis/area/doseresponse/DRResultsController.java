@@ -68,7 +68,7 @@ public class DRResultsController {
     private GridBagConstraints gridBagConstraints;
 
     /**
-     * Initialize controller
+     * Initialise controller
      */
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
@@ -115,8 +115,9 @@ public class DRResultsController {
     }
 
     /**
-     * Calculate statictics and set corresponding fields in analysisResults
+     * Calculate statistics and set corresponding fields in analysisResults
      * class. Called by sibling controllers after fitting.
+     * @param analysisGroup
      */
     public void calculateStatistics(DoseResponseAnalysisGroup analysisGroup) {
         DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
@@ -435,7 +436,7 @@ public class DRResultsController {
         PdfUtils.addEmptyLines(document, 1);
         // add information on dataset (algorithm) and imaging type analyzed
         List<String> lines = new ArrayList<>();
-        String line = "DATASET: " + doseResponseController.getSelectedALgorithm();
+        String line = "DATASET: " + doseResponseController.getSelectedAlgorithm();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);

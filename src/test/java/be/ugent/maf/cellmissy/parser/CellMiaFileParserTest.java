@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.parser;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,12 +33,12 @@ public class CellMiaFileParserTest {
      * cellMia files
      */
     @Test
-    public void testCellMiaFileParser() {
+    public void testCellMiaFileParser() throws URISyntaxException {
 
-        File trackingFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("tracking.txt").getPath());
+        File trackingFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("tracking.txt").toURI());
         List<Track> trackList = cellMiaFileParser.parseTrackingFile(trackingFile);
 
-        File bulkCellFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("bulkcell.txt").getPath());
+        File bulkCellFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("bulkcell.txt").toURI());
         List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(bulkCellFile);
 
         Assert.assertTrue(!trackList.isEmpty());

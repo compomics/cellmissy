@@ -63,29 +63,26 @@ public class DRInputController {
     // parent controller
     @Autowired
     private DoseResponseController doseResponseController;
-    // services
-    private GridBagConstraints gridBagConstraints;
 
     /**
-     * Initialize controller
+     * Initialise controller
      */
     public void init() {
         plateConditionsList = new ArrayList<>();
         areaAnalysisResultsList = new ArrayList<>();
         bindingGroup = new BindingGroup();
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         sharedTableModel = new NonEditableTableModel();
         //init view
         initDRInputPanel();
     }
-    
+
     /**
      * Reset on cancel
      */
     public void onCancel() {
         plateConditionsList = new ArrayList<>();
         areaAnalysisResultsList = new ArrayList<>();
-        
+
     }
 
     /**
@@ -110,7 +107,7 @@ public class DRInputController {
     }
 
     /**
-     * Initalize data, called on switch from linear regression to dose-response
+     * Initialise data, called on switch from linear regression to dose-response
      */
     public void initDRInputData() {
         //get conditions processed in area analysis
@@ -210,9 +207,6 @@ public class DRInputController {
                 doseResponseController.setFirstFitting(true);
             }
         });
-
-        //add view to parent panel
-        //doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel, gridBagConstraints);
     }
 
     /**
@@ -220,7 +214,6 @@ public class DRInputController {
      * dose-response analysis group
      */
     private void addToDRAnalysis() {
-        //selected conditions
         List<PlateCondition> selectedConditions = getSelectedConditions();
         if (selectedConditions != null) {
             for (PlateCondition selectedCondition : selectedConditions) {
@@ -244,10 +237,9 @@ public class DRInputController {
     }
 
     /**
-     * Remove selected condition from the dose-response analysis group
+     * Remove selected condition(s) from the dose-response analysis group
      */
     private void removeFromDRAnalysis() {
-        //selected conditions
         List<PlateCondition> selectedConditions = getSelectedConditions();
         for (PlateCondition selectedCondition : selectedConditions) {
             //only possible to remove if group contains selected condition
@@ -257,13 +249,18 @@ public class DRInputController {
                 areaAnalysisResultsList.remove(areaAnalysisResults);
             }
         }
-        doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
+        //only make new analysis group if you have not removed all
+        if (!plateConditionsList.isEmpty()){
+            doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
         //check treatments, dialog pops up if necessary
         checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
         dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
         dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
-
+        } else {
+            //otherwise show new empty table
+            dRInputPanel.getSlopesTable().setModel(new NonEditableTableModel());
+        }
     }
 
     /**
@@ -302,7 +299,6 @@ public class DRInputController {
             List<Treatment> treatmentList = condition.getTreatmentList();
 
             for (Treatment treatment : treatmentList) {
-                //for dose-response treatment category needs to be 1
 
                 conditionNumberList.add(i);
                 treatmentNameList.add(treatment.getTreatmentType().getName());
@@ -364,7 +360,7 @@ public class DRInputController {
         if (velocitiesMap.size() == 0) {
             return new NonEditableTableModel();
         }
-        
+
         int maxReplicates = 0;
         for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
             int replicates = entry.getValue().size();
@@ -442,7 +438,7 @@ public class DRInputController {
     /**
      * Checks analysis group treatments. If there is more than one (excluding
      * control), a dialog must pop up where the user must choose which treatment
-     * to analyze.
+     * to analyse.
      */
     private void checkTreatments(DoseResponseAnalysisGroup analysisGroup, ChooseTreatmentDialog dialog) {
         Set<String> treatmentSet = analysisGroup.getConcentrationsMap().keySet();
@@ -451,6 +447,7 @@ public class DRInputController {
         if (treatmentSet.size() > 2) {
             //Strings are needed for display
             for (String treatment : treatmentSet) {
+                //check for partial string to avoid case sensitivity
                 if (!treatment.contains("ontrol")) {
                     dialog.getTreatmentComboBox().addItem(treatment);
                 }
@@ -465,21 +462,22 @@ public class DRInputController {
             for (String treatment : treatmentSet) {
                 if (!treatment.contains("ontrol")) {
                     analysisGroup.setTreatmentToAnalyse(treatment);
+                    doseResponseController.setFirstFitting(true);
                     break;
                 }
             }
-            doseResponseController.setFirstFitting(true);
         }
     }
 
     /**
      * Sets the treatment to analyse in the analysis group to the treatment with
-     * this name.
+     * this name. Method of the pop-up dialog.
      *
      * @param treatmentName The string selected in the dialog combobox
      */
     private void setTreatment(String treatmentName) {
         Set<String> allTreatments = doseResponseController.getdRAnalysisGroup().getConcentrationsMap().keySet();
+        //additional (perhaps unnecessary) check to avoid outside tampering
         for (String treatment : allTreatments) {
             if (treatment.equals(treatmentName)) {
                 doseResponseController.getdRAnalysisGroup().setTreatmentToAnalyse(treatment);

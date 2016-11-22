@@ -49,12 +49,7 @@ import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTextAnnotation;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -157,7 +152,7 @@ public class DoseResponseController {
         return areaMainController.getExperiment();
     }
 
-    public Algorithm getSelectedALgorithm() {
+    public Algorithm getSelectedAlgorithm() {
         return areaMainController.getSelectedALgorithm();
     }
 
@@ -165,6 +160,12 @@ public class DoseResponseController {
         return firstFitting;
     }
 
+    /**
+     * Set wheter the data needs to be fit for a first time. Is set to true when
+     * creating a analysis group, set to false after performing first fit.
+     *
+     * @param firstFitting
+     */
     public void setFirstFitting(boolean firstFitting) {
         this.firstFitting = firstFitting;
     }
@@ -178,7 +179,7 @@ public class DoseResponseController {
     }
 
     /**
-     * Called by parent controller, initialize tables
+     * Called by parent controller, initialise tables
      */
     public void onDoseResponse() {
         dRInputController.initDRInputData();
@@ -189,7 +190,8 @@ public class DoseResponseController {
 
     /**
      * Do a fitting according to initial, standard parameters and calculate
-     * statistics.
+     * statistics. This method is called when the user switches to the initial
+     * or normalized subview for the first time.
      */
     private void initFirstFitting() {
         dRInitialController.initDRInitialData();
@@ -289,29 +291,29 @@ public class DoseResponseController {
      * and the curve (line) from the fitting. To be visible in the program,
      * another method adds the chart to the right panel.
      *
-     * @param dataToPlot The map created in a child controller, maps
-     * log-transformed concentration to replicate (normalized) velocities.
+     * @param dataToPlot Maps log-transformed concentration to replicate
+     * (normalized) velocities.
      * @param analysisGroup The dose-response analysis group
      * @param normalized Whether the data is normalized or not
      * @return
      */
     protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
-        
+
         //setup scatter data of experimental concentrations/slopes, renderer and axis
         XYSeriesCollection experimentalData = new XYSeriesCollection();
         XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(AnalysisUtils.generateXValues(dataToPlot), AnalysisUtils.generateYValues(dataToPlot));
         scatterXYSeries.setKey("Experimental data");
         experimentalData.addSeries(scatterXYSeries);
-        
+
         // Create the line data, renderer, and axis
         XYSeriesCollection fitting = new XYSeriesCollection();
         // create xy series of simulated data from the parameters from the fitting
         XYSeries fittingData = simulateData(analysisGroup, normalized);
         fittingData.setKey("Fitting");
         fitting.addSeries(fittingData);
-        
+
         XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, normalized);
-        
+
         // show the r squared value
         SigmoidFittingResultsHolder resultsholder = null;
         if (normalized) {
@@ -505,7 +507,7 @@ public class DoseResponseController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (dRAnalysisGroup != null) {
-                //switch shared table view: create and set new table model with most recent statistical values
+                    //switch shared table view: create and set new table model with most recent statistical values
                     // (these values get recalculated after each new fitting)
                     dRResultsController.setTableModel(dRResultsController.reCreateTableModel(dRAnalysisGroup));
                     updateModelInTable(dRResultsController.getTableModel());
