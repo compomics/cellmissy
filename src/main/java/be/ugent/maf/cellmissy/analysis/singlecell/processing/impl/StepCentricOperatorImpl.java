@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -307,7 +305,7 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
             try {
                 tree.insert(key, point);
             } catch (KeySizeException | KeyDuplicateException ex) {
-                Logger.getLogger(EnclosingBallCalculatorImpl.class.getName()).log(Level.INFO, "", ex);
+//                Logger.getLogger(EnclosingBallCalculatorImpl.class.getName()).log(Level.INFO, "", ex);
             }
         }
         return tree;

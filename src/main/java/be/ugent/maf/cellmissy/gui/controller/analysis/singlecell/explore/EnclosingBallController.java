@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.explore;
 
+import be.ugent.maf.cellmissy.analysis.LinearRegressor;
 import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.FractalDimension;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
@@ -12,6 +13,7 @@ import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
@@ -28,6 +30,12 @@ import org.jfree.chart.annotations.XYShapeAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.function.LineFunction2D;
+import org.jfree.data.general.DatasetUtilities;
+import org.jfree.data.statistics.Regression;
+import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +66,8 @@ class EnclosingBallController {
     private ExploreTrackController exploreTrackController;
     // child controllers
     // services
+    @Autowired
+    private LinearRegressor linearRegressor;
     private GridBagConstraints gridBagConstraints;
 
     /**
@@ -256,10 +266,28 @@ class EnclosingBallController {
         String seriesKey = "track " + trackDataHolder.getTrack().getTrackNumber() + ", well " + trackDataHolder.getTrack().getWellHasImagingType().getWell();
         series.setKey(seriesKey);
         XYSeriesCollection collection = new XYSeriesCollection(series);
-        JFreeChart chart = ChartFactory.createXYLineChart(seriesKey + " - FD = " + AnalysisUtils.roundThreeDecimals(fractalDimension.getFD()), "log(1/r)", "log(N)",
-                collection, PlotOrientation.VERTICAL, false, true, false);
+
+        double regression[] = Regression.getOLSRegression(collection, 0);
+        // first the intercept, then the slope
+        LineFunction2D linefunction2d = new LineFunction2D(regression[0], regression[1]);
+
+        fractalDimension.setFD(regression[1]);
+        JFreeChart chart = ChartFactory.createScatterPlot(seriesKey + " - FD = " + AnalysisUtils.roundThreeDecimals(fractalDimension.getFD()),
+                "log(1/r)", "log(N)", collection, PlotOrientation.VERTICAL, false, true, false);
+        // start, end, number of samples
+        XYDataset dataset = DatasetUtilities.sampleFunction2D(linefunction2d, series.getMinX(), series.getMaxX(), 1000, "Fitted Regression Line");
+        chart.getXYPlot().setDataset(1, dataset);
+
         JFreeChartUtils.setupXYPlot(chart.getXYPlot());
         JFreeChartUtils.setupSingleTrackPlot(chart, exploreTrackController.getExploreTrackPanel().getTracksList().getSelectedIndex(), true);
+        XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
+        renderer.setSeriesLinesVisible(0, false);
+        renderer.setSeriesShape(0, new Ellipse2D.Double(0, 0, 8, 8));
+
+        XYItemRenderer renderer2 = new XYLineAndShapeRenderer(true, false);
+        renderer2.setSeriesPaint(0, GuiUtils.getDefaultColor());
+        chart.getXYPlot().setRenderer(1, renderer2);
+
         return chart;
     }
 

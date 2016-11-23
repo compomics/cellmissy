@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -140,6 +141,9 @@ public class AnalysisUtils {
      */
     public static Double roundThreeDecimals(Double d) {
         DecimalFormat threeForm = new DecimalFormat("###.###");
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        threeForm.setDecimalFormatSymbols(dfs);
         return Double.valueOf(threeForm.format(d));
     }
 
@@ -151,6 +155,9 @@ public class AnalysisUtils {
      */
     public static Double roundTwoDecimals(Double d) {
         DecimalFormat twoDForm = new DecimalFormat("###.##");
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        twoDForm.setDecimalFormatSymbols(dfs);
         return Double.valueOf(twoDForm.format(d));
     }
 
@@ -373,7 +380,8 @@ public class AnalysisUtils {
      */
     public static int getNumberOfSingleCellAnalyzedSamplesPerWell(Well well) {
         int numberOfSamplesPerWell = 0;
-        numberOfSamplesPerWell = well.getWellHasImagingTypeList().stream().filter((wellHasImagingType) -> (!wellHasImagingType.getTrackList().isEmpty())).map((_item) -> 1).reduce(numberOfSamplesPerWell, Integer::sum);
+        numberOfSamplesPerWell = well.getWellHasImagingTypeList().stream().filter((wellHasImagingType)
+                -> (!wellHasImagingType.getTrackList().isEmpty())).map((_item) -> 1).reduce(numberOfSamplesPerWell, Integer::sum);
         return numberOfSamplesPerWell;
     }
 

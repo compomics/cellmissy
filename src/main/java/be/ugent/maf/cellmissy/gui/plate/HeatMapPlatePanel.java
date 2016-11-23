@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package be.ugent.maf.cellmissy.gui.plate;
@@ -8,25 +9,29 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Analysis Plate View: Show wells with rectangles around: each rectangle has it
- * own colour, according to condition colour. This class is used in the analysis
- * step, to show conditions on the plate view.
+ * An extension of the abstract plate panel to show the plate in the form of a
+ * heat map.
  *
- * @author Paola Masuzzo
+ * @author Paola
  */
-public class AnalysisPlatePanel extends AbstractPlatePanel {
+public class HeatMapPlatePanel extends AbstractPlatePanel {
 
+    // the experiment
     private Experiment experiment;
-    private PlateCondition currentCondition;
+    // the third dimension of the heatmap, i.e. the quantity to show
+    // this is computed in the controller class
+    private Map<Well, Double> values;
+    private double min;
+    private double max;
 
     /**
      * set Experiment
@@ -37,13 +42,28 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         this.experiment = experiment;
     }
 
-    /**
-     * Set current condition
-     *
-     * @param currentCondition
-     */
-    public void setCurrentCondition(PlateCondition currentCondition) {
-        this.currentCondition = currentCondition;
+    public void setValues(Map<Well, Double> values) {
+        this.values = values;
+    }
+
+    public void setMin(double min) {
+        this.min = min;
+    }
+
+    public void setMax(double max) {
+        this.max = max;
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public double getMax() {
+        return max;
+    }
+
+    public Map<Well, Double> getValues() {
+        return values;
     }
 
     @Override
@@ -92,17 +112,10 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
         }
     }
 
-    /**
-     * Render wells Override method from Abstract Plate Panel: if wells have
-     * already been rendered, just redraw them
-     *
-     * @param g
-     */
     @Override
     protected void reDrawWells(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         GuiUtils.setGraphics(g2d);
-        int length = GuiUtils.getAvailableColors().length;
 
         // draw all the wells
         for (WellGui wellGui : wellGuiList) {
@@ -114,8 +127,9 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
                 drawPlateLabel(defaultWell, g2d, wellGui.getColumnNumber(), wellGui.getRowNumber());
             }
         }
+
         // highlight the ones that were not imaged
-        if (experiment != null) {
+        if (experiment != null && values != null) {
             List<PlateCondition> plateConditions = experiment.getPlateConditionList();
             for (PlateCondition plateCondition : plateConditions) {
                 if (plateCondition.isLoaded()) {
@@ -130,45 +144,26 @@ public class AnalysisPlatePanel extends AbstractPlatePanel {
                                     g2d.fill(defaultWell);
                                 }
                             }
-                        }
-                    }
-                }
-                //
-                if (plateCondition.equals(currentCondition)) {
-                    int conditionIndex = plateConditions.indexOf(currentCondition);
-                    int indexOfColor = conditionIndex % length;
-                    g2d.setColor(GuiUtils.getAvailableColors()[indexOfColor]);
+                        } else {
+                            float[] RGBtoHSB = Color.RGBtoHSB(Color.BLUE.getRed(), Color.BLUE.getGreen(), Color.BLUE.getBlue(), null);
+                            float blueHue = RGBtoHSB[0];
+                            RGBtoHSB = Color.RGBtoHSB(Color.RED.getRed(), Color.RED.getGreen(), Color.RED.getBlue(), null);
+                            float redHue = RGBtoHSB[0];
 
-                    List<Well> wells = plateCondition.getWellList();
-                    for (Well well : wells) {
-                        for (WellGui wellGui : wellGuiList) {
-                            if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
-                                //get only the bigger default ellipse2D
-                                Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
-                                double height = defaultWell.getHeight();
-                                double width = defaultWell.getWidth();
-                                double upperLeftCornerX = defaultWell.getX() + AnalysisPlatePanel.pixelsGrid / 2;
-                                double upperLeftCornerY = defaultWell.getY() + AnalysisPlatePanel.pixelsGrid / 2;
+                            for (WellGui wellGui : wellGuiList) {
+                                if (wellGui.getRowNumber() == well.getRowNumber() && wellGui.getColumnNumber() == well.getColumnNumber()) {
+                                    //get only the bigger default ellipse2D
+                                    Ellipse2D defaultWell = wellGui.getEllipsi().get(0);
+                                    Double value = values.get(well);
 
-                                Point2D upperLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY);
-                                Point2D upperRightPoint = new Point2D.Double(upperLeftCornerX + width - AnalysisPlatePanel.pixelsGrid, upperLeftCornerY);
-                                Point2D lowerLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY + height - AnalysisPlatePanel.pixelsGrid);
-                                Point2D lowerRightPoint = new Point2D.Double(upperLeftCornerX + width - AnalysisPlatePanel.pixelsGrid, upperLeftCornerY + height - AnalysisPlatePanel.pixelsGrid);
+                                    float hue = (float) (blueHue + (redHue - blueHue) * (value - min) / (max - min));
+                                    int HSBtoRGB = Color.HSBtoRGB(hue, 0.85f, 0.9f);
+                                    g2d.setColor(new Color(HSBtoRGB));
 
-                                Point2D verticalUpperPoint = new Point2D.Double(upperLeftCornerX + width / 2 - AnalysisPlatePanel.pixelsGrid / 2, upperLeftCornerY);
-                                Point2D verticalLowerPoint = new Point2D.Double(upperLeftCornerX + width / 2 - AnalysisPlatePanel.pixelsGrid / 2, upperLeftCornerY + height - AnalysisPlatePanel.pixelsGrid);
-                                Point2D horizontalLeftPoint = new Point2D.Double(upperLeftCornerX, upperLeftCornerY + height / 2 - AnalysisPlatePanel.pixelsGrid / 2);
-                                Point2D horizontalRightPoint = new Point2D.Double(upperLeftCornerX + width - AnalysisPlatePanel.pixelsGrid, upperLeftCornerY + height / 2 - AnalysisPlatePanel.pixelsGrid / 2);
-
-                                Line2D firstLine2D = new Line2D.Double(upperLeftPoint, lowerRightPoint);
-                                g2d.draw(firstLine2D);
-                                Line2D secondLine2D = new Line2D.Double(upperRightPoint, lowerLeftPoint);
-                                g2d.draw(secondLine2D);
-                                Line2D verticalLine2D = new Line2D.Double(verticalUpperPoint, verticalLowerPoint);
-                                g2d.draw(verticalLine2D);
-                                Line2D horizontalLine2D = new Line2D.Double(horizontalLeftPoint, horizontalRightPoint);
-                                g2d.draw(horizontalLine2D);
+                                    g2d.fill(defaultWell);
+                                }
                             }
+
                         }
                     }
                 }

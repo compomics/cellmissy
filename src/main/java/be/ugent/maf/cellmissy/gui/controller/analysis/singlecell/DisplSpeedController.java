@@ -281,7 +281,6 @@ class DisplSpeedController {
 //                plotMsdData(singleCellPreProcessingController.getCurrentCondition()); // plot the data
 //            }
 //        });
-
         //select as default first button 
         displSpeedPanel.getInstantaneousDisplRadioButton().setSelected(true);
         // add view to parent panel
@@ -360,7 +359,7 @@ class DisplSpeedController {
         densityFunctions.put(DensityFunctionHolderCacheSingleCell.DataCategory.TRACK_DISPL, trackDisplDensityFunctions);
 
         List<List<double[]>> trackSpeedDensityFunctions = new ArrayList<>();
-        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder) -> singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
+        singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder) -> singleCellPreProcessingController.estimateDensityFunction(singleCellWellDataHolder.getTrackSpeedsVector(),
                 kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackSpeedDensityFunction) -> {
                     trackSpeedDensityFunctions.add(oneReplicateTrackSpeedDensityFunction);
                 });
@@ -508,44 +507,64 @@ class DisplSpeedController {
     private XYSeriesCollection generateDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, Map<DataCategory, List<List<double[]>>> densityFunctionsMap, DataCategory dataCategory) {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         List<List<double[]>> densityFunctions = densityFunctionsMap.get(dataCategory);
-        int counter = 0;
-        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
-            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSingleCellAnalyzedSamplesPerWell(singleCellWellDataHolder.getWell());
-            if (numberOfSamplesPerWell == 1) {
-                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
-                    // x values
-                    double[] xValues = densityFunctions.get(i).get(0);
-                    // y values
-                    double[] yValues = densityFunctions.get(i).get(1);
-                    XYSeries series = new XYSeries("" + singleCellWellDataHolder.getWell(), false);
-                    for (int j = 0; j < xValues.length; j++) {
-                        double x = xValues[j];
-                        double y = yValues[j];
-                        series.add(x, y);
-                    }
-                    xySeriesCollection.addSeries(series);
+        List<SingleCellWellDataHolder> singleCellWellDataHolders = singleCellConditionDataHolder.getSingleCellWellDataHolders();
+        
+        for(int j =0; j < singleCellWellDataHolders.size(); j++){
+            // x values
+                double[] xValues = densityFunctions.get(j).get(0);
+                // y values
+                double[] yValues = densityFunctions.get(j).get(1);
+                 XYSeries series = new XYSeries("" + singleCellWellDataHolders.get(j).getWell(), false);
+                for (int z = 0; z < xValues.length; z++) {
+                    double x = xValues[z];
+                    double y = yValues[z];
+                    series.add(x, y);
                 }
-                counter += numberOfSamplesPerWell;
-            } else {
-                int label = 0;
-                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
-                    // x values
-                    double[] xValues = densityFunctions.get(i).get(0);
-                    // y values
-                    double[] yValues = densityFunctions.get(i).get(1);
-                    XYSeries series = new XYSeries("" + (singleCellWellDataHolder.getWell()) + ", " + (label + 1), false);
-                    for (int j = 0; j < xValues.length; j++) {
-                        double x = xValues[j];
-                        double y = yValues[j];
-                        series.add(x, y);
-                    }
-                    xySeriesCollection.addSeries(series);
-                    label++;
-                }
-                counter += numberOfSamplesPerWell;
-            }
-
+                xySeriesCollection.addSeries(series);
         }
+        
+        
+        
+//        //        int counter = 0;
+//        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+//            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSingleCellAnalyzedSamplesPerWell(singleCellWellDataHolder.getWell());
+////            if (numberOfSamplesPerWell == 1) {
+//            for (int i = 0; i < numberOfSamplesPerWell; i++) {
+//                // x values
+//                double[] xValues = densityFunctions.get(i).get(0);
+//                // y values
+//                double[] yValues = densityFunctions.get(i).get(1);
+//                XYSeries series = new XYSeries("" + singleCellWellDataHolder.getWell() + i, false);
+//                for (int j = 0; j < xValues.length; j++) {
+//                    double x = xValues[j];
+//                    double y = yValues[j];
+//                    series.add(x, y);
+//                }
+//                xySeriesCollection.addSeries(series);
+//            }
+////                counter += numberOfSamplesPerWell;
+////            } 
+////            else {
+////                int label = 0;
+////                for (int i = counter; i < counter + numberOfSamplesPerWell; i++) {
+////                    // x values
+////                    double[] xValues = densityFunctions.get(i).get(0);
+////                    // y values
+////                    double[] yValues = densityFunctions.get(i).get(1);
+////                    XYSeries series = new XYSeries("" + (singleCellWellDataHolder.getWell()) + ", " + (label + 1), false);
+////                    for (int j = 0; j < xValues.length; j++) {
+////                        double x = xValues[j];
+////                        double y = yValues[j];
+////                        series.add(x, y);
+////                    }
+////                    xySeriesCollection.addSeries(series);
+////                    label++;
+////                }
+//////                counter += numberOfSamplesPerWell;
+////            }
+////            counter += numberOfSamplesPerWell;
+//
+//        }
         return xySeriesCollection;
     }
 

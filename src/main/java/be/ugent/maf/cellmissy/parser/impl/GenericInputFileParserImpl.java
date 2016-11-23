@@ -70,12 +70,12 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
             // we keep a current track in memory
             Track currentTrack = null;
             List<TrackPoint> currentTrackPointList = new ArrayList<>();
-            int currentNumber = 0;
+            int currentNumber = -1;
 
             String strRead;
             while ((strRead = bufferedReader.readLine()) != null) {
                 // check for the header of the file
-                if (strRead.startsWith("Track")) {
+                if (strRead.toLowerCase().startsWith("track")) {
                     continue;
                 }
                 String[] splitarray = strRead.split("\t");
@@ -99,7 +99,8 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
 
                         // create trackpoint object and set class members                      
                         TrackPoint trackPoint = new TrackPoint();
-                        trackPoint.setTimeIndex(Integer.parseInt(splitarray[1]));
+                        Double parseDouble = Double.parseDouble(splitarray[1]);
+                        trackPoint.setTimeIndex(parseDouble.intValue());
                         trackPoint.setCellRow(Double.parseDouble(splitarray[2]));
                         trackPoint.setCellCol(Double.parseDouble(splitarray[3]));
                         trackPoint.setTrack(currentTrack);

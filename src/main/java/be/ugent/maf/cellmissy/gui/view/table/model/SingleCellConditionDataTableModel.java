@@ -50,8 +50,8 @@ public class SingleCellConditionDataTableModel extends AbstractTableModel {
      * define structure for table
      */
     private void initTable() {
-        columnNames = new String[]{"condition", "mean speed", "median speed", "mean direct", "median direct",
-            "mean turn angle", "median turn angle"};
+        columnNames = new String[]{"condition", "mean speed (µm/min)", "median speed (µm/min)", "mean direct", "median direct",
+            "mean turn angle (deg)", "median turn angle (deg)"};
 
         data = new Object[conditions.size()][columnNames.length];
 

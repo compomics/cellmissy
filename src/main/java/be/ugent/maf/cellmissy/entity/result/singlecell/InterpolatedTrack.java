@@ -24,6 +24,8 @@ public class InterpolatedTrack {
     private PolynomialFunction polynomialFunctionY;
     // the coordinates matrix
     private double[][] coordinatesMatrix;
+    // the shifted coordinates matrix
+    private double[][] shiftedCoordinatesMatrix;
     // the delta movements
     private double[][] deltaMovements;
     // the turning angles
@@ -98,6 +100,14 @@ public class InterpolatedTrack {
 
     public void setCoordinatesMatrix(double[][] coordinatesMatrix) {
         this.coordinatesMatrix = coordinatesMatrix;
+    }
+
+    public double[][] getShiftedCoordinatesMatrix() {
+        return shiftedCoordinatesMatrix;
+    }
+
+    public void setShiftedCoordinatesMatrix(double[][] shiftedCoordinatesMatrix) {
+        this.shiftedCoordinatesMatrix = shiftedCoordinatesMatrix;
     }
 
     public double[][] getDeltaMovements() {

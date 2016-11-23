@@ -257,6 +257,7 @@ public class SingleCellWellOperatorImpl implements SingleCellWellOperator {
                 InterpolatedTrack interpolatedTrack = interpolationMap.get(method);
                 // now do the computations
                 interpolatedTrackOperator.computeCoordinatesMatrix(interpolatedTrack);
+                interpolatedTrackOperator.computeShiftedCoordinatesMatrix(interpolatedTrack);
                 interpolatedTrackOperator.computeDeltaMovements(interpolatedTrack);
                 interpolatedTrackOperator.computeTurningAngles(interpolatedTrack);
             });

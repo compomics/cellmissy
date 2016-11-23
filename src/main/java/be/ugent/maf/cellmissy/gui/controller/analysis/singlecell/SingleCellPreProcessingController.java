@@ -114,6 +114,10 @@ public class SingleCellPreProcessingController {
         return singleCellAnalysisPanel;
     }
 
+    public Experiment getExperiment() {
+        return singleCellMainController.getExperiment();
+    }
+
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesController.getTrackCoordinatesPanel();
     }
@@ -293,8 +297,8 @@ public class SingleCellPreProcessingController {
     public void setMeanDisplForExperiment() {
         filteringController.setMedianDisplForExperiment();
     }
-    
-    public void setPercentileDispl(PlateCondition plateCondition){
+
+    public void setPercentileDispl(PlateCondition plateCondition) {
         filteringController.setPercentileDispl(plateCondition);
     }
 
@@ -305,11 +309,11 @@ public class SingleCellPreProcessingController {
     public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
         return filteringController.getFilteringMap();
     }
-    
+
     public void scaleAxesToExperiment(JFreeChart chart, boolean useRawData) {
         trackCoordinatesController.scaleAxesToExperiment(chart, useRawData);
     }
-    
+
     public XYSeriesCollection generateDensityFunction(List<List<double[]>> densityFunctions) {
         return filteringController.generateDensityFunction(densityFunctions);
     }

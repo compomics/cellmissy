@@ -4,6 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.explore.ExploreTrackController;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Track;
@@ -94,6 +95,8 @@ public class TrackCoordinatesController {
     private GlobalViewExperimentController globalViewExperimentController;
     @Autowired
     private GlobalViewConditionController globalViewConditionController;
+    @Autowired
+    private PlateHeatMapController plateHeatMapController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -110,6 +113,7 @@ public class TrackCoordinatesController {
         exploreTrackController.init();
         globalViewExperimentController.init();
         globalViewConditionController.init();
+        plateHeatMapController.init();
     }
 
     /**
@@ -117,6 +121,10 @@ public class TrackCoordinatesController {
      */
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesPanel;
+    }
+
+    public Experiment getExperiment() {
+        return singleCellPreProcessingController.getExperiment();
     }
 
     public ObservableList<TrackDataHolder> getTrackDataHolderBindingList() {
@@ -958,7 +966,7 @@ public class TrackCoordinatesController {
      * @return the default number
      */
     private int getDefaultNumberOfTracks(int maxTracks) {
-        int defaultNumber = 10;
+        int defaultNumber = 5;
         if (defaultNumber > maxTracks) {
             defaultNumber--;
         }

@@ -21,6 +21,8 @@ public interface InterpolatedTrackOperator {
      */
     void computeCoordinatesMatrix(InterpolatedTrack interpolatedTrack);
 
+    void computeShiftedCoordinatesMatrix(InterpolatedTrack interpolatedTrack);
+
     /**
      * Compute the double array holding the delta movements in both x and y
      * directions for an interpolated track.

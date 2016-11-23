@@ -32,6 +32,22 @@ public class InterpolatedTrackOperatorImpl implements InterpolatedTrackOperator 
     }
 
     @Override
+    public void computeShiftedCoordinatesMatrix(InterpolatedTrack interpolatedTrack) {
+        double[][] coordinatesMatrix = interpolatedTrack.getCoordinatesMatrix();
+        double[][] shiftedCoordinatesMatrix = new double[coordinatesMatrix.length][coordinatesMatrix[0].length];
+        double x0 = coordinatesMatrix[0][0];
+        double y0 = coordinatesMatrix[0][1];
+        for (int row = 0; row < coordinatesMatrix.length; row++) {
+            // get current x and current y
+            double currentX = coordinatesMatrix[row][0];
+            double currentY = coordinatesMatrix[row][1];
+            shiftedCoordinatesMatrix[row][0] = currentX - x0;
+            shiftedCoordinatesMatrix[row][1] = currentY - y0;
+        }
+        interpolatedTrack.setShiftedCoordinatesMatrix(shiftedCoordinatesMatrix);
+    }
+
+    @Override
     public void computeDeltaMovements(InterpolatedTrack interpolatedTrack) {
         // get the (already computed) coordinates matrix of the interpolated track
         double[][] coordinatesMatrix = interpolatedTrack.getCoordinatesMatrix();

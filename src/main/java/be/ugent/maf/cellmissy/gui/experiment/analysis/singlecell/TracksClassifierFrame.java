@@ -88,8 +88,8 @@ class TracksClassifierFrame extends javax.swing.JFrame {
     private final ProjectService projectService = context.getBean("projectService", ProjectService.class);
     private final ExperimentService experimentService = context.getBean("experimentService", ExperimentService.class);
     private final WellService wellService = context.getBean("wellService", WellService.class);
-    SingleCellConditionPreProcessor singleCellConditionPreProcessor = (SingleCellConditionPreProcessor) context.getBean("singleCellPreProcessor");
-    SingleCellConditionOperator singleCellConditionOperator = (SingleCellConditionOperator) context.getBean("singleCellOperator");
+    SingleCellConditionPreProcessor singleCellConditionPreProcessor = (SingleCellConditionPreProcessor) context.getBean("singleCellConditionPreProcessor");
+    SingleCellConditionOperator singleCellConditionOperator = (SingleCellConditionOperator) context.getBean("singleCellConditionOperator");
 
     /**
      * Creates new form TracksClassifierFrame
@@ -179,34 +179,31 @@ class TracksClassifierFrame extends javax.swing.JFrame {
         });
 
         //show data for current track
-        tracksList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    int selectedTrackIndex = tracksList.getSelectedIndex();
-                    if (selectedTrackIndex != -1) {
-                        TrackDataHolder selectedTrackDataHolder = trackDataHolderBindingList.get(selectedTrackIndex);
-                        // update model for the track table
-                        trackTable.setModel(new TrackDataHolderTableModel(selectedTrackDataHolder));
-                        SingleCellDataTableRenderer singleCellDataTableRenderer = new SingleCellDataTableRenderer(new DecimalFormat("###.###"));
-                        for (int i = 0; i < trackTable.getColumnCount(); i++) {
-                            trackTable.getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
-                        }
-                        for (int i = 0; i < trackTable.getColumnCount(); i++) {
-                            GuiUtils.packColumn(trackTable, i);
-                        }
-                        // upate convex hull data in table
-                        CellCentricDataHolder cellCentricDataHolder = selectedTrackDataHolder.getCellCentricDataHolder();
-                        ConvexHull convexHull = cellCentricDataHolder.getConvexHull();
-                        convexHullTable.setModel(new ConvexHullTableModel(convexHull));
-                        for (int i = 0; i < convexHullTable.getColumnCount(); i++) {
-                            convexHullTable.getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
-                        }
-                        for (int i = 0; i < convexHullTable.getColumnCount(); i++) {
-                            GuiUtils.packColumn(convexHullTable, i);
-                        }
-                        plotConvexHull(selectedTrackDataHolder);
+        tracksList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedTrackIndex = tracksList.getSelectedIndex();
+                if (selectedTrackIndex != -1) {
+                    TrackDataHolder selectedTrackDataHolder = trackDataHolderBindingList.get(selectedTrackIndex);
+                    // update model for the track table
+                    trackTable.setModel(new TrackDataHolderTableModel(selectedTrackDataHolder));
+                    SingleCellDataTableRenderer singleCellDataTableRenderer = new SingleCellDataTableRenderer(new DecimalFormat("###.###"));
+                    for (int i = 0; i < trackTable.getColumnCount(); i++) {
+                        trackTable.getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
                     }
+                    for (int i = 0; i < trackTable.getColumnCount(); i++) {
+                        GuiUtils.packColumn(trackTable, i);
+                    }
+                    // upate convex hull data in table
+                    CellCentricDataHolder cellCentricDataHolder = selectedTrackDataHolder.getCellCentricDataHolder();
+                    ConvexHull convexHull = cellCentricDataHolder.getConvexHull();
+                    convexHullTable.setModel(new ConvexHullTableModel(convexHull));
+                    for (int i = 0; i < convexHullTable.getColumnCount(); i++) {
+                        convexHullTable.getColumnModel().getColumn(i).setCellRenderer(singleCellDataTableRenderer);
+                    }
+                    for (int i = 0; i < convexHullTable.getColumnCount(); i++) {
+                        GuiUtils.packColumn(convexHullTable, i);
+                    }
+                    plotConvexHull(selectedTrackDataHolder);
                 }
             }
         });
@@ -409,14 +406,17 @@ class TracksClassifierFrame extends javax.swing.JFrame {
                 info = "starting computations for condition: " + plateCondition;
                 appendInfo(info);
                 // create a new object to hold pre-processing results
-                SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder();
+                SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder(plateCondition);
                 // do computations
                 singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
                 singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
                 singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, conversionFactor,
-                          experiment.getExperimentInterval());
+                        experiment.getExperimentInterval());
                 singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
                 singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
+                singleCellConditionPreProcessor.generateRawCoordinatesRanges(singleCellConditionDataHolder);
+                singleCellConditionPreProcessor.generateShiftedCoordinatesRanges(singleCellConditionDataHolder);
+                singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
                 singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
                 singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
                 singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
@@ -509,21 +509,24 @@ class TracksClassifierFrame extends javax.swing.JFrame {
      * Write the dataset to file
      */
     private void writeDatasetToFile() {
-        File folder = new File("E:\\");
-        Project project = (Project) projectsList.getSelectedValue();
-        String fileName = project + "_" + experiment + "_" + "data_label.csv";
+        File folder = new File("C:\\Users\\Paola\\Google Drive\\UGent\\Thesis\\chapters\\Chapter3_CellMissy_II\\public data\\public_traj_1_cellmissy\\classif\\cellmissy");
+        String fileName = "classif.txt";
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(folder, fileName)))) {
             // header of the file
-            bufferedWriter.append("expid" + " " + "condid" + " " + "sampleid" + " " + "trackid" + " " + "label" + " " + "steps" + " " + "xmin" + " " + "xmax" + " " + "ymin" + " " + "ymax" + " " + "xnd" + " " + "ynd" + " " + "cumdist" + " " + "eucldist" + " " + "endpointdir" + " " + "meddirect" + " " + "meddispl" + " " + "medspeed" + " " + "medturnangle" + " " + "maxdis" + " " + "displratio" + " " + "outrratio" + " " + "perim" + " " + "area" + " " + "acirc" + " " + "direct" + " " + "vertices");
+            bufferedWriter.append("sampleid" + " " + "trackid" + " " + "label" + " " + "steps" + " " + "xmin" + " " + "xmax" + " " + "ymin" + " " + "ymax" + " "
+                    + "xnd" + " " + "ynd" + " " + "cumdist" + " " + "eucldist" + " " + "straightness" + " " + "meddirect" + " " + "meddispl" + " " + "medspeed" + " "
+                    + "medturnangle" + " " + "maxdis" + " " + "displratio" + " " + "outrratio" + " " + "perim" + " " + "area" + " " + "acirc" + " " + "direct" + " "
+                    + "vertices" + " " + "xyfd" + " " + "xtfd" + " " + "ytfd" + " " + "td1" + " " + "td2" + " " + "td3" + " " + "td4" + " "
+                    + "td5" + " " + "td6" + " " + "td7" + " " + "td8" + " " + "td9" + " " + "td10" + " "
+                    + "td11" + " " + "td12" + " " + "td13" + " " + "td14" + " " + "td15" + " "
+                    + "td16" + " " + "td17" + " " + "td18" + " " + "td19");
+
             // new line
             bufferedWriter.newLine();
             for (TrackDataHolder trackDataHolder : trackDatasetList) {
-                Track track = trackDataHolder.getTrack();
                 CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
-                bufferedWriter.append("" + experiment.getExperimentid());
-                bufferedWriter.append(" ");
-                bufferedWriter.append("" + track.getWellHasImagingType().getWell().getPlateCondition().getPlateConditionid());
-                bufferedWriter.append(" ");
+                Track track = trackDataHolder.getTrack();
+
                 bufferedWriter.append("" + track.getWellHasImagingType().getWellHasImagingTypeid());
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + track.getTrackid());
@@ -531,20 +534,19 @@ class TracksClassifierFrame extends javax.swing.JFrame {
 
                 bufferedWriter.append("" + cellCentricDataHolder.getLabel());
                 bufferedWriter.append(" ");
-
                 bufferedWriter.append("" + trackDataHolder.getTrack().getTrackPointList().size());
                 bufferedWriter.append(" ");
-//                bufferedWriter.append("" + cellCentricDataHolder.getxMin());
-//                bufferedWriter.append(" ");
-//                bufferedWriter.append("" + cellCentricDataHolder.getxMax());
-//                bufferedWriter.append(" ");
-//                bufferedWriter.append("" + cellCentricDataHolder.getyMin());
-//                bufferedWriter.append(" ");
-//                bufferedWriter.append("" + cellCentricDataHolder.getyMax());
-//                bufferedWriter.append(" ");
-//                bufferedWriter.append("" + (cellCentricDataHolder.getxNetDisplacement()));
-//                bufferedWriter.append(" ");
-//                bufferedWriter.append("" + (cellCentricDataHolder.getyNetDisplacement()));
+                bufferedWriter.append("" + cellCentricDataHolder.getBoundingBox().getxMin());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + cellCentricDataHolder.getBoundingBox().getxMax());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + cellCentricDataHolder.getBoundingBox().getyMin());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + cellCentricDataHolder.getBoundingBox().getyMax());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + (cellCentricDataHolder.getBoundingBox().getxNetDisplacement()));
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + (cellCentricDataHolder.getBoundingBox().getyNetDisplacement()));
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getCumulativeDistance());
                 bufferedWriter.append(" ");
@@ -575,6 +577,21 @@ class TracksClassifierFrame extends javax.swing.JFrame {
                 bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getDirectionality());
                 bufferedWriter.append(" ");
                 bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getHullSize());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + cellCentricDataHolder.getxYFD().getFD());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + cellCentricDataHolder.getxTFD().getFD());
+                bufferedWriter.append(" ");
+                bufferedWriter.append("" + cellCentricDataHolder.getyTFD().getFD());
+                bufferedWriter.append(" ");
+                for (int i = 0; i < cellCentricDataHolder.getEntropies().size(); i++) {
+
+                    bufferedWriter.append("" + cellCentricDataHolder.getEntropies().get(i));
+                    if (i < cellCentricDataHolder.getEntropies().size() - 1) {
+                        bufferedWriter.append(" ");
+                    }
+
+                }
                 bufferedWriter.newLine();
             }
         } catch (IOException ex) {

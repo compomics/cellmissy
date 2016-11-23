@@ -27,7 +27,6 @@ public class LinearRegressorImpl implements LinearRegressor {
         //get Slopes and R2 coefficients fromt the Model
         linearModelResults.add(simpleRegression.getSlope());
         linearModelResults.add(simpleRegression.getRSquare());
-
         return linearModelResults;
     }
 }

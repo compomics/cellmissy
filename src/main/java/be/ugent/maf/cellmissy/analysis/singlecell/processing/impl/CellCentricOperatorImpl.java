@@ -17,11 +17,15 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.FractalDimension;
 import be.ugent.maf.cellmissy.entity.result.singlecell.MostDistantPointsPair;
 import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
+import org.jfree.data.statistics.Regression;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -101,9 +105,9 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
 
     @Override
     public void computeMedianSpeed(CellCentricDataHolder cellCentricDataHolder) {
-        double medianDisplacement = cellCentricDataHolder.getMedianDisplacement();
+        double cumDistance = cellCentricDataHolder.getCumulativeDistance();
         double duration = cellCentricDataHolder.getTrackDuration();
-        double medianSpeed = medianDisplacement / duration;
+        double medianSpeed = cumDistance / duration;
         cellCentricDataHolder.setMedianSpeed(medianSpeed);
     }
 
@@ -171,15 +175,28 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
         int N = stepCentricDataHolder.getTrack().getTrackPointList().size();
         List<Double> entropies = new ArrayList<>();
         List<List<EnclosingBall>> xyEnclosingBalls = stepCentricDataHolder.getxYEnclosingBalls();
-        xyEnclosingBalls.stream().map((enclosingBalls) -> {
-            double sum = 0;
-            for (EnclosingBall enclosingBall : enclosingBalls) {
-                sum += (1 / (double) N) * Math.log10((double) enclosingBall.getEnclosingPoints().size() / (double) N);
+
+        for (List<EnclosingBall> list : xyEnclosingBalls) {
+            int nBalls = list.size();
+            int nPoints = 0;
+            for (EnclosingBall enclosingBall : list) {
+                nPoints += enclosingBall.getEnclosingPoints().size();
             }
-            return sum;
-        }).map((sum) -> -(1 / (double) N) * sum).forEach((entropy) -> {
+            double entropy = (double) nBalls / (double) nPoints;
+            entropy = entropy / (double) N;
             entropies.add(entropy);
-        });
+        }
+
+//        xyEnclosingBalls.stream().map((enclosingBalls) -> {
+//            double sum = 0;
+//            for (EnclosingBall enclosingBall : enclosingBalls) {
+////                 sum += (double) enclosingBall.getEnclosingPoints().size()  * Math.log10((double) enclosingBall.getEnclosingPoints().size());
+//                sum += ((double) enclosingBall.getEnclosingPoints().size() / (double) N) * Math.log10((double) enclosingBall.getEnclosingPoints().size() / (double) N);
+//            }
+//            return sum;
+//        }).map((sum) -> -(1 / (double) N) * sum).forEach((entropy) -> {
+//            entropies.add(entropy);
+//        });
         cellCentricDataHolder.setEntropies(entropies);
     }
 
@@ -196,9 +213,15 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
             radii[i] = Math.log10(1 / (r_min + (i * r_step)));
             balls[i] = Math.log10(xyEnclosingBalls.get(i).size());
         }
-        double[][] data = new double[][]{radii, balls};
+
         FractalDimension fractalDimension = new FractalDimension(radii, balls);
-        fractalDimension.setFD(linearRegressor.estimateLinearModel(data).get(0));
+//        List<Double> linearModel = linearRegressor.estimateLinearModel(new double[][]{fractalDimension.getxValues(), fractalDimension.getyValues()});
+//        fractalDimension.setFD(linearModel.get(0));
+
+        XYSeries series = JFreeChartUtils.generateXYSeries(fractalDimension.getxValues(), fractalDimension.getyValues());
+        XYSeriesCollection collection = new XYSeriesCollection(series);
+        double regression[] = Regression.getOLSRegression(collection, 0);
+        fractalDimension.setFD(regression[1]);
         cellCentricDataHolder.setxYFD(fractalDimension);
     }
 
@@ -215,9 +238,14 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
             radii[i] = Math.log10(1 / (eps_min + (i * eps_step)));
             balls[i] = Math.log10(xtEnclosingBalls.get(i).size());
         }
-        double[][] data = new double[][]{radii, balls};
         FractalDimension fractalDimension = new FractalDimension(radii, balls);
-        fractalDimension.setFD(linearRegressor.estimateLinearModel(data).get(0));
+//        List<Double> linearModel = linearRegressor.estimateLinearModel(new double[][]{fractalDimension.getxValues(), fractalDimension.getyValues()});
+//        fractalDimension.setFD(linearModel.get(0));
+
+        XYSeries series = JFreeChartUtils.generateXYSeries(fractalDimension.getxValues(), fractalDimension.getyValues());
+        XYSeriesCollection collection = new XYSeriesCollection(series);
+        double regression[] = Regression.getOLSRegression(collection, 0);
+        fractalDimension.setFD(regression[1]);
         cellCentricDataHolder.setxTFD(fractalDimension);
     }
 
@@ -234,10 +262,16 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
             radii[i] = Math.log10(1 / (eps_min + (i * eps_step)));
             balls[i] = Math.log10(ytEnclosingBalls.get(i).size());
         }
-        double[][] data = new double[][]{radii, balls};
         FractalDimension fractalDimension = new FractalDimension(radii, balls);
-        fractalDimension.setFD(linearRegressor.estimateLinearModel(data).get(0));
+//        List<Double> linearModel = linearRegressor.estimateLinearModel(new double[][]{fractalDimension.getxValues(), fractalDimension.getyValues()});
+//        fractalDimension.setFD(linearModel.get(0));
+
+        XYSeries series = JFreeChartUtils.generateXYSeries(fractalDimension.getxValues(), fractalDimension.getyValues());
+        XYSeriesCollection collection = new XYSeriesCollection(series);
+        double regression[] = Regression.getOLSRegression(collection, 0);
+        fractalDimension.setFD(regression[1]);
         cellCentricDataHolder.setyTFD(fractalDimension);
+
     }
 
     @Override

@@ -6,13 +6,14 @@ package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.analysis.singlecell.preprocessing.SingleCellConditionPreProcessor;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellConditionOperator;
+import be.ugent.maf.cellmissy.config.PropertiesConfigurationHolder;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.Well;
-import be.ugent.maf.cellmissy.entity.result.singlecell.CellCentricDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.EnclosingBall;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
+import be.ugent.maf.cellmissy.entity.result.singlecell.StepCentricDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
@@ -45,20 +46,20 @@ class CellCentricDataGenerator {
         ExperimentService experimentService = (ExperimentService) context.getBean("experimentService");
         ProjectService projectService = (ProjectService) context.getBean("projectService");
         WellService wellService = (WellService) context.getBean("wellService");
-        SingleCellConditionPreProcessor singleCellConditionPreProcessor = (SingleCellConditionPreProcessor) context.getBean("singleCellPreProcessor");
-        SingleCellConditionOperator singleCellConditionOperator = (SingleCellConditionOperator) context.getBean("singleCellOperator");
+        SingleCellConditionPreProcessor singleCellConditionPreProcessor = (SingleCellConditionPreProcessor) context.getBean("singleCellConditionPreProcessor");
+        SingleCellConditionOperator singleCellConditionOperator = (SingleCellConditionOperator) context.getBean("singleCellConditionOperator");
         // get all the experiments from DB
-        Project project = projectService.findById(3L);
+        Project project = projectService.findById(4L);
         List<Experiment> experiments = experimentService.findExperimentsByProjectId(project.getProjectid());
         // root folder
-        File folder = new File("E:\\P013");
+        File folder = new File("C:\\Users\\Paola\\Desktop\\benchmark\\cellmissy");
         // subfolder for project
-        File subfolder = new File(folder, project + "_" + project.getProjectDescription());
-        subfolder.mkdir();
+//        File subfolder = new File(folder, project + "_" + project.getProjectDescription());
+//        subfolder.mkdir();
 //        List<List<TrackDataHolder>> biologicalConditions = new ArrayList<>();
         int totTracks = 0;
         for (Experiment experiment : experiments) {
-            if (experiment.getExperimentNumber() == 11) {
+            if (experiment.getExperimentNumber() == 1) {
 
                 List<List<TrackDataHolder>> biologicalConditions = new ArrayList<>();
                 String expPurpose = experiment.getPurpose();
@@ -68,10 +69,9 @@ class CellCentricDataGenerator {
                 expPurpose = expPurpose.replace("-->", "_");
 
                 System.out.println("exp: " + expPurpose);
-                String fileName = project + "_" + project.getProjectDescription() + "_" + experiment + "_" + expPurpose + ".csv";
+
                 System.out.println("STARTING WITH EXPERIMENT: " + experiment + ": " + expPurpose);
 
-//            if (experiment.getExperimentid() != 59) {
                 double instrumentConversionFactor = experiment.getInstrument().getConversionFactor();
                 double magnificationValue = experiment.getMagnification().getMagnificationValue();
                 double conversionFactor = instrumentConversionFactor * magnificationValue / 10;
@@ -87,16 +87,19 @@ class CellCentricDataGenerator {
                 }
                 // now do the computations
                 for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
+                    String fileName = plateCondition + ".csv";
                     // create a new object to hold pre-processing results
-                    SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder();
+                    SingleCellConditionDataHolder singleCellConditionDataHolder = new SingleCellConditionDataHolder(plateCondition);
                     System.out.println("****************cell-centric computations started for condition: " + plateCondition);
                     // do the computations
                     singleCellConditionPreProcessor.generateDataHolders(singleCellConditionDataHolder);
                     singleCellConditionPreProcessor.generateDataStructure(singleCellConditionDataHolder);
                     singleCellConditionPreProcessor.preProcessStepsAndCells(singleCellConditionDataHolder, conversionFactor,
-                              experiment.getExperimentInterval());
+                            experiment.getExperimentInterval());
                     singleCellConditionPreProcessor.generateRawTrackCoordinatesMatrix(singleCellConditionDataHolder);
                     singleCellConditionPreProcessor.generateShiftedTrackCoordinatesMatrix(singleCellConditionDataHolder);
+
+                    singleCellConditionOperator.operateOnStepsAndCells(singleCellConditionDataHolder);
                     singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
                     singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
                     singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
@@ -110,6 +113,8 @@ class CellCentricDataGenerator {
                     singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
                     singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
                     singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
+//                    singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
+
                     List<TrackDataHolder> trackDataHolders = singleCellConditionDataHolder.getTrackDataHolders();
                     System.out.println("****************cell-centric computations ended for condition: " + plateCondition);
                     biologicalConditions.add(trackDataHolders);
@@ -121,77 +126,43 @@ class CellCentricDataGenerator {
                 System.out.println("$$$$$$ total tracks so far: " + totTracks);
 //            }
 
-                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(subfolder, fileName)))) {
-                    System.out.println("csv file succ. created!");
+                double r_min = PropertiesConfigurationHolder.getInstance().getDouble("r_min");
+                double r_max = PropertiesConfigurationHolder.getInstance().getDouble("r_max");
+                double r_step = PropertiesConfigurationHolder.getInstance().getDouble("r_step");
+                int N = (int) ((r_max - r_min) / r_step) + 1;
+                try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(new File(folder, "bench_ec.txt")))) {
                     // header of the file
-                    bufferedWriter.append("expid" + " " + "condid" + " " + "sampleid" + " " + "trackid" + " " + "steps" + " " + "xmin" + " " + "xmax" + " " + "ymin" + " " + "ymax" + " " + "xnd" + " " + "ynd" + " " + "cumdist" + " " + "eucldist" + " " + "endpointdir" + " " + "meddirect" + " " + "meddispl" + " " + "medspeed" + " " + "medturnangle" + " " + "maxdis" + " " + "displratio" + " " + "outrratio" + " " + "perim" + " " + "area" + " " + "acirc" + " " + "direct" + " " + "vertices");
+                    bufferedWriter.append("traj_id" + " " + "log(1/r)" + " " + "log(N)");
                     // new line
                     bufferedWriter.newLine();
-                    for (List<TrackDataHolder> conditionTracks : biologicalConditions) {
-                        int tracksNumber = conditionTracks.size();
-                        for (TrackDataHolder trackDataHolder : conditionTracks) {
-                            CellCentricDataHolder cellCentricDataHolder = trackDataHolder.getCellCentricDataHolder();
-                            Track track = trackDataHolder.getTrack();
-                            bufferedWriter.append("" + experiment.getExperimentid());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + track.getWellHasImagingType().getWell().getPlateCondition().getPlateConditionid());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + track.getWellHasImagingType().getWellHasImagingTypeid());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + track.getTrackid());
-                            bufferedWriter.append(" ");
 
-                            bufferedWriter.append("" + trackDataHolder.getTrack().getTrackPointList().size());
-                            bufferedWriter.append(" ");
-//                            bufferedWriter.append("" + cellCentricDataHolder.getxMin());
-//                            bufferedWriter.append(" ");
-//                            bufferedWriter.append("" + cellCentricDataHolder.getxMax());
-//                            bufferedWriter.append(" ");
-//                            bufferedWriter.append("" + cellCentricDataHolder.getyMin());
-//                            bufferedWriter.append(" ");
-//                            bufferedWriter.append("" + cellCentricDataHolder.getyMax());
-//                            bufferedWriter.append(" ");
-//                            bufferedWriter.append("" + (cellCentricDataHolder.getxNetDisplacement()));
-//                            bufferedWriter.append(" ");
-//                            bufferedWriter.append("" + (cellCentricDataHolder.getyNetDisplacement()));
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getCumulativeDistance());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getEuclideanDistance());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getEndPointDirectionalityRatio());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getMedianDirectionalityRatio());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getMedianDisplacement());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getMedianSpeed());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getMedianTurningAngle());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getMostDistantPointsPair().getMaxSpan());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getDisplacementRatio());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getOutreachRatio());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getPerimeter());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getArea());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getAcircularity());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getDirectionality());
-                            bufferedWriter.append(" ");
-                            bufferedWriter.append("" + cellCentricDataHolder.getConvexHull().getHullSize());
-                            bufferedWriter.newLine();
+                    for (List<TrackDataHolder> conditionTracks : biologicalConditions) {
+                        for (TrackDataHolder trackDataHolder : conditionTracks) {
+
+                            StepCentricDataHolder stepCentricDataHolder = trackDataHolder.getStepCentricDataHolder();
+                            List<List<EnclosingBall>> xyEnclosingBalls = stepCentricDataHolder.getxYEnclosingBalls();
+                            for (int j = 0; j < xyEnclosingBalls.size(); j++) {
+
+                                bufferedWriter.append("" + trackDataHolder.getTrack().getTrackid());
+                                bufferedWriter.append(" ");
+                                double radius = Math.log10(1 / (r_min + (j * r_step)));
+                                bufferedWriter.append("" + radius);
+                                bufferedWriter.append(" ");
+                                bufferedWriter.append("" + Math.log10(xyEnclosingBalls.get(j).size()));
+                                if (j < xyEnclosingBalls.size() - 1) {
+                                    bufferedWriter.append(" ");
+                                }
+                                bufferedWriter.newLine();
+                            }
+
                         }
+
                     }
-                    bufferedWriter.newLine();
                 } catch (IOException ex) {
                     Logger.getLogger(CellCentricDataGenerator.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
+//                }
             }
         }
     }

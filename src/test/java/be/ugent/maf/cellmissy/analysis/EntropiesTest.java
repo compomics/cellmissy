@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:mySpringXMLConfig.xml")
-public class EnclosingBallsCalculatorTest {
+public class EntropiesTest {
 
     @Autowired
     private StepCentricOperator stepCentricOperator;
@@ -46,12 +46,12 @@ public class EnclosingBallsCalculatorTest {
     @BeforeClass
     public static void createTrack() {
         List<TrackPoint> trackPoints = new ArrayList<>();
-        TrackPoint tpq = new TrackPoint(0.5, 0.5);
-        TrackPoint tpr = new TrackPoint(0.7, 0.5);
-        TrackPoint tps = new TrackPoint(1.5, 0.5);
-        TrackPoint tpt = new TrackPoint(3, 3);
-        TrackPoint tpu = new TrackPoint(3.3, 2);
-        TrackPoint tpv = new TrackPoint(7, -4);
+        TrackPoint tpq = new TrackPoint(1.0, 1.0);
+        TrackPoint tpr = new TrackPoint(2.0, 2.0);
+        TrackPoint tps = new TrackPoint(3.0, 3.0);
+        TrackPoint tpt = new TrackPoint(4.0, 4.0);
+        TrackPoint tpu = new TrackPoint(5.0, 5.0);
+        TrackPoint tpv = new TrackPoint(6.0, 6.0);
         trackPoints.add(tpq);
         trackPoints.add(tpr);
         trackPoints.add(tps);
@@ -64,44 +64,26 @@ public class EnclosingBallsCalculatorTest {
     }
 
     @Test
-    public void testEnclosingBalls() {
+    public void testEntropies() {
         stepCentricOperator.generateCoordinatesMatrix(stepCentricDataHolder, 1.0);
-        double[] timeIndexes = new double[]{2, 3, 5, 6, 7, 10}; // time indexes of the track
+        double[] timeIndexes = new double[]{1, 2, 3, 4, 5, 6}; // time indexes of the track
         stepCentricDataHolder.setTimeIndexes(timeIndexes);
         stepCentricOperator.init2Dtrees(stepCentricDataHolder);
 
         Double[][] coordinatesMatrix = stepCentricDataHolder.getCoordinatesMatrix();
         double[] xCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[0]));
         double[] yCoord = ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.transpose2DArray(coordinatesMatrix)[1]));
-        List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 0.1);
-        Assert.assertEquals(6, enclosingBalls.size());
+        List<EnclosingBall> enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 1.5);
 
-        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 0.5);
-        Assert.assertEquals(5, enclosingBalls.size());
         List<List<EnclosingBall>> list = new ArrayList<>();
         list.add(enclosingBalls);
         stepCentricDataHolder.setxYEnclosingBalls(list);
         cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
         Double entropy = cellCentricDataHolder.getEntropies().get(0);
-//        Assert.assertEquals(0.113, entropy, 0.1);
-//
-//        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(xCoord, yCoord, stepCentricDataHolder.getxY2DTree(), 1.1);
-//        Assert.assertEquals(3, enclosingBalls.size());
-//        Assert.assertEquals(3, enclosingBalls.get(0).getEnclosingPoints().size());
-//        Assert.assertEquals(2, enclosingBalls.get(1).getEnclosingPoints().size());
-//        Assert.assertEquals(1, enclosingBalls.get(2).getEnclosingPoints().size());
-//
-//        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getxT2DTree(), 0.5);
-//        Assert.assertEquals(6, enclosingBalls.size());
-//        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getxT2DTree(), 1.0);
-//        Assert.assertEquals(6, enclosingBalls.size());
-//        enclosingBalls = enclosingBallsCalculator.findEnclosingBalls(timeIndexes, xCoord, stepCentricDataHolder.getxT2DTree(), 1.5);
-//        Assert.assertEquals(4, enclosingBalls.size());
-//
+
 //        stepCentricDataHolder.setxYEnclosingBalls(list);
 //        cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
 //        entropy = cellCentricDataHolder.getEntropies().get(0);
 //        Assert.assertEquals(0.113, entropy, 0.1);
     }
-
 }
