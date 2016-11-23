@@ -33,12 +33,12 @@ public class CellMiaFileParserTest {
      * cellMia files
      */
     @Test
-    public void testCellMiaFileParser() throws URISyntaxException {
+    public void testCellMiaFileParser() {
 
-        File trackingFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("tracking.txt").toURI());
+        File trackingFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("tracking.txt").getPath());
         List<Track> trackList = cellMiaFileParser.parseTrackingFile(trackingFile);
 
-        File bulkCellFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("bulkcell.txt").toURI());
+        File bulkCellFile = new File(CellMiaFileParserTest.class.getClassLoader().getResource("bulkcell.txt").getPath());
         List<TimeStep> timeStepList = cellMiaFileParser.parseBulkCellFile(bulkCellFile);
 
         Assert.assertTrue(!trackList.isEmpty());
