@@ -9,15 +9,12 @@ import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.HeatMapScalePanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.plate.HeatMapPlatePanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.ColorScale;
-import be.ugent.maf.cellmissy.gui.view.renderer.ColorScale1;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -26,27 +23,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.lang.ArrayUtils;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.block.ColumnArrangement;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYBlockRenderer;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.chart.title.PaintScaleLegend;
-import org.jfree.data.xy.DefaultXYZDataset;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYZDataset;
-import org.jfree.ui.HorizontalAlignment;
-import org.jfree.ui.RectangleEdge;
-import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.VerticalAlignment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -130,86 +109,17 @@ class PlateHeatMapController {
      * Action called on pressing the button: refresh the heat map view
      */
     private void plotHeatMap() {
-        heatMapPlatePanel.setValues(computeValuesMap());
-        heatMapPlatePanel.repaint();
         trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().removeAll();
-
-        // does not work!
-//        JFreeChart legendChart = new JFreeChart("", null,
-//                         new XYPlot(), 
-//                         false); //Hidden plot is a plot implementation that does not draw anything.
-//
-//        LegendTitle legendTitle = new LegendTitle(createChart(createDataset()).getPlot());
-//        legendTitle.setVisible(true);
-//        legendTitle.setVerticalAlignment(VerticalAlignment.TOP);
-//        legendChart.addLegend(legendTitle);
-        
-        
-        ColorScale colorScale = new ColorScale(heatMapPlatePanel.getMin(), heatMapPlatePanel.getMax());
-        JPanel initialize = colorScale.initialize(trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel());
-        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().add(initialize, gridBagConstraints);
-        
-//        JFreeChart createChart = createChart(createDataset());
-//        ChartPanel chartPanel = new ChartPanel(createChart);
-//
-//        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().add(chartPanel, gridBagConstraints);
         trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().repaint();
 
-    }
+        heatMapPlatePanel.setValues(computeValuesMap());
+        heatMapPlatePanel.repaint();
 
-    private XYZDataset createDataset() {
-        DefaultXYZDataset dataset = new DefaultXYZDataset();
-        Map<Well, Double> map = heatMapPlatePanel.getValues();
-        int nRow = Integer.parseInt(trackCoordinatesController.getTrackCoordinatesPanel().getnRowTextField().getText());
-        int nCol = Integer.parseInt(trackCoordinatesController.getTrackCoordinatesPanel().getnColTextField().getText());
-        double[][] data = new double[3][nRow * nCol];
+        HeatMapScalePanel heatMapScalePanel = new HeatMapScalePanel(heatMapPlatePanel.getMin(), heatMapPlatePanel.getMax());
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().add(heatMapScalePanel, gridBagConstraints);
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().revalidate();
 
-        int z = 0;
-        List<Well> wells = new ArrayList<>(map.keySet());
-        for (int i = 0; i < nRow - 1; i++) {
-
-            for (int j = 0; j < nCol - 1; j++) {
-                data[0][j] = i + 1;
-                data[1][j] = j + 1;
-                data[2][j] = map.get(wells.get(z));
-                z++;
-            }
-
-        }
-        dataset.addSeries("", data);
-        return dataset;
-    }
-
-    private JFreeChart createChart(XYDataset dataset) {
-
-        ColorScale1 colorScale1 = new ColorScale1(heatMapPlatePanel.getMin(), heatMapPlatePanel.getMax());
-        NumberAxis xAxis = new NumberAxis("col");
-        NumberAxis yAxis = new NumberAxis("row");
-        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, null);
-
-        JFreeChart chart = new JFreeChart(plot);
-
-        NumberAxis scaleAxis = new NumberAxis("scale");
-        scaleAxis.setAxisLinePaint(Color.white);
-        scaleAxis.setTickMarkPaint(Color.white);
-
-        XYBlockRenderer r = new XYBlockRenderer();
-
-        r.setPaintScale(colorScale1);
-        r.setBlockHeight(1);
-        r.setBlockWidth(1);
-        plot.setRenderer(r);
-
-        PaintScaleLegend legend = new PaintScaleLegend(colorScale1, scaleAxis);
-//        legend.setSubdivisionCount(128);
-        legend.setAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
-//        legend.setPadding(new RectangleInsets(10, 10, 10, 10));
-//        legend.setStripWidth(20);
-        legend.setPosition(RectangleEdge.RIGHT);
-        legend.setBackgroundPaint(Color.WHITE);
-        chart.addSubtitle(legend);
-        chart.setBackgroundPaint(Color.white);
-        return chart;
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().repaint();
     }
 
     /**

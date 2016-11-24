@@ -50,14 +50,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return dataTablePanel;
     }
 
-    public JTextField getnColTextField() {
-        return nColTextField;
-    }
-
-    public JTextField getnRowTextField() {
-        return nRowTextField;
-    }
-
     public JPanel getCoordinatesParentPanel() {
         return coordinatesParentPanel;
     }
@@ -212,11 +204,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         plateHeatMapParentPanel = new javax.swing.JPanel();
         graphicParentPanel = new javax.swing.JPanel();
         colorBarPanel = new javax.swing.JPanel();
-        optionPanels = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        nRowTextField = new javax.swing.JTextField();
-        nColTextField = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1000, 680));
@@ -644,9 +631,10 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.weighty = 0.9;
         plateHeatMapParentPanel.add(graphicParentPanel, gridBagConstraints);
 
+        colorBarPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Scale"));
         colorBarPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         colorBarPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         colorBarPanel.setLayout(new java.awt.GridBagLayout());
@@ -655,55 +643,8 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.4;
+        gridBagConstraints.weighty = 0.1;
         plateHeatMapParentPanel.add(colorBarPanel, gridBagConstraints);
-
-        optionPanels.setPreferredSize(new java.awt.Dimension(20, 20));
-
-        jLabel7.setText("nRow");
-
-        jLabel9.setText("nCol");
-
-        nRowTextField.setText("6");
-
-        nColTextField.setText("8");
-
-        javax.swing.GroupLayout optionPanelsLayout = new javax.swing.GroupLayout(optionPanels);
-        optionPanels.setLayout(optionPanelsLayout);
-        optionPanelsLayout.setHorizontalGroup(
-            optionPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionPanelsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel9))
-                .addGap(18, 18, 18)
-                .addGroup(optionPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nColTextField)
-                    .addComponent(nRowTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE))
-                .addContainerGap(32, Short.MAX_VALUE))
-        );
-        optionPanelsLayout.setVerticalGroup(
-            optionPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optionPanelsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(optionPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(nRowTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(optionPanelsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(nColTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(186, Short.MAX_VALUE))
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.3;
-        gridBagConstraints.weighty = 0.4;
-        plateHeatMapParentPanel.add(optionPanels, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -747,14 +688,9 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox measurementComboBox;
-    private javax.swing.JTextField nColTextField;
-    private javax.swing.JTextField nRowTextField;
-    private javax.swing.JPanel optionPanels;
     private javax.swing.JPanel optionsConditionParentPanel;
     private javax.swing.JPanel optionsExperimentParentPanel;
     private javax.swing.JPanel optionsPanel;
