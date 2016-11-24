@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.analysis.area.impl.doseresponse;
+package be.ugent.maf.cellmissy.analysis.doseresponse.impl;
 
-import be.ugent.maf.cellmissy.analysis.area.doseresponse.DoseResponseAbstractCurveFitter;
-import be.ugent.maf.cellmissy.analysis.area.doseresponse.SigmoidFitter;
+import be.ugent.maf.cellmissy.analysis.doseresponse.DoseResponseAbstractCurveFitter;
+import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;

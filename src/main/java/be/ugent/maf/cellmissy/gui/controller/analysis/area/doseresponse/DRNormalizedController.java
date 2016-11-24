@@ -85,10 +85,13 @@ public class DRNormalizedController {
     }
 
     /**
-     * When changing view from input panel: make dataset, do fitting and plot
-     * according to starting parameters.
+     * When changing view from input panel after creating new analysis group:
+     * make dataset, do fitting and plot according to default parameters.
      */
     public void initDRNormalizedData() {
+        //set constrain combo boxes to standard setting: means
+        dRNormalizedPlotPanel.getBottomComboBox().setSelectedIndex(0);
+        dRNormalizedPlotPanel.getTopComboBox().setSelectedIndex(0);
         //set initial parameters
         dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup()))).toString());
         dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup()))).toString());
@@ -166,8 +169,10 @@ public class DRNormalizedController {
         });
 
         /**
-         * If selected, text field with chosen value (combobox) will be used to
-         * constrain the curve fit.
+         * If selected, the curve fit 'bottom' parameter will be constrained to
+         * zero. This zero is defined by the text field value during
+         * normalization.
+         *
          */
         dRNormalizedPlotPanel.getBottomConstrainCheckBox().addItemListener(new ItemListener() {
 
@@ -181,6 +186,11 @@ public class DRNormalizedController {
             }
         });
 
+        /**
+         * If selected, the curve fit 'top' parameter will be constrained to
+         * 100. This is defined by the text field value during normalization.
+         *
+         */
         dRNormalizedPlotPanel.getTopConstrainCheckBox().addItemListener(new ItemListener() {
 
             @Override

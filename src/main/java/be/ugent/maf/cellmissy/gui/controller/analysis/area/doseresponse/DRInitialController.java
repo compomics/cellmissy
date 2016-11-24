@@ -169,7 +169,7 @@ public class DRInitialController {
      *
      * @param dRAnalysisGroup
      * @return LinkedHashMap That maps the concentration (log-transformed!) to
-     * the replicate velocites
+     * the replicate velocities
      */
     private LinkedHashMap<Double, List<Double>> prepareFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
         LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
@@ -180,7 +180,7 @@ public class DRInitialController {
         //put concentrations of treatment to analyze (control not included!) in list
         LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
         for (Double concentration : nestedMap.keySet()) {
-            //what happens if one concentration is mapped to more than 1 unit?
+            //key can only be linked with a single value, if one concentration is setup to have more than one associated concentration unit, only the last will remain
             String unit = nestedMap.get(concentration);
 
             Double logConcentration = AnalysisUtils.logTransform(concentration, unit);
