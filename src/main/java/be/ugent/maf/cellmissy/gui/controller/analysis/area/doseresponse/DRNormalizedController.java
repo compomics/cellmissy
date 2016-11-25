@@ -84,6 +84,14 @@ public class DRNormalizedController {
         return dataToFit;
     }
 
+    public Double getBottomConstrainValue() {
+        return bottomConstrainValue;
+    }
+
+    public Double getTopConstrainValue() {
+        return topConstrainValue;
+    }
+
     /**
      * When changing view from input panel after creating new analysis group:
      * make dataset, do fitting and plot according to default parameters.
@@ -383,6 +391,19 @@ public class DRNormalizedController {
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
         nonEditableTableModel.setDataVector(data, columnNames);
         return nonEditableTableModel;
+    }
+
+    /**
+     * Give information on how normalization was performed for the PDF report.
+     * @return 
+     */
+    public String getNormalizationInfo() {
+        Double bottomNormalize = Double.parseDouble(dRNormalizedPlotPanel.getBottomTextField().getText());
+        Double topNormalize = Double.parseDouble(dRNormalizedPlotPanel.getTopTextField().getText());
+        String result = "NORMALIZATION: ";
+        String zero = " 0% = " + bottomNormalize + " (" + (String) dRNormalizedPlotPanel.getBottomComboBox().getSelectedItem() + ")  ";
+        String hundred = " 100% = " + topNormalize + " (" + (String) dRNormalizedPlotPanel.getTopComboBox().getSelectedItem() + ")  ";
+        return result + zero + hundred;
     }
 
 }

@@ -31,6 +31,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,6 +216,25 @@ public class DoseResponseController {
      */
     protected void updateModelInTable(NonEditableTableModel tableModel) {
         dataTable.setModel(tableModel);
+    }
+
+    /**
+     * Get the constrain values for the bottom and top parameter. (Double number
+     * or null if not constrained)
+     *
+     * @param normalized True if from normalized fit
+     * @return
+     */
+    protected List<Double> getConstrainValues(boolean normalized) {
+        List<Double> result = new ArrayList<>();
+        if (!normalized) {
+            result.add(dRInitialController.getBottomConstrainValue());
+            result.add(dRInitialController.getTopConstrainValue());
+        } else {
+            result.add(dRNormalizedController.getBottomConstrainValue());
+            result.add(dRNormalizedController.getTopConstrainValue());
+        }
+        return result;
     }
 
     /**
@@ -528,6 +548,10 @@ public class DoseResponseController {
 
         //add view to parent panel
         areaMainController.getAreaAnalysisPanel().getDoseResponseParentPanel().add(dRPanel, gridBagConstraints);
+    }
+
+    protected String getNormalizationInfo() {
+        return dRNormalizedController.getNormalizationInfo();
     }
 
     /**

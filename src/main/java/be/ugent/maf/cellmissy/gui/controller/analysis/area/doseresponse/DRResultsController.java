@@ -19,6 +19,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
+import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
 import java.awt.GridBagConstraints;
@@ -29,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -117,6 +119,7 @@ public class DRResultsController {
     /**
      * Calculate statistics and set corresponding fields in analysisResults
      * class. Called by sibling controllers after fitting.
+     *
      * @param analysisGroup
      */
     public void calculateStatistics(DoseResponseAnalysisGroup analysisGroup) {
@@ -141,7 +144,7 @@ public class DRResultsController {
         analysisResults.setcILogEC50Initial(checkAndGetCI(initialFittingResults.getLogEC50(), standardErrors[2]));
         analysisResults.setStdErrHillslopeInitial(standardErrors[3]);
         analysisResults.setcIHillslopeInitial(checkAndGetCI(initialFittingResults.getHillslope(), standardErrors[3]));
-        
+
         //statistics of the normalized fitting
         standardErrors = AnalysisUtils.calculateStandardErrors(doseResponseController.getDataToFit(true), normalizedFittingResults);
         analysisResults.setStdErrBottomNormalized(standardErrors[0]);
@@ -152,8 +155,7 @@ public class DRResultsController {
         analysisResults.setcILogEC50Normalized(checkAndGetCI(normalizedFittingResults.getLogEC50(), standardErrors[2]));
         analysisResults.setStdErrHillslopeNormalized(standardErrors[3]);
         analysisResults.setcIHillslopeNormalized(checkAndGetCI(normalizedFittingResults.getHillslope(), standardErrors[3]));
-                
-      
+
         //confidence interval for ec50 (antilog of logec50 ci bounds)
         double[] cILogEc50initial = analysisResults.getcILogEC50Initial();
         double[] cILogEc50normalized = analysisResults.getcILogEC50Normalized();
@@ -231,7 +233,7 @@ public class DRResultsController {
             }
         });
     }
-    
+
     private double[] checkAndGetCI(double parameter, double standardError) {
         if (standardError != 0.0) {
             return AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, standardError);
@@ -292,7 +294,7 @@ public class DRResultsController {
         }
         data[10][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrHillslopeInitial());
         data[11][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getStdErrLogEC50Initial());
-        if (analysisResults.getcIBottomInitial() != null){
+        if (analysisResults.getcIBottomInitial() != null) {
             data[13][1] = AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomInitial()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcIBottomInitial()[1]);
         } else {
             data[13][1] = "--";
@@ -329,7 +331,7 @@ public class DRResultsController {
         } else {
             data[13][2] = "--";
         }
-        if (analysisResults.getcITopNormalized() != null){
+        if (analysisResults.getcITopNormalized() != null) {
             data[14][2] = AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[0]) + " to " + AnalysisUtils.roundThreeDecimals(analysisResults.getcITopNormalized()[1]);
         } else {
             data[14][2] = "--";
@@ -448,14 +450,157 @@ public class DRResultsController {
     }
 
     private void addAnalysisGroupInfoTable() {
-
+        //add title before the table
+        PdfUtils.addTitle(document, "ANALYSIS GROUP SUMMARY", boldFont);
+        PdfPTable conditionsInfoTable = createAnalysisGroupInfoTable();
+        addTable(conditionsInfoTable);
     }
 
+    /**
+     * Add information on the initial fitting: parameters constrained Y/N +
+     * values, table with statistical values and the graphical plot
+     */
     private void addInitialFittingInfo() {
-
+        //add title before the table
+        PdfUtils.addTitle(document, "INITIAL FIT", boldFont);
+        PdfUtils.addEmptyLines(document, 1);
+        List<Double> constrainValues = doseResponseController.getConstrainValues(false);
+        List<String> lines = new ArrayList<>();
+        String parameters = "BOTTOM = ";
+        if (constrainValues.get(0) == null) {
+            parameters += "-";
+        } else {
+            parameters += constrainValues.get(0);
+        }
+        parameters += "    TOP + ";
+        if (constrainValues.get(1) == null) {
+            parameters += "-";
+        } else {
+            parameters += constrainValues.get(1);
+        }
+        String line = "CONSTRAINED PARAMETERS: " + parameters;
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
     }
 
+    /**
+     * Add information on the initial fitting: normalization settings + values,
+     * parameters constrained Y/N, table with statistical values and the
+     * graphical plot
+     */
     private void addNormalizedFittingInfo() {
+        //add title before the table
+        PdfUtils.addTitle(document, "NORMALIZED FIT", boldFont);
+        PdfUtils.addEmptyLines(document, 1);
+        List<Double> constrainValues = doseResponseController.getConstrainValues(true);
+        List<String> lines = new ArrayList<>();
+        //add information about normalization
+        lines.add(doseResponseController.getNormalizationInfo());
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        lines.clear();
+        //add information about constraining
+        String parameters = "BOTTOM = ";
+        if (constrainValues.get(0) == null) {
+            parameters += "-";
+        } else {
+            parameters += constrainValues.get(0);
+        }
+        parameters += "    TOP + ";
+        if (constrainValues.get(1) == null) {
+            parameters += "-";
+        } else {
+            parameters += constrainValues.get(1);
+        }
+        String line = "CONSTRAINED PARAMETERS: " + parameters;
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+    }
+
+    /**
+     * Add a PdfPTable to the document
+     *
+     * @param dataTable
+     */
+    private void addTable(PdfPTable dataTable) {
+        try {
+            document.add(dataTable);
+        } catch (DocumentException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Create PdfTable with info on each condition of the analysis group;
+     */
+    private PdfPTable createAnalysisGroupInfoTable() {
+        //maps double conc to corresponding unit (string)
+        LinkedHashMap concentrationsMap = doseResponseController.getdRAnalysisGroup().getConcentrationsMap().get(doseResponseController.getdRAnalysisGroup().getTreatmentToAnalyse());
+        //maps log transformed conc (double) to list of velocities (double)
+        LinkedHashMap fittedData = doseResponseController.getDataToFit(false);
+
+        // new table with 6 columns
+        PdfPTable dataTable = new PdfPTable(6);
+        PdfUtils.setUpPdfPTable(dataTable);
+        // add 1st row: column names
+        PdfUtils.addCustomizedCell(dataTable, "CONDITIONS", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "# TECHNICAL REPLICATES", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "TECHNICAL REPLICATES EXCLUDED?", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "DRUG CONCENTRATION", boldFont);
+
+        //these two are not definitive yet!!
+        PdfUtils.addCustomizedCell(dataTable, "CALCULATED VELOCITIES", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "ANALYZED TIME INTERVAL", boldFont);
+
+        int lenght = GuiUtils.getAvailableColors().length;
+        // for each condition get results and add a cell
+        for (int i = 0; i < plateConditionList.size(); i++) {
+            PlateCondition plateCondition = plateConditionList.get(i);
+            AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
+            // condition index
+            int conditionIndex = plateConditionList.indexOf(plateCondition);
+            int indexOfColor = conditionIndex % lenght;
+            Color color = GuiUtils.getAvailableColors()[indexOfColor];
+            PdfUtils.addColoredCell(dataTable, color);
+            // how many technical replicates?
+            PdfUtils.addCustomizedCell(dataTable, "" + findNumberOfReplicates(areaPreProcessingResults), bodyFont);
+            // techincal replicates were excluded, if Y, which ones?
+            List<Well> excludedWells = getExcludedWells(plateCondition);
+            String excluded;
+            if (excludedWells.isEmpty()) {
+                excluded = "N";
+            } else {
+                excluded = "Y " + excludedWells;
+            }
+            PdfUtils.addCustomizedCell(dataTable, excluded, bodyFont);
+            // user chosen time interval
+            PdfUtils.addCustomizedCell(dataTable, areaPreProcessingResults.getTimeInterval().toString(), bodyFont);
+            // maximum time point
+            PdfUtils.addCustomizedCell(dataTable, "" + areaPreProcessingResults.getTimeInterval().getProposedCutOff(), bodyFont);
+            // analyzed time interval
+            double[] analysisTimeFrames = areaAnalysisController.getAnalysisTimeFrames();
+            int firstTimePoint = (int) (analysisTimeFrames[0] / experiment.getExperimentInterval());
+            int lastTimePoint = (int) (analysisTimeFrames[analysisTimeFrames.length - 1] / experiment.getExperimentInterval());
+            String analyzedTimeInterval = "(" + firstTimePoint + ", " + lastTimePoint + ")";
+            PdfUtils.addCustomizedCell(dataTable, "" + analyzedTimeInterval, bodyFont);
+        }
+        return dataTable;
+    }
+
+    /**
+     * Create info table for the corresponding fitting mode (initial/normalized)
+     *
+     * @return
+     */
+    private PdfPTable createFittingInfoTable() {
+        // 4 columns
+        PdfPTable dataTable = new PdfPTable(4);
+        PdfUtils.setUpPdfPTable(dataTable);
+        // add 1st row: column names
+        PdfUtils.addCustomizedCell(dataTable, "Parameter", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "Best-fit value", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "Standard Error", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "95% Confidende Interval", boldFont);
 
     }
 }

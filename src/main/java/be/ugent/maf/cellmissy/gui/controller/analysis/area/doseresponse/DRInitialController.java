@@ -83,6 +83,14 @@ public class DRInitialController {
         return dataToFit;
     }
 
+    public Double getBottomConstrainValue() {
+        return bottomConstrainValue;
+    }
+
+    public Double getTopConstrainValue() {
+        return topConstrainValue;
+    }
+    
     /**
      * When changing view from input panel: make dataset, do fitting and plot
      * according to starting parameters.
