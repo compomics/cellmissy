@@ -5,7 +5,7 @@
  */
 package be.ugent.maf.cellmissy.analysis.doseresponse.impl;
 
-import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

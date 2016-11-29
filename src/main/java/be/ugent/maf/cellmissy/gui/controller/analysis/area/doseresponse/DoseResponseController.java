@@ -10,9 +10,9 @@ import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
-import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisResults;
-import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
@@ -280,7 +280,7 @@ public class DoseResponseController {
      * child controllers on new fitting.
      */
     protected void calculateStatistics() {
-        dRResultsController.calculateStatistics(dRAnalysisGroup);
+        dRResultsController.setStatistics(dRAnalysisGroup);
     }
 
     /**
@@ -335,12 +335,7 @@ public class DoseResponseController {
         XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, normalized);
 
         // show the r squared value
-        SigmoidFittingResultsHolder resultsholder = null;
-        if (normalized) {
-            resultsholder = analysisGroup.getDoseResponseAnalysisResults().getNormalizedFittingResults();
-        } else {
-            resultsholder = analysisGroup.getDoseResponseAnalysisResults().getInitialFittingResults();
-        }
+        SigmoidFittingResultsHolder resultsholder = analysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
         plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsholder)), -4, 1.0));
 
         // Create the chart with the plot and no legend
@@ -366,12 +361,7 @@ public class DoseResponseController {
      */
     protected XYSeries simulateData(DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
-        SigmoidFittingResultsHolder resultsholder = null;
-        if (!normalized) {
-            resultsholder = analysisResults.getInitialFittingResults();
-        } else {
-            resultsholder = analysisResults.getNormalizedFittingResults();
-        }
+        SigmoidFittingResultsHolder resultsholder = analysisResults.getFittingResults(normalized);
         return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50());
     }
 

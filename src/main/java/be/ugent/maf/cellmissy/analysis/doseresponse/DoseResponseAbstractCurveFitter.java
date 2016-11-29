@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis.doseresponse;
 
 import be.ugent.maf.cellmissy.analysis.doseresponse.impl.DoseResponseLMOptimizer;
 import be.ugent.maf.cellmissy.analysis.doseresponse.impl.OptimumImpl;
-import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import java.util.Collection;
 import org.apache.commons.math3.fitting.AbstractCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;

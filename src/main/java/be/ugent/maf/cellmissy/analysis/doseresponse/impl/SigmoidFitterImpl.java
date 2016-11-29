@@ -7,7 +7,7 @@ package be.ugent.maf.cellmissy.analysis.doseresponse.impl;
 
 import be.ugent.maf.cellmissy.analysis.doseresponse.DoseResponseAbstractCurveFitter;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
-import be.ugent.maf.cellmissy.entity.result.area.doseresponse.SigmoidFittingResultsHolder;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.Collection;
