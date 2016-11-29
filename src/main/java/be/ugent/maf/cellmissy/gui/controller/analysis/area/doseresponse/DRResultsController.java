@@ -20,6 +20,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
+import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
@@ -192,7 +193,13 @@ public class DRResultsController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                try {
+                    //create the PDF report file
+                    doseResponseController.createPdfReport();
 
+                } catch (IOException ex) {
+                    LOG.error(ex.getMessage(), ex);
+                }
             }
         });
     }
@@ -201,7 +208,7 @@ public class DRResultsController {
         //calculate and set R² and EC50
         statisticsHolder.setGoodnessOfFit(AnalysisUtils.computeRSquared(dataToFit, resultsHolder));
         statisticsHolder.setEc50(Math.pow(10, resultsHolder.getLogEC50()));
-        
+
         //calculate and set standard errors of parameters
         //calculate and set 95% confidence interval boundaries
         double[] standardErrors = AnalysisUtils.calculateStandardErrors(dataToFit, resultsHolder);
@@ -213,7 +220,7 @@ public class DRResultsController {
         statisticsHolder.setcILogEC50(checkAndGetCI(resultsHolder.getLogEC50(), standardErrors[2]));
         statisticsHolder.setStdErrHillslope(standardErrors[3]);
         statisticsHolder.setcIHillslope(checkAndGetCI(resultsHolder.getHillslope(), standardErrors[3]));
-        
+
         //confidence interval for ec50 (antilog of logec50 ci)
         double[] cILogEc50 = statisticsHolder.getcILogEC50();
         double[] cIEc50 = new double[2];
@@ -298,7 +305,6 @@ public class DRResultsController {
         data[15][1] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
         data[16][1] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
         data[17][1] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
-        
 
         //set third column (normalized fitting results)
         fittingResults = analysisResults.getFittingResults(true);
@@ -442,6 +448,7 @@ public class DRResultsController {
         line = "NUMBER OF BIOLOGICAL CONDITIONS: " + experiment.getPlateConditionList().size();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        //additonal: add plate panel?
     }
 
     private void addAnalysisGroupInfoTable() {
@@ -467,7 +474,7 @@ public class DRResultsController {
         } else {
             parameters += constrainValues.get(0);
         }
-        parameters += "    TOP + ";
+        parameters += "    TOP = ";
         if (constrainValues.get(1) == null) {
             parameters += "-";
         } else {
@@ -478,12 +485,16 @@ public class DRResultsController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-        line = "R SQUARED (GOODNESS OF FIT)= " + doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getGoodnessOfFitInitial();
+        line = "R SQUARED (GOODNESS OF FIT)= " + doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(false).getGoodnessOfFit();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
+        //add table with statistical values
         PdfPTable initialFittingInfoTable = createFittingInfoTable(false);
         addTable(initialFittingInfoTable);
+        PdfUtils.addEmptyLines(document, 1);
+        //add graphical plot
+        addImageFromChart(doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), doseResponseController.getdRAnalysisGroup(), false), chartWidth, chartHeight);
     }
 
     /**
@@ -509,7 +520,7 @@ public class DRResultsController {
         } else {
             parameters += constrainValues.get(0);
         }
-        parameters += "    TOP + ";
+        parameters += "    TOP = ";
         if (constrainValues.get(1) == null) {
             parameters += "-";
         } else {
@@ -520,12 +531,16 @@ public class DRResultsController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-        line = "R SQUARED (GOODNESS OF FIT)= " + doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getGoodnessOfFitNormalized();
+        line = "R SQUARED (GOODNESS OF FIT)= " + doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(true).getGoodnessOfFit();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
+        //add table with statistical values
         PdfPTable normalizedFittingInfoTable = createFittingInfoTable(true);
         addTable(normalizedFittingInfoTable);
+        PdfUtils.addEmptyLines(document, 1);
+        //add graphical plot
+        addImageFromChart(doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), doseResponseController.getdRAnalysisGroup(), true), chartWidth, chartHeight);
     }
 
     /**
@@ -606,15 +621,94 @@ public class DRResultsController {
      *
      * @return
      */
-    private PdfPTable createFittingInfoTable() {
+    private PdfPTable createFittingInfoTable(boolean normalized) {
         // 4 columns
         PdfPTable dataTable = new PdfPTable(4);
         PdfUtils.setUpPdfPTable(dataTable);
+        DecimalFormat df = new DecimalFormat("00.00E00");
+        DoseResponseStatisticsHolder statistics = doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(normalized);
         // add 1st row: column names
         PdfUtils.addCustomizedCell(dataTable, "Parameter", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "Best-fit value", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "Standard Error", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "95% Confidende Interval", boldFont);
 
+        //parameter names
+        List<String> parameters = new ArrayList<>();
+        parameters.add("Bottom");
+        parameters.add("Top");
+        parameters.add("LogEC50");
+        parameters.add("Hillslope");
+        //best-fit values
+        List<Double> bestFitValues = new ArrayList<>();
+        bestFitValues.add(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(normalized).getBottom());
+        bestFitValues.add(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(normalized).getTop());
+        bestFitValues.add(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(normalized).getLogEC50());
+        bestFitValues.add(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(normalized).getHillslope());
+        //standard errors
+        List<Double> standardErrors = new ArrayList<>();
+        standardErrors.add(statistics.getStdErrBottom());
+        standardErrors.add(statistics.getStdErrTop());
+        standardErrors.add(statistics.getStdErrBottom());
+        standardErrors.add(statistics.getStdErrBottom());
+        //ec50 does not have a SE, will need to be displayed differently
+        standardErrors.add(Double.NaN);
+        //confidence interval boundaries
+        List<Double> cIBoundaries = new ArrayList<>();
+        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcIBottom());
+        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcITop());
+        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcILogEC50());
+        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcIHillslope());
+
+        //for all parameters except EC50 (is handled separately for scientific notation purposes)
+        for (int row = 0; row < parameters.size(); row++) {
+            //parameter name in 1st column
+            PdfUtils.addCustomizedCell(dataTable, parameters.get(row), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, bestFitValues.get(row).toString(), bodyFont);
+            if (standardErrors.get(row) == 0.0) {
+                PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
+                PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
+            } else {
+                PdfUtils.addCustomizedCell(dataTable, standardErrors.get(row).toString(), bodyFont);
+                PdfUtils.addCustomizedCell(dataTable, cIBoundaries.get(row * 2) + " to " + cIBoundaries.get((row * 2) + 1), bodyFont);
+            }
+
+        }
+        //add EC50 information
+        PdfUtils.addCustomizedCell(dataTable, "EC50", bodyFont);
+        PdfUtils.addCustomizedCell(dataTable, df.format(statistics.getEc50()), bodyFont);
+        PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
+        PdfUtils.addCustomizedCell(dataTable, df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]), bodyFont);
+        return dataTable;
+    }
+
+    private List<Double> addArrayToList(List<Double> list, double[] array) {
+        List<Double> copiedList = new ArrayList<>(list);
+        //if parameter is constrained there is a null instead of an array
+        if (array == null) {
+            copiedList.add(null);
+            copiedList.add(null);
+        } else {
+            for (int i = 0; i < array.length; i++) {
+                copiedList.add(array[i]);
+            }
+        }
+        return copiedList;
+    }
+
+    /**
+     * Create Image from a aJFreeChart and add it to document
+     *
+     * @param chart
+     */
+    private void addImageFromChart(JFreeChart chart, int imageWidth, int imageHeight) {
+        Image imageFromChart = PdfUtils.getImageFromJFreeChart(writer, chart, imageWidth, imageHeight);
+        // put image in the center
+        imageFromChart.setAlignment(Element.ALIGN_CENTER);
+        try {
+            document.add(imageFromChart);
+        } catch (DocumentException ex) {
+            LOG.error(ex.getMessage(), ex);
+        }
     }
 }
