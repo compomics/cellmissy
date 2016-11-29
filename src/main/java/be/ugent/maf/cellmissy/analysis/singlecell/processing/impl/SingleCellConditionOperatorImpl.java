@@ -11,7 +11,9 @@ import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.List;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -94,6 +96,18 @@ public class SingleCellConditionOperatorImpl implements SingleCellConditionOpera
             trackDisplacementsVector[i] = trackMeanDisplacement;
         }
         singleCellConditionDataHolder.setTrackDisplacementsVector(trackDisplacementsVector);
+    }
+
+    /**
+     *
+     * @param singleCellConditionDataHolder
+     */
+    @Override
+    public void computeMedianSpeed(SingleCellConditionDataHolder singleCellConditionDataHolder) {
+        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
+            double medianSpeed = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(singleCellWellDataHolder.getTrackSpeedsVector())));
+            singleCellConditionDataHolder.setMedianSpeed(medianSpeed);
+        }
     }
 
     @Override

@@ -15,17 +15,27 @@ import be.ugent.maf.cellmissy.gui.plate.HeatMapPlatePanel;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.apache.commons.lang.ArrayUtils;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -43,6 +53,7 @@ class PlateHeatMapController {
     private boolean firstView;
     // view
     private HeatMapPlatePanel heatMapPlatePanel;
+    private ChartPanel zScoreChartPanel;
     // parent controller
     @Autowired
     private TrackCoordinatesController trackCoordinatesController;
@@ -70,27 +81,42 @@ class PlateHeatMapController {
         trackCoordinatesPanel.getMeasurementComboBox().setSelectedIndex(0);
         trackCoordinatesPanel.getAggregationComboBox().setSelectedIndex(0);
 
+        zScoreChartPanel = new ChartPanel(null);
+        zScoreChartPanel.setOpaque(false);
+        trackCoordinatesPanel.getzScoreParentPanel().add(zScoreChartPanel, gridBagConstraints);
+
         // the real plotting action
-        trackCoordinatesPanel.getPlotHeatMapButton().addActionListener(new ActionListener() {
+        trackCoordinatesPanel.getPlotHeatMapButton().addActionListener((ActionEvent e) -> {
+            plotHeatMap();
+            heatMapPlatePanel.repaint();
+        });
+
+        trackCoordinatesPanel.getPlotZScoreButton().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                plotHeatMap();
-                heatMapPlatePanel.repaint();
+                // if these are still null, compute them
+                if (trackCoordinatesController.getPlateMedianSpeed() == 0 & trackCoordinatesController.getPlateMADSpeed() == 0) {
+                    trackCoordinatesController.computePlateMedianSpeed();
+                    trackCoordinatesController.computePlateMADSpeed();
+                    // set value sin the text fields
+                    trackCoordinatesController.getTrackCoordinatesPanel().getPlateMedianSpeedTextField().setText(""
+                            + AnalysisUtils.roundThreeDecimals(trackCoordinatesController.getPlateMedianSpeed()));
+                    trackCoordinatesController.getTrackCoordinatesPanel().getPlateMADSpeedTextField().setText(""
+                            + AnalysisUtils.roundThreeDecimals(trackCoordinatesController.getPlateMADSpeed()));
+                }
+                plotZScoreHeatMap();
+                plotZScores();
             }
         });
 
         // click on first view
-        trackCoordinatesPanel.getTrackCoordinatesTabbedPane().addChangeListener(new ChangeListener() {
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (firstView) {
-                    Dimension parentDimension = trackCoordinatesController.getTrackCoordinatesPanel().getGraphicParentPanel().getSize();
-                    heatMapPlatePanel.setExperiment(trackCoordinatesController.getExperiment());
-                    heatMapPlatePanel.initPanel(trackCoordinatesController.getExperiment().getPlateFormat(), parentDimension);
-                    firstView = false;
-                }
+        trackCoordinatesPanel.getTrackCoordinatesTabbedPane().addChangeListener((ChangeEvent e) -> {
+            if (firstView) {
+                Dimension parentDimension = trackCoordinatesController.getTrackCoordinatesPanel().getGraphicParentPanel().getSize();
+                heatMapPlatePanel.setExperiment(trackCoordinatesController.getExperiment());
+                heatMapPlatePanel.initPanel(trackCoordinatesController.getExperiment().getPlateFormat(), parentDimension);
+                firstView = false;
             }
         });
     }
@@ -123,6 +149,100 @@ class PlateHeatMapController {
     }
 
     /**
+     * Plot the heat-map, but this time using the robust z-scores from the
+     * median cell speed.
+     */
+    private void plotZScoreHeatMap() {
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().removeAll();
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().repaint();
+
+        heatMapPlatePanel.setValues(computeZScoresForMap());
+        heatMapPlatePanel.repaint();
+
+        HeatMapScalePanel heatMapScalePanel = new HeatMapScalePanel(heatMapPlatePanel.getMin(), heatMapPlatePanel.getMax());
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().add(heatMapScalePanel, gridBagConstraints);
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().revalidate();
+
+        trackCoordinatesController.getTrackCoordinatesPanel().getColorBarPanel().repaint();
+    }
+
+    /**
+     * Plot the z-scores: simple scatterplot
+     */
+    private void plotZScores() {
+        XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
+        Map<Well, Double> map = computeZScoresForMap();
+
+        List<Well> list = new ArrayList<>(map.keySet());
+        for (PlateCondition condition : trackCoordinatesController.getPlateConditionList()) {
+            XYSeries series = new XYSeries("" + condition);
+            for (int i = 0; i < condition.getWellList().size(); i++) {
+
+                for (int j = 0; j < list.size(); j++) {
+                    if (condition.getWellList().get(i).equals(list.get(j))) {
+                        series.add(i + 1, map.get(list.get(j)));
+                    }
+                }
+
+            }
+            xySeriesCollection.addSeries(series);
+        }
+
+        JFreeChart jfreechart = ChartFactory.createScatterPlot("z*-score", "sample well number", "z*-score", xySeriesCollection,
+                PlotOrientation.VERTICAL, false, true, false);
+        JFreeChartUtils.setupXYPlot(jfreechart.getXYPlot());
+        jfreechart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        XYItemRenderer renderer = jfreechart.getXYPlot().getRenderer();
+        for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
+            // plot lines according to conditions indexes
+            int colorIndex = i % GuiUtils.getAvailableColors().length;
+            Color color = GuiUtils.getAvailableColors()[colorIndex];
+            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 127);
+            renderer.setSeriesPaint(i, color);
+            renderer.setSeriesShape(i, new Ellipse2D.Double(0, 0, 10, 10));
+        }
+        zScoreChartPanel.setChart(jfreechart);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private Map<Well, Double> computeZScoresForMap() {
+        Map<Well, Double> zScoresMap = new LinkedHashMap<>();
+        double plateMedianSpeed = trackCoordinatesController.getPlateMedianSpeed();
+        double plateMADSpeed = trackCoordinatesController.getPlateMADSpeed();
+
+        double min = 0.0000000000000000;
+        double max = 0.0000000000000000;
+
+        List<PlateCondition> plateConditionList = trackCoordinatesController.getPlateConditionList();
+        for (PlateCondition condition : plateConditionList) {
+            SingleCellConditionDataHolder conditionDataHolder = trackCoordinatesController.getConditionDataHolder(condition);
+            List<SingleCellWellDataHolder> singleCellWellDataHolders = conditionDataHolder.getSingleCellWellDataHolders();
+            for (SingleCellWellDataHolder wellDataHolder : singleCellWellDataHolders) {
+                if (!wellDataHolder.getTrackDataHolders().isEmpty()) {
+                    Well well = wellDataHolder.getWell();
+
+                    Double[] trackSpeedsVector = wellDataHolder.getTrackSpeedsVector();
+                    double wellMedianSpeed = AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(trackSpeedsVector)));
+                    double zScore = (wellMedianSpeed - plateMedianSpeed) / plateMADSpeed;
+                    if (zScore > max) {
+                        max = zScore;
+                    }
+                    if (zScore < min) {
+                        min = zScore;
+                    }
+                    zScoresMap.put(well, zScore);
+                }
+            }
+        }
+        heatMapPlatePanel.setMin(min);
+        heatMapPlatePanel.setMax(max);
+        return zScoresMap;
+    }
+
+    /**
      *
      * @return
      */
@@ -133,8 +253,8 @@ class PlateHeatMapController {
         int measurement = trackCoordinatesPanel.getMeasurementComboBox().getSelectedIndex();
         int aggregation = trackCoordinatesPanel.getAggregationComboBox().getSelectedIndex();
         Double value = 0.0;
-        double min = 0.00000;
-        double max = 0.00000;
+        double min = 0.0000000000000000;
+        double max = 0.0000000000000000;
         List<PlateCondition> plateConditionList = trackCoordinatesController.getPlateConditionList();
         for (PlateCondition condition : plateConditionList) {
             SingleCellConditionDataHolder conditionDataHolder = trackCoordinatesController.getConditionDataHolder(condition);

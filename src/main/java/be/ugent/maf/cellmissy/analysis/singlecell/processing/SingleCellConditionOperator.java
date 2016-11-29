@@ -49,6 +49,13 @@ public interface SingleCellConditionOperator {
      * @param singleCellConditionDataHolder
      */
     void generateTrackDisplacementsVector(SingleCellConditionDataHolder singleCellConditionDataHolder);
+    
+    /**
+     * Compute the median speed across replicates for a condition.
+     *
+     * @param singleCellConditionDataHolder
+     */
+    void computeMedianSpeed(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
      * Generate the cumulative distances vector.
@@ -72,8 +79,8 @@ public interface SingleCellConditionOperator {
     void generateTrackSpeedsVector(SingleCellConditionDataHolder singleCellConditionDataHolder);
 
     /**
-     * 
-     * @param singleCellConditionDataHolder 
+     *
+     * @param singleCellConditionDataHolder
      */
     void generateMSDArray(SingleCellConditionDataHolder singleCellConditionDataHolder);
 

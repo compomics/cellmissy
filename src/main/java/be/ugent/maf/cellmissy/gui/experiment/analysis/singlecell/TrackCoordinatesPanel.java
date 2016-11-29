@@ -42,6 +42,22 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         return plotHeatMapButton;
     }
 
+    public JButton getPlotZScoreButton() {
+        return plotZScoreButton;
+    }
+
+    public JPanel getzScoreParentPanel() {
+        return zScoreParentPanel;
+    }
+
+    public JTextField getPlateMADSpeedTextField() {
+        return plateMADSpeedTextField;
+    }
+
+    public JTextField getPlateMedianSpeedTextField() {
+        return plateMedianSpeedTextField;
+    }
+
     public JPanel getColorBarPanel() {
         return colorBarPanel;
     }
@@ -201,9 +217,15 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         aggregationComboBox = new javax.swing.JComboBox();
         plotHeatMapButton = new javax.swing.JButton();
+        plotZScoreButton = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        plateMedianSpeedTextField = new javax.swing.JTextField();
+        plateMADSpeedTextField = new javax.swing.JTextField();
         plateHeatMapParentPanel = new javax.swing.JPanel();
         graphicParentPanel = new javax.swing.JPanel();
         colorBarPanel = new javax.swing.JPanel();
+        zScoreParentPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1000, 680));
@@ -572,24 +594,58 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
 
         aggregationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "mean", "median" }));
 
-        plotHeatMapButton.setText("Plot Heat Map");
+        plotHeatMapButton.setText("Plot Heat-Map");
+
+        plotZScoreButton.setText("Plot Median Speed z*-score ");
+
+        jLabel7.setText("plate median speed");
+
+        jLabel9.setText("plate MAD speed");
+
+        plateMedianSpeedTextField.setEditable(false);
+
+        plateMADSpeedTextField.setEditable(false);
 
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
         optionsPanelLayout.setHorizontalGroup(
             optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optionsPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(measurementComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(aggregationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(plotHeatMapButton, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(134, Short.MAX_VALUE))
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(plotHeatMapButton, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(plotZScoreButton)))
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(aggregationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(measurementComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel7))
+                        .addGap(18, 18, 18)
+                        .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(plateMedianSpeedTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                            .addComponent(plateMADSpeedTextField))))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
 
-        optionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aggregationComboBox, jLabel5, jLabel6, measurementComboBox, plotHeatMapButton});
+        optionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aggregationComboBox, jLabel5, jLabel6, measurementComboBox, plotHeatMapButton, plotZScoreButton});
+
+        optionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {plateMADSpeedTextField, plateMedianSpeedTextField});
+
+        optionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel7, jLabel9});
 
         optionsPanelLayout.setVerticalGroup(
             optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -604,7 +660,17 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addComponent(aggregationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47)
                 .addComponent(plotHeatMapButton)
-                .addContainerGap(381, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(plotZScoreButton)
+                .addGap(18, 18, 18)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(plateMedianSpeedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(plateMADSpeedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(270, Short.MAX_VALUE))
         );
 
         optionsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {aggregationComboBox, measurementComboBox, plotHeatMapButton});
@@ -612,6 +678,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.3;
         gridBagConstraints.weighty = 0.5;
@@ -651,8 +718,21 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 0.7;
-        gridBagConstraints.weighty = 0.5;
+        gridBagConstraints.weighty = 0.7;
         plateHeatMapPanel.add(plateHeatMapParentPanel, gridBagConstraints);
+
+        zScoreParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "z*-score"));
+        zScoreParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        zScoreParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
+        zScoreParentPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 0.7;
+        gridBagConstraints.weighty = 0.3;
+        plateHeatMapPanel.add(zScoreParentPanel, gridBagConstraints);
 
         trackCoordinatesTabbedPane.addTab("Plate Heat Map", plateHeatMapPanel);
 
@@ -688,7 +768,9 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox measurementComboBox;
     private javax.swing.JPanel optionsConditionParentPanel;
@@ -698,9 +780,12 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JPanel plateHeatMapPanel;
     private javax.swing.JPanel plateHeatMapParentPanel;
+    private javax.swing.JTextField plateMADSpeedTextField;
+    private javax.swing.JTextField plateMedianSpeedTextField;
     private javax.swing.JButton plotAllTracksButton;
     private javax.swing.JButton plotHeatMapButton;
     private javax.swing.JPanel plotSettingsPanel;
+    private javax.swing.JButton plotZScoreButton;
     private javax.swing.JTable plottedTracksTable;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JButton randomAndPlotButton;
@@ -717,5 +802,6 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton unshiftedCoordinatesRadioButton;
     private javax.swing.JRadioButton wellRadioButton;
     private javax.swing.JComboBox wellsComboBox;
+    private javax.swing.JPanel zScoreParentPanel;
     // End of variables declaration//GEN-END:variables
 }

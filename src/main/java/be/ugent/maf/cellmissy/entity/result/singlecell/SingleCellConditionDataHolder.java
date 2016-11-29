@@ -65,6 +65,8 @@ public class SingleCellConditionDataHolder {
     private Double[] medianTurningAnglesVector;
     // array with the median direction autocorrelations
     private Double[] medianDirectionAutocorrelationsVector;
+    // median speed per condition
+    private double medianSpeed;
 
     /**
      * Empty Constructor.
@@ -258,6 +260,14 @@ public class SingleCellConditionDataHolder {
 
     public void setMedianDirectionAutocorrelationsVector(Double[] medianDirectionAutocorrelationsVector) {
         this.medianDirectionAutocorrelationsVector = medianDirectionAutocorrelationsVector;
+    }
+
+    public double getMedianSpeed() {
+        return medianSpeed;
+    }
+
+    public void setMedianSpeed(double medianSpeed) {
+        this.medianSpeed = medianSpeed;
     }
 
     @Override

@@ -13,7 +13,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 /**
  * Utility class for Analysis -- basic math and statistics methods

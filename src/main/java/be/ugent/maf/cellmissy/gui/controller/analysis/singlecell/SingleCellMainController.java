@@ -26,6 +26,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import org.jdesktop.beansbinding.*;
 import org.jdesktop.observablecollections.ObservableCollections;
@@ -43,6 +44,7 @@ import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +64,8 @@ public class SingleCellMainController {
     // model
     private Experiment experiment;
     private PlateCondition currentCondition;
+    private double plateMedianSpeed;
+    private double plateMADSpeed;
     private double conversionFactor;
     private ObservableList<Algorithm> algorithmBindingList;
     private ObservableList<ImagingType> imagingTypeBindingList;
@@ -149,6 +153,14 @@ public class SingleCellMainController {
     public TrackCoordinatesUnitOfMeasurement getCoordinatesUnitOfMeasurement() {
         return (TrackCoordinatesUnitOfMeasurement) metadataSingleCellPanel.getCoordinatesUnitOfMeasurementComboBox()
                 .getSelectedItem();
+    }
+
+    public double getPlateMedianSpeed() {
+        return plateMedianSpeed;
+    }
+
+    public double getPlateMADSpeed() {
+        return plateMADSpeed;
     }
 
     public double getConversionFactor() {
@@ -421,6 +433,9 @@ public class SingleCellMainController {
                     singleCellPreProcessingController.showShiftedTrackCoordinatesInTable(selectedCondition);
                 }
                 singleCellPreProcessingController.renderConditionGlobalView(selectedCondition);
+                if (singleCellPreProcessingController.getTrackCoordinatesPanel().getTrackCoordinatesTabbedPane().getSelectedIndex() == 4 && !proceedToAnalysis()) {
+                    singleCellPreProcessingController.enableAnalysis();
+                }
                 break;
             case "displSpeedParentPanel":
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
@@ -520,7 +535,7 @@ public class SingleCellMainController {
                 analysisPlatePanel.revalidate();
                 dataAnalysisPanel.getConditionsList().setEnabled(false);
                 // see if some conditions still need to be processed
-                if (!proceedToAnalysis()) {
+                if (!proceedToAnalysis()) { // I am pretty sure this is no longer needed !!!
                     singleCellPreProcessingController.enableAnalysis();
                 }
                 // check if the user wants to proceed with filtered data or not
@@ -552,6 +567,32 @@ public class SingleCellMainController {
      */
     private boolean proceedToAnalysis() {
         return plateConditionList.stream().noneMatch((plateCondition) -> (!plateCondition.isComputed()));
+    }
+
+    /**
+     * Compute median speed across the plate.
+     */
+    public void computePlateMedianSpeed() {
+        List<Double> list = new ArrayList<>();
+        for (PlateCondition condition : plateConditionList) {
+            SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getPreProcessingMap().get(condition);
+            Double[] trackSpeedsVector = conditionDataHolder.getTrackSpeedsVector();
+            list.addAll(Arrays.asList(AnalysisUtils.excludeNullValues(trackSpeedsVector)));
+        }
+        plateMedianSpeed = AnalysisUtils.computeMedian(list.stream().mapToDouble(i -> i).toArray());
+    }
+
+    /**
+     * Compute the MAD speed across the plate.
+     */
+    public void computePlateMADSpeed() {
+        List<Double> list = new ArrayList<>();
+        for (PlateCondition condition : plateConditionList) {
+            SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getPreProcessingMap().get(condition);
+            double medianSpeed = conditionDataHolder.getMedianSpeed();
+            list.add(medianSpeed);
+        }
+        plateMADSpeed = AnalysisUtils.scaleMAD(list.stream().mapToDouble(i -> i).toArray());
     }
 
     /**

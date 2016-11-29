@@ -27,6 +27,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 import be.ugent.maf.cellmissy.logging.LogTextAreaAppender;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -109,6 +110,8 @@ public class SingleCellPreProcessingController {
 
     /**
      * getters
+     *
+     * @return
      */
     public SingleCellAnalysisPanel getSingleCellAnalysisPanel() {
         return singleCellAnalysisPanel;
@@ -118,6 +121,21 @@ public class SingleCellPreProcessingController {
         return singleCellMainController.getExperiment();
     }
 
+    public double getPlateMedianSpeed() {
+        return singleCellMainController.getPlateMedianSpeed();
+    }
+
+    public void computePlateMedianSpeed() {
+        singleCellMainController.computePlateMedianSpeed();
+    }
+
+    public double getPlateMADSpeed() {
+        return singleCellMainController.getPlateMADSpeed();
+    }
+
+    public void computePlateMADSpeed() {
+        singleCellMainController.computePlateMADSpeed();
+    }
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesController.getTrackCoordinatesPanel();
     }
@@ -332,16 +350,22 @@ public class SingleCellPreProcessingController {
         singleCellConditionOperator.generateInstantaneousDisplacementsVector(singleCellConditionDataHolder);
         LOG.info("generating directionality ratios...");
         singleCellConditionOperator.generateDirectionalityRatiosVector(singleCellConditionDataHolder);
-        LOG.info("generating track displacements...");
-        singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
         LOG.info("generating median directionality ratios...");
+        singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating track displacements...");
         singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
+        
+        
+        
         LOG.info("generating cumulative distances...");
         singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
         LOG.info("generating euclidean distances...");
         singleCellConditionOperator.generateEuclideanDistancesVector(singleCellConditionDataHolder);
         LOG.info("generating track speeds...");
         singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
+
+//        LOG.info("computing median speed...");
+        singleCellConditionOperator.computeMedianSpeed(singleCellConditionDataHolder); // maybe not needed
         LOG.info("generating track end-point directionality ratios...");
         singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
         LOG.info("generating turning angles...");
@@ -460,6 +484,8 @@ public class SingleCellPreProcessingController {
 
     /**
      * Set cursor from main controller
+     *
+     * @param cursor
      */
     public void setCursor(Cursor cursor) {
         singleCellMainController.setCursor(cursor);
@@ -479,6 +505,8 @@ public class SingleCellPreProcessingController {
     /**
      * This method pre-processes the entire experiment: data are retrieved from
      * DB for all the conditions, and basic computations are performed.
+     *
+     * @param experiment
      */
     public void preProcessExperiment(Experiment experiment) {
         PreProcessExperimentSwingWorker preProcessExperimentSwingWorker = new PreProcessExperimentSwingWorker(experiment);
@@ -709,8 +737,7 @@ public class SingleCellPreProcessingController {
 
     /**
      * A class extending a swing worker to pre-process the entire experiment
-     * (i.e. all its A class extending a swing worker to pre-process the entire
-     * experiment (i.e. all its conditions at once).
+     * (i.e. all its conditions at once).
      */
     private class PreProcessExperimentSwingWorker extends SwingWorker<Void, Void> {
 
@@ -821,6 +848,7 @@ public class SingleCellPreProcessingController {
                 // the condition is loaded, and plate view is refreshed
                 singleCellMainController.showNotImagedWells(plateCondition);
                 singleCellMainController.showWellsForCurrentCondition(plateCondition);
+
                 // when done, enable back the list and put back cursor to default
                 singleCellMainController.getDataAnalysisPanel().getConditionsList().setEnabled(true);
                 singleCellMainController.controlGuiComponents(true);

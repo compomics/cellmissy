@@ -118,9 +118,26 @@ public class TrackCoordinatesController {
 
     /**
      * Getters
+     * @return 
      */
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesPanel;
+    }
+
+    public double getPlateMedianSpeed() {
+        return singleCellPreProcessingController.getPlateMedianSpeed();
+    }
+
+    public double getPlateMADSpeed() {
+        return singleCellPreProcessingController.getPlateMADSpeed();
+    }
+
+    public void computePlateMedianSpeed() {
+        singleCellPreProcessingController.computePlateMedianSpeed();
+    }
+
+    public void computePlateMADSpeed() {
+        singleCellPreProcessingController.computePlateMADSpeed();
     }
 
     public Experiment getExperiment() {
@@ -643,6 +660,12 @@ public class TrackCoordinatesController {
                     && globalViewExperimentController.isFirstView()) {
                 globalViewExperimentController.renderExperimentGlobalView();
                 globalViewExperimentController.setFirstView(false);
+            } else if (trackCoordinatesPanel.getTrackCoordinatesTabbedPane().getSelectedIndex() == 4) {
+                for (PlateCondition condition : singleCellPreProcessingController.getPlateConditionList()) {
+                    if (!condition.isComputed()) {
+                        singleCellPreProcessingController.operateOnCondition(condition);
+                    }
+                }
             }
         });
 
