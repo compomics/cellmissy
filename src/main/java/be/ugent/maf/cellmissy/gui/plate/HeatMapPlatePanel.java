@@ -133,7 +133,7 @@ public class HeatMapPlatePanel extends AbstractPlatePanel {
             List<PlateCondition> plateConditions = experiment.getPlateConditionList();
             for (PlateCondition plateCondition : plateConditions) {
                 if (plateCondition.isLoaded()) {
-                    List<Well> wells = plateCondition.getWellList();
+                    List<Well> wells = plateCondition.getSingleCellAnalyzedWells();
                     for (Well well : wells) {
                         if (well.getWellHasImagingTypeList().isEmpty()) {
                             for (WellGui wellGui : wellGuiList) {

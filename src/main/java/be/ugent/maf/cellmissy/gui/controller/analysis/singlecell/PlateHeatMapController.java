@@ -16,13 +16,14 @@ import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
+import java.awt.Stroke;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -173,25 +175,43 @@ class PlateHeatMapController {
         XYSeriesCollection xySeriesCollection = new XYSeriesCollection();
         Map<Well, Double> map = computeZScoresForMap();
 
-        List<Well> list = new ArrayList<>(map.keySet());
-        for (PlateCondition condition : trackCoordinatesController.getPlateConditionList()) {
-            XYSeries series = new XYSeries("" + condition);
-            for (int i = 0; i < condition.getWellList().size(); i++) {
+        List<PlateCondition> plateConditionList = trackCoordinatesController.getPlateConditionList();
 
-                for (int j = 0; j < list.size(); j++) {
-                    if (condition.getWellList().get(i).equals(list.get(j))) {
-                        series.add(i + 1, map.get(list.get(j)));
-                    }
-                }
-
+        for (int i = 0; i < plateConditionList.size(); i++) {
+            // current condition
+            PlateCondition condition = plateConditionList.get(i);
+            XYSeries series = new XYSeries(i + "-" + condition);
+            for (int j = 0; j < condition.getSingleCellAnalyzedWells().size(); j++) {
+                // current well
+                Well well = condition.getSingleCellAnalyzedWells().get(j);
+                series.add(i + 1, map.get(well));
             }
             xySeriesCollection.addSeries(series);
         }
 
-        JFreeChart jfreechart = ChartFactory.createScatterPlot("z*-score", "sample well number", "z*-score", xySeriesCollection,
+        JFreeChart jfreechart = ChartFactory.createScatterPlot("z*-score", "condition number", "z*-score", xySeriesCollection,
                 PlotOrientation.VERTICAL, false, true, false);
         JFreeChartUtils.setupXYPlot(jfreechart.getXYPlot());
         jfreechart.getXYPlot().getDomainAxis().setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+        // line for the median speed
+        ValueMarker marker = new ValueMarker(0);
+        marker.setPaint(Color.GRAY);
+        Stroke dashedStroke = new BasicStroke(
+                2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                1.0f, new float[]{1.0f, 3.0f}, 0.0f);
+        marker.setStroke(dashedStroke);
+        jfreechart.getXYPlot().addRangeMarker(marker);
+
+        marker = new ValueMarker(3);
+        marker.setPaint(Color.GRAY);
+        marker.setStroke(dashedStroke);
+        jfreechart.getXYPlot().addRangeMarker(marker);
+
+        marker = new ValueMarker(-3);
+        marker.setPaint(Color.GRAY);
+        marker.setStroke(dashedStroke);
+        jfreechart.getXYPlot().addRangeMarker(marker);
+
         XYItemRenderer renderer = jfreechart.getXYPlot().getRenderer();
         for (int i = 0; i < xySeriesCollection.getSeriesCount(); i++) {
             // plot lines according to conditions indexes

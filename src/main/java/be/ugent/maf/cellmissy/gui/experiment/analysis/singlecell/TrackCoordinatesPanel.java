@@ -697,8 +697,9 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.9;
+        gridBagConstraints.weighty = 0.8;
         plateHeatMapParentPanel.add(graphicParentPanel, gridBagConstraints);
 
         colorBarPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Scale"));
@@ -710,7 +711,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.weighty = 0.2;
         plateHeatMapParentPanel.add(colorBarPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
