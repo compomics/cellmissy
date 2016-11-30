@@ -168,7 +168,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Constrain Bottom"/>
+            <Property name="label" type="java.lang.String" value="Constrain Bottom to 0"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="topConstrainCheckBox">
@@ -179,7 +179,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="12" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Constrain Top"/>
+            <Property name="label" type="java.lang.String" value="Constrain Top to 100"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="bottomTextField">

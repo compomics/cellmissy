@@ -104,11 +104,11 @@ public class DRNormalizedPlotPanel extends javax.swing.JPanel {
 
         bottomConstrainCheckBox.setBackground(new java.awt.Color(255, 255, 255));
         bottomConstrainCheckBox.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        bottomConstrainCheckBox.setText("Constrain Bottom");
+        bottomConstrainCheckBox.setLabel("Constrain Bottom to 0");
 
         topConstrainCheckBox.setBackground(new java.awt.Color(255, 255, 255));
         topConstrainCheckBox.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        topConstrainCheckBox.setText("Constrain Top");
+        topConstrainCheckBox.setLabel("Constrain Top to 100");
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);

@@ -617,6 +617,8 @@ public class DRResultsController {
             else {
                 concentration = transformed * Math.pow(10,3) + " mM";
             }
+            //remove null's (excluded replicates) from velocities collection
+            velocities.removeAll(Collections.singleton(null));
 
             PdfUtils.addCustomizedCell(dataTable, concentration, bodyFont);
             PdfUtils.addCustomizedCell(dataTable, replicates.toString(), bodyFont);
