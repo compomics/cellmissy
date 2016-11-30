@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -220,6 +221,27 @@ public class AnalysisUtils {
             // even size
             double lower = data[(data.length / 2 - 1)];
             double upper = data[(data.length / 2)];
+            return (lower + upper) / 2;
+        }
+    }
+    
+    /**
+     * Compute median value of a list of double
+     *
+     * @param data
+     * @return median
+     */
+    public static Double computeMedian(List<Double> data) {
+        // sort the input data, i.e. arrange the data points in ascending order
+        Collections.sort(data);
+        //make a distinction between odd and even dataset sizes
+        // odd size: return the data point in the middle position
+        if (data.size() % 2 == 1) {
+            return data.get((data.size() + 1) / 2 - 1);
+        } else {
+            // even size
+            Double lower = data.get((data.size() / 2 - 1));
+            Double upper = data.get((data.size() / 2));
             return (lower + upper) / 2;
         }
     }

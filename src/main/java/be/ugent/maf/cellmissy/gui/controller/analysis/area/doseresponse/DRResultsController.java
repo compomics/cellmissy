@@ -32,8 +32,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 
 import org.jfree.chart.ChartPanel;
@@ -448,6 +450,11 @@ public class DRResultsController {
         line = "NUMBER OF BIOLOGICAL CONDITIONS: " + experiment.getPlateConditionList().size();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        lines.clear();
+        line = "DRUG ANALYSED: " + doseResponseController.getdRAnalysisGroup().getTreatmentToAnalyse();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         //additonal: add plate panel?
     }
 
@@ -560,59 +567,66 @@ public class DRResultsController {
      * Create PdfTable with info on each condition of the analysis group;
      */
     //possibly reuse dRInputController's createTableModel(List<PlateCondition> processedConditions)
-    //easiest datastorage-wise is to use already log-transformed concentration "fitteddata" map
     private PdfPTable createAnalysisGroupInfoTable() {
-        //maps double conc to corresponding unit (string)
-        LinkedHashMap concentrationsMap = doseResponseController.getdRAnalysisGroup().getConcentrationsMap().get(doseResponseController.getdRAnalysisGroup().getTreatmentToAnalyse());
         //maps log transformed conc (double) to list of velocities (double)
-        LinkedHashMap fittedData = doseResponseController.getDataToFit(false);
+        LinkedHashMap<Double, List<Double>> fittedData = doseResponseController.getDataToFit(false);
 
         // new table with 6 columns
         PdfPTable dataTable = new PdfPTable(6);
         PdfUtils.setUpPdfPTable(dataTable);
         // add 1st row: column names
-        PdfUtils.addCustomizedCell(dataTable, "CONDITIONS", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "DRUG CONCENTRATION", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "# TECHNICAL REPLICATES", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "TECHNICAL REPLICATES EXCLUDED?", boldFont);
-        PdfUtils.addCustomizedCell(dataTable, "DRUG CONCENTRATION", boldFont);
-
-        //these two are not definitive yet!!
-        PdfUtils.addCustomizedCell(dataTable, "CALCULATED VELOCITIES", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "LOWEST VELOCITY", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "HIGHEST VELOCITY", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "MEDIAN VELOCITY", boldFont);
 
-        //should color be added? perhaps only if wellplate will also be displayed
-        int lenght = GuiUtils.getAvailableColors().length;
         // for each condition get results and add a cell
-        for (int i = 0; i < plateConditionList.size(); i++) {
-            PlateCondition plateCondition = plateConditionList.get(i);
-            AreaPreProcessingResults areaPreProcessingResults = preProcessingMap.get(plateCondition);
-            // condition index
-            int conditionIndex = plateConditionList.indexOf(plateCondition);
-            int indexOfColor = conditionIndex % lenght;
-            Color color = GuiUtils.getAvailableColors()[indexOfColor];
-            PdfUtils.addColoredCell(dataTable, color);
-            // how many technical replicates?
-            PdfUtils.addCustomizedCell(dataTable, "" + findNumberOfReplicates(areaPreProcessingResults), bodyFont);
-            // techincal replicates were excluded, if Y, which ones?
-            List<Well> excludedWells = getExcludedWells(plateCondition);
+        for (Map.Entry<Double, List<Double>> condition : fittedData.entrySet()) {
+            Integer replicates = condition.getValue().size();
             String excluded;
-            if (excludedWells.isEmpty()) {
-                excluded = "N";
-            } else {
-                excluded = "Y " + excludedWells;
+            int excludedCount = 0;
+            List<Double> velocities = condition.getValue();
+
+            //count how many replicates were excluded
+            for (int i = 0; i < velocities.size(); i++) {
+                Double replicate = velocities.get(i);
+                if (replicate == null) {
+                    excludedCount++;
+                }
             }
+            if (excludedCount == 0) {
+                excluded = "NO";
+            } else {
+                excluded = "YES, " + excludedCount;
+            }
+
+            //put log-value of the concentration back to an understandable format
+            String concentration;
+            Double logConc = condition.getKey();
+            Double transformed = Math.pow(10, logConc);
+            //check which concentration unit is to be used
+            //if lower than 0.1 µM: use nM unit
+            if (transformed < Math.pow(10, -7)) {
+                concentration = transformed * Math.pow(10,9) + " nM";
+            } //if lower than 0.1 mM: use µM unit
+            else if (transformed < Math.pow(10, -4)) {
+                concentration = transformed * Math.pow(10,6) + " µM";
+            } //else use mM unit
+            else {
+                concentration = transformed * Math.pow(10,3) + " mM";
+            }
+
+            PdfUtils.addCustomizedCell(dataTable, concentration, bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, replicates.toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, excluded, bodyFont);
-            // user chosen time interval
-            PdfUtils.addCustomizedCell(dataTable, areaPreProcessingResults.getTimeInterval().toString(), bodyFont);
-            // maximum time point
-            PdfUtils.addCustomizedCell(dataTable, "" + areaPreProcessingResults.getTimeInterval().getProposedCutOff(), bodyFont);
-            // analyzed time interval
-            double[] analysisTimeFrames = areaAnalysisController.getAnalysisTimeFrames();
-            int firstTimePoint = (int) (analysisTimeFrames[0] / experiment.getExperimentInterval());
-            int lastTimePoint = (int) (analysisTimeFrames[analysisTimeFrames.length - 1] / experiment.getExperimentInterval());
-            String analyzedTimeInterval = "(" + firstTimePoint + ", " + lastTimePoint + ")";
-            PdfUtils.addCustomizedCell(dataTable, "" + analyzedTimeInterval, bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, Collections.min(velocities).toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, Collections.max(velocities).toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.computeMedian(velocities).toString(), bodyFont);
+
         }
+
         return dataTable;
     }
 

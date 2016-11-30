@@ -231,7 +231,7 @@ public class DRInputController {
             checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
             // populate bottom table with the analysis group
             dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-            dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+            dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         }
     }
 
@@ -292,7 +292,8 @@ public class DRInputController {
         List<Double> concentrationList = new ArrayList();
         List<String> concentrationUnitList = new ArrayList();
         List<Double[]> slopesList = new ArrayList();
-        Integer i = 0;
+        //start counting from 1, easier for user
+        Integer i = 1;
         for (PlateCondition condition : processedConditions) {
             //1 platecondition might have multiple treatments
             List<Treatment> treatmentList = condition.getTreatmentList();

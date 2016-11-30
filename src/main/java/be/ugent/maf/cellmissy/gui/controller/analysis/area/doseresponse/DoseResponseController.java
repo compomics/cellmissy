@@ -186,6 +186,7 @@ public class DoseResponseController {
         dRInputController.initDRInputData();
         //switch shared table view
         updateModelInTable(dRInputController.getTableModel());
+        dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         updateTableInfoMessage("This table contains all conditions and their respective slopes");
     }
 
