@@ -571,7 +571,9 @@ public class DRResultsController {
     private PdfPTable createAnalysisGroupInfoTable() {
         //maps log transformed conc (double) to list of velocities (double)
         LinkedHashMap<Double, List<Double>> fittedData = doseResponseController.getDataToFit(false);
-
+        //CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES: find control concentration
+        Double controlConcentration = Collections.min(fittedData.keySet());
+        
         // new table with 6 columns
         PdfPTable dataTable = new PdfPTable(6);
         PdfUtils.setUpPdfPTable(dataTable);
@@ -603,11 +605,6 @@ public class DRResultsController {
                 excluded = "YES, " + excludedCount;
             }
             
-            /**
-             * PROBLEM: CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES
-             * Check if concentration is 1 lower??? But it is a map
-             */
-           
             //put log-value of the concentration back to an understandable format
             String concentration;
             Double logConc = condition.getKey();
@@ -617,11 +614,15 @@ public class DRResultsController {
             if (transformed < Math.pow(10, -7)) {
                 concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,9)) + " nM";
             } //if lower than 0.1 mM: use µM unit
-            else if (transformed < Math.pow(10, -4)) {
+            else if (transformed < Math.pow(10, -3)) {
                 concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,6)) + " µM";
-            } //else use mM unit
+            } //else for everything >= 1 mM use mM unit
             else {
                 concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,3)) + " mM";
+            }
+            //if this is the control, replace concentration string
+            if (logConc == controlConcentration) {
+                concentration = "Control";
             }
             //remove null's (excluded replicates) from velocities collection
             velocities.removeAll(Collections.singleton(null));
