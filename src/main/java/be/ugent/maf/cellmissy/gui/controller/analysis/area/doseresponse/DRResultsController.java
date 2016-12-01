@@ -434,7 +434,6 @@ public class DRResultsController {
     /**
      * Overview of Report: experiment and project numbers + some details.
      */
-    //STILL NEEDS TO BE EDITED/ADJUSTED FOR DOSE-RESPONSE!!
     private void addOverview() {
         String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
         PdfUtils.addTitle(document, title, titleFont);
@@ -455,12 +454,14 @@ public class DRResultsController {
         line = "DRUG ANALYSED: " + doseResponseController.getdRAnalysisGroup().getTreatmentToAnalyse();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
-        //additonal: add plate panel?
+        PdfUtils.addEmptyLines(document, 1);
+        PdfUtils.addEmptyLines(document, 1);
     }
 
     private void addAnalysisGroupInfoTable() {
         //add title before the table
         PdfUtils.addTitle(document, "ANALYSIS GROUP SUMMARY", boldFont);
+        PdfUtils.addEmptyLines(document, 1);
         PdfPTable conditionsInfoTable = createAnalysisGroupInfoTable();
         addTable(conditionsInfoTable);
     }
@@ -492,7 +493,7 @@ public class DRResultsController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-        line = "R SQUARED (GOODNESS OF FIT)= " + doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(false).getGoodnessOfFit();
+        line = "R SQUARED (GOODNESS OF FIT)= " + AnalysisUtils.roundThreeDecimals(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(false).getGoodnessOfFit());
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -538,7 +539,7 @@ public class DRResultsController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-        line = "R SQUARED (GOODNESS OF FIT)= " + doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(true).getGoodnessOfFit();
+        line = "R SQUARED (GOODNESS OF FIT)= " + AnalysisUtils.roundThreeDecimals(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(true).getGoodnessOfFit());
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -601,7 +602,12 @@ public class DRResultsController {
             } else {
                 excluded = "YES, " + excludedCount;
             }
-
+            
+            /**
+             * PROBLEM: CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES
+             * Check if concentration is 1 lower??? But it is a map
+             */
+           
             //put log-value of the concentration back to an understandable format
             String concentration;
             Double logConc = condition.getKey();
@@ -609,13 +615,13 @@ public class DRResultsController {
             //check which concentration unit is to be used
             //if lower than 0.1 µM: use nM unit
             if (transformed < Math.pow(10, -7)) {
-                concentration = transformed * Math.pow(10,9) + " nM";
+                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,9)) + " nM";
             } //if lower than 0.1 mM: use µM unit
             else if (transformed < Math.pow(10, -4)) {
-                concentration = transformed * Math.pow(10,6) + " µM";
+                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,6)) + " µM";
             } //else use mM unit
             else {
-                concentration = transformed * Math.pow(10,3) + " mM";
+                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,3)) + " mM";
             }
             //remove null's (excluded replicates) from velocities collection
             velocities.removeAll(Collections.singleton(null));
@@ -623,9 +629,9 @@ public class DRResultsController {
             PdfUtils.addCustomizedCell(dataTable, concentration, bodyFont);
             PdfUtils.addCustomizedCell(dataTable, replicates.toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, excluded, bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, Collections.min(velocities).toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, Collections.max(velocities).toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.computeMedian(velocities).toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(Collections.min(velocities)).toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(Collections.max(velocities)).toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeMedian(velocities)).toString(), bodyFont);
 
         }
 
@@ -641,7 +647,7 @@ public class DRResultsController {
         // 4 columns
         PdfPTable dataTable = new PdfPTable(4);
         PdfUtils.setUpPdfPTable(dataTable);
-        DecimalFormat df = new DecimalFormat("00.00E00");
+        DecimalFormat df = new DecimalFormat("0.00E00");
         DoseResponseStatisticsHolder statistics = doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(normalized);
         // add 1st row: column names
         PdfUtils.addCustomizedCell(dataTable, "Parameter", boldFont);
@@ -665,8 +671,8 @@ public class DRResultsController {
         List<Double> standardErrors = new ArrayList<>();
         standardErrors.add(statistics.getStdErrBottom());
         standardErrors.add(statistics.getStdErrTop());
-        standardErrors.add(statistics.getStdErrBottom());
-        standardErrors.add(statistics.getStdErrBottom());
+        standardErrors.add(statistics.getStdErrLogEC50());
+        standardErrors.add(statistics.getStdErrHillslope());
         //ec50 does not have a SE, will need to be displayed differently
         standardErrors.add(Double.NaN);
         //confidence interval boundaries
@@ -680,13 +686,13 @@ public class DRResultsController {
         for (int row = 0; row < parameters.size(); row++) {
             //parameter name in 1st column
             PdfUtils.addCustomizedCell(dataTable, parameters.get(row), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, bestFitValues.get(row).toString(), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(bestFitValues.get(row)).toString(), bodyFont);
             if (standardErrors.get(row) == 0.0) {
                 PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
                 PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
             } else {
-                PdfUtils.addCustomizedCell(dataTable, standardErrors.get(row).toString(), bodyFont);
-                PdfUtils.addCustomizedCell(dataTable, cIBoundaries.get(row * 2) + " to " + cIBoundaries.get((row * 2) + 1), bodyFont);
+                PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(standardErrors.get(row)).toString(), bodyFont);
+                PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(cIBoundaries.get(row * 2)) + " to " + AnalysisUtils.roundThreeDecimals(cIBoundaries.get((row * 2) + 1)), bodyFont);
             }
 
         }
