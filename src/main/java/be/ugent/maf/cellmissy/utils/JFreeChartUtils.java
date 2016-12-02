@@ -539,12 +539,6 @@ public class JFreeChartUtils {
         // Set the line data, renderer, and axis into plot
         plot.setDataset(1, dataset2);
         plot.setRenderer(1, renderer2);
-        plot.setDomainAxis(1, domain1);
-        //plot.setRangeAxis(1, range1);
-        // Map the line to the first Domain and Range
-//        plot.mapDatasetToDomainAxis(1, 0);
-//        plot.mapDatasetToRangeAxis(1, 0);
-
         return plot;
     }
 
