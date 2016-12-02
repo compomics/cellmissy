@@ -56,6 +56,7 @@ public class DRInputController {
     private List<PlateCondition> plateConditionsList;
     private List<AreaAnalysisResults> areaAnalysisResultsList;
     private NonEditableTableModel sharedTableModel;
+    private JTable slopesTable;
     //view
     private DRInputPanel dRInputPanel;
     private ChooseTreatmentDialog chooseTreatmentDialog;
@@ -134,10 +135,11 @@ public class DRInputController {
         dRInputPanel = new DRInputPanel();
         // control opaque property of bottom table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
-        JTable slopesTable = dRInputPanel.getSlopesTable();
+        slopesTable = dRInputPanel.getSlopesTable();
         slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         slopesTable.getTableHeader().setReorderingAllowed(false);
         slopesTable.setFillsViewportHeight(true);
+        slopesTable.setModel(new NonEditableTableModel());
 
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup experimentTypeRadioButtonGroup = new ButtonGroup();
@@ -230,8 +232,8 @@ public class DRInputController {
             // check treatments, dialog pops up if necessary
             checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
             // populate bottom table with the analysis group
-            dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-            dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+            slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+            slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         }
     }
 
@@ -254,11 +256,11 @@ public class DRInputController {
         //check treatments, dialog pops up if necessary
         checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
-        dRInputPanel.getSlopesTable().setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-        dRInputPanel.getSlopesTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         } else {
             //otherwise show new empty table
-            dRInputPanel.getSlopesTable().setModel(new NonEditableTableModel());
+            slopesTable.setModel(new NonEditableTableModel());
         }
     }
 
