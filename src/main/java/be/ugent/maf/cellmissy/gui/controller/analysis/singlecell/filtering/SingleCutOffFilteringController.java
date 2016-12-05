@@ -8,6 +8,9 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.filtering;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.SingleCutOffPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.SingleFilteringSummaryTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
@@ -15,12 +18,13 @@ import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -77,8 +81,8 @@ public class SingleCutOffFilteringController {
         DefaultListModel model = (DefaultListModel) singleCutOffPanel.getMedianDisplList().getModel();
         model.clear();
         filteringController.getPlateConditions().stream().map((condition)
-                -> filteringController.getMedianDisplAcrossReplicates(condition)).forEach((medianDisplForCondition) -> {
-                    model.addElement(medianDisplForCondition);
+                -> filteringController.getMedianDisplAcrossReplicates(condition)).forEach((Double medianDisplForCondition) -> {
+                    model.addElement(AnalysisUtils.roundThreeDecimals(medianDisplForCondition));
                 });
     }
 
@@ -126,6 +130,12 @@ public class SingleCutOffFilteringController {
                 LOG.error(ex.getMessage());
             }
         });
+
+        AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.LEFT);
+        for (int i = 0; i < singleCutOffPanel.getSummaryTable().getColumnModel().getColumnCount(); i++) {
+            singleCutOffPanel.getSummaryTable().getColumnModel().getColumn(i).setCellRenderer(alignedTableRenderer);
+        }
+        singleCutOffPanel.getSummaryTable().getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
 
         // add view to parent container
         filteringController.getFilteringPanel().getSingleCutOffParentPanel().add(singleCutOffPanel, gridBagConstraints);
@@ -254,7 +264,7 @@ public class SingleCutOffFilteringController {
      * pass it to the parent controller.
      */
     private void filter() {
-        Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = new HashMap<>();
+        Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = new LinkedHashMap<>();
         filteringController.getPreProcessingMap().keySet().stream().forEach((plateCondition) -> {
             List<TrackDataHolder> retainedTrackDataHolders = new ArrayList<>();
             SingleCellConditionDataHolder conditionDataHolder = filteringController.getPreProcessingMap().get(plateCondition);
@@ -265,6 +275,13 @@ public class SingleCutOffFilteringController {
             filteringMap.put(conditionDataHolder, retainedTrackDataHolders);
         });
         filteringController.setFilteringMap(filteringMap);
+    }
+
+    /**
+     * Update the summary table.
+     */
+    private void updateSummaryTable() {
+        singleCutOffPanel.getSummaryTable().setModel(new SingleFilteringSummaryTableModel(filteringController.getFilteringMap()));
     }
 
     /**
@@ -290,6 +307,8 @@ public class SingleCutOffFilteringController {
                 // plot the filtered KDE plots
                 plotRetainedDisplKDE();
                 plotRetainedSpeedKDE();
+                // update summary table
+                updateSummaryTable();
                 // recontrol GUI
                 filteringController.hideWaitingDialog();
                 filteringController.controlGuiComponents(true);

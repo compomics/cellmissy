@@ -16,10 +16,9 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Paola
  */
-public class FilteringSummaryTableModel extends AbstractTableModel {
+public class SingleFilteringSummaryTableModel extends AbstractTableModel {
 
     private final Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
-    private final Map<SingleCellConditionDataHolder, Double> cutOffMap;
     private String columnNames[];
     private Object[][] data;
 
@@ -27,11 +26,9 @@ public class FilteringSummaryTableModel extends AbstractTableModel {
      * Constructor.
      *
      * @param filteringMap
-     * @param cutOffMap
      */
-    public FilteringSummaryTableModel(Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap, Map<SingleCellConditionDataHolder, Double> cutOffMap) {
+    public SingleFilteringSummaryTableModel(Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap) {
         this.filteringMap = filteringMap;
-        this.cutOffMap = cutOffMap;
         initTable();
     }
 
@@ -59,10 +56,9 @@ public class FilteringSummaryTableModel extends AbstractTableModel {
 
         columnNames = new String[5];
         columnNames[0] = "condition";
-        columnNames[1] = "cut-off";
-        columnNames[2] = "nr tracks";
-        columnNames[3] = "nr retained tracks";
-        columnNames[4] = "% retained tracks";
+        columnNames[1] = "nr tracks";
+        columnNames[2] = "nr retained tracks";
+        columnNames[3] = "% retained tracks";
 
         List<SingleCellConditionDataHolder> conditionDataHolders = new ArrayList<>(filteringMap.keySet());
         data = new Object[conditionDataHolders.size()][columnNames.length];
@@ -70,10 +66,9 @@ public class FilteringSummaryTableModel extends AbstractTableModel {
         for (int i = 0; i < conditionDataHolders.size(); i++) {
             SingleCellConditionDataHolder conditionDataHolder = conditionDataHolders.get(i);
             data[i][0] = conditionDataHolder.getPlateCondition();
-            data[i][1] = cutOffMap.get(conditionDataHolder);
-            data[i][2] = conditionDataHolder.getTrackDataHolders().size();
-            data[i][3] = filteringMap.get(conditionDataHolder).size();
-            data[i][4] = filteringMap.get(conditionDataHolder).size() * 100 / conditionDataHolder.getTrackDataHolders().size();
+            data[i][1] = conditionDataHolder.getTrackDataHolders().size();
+            data[i][2] = filteringMap.get(conditionDataHolder).size();
+            data[i][3] = filteringMap.get(conditionDataHolder).size() * 100 / conditionDataHolder.getTrackDataHolders().size();
         }
     }
 }

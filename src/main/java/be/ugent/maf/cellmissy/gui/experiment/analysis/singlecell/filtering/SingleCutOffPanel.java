@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 /**
@@ -55,6 +56,10 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         return medianDisplList;
     }
 
+    public JTable getSummaryTable() {
+        return summaryTable;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -90,6 +95,9 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         cellSpeedPlotPanel = new javax.swing.JPanel();
         rawSpeedKDEParentPanel = new javax.swing.JPanel();
         filteredSpeedKDEParentPanel = new javax.swing.JPanel();
+        tablePanel = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        summaryTable = new javax.swing.JTable();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -235,7 +243,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -244,8 +252,8 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.2;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.weighty = 0.5;
         plotsPanel.add(medianDisplListPanel, gridBagConstraints);
 
         graphicsParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -308,7 +316,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         graphicsParentPanel.setLayout(graphicsParentPanelLayout);
         graphicsParentPanelLayout.setHorizontalGroup(
             graphicsParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 709, Short.MAX_VALUE)
+            .addGap(0, 640, Short.MAX_VALUE)
             .addGroup(graphicsParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(graphicsParentPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -317,7 +325,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         );
         graphicsParentPanelLayout.setVerticalGroup(
             graphicsParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 547, Short.MAX_VALUE)
+            .addGap(0, 546, Short.MAX_VALUE)
             .addGroup(graphicsParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(graphicsParentPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -328,11 +336,53 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.weightx = 0.6;
         gridBagConstraints.weighty = 1.0;
         plotsPanel.add(graphicsParentPanel, gridBagConstraints);
+
+        tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
+
+        summaryTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(summaryTable);
+
+        javax.swing.GroupLayout tablePanelLayout = new javax.swing.GroupLayout(tablePanel);
+        tablePanel.setLayout(tablePanelLayout);
+        tablePanelLayout.setHorizontalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tablePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        tablePanelLayout.setVerticalGroup(
+            tablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tablePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.weighty = 0.5;
+        plotsPanel.add(tablePanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -363,6 +413,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField meanDisplacTextField;
@@ -371,5 +422,7 @@ public class SingleCutOffPanel extends javax.swing.JPanel {
     private javax.swing.JPanel plotsPanel;
     private javax.swing.JPanel rawDisplKDEParentPanel;
     private javax.swing.JPanel rawSpeedKDEParentPanel;
+    private javax.swing.JTable summaryTable;
+    private javax.swing.JPanel tablePanel;
     // End of variables declaration//GEN-END:variables
 }
