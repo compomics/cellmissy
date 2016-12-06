@@ -5,8 +5,9 @@
  */
 package be.ugent.maf.cellmissy.entity.result.doseresponse;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  * This class keeps information of the fitting to a dose-response model.
@@ -27,8 +28,11 @@ public class SigmoidFittingResultsHolder {
     //log of 50% effective concentration
     private double logEC50;
 
-    //contains parameter estimates from every fitter iteration
-    private HashMap<String, List<Double>> parameterDistributions;
+    //matrix of parameter covariances
+    private double[][] covariances;
+
+    //list of constrained parameter names
+    private List<String> constrainedParameters;
 
     /**
      * Getters and setters
@@ -67,12 +71,20 @@ public class SigmoidFittingResultsHolder {
         this.logEC50 = logEC50;
     }
 
-    public HashMap<String, List<Double>> getParameterDistributions() {
-        return parameterDistributions;
+    public double[][] getCovariances() {
+        return covariances;
     }
 
-    public void setParameterDistributions(HashMap<String, List<Double>> parameterDistributions) {
-        this.parameterDistributions = parameterDistributions;
+    public void setCovariances(double[][] covariances) {
+        this.covariances = covariances;
+    }
+
+    public List<String> getConstrainedParameters() {
+        return constrainedParameters;
+    }
+
+    public void setConstrainedParameters(List<String> constrainedParameters) {
+        this.constrainedParameters = constrainedParameters;
     }
 
 }

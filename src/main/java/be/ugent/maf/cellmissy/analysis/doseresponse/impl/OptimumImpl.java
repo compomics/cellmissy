@@ -43,11 +43,10 @@ public class OptimumImpl implements Optimum {
      * @param evaluations number of times the function was evaluated
      * @param iterations number of iterations of the algorithm
      */
-    OptimumImpl(final Evaluation value, final int evaluations, final int iterations, HashMap<Integer, ArrayList<Double>> parameterDistr) {
+    OptimumImpl(final Evaluation value, final int evaluations, final int iterations) {
         this.value = value;
         this.evaluations = evaluations;
         this.iterations = iterations;
-        this.parameterDistr = parameterDistr;
     }
 
     @Override
@@ -58,10 +57,6 @@ public class OptimumImpl implements Optimum {
     @Override
     public int getIterations() {
         return iterations;
-    }
-
-    public HashMap<Integer, ArrayList<Double>> getParameterDistr() {
-        return parameterDistr;
     }
 
     @Override

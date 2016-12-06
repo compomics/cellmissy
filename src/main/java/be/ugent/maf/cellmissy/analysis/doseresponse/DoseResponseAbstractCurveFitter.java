@@ -11,10 +11,10 @@ import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHo
 import java.util.Collection;
 import org.apache.commons.math3.fitting.AbstractCurveFitter;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
 
 /**
- * Extends to include extra argument in method calls.
+ * Extension to return OptimumImp to acquire covariances for statistics
+ * calculation.
  *
  * @author Gwendolien
  */
@@ -32,15 +32,17 @@ public abstract class DoseResponseAbstractCurveFitter extends AbstractCurveFitte
      * @param points Observations.
      * @return the fitted parameters.
      */
-    public OptimumImpl fit(Collection<WeightedObservedPoint> points, SigmoidFittingResultsHolder resultsHolder) {
+    public OptimumImpl performRegression(Collection<WeightedObservedPoint> points) {
         // Perform the fit.
-        return getOptimizer().optimize(getProblem(points), resultsHolder);
+        return getOptimizer().optimize(getProblem(points));
     }
 
     /**
      * Creates an optimizer set up to fit the appropriate curve.
      *
-     * The default implementation uses a edited Levenberg-Marquardt optimizer.
+     * It is essentialy a Levenberg-Marquardt optimizer, the only edit is that
+     * the fit returns an OptimumImp instead of just Optimum. This to acquire
+     * the parameter covariances vor statustics calculation.
      *
      * @return the optimizer to use for fitting the curve to the given
      * datapoints.

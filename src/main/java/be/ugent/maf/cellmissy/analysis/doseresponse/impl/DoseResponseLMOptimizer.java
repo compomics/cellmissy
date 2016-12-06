@@ -31,8 +31,6 @@ import org.apache.commons.math3.util.Precision;
  */
 public class DoseResponseLMOptimizer extends LevenbergMarquardtOptimizer {
 
-    // edit extisting .optimize code to save parameter values in (separate) collection
-    // just before end of optimize: call method that saves collection in resultsHolder
     public DoseResponseLMOptimizer() {
         super();
     }
@@ -44,17 +42,15 @@ public class DoseResponseLMOptimizer extends LevenbergMarquardtOptimizer {
 
     /**
      * Optimizes the problem to obtain parameter estimates. Difference with
-     * inherited method: for each estimated parameter, a collection is created
-     * where every iteration's estimates are added to.
+     * inherited method: returns OptimumImp instead of Optimum. This is done so
+     * parameter covariances can be acquired to calculate statistics.
      *
      * @param problem Contains datapoints, function and parameters to fit.
-     * @param resultsHolder Holds the results of the fitting
      * @return
      */
-    public OptimumImpl optimize(final LeastSquaresProblem problem, SigmoidFittingResultsHolder resultsHolder) {
+    public OptimumImpl optimize(final LeastSquaresProblem problem) {
 
         // Empty collection for parameter distributions
-        HashMap<Integer, ArrayList<Double>> parameterDistr = new HashMap<>();
         // Pull in relevant data from the problem as locals.
         final int nR = problem.getObservationSize(); // Number of observed data.
         final int nC = problem.getParameterSize(); // Number of parameters.
@@ -159,7 +155,7 @@ public class DoseResponseLMOptimizer extends LevenbergMarquardtOptimizer {
                 return new OptimumImpl(
                         current,
                         evaluationCounter.getCount(),
-                        iterationCounter.getCount(), parameterDistr);
+                        iterationCounter.getCount());
             }
 
             // rescale if necessary
@@ -206,16 +202,6 @@ public class DoseResponseLMOptimizer extends LevenbergMarquardtOptimizer {
                 currentResiduals = current.getResiduals().toArray();
                 currentCost = current.getCost();
                 currentPoint = current.getPoint().toArray();
-                //put new parameter estimates in collection
-                for (int i = 0; i < currentPoint.length; i++) {
-                    if (parameterDistr.get(i) != null) {
-                        parameterDistr.get(i).add(currentPoint[i]);
-                    } else {
-                        parameterDistr.put(i, new ArrayList<Double>());
-                        parameterDistr.get(i).add(currentPoint[i]);
-                    }
-                    
-                }
 
                 // compute the scaled actual reduction
                 double actRed = -1.0;
@@ -274,7 +260,7 @@ public class DoseResponseLMOptimizer extends LevenbergMarquardtOptimizer {
 
                     // tests for convergence.
                     if (checker != null && checker.converged(iterationCounter.getCount(), previous, current)) {
-                        return new OptimumImpl(current, evaluationCounter.getCount(), iterationCounter.getCount(),parameterDistr);
+                        return new OptimumImpl(current, evaluationCounter.getCount(), iterationCounter.getCount());
                     }
                 } else {
                     // failed iteration, reset the previous values
@@ -295,7 +281,7 @@ public class DoseResponseLMOptimizer extends LevenbergMarquardtOptimizer {
                         && preRed <= getCostRelativeTolerance()
                         && ratio <= 2.0)
                         || delta <= getParameterRelativeTolerance() * xNorm) {
-                    return new OptimumImpl(current, evaluationCounter.getCount(), iterationCounter.getCount(),parameterDistr);
+                    return new OptimumImpl(current, evaluationCounter.getCount(), iterationCounter.getCount());
                 }
 
                 // tests for termination and stringent tolerances

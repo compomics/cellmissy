@@ -251,7 +251,7 @@ public class DRResultsController {
         DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
         //specify decimal format for scientific notation
         DecimalFormat df = new DecimalFormat("00.00E00");
-        Object[][] data = new Object[18][3];
+        Object[][] data = new Object[19][3];
 
         //set fields in first column
         data[0][0] = "Best-fit value";
@@ -342,6 +342,12 @@ public class DRResultsController {
         data[15][2] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
         data[16][2] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
         data[17][2] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
+        
+        //TEST to see after how many iterations fitter stops
+        data[18][1] = "times estimated (initial):  " + analysisGroup.getDoseResponseAnalysisResults().getFittingResults(false).getParameterDistributions().get("logec50").size();
+        data[18][2] = "times estimated (normalized):  " + analysisGroup.getDoseResponseAnalysisResults().getFittingResults(true).getParameterDistributions().get("logec50").size();
+
+        
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "";
         columnNames[1] = "Initial fitting";

@@ -555,8 +555,7 @@ public class AnalysisUtils {
 
         for (int i = 0; i < experimentalYS.length; i++) {
             ssTot += (experimentalYS[i] - mean) * (experimentalYS[i] - mean);
-            ssRes += (experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder))
-                    * (experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder));
+            ssRes += Math.pow(experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder),2);
         }
 
         return 1 - (ssRes / ssTot);
@@ -594,29 +593,16 @@ public class AnalysisUtils {
         return result;
     }
 
-    /**
-     * Calculates the entire covariance matrix for a given data set.
-     *
-     * @param intermediateValues Contains estimates for the parameters. Columns
-     * contain variable values.
-     * @return
-     */
-    private static double[][] calculateCovarianceMatrix(double[][] intermediateValues) {
-        Covariance covariance = (new Covariance(intermediateValues));
-        return covariance.getCovarianceMatrix().getData();
-    }
-
+   
     /**
      * Acquire the diagonal covariances for a given data set. These can be used
      * for calculating standard errors.
      *
-     * @param intermediateValues Contains estimates for the parameters. Columns
-     * contain variable values.
+     * @param covarianceMatrix Contains covariances for the estimated parameters
      * @return Array containing the diagonal matrix values of the covariance
      * matrix.
      */
-    public static double[] getDiagonalCovariances(double[][] intermediateValues) {
-        double[][] covarianceMatrix = calculateCovarianceMatrix(intermediateValues);
+    public static double[] getDiagonalCovariances(double[][] covarianceMatrix) {
         double[] result = new double[covarianceMatrix.length];
         for (int i = 0; i < covarianceMatrix.length; i++) {
             result[i] = covarianceMatrix[i][i];
@@ -632,38 +618,26 @@ public class AnalysisUtils {
      * (normalized or not)
      * @param resultsholder Contains the best-fit value parameters of the
      * initial or normalized fitting
-     * @param parameterDistributions Intermediate fitter values mapped to
-     * parameter name
      * @return
      */
     public static double[] calculateStandardErrors(LinkedHashMap<Double, List<Double>> data, SigmoidFittingResultsHolder resultsholder) {
         //lenght of the result array is always 4, for the max amount of parameters possible to be estimated in a dose-response fit.
         double[] result = new double[4];
-        List<String> constrainedParameters = new ArrayList<>();
-        HashMap<String, List<Double>> parameterDistributions = resultsholder.getParameterDistributions();
+        List<String> constrainedParameters = resultsholder.getConstrainedParameters();
         //calculate residual sum of squares
         double ssRes = 0.0;
         double[] experimentalYS = generateYValues(data);
         double[] experimentalXS = generateXValues(data);
         for (int i = 0; i < experimentalYS.length; i++) {
-            ssRes += (experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder))
-                    * (experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder));
-        }
-        //the degrees of freedom is the amount of data points minus the number of parameters fit
-        int degreesFreedom = experimentalXS.length - parameterDistributions.size();
-
-        //bottom and/or top parameter can be constrained: lenght of covariance array will change
-        List<Double> bottomDistribution = parameterDistributions.get("bottom");
-        if (bottomDistribution == null) {
-            constrainedParameters.add("bottom");
-        }
-        List<Double> topDistribution = parameterDistributions.get("top");
-        if (topDistribution == null) {
-            constrainedParameters.add("top");
+            ssRes += Math.pow(experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder),2);
         }
         //get the diagonal values from the covariance matrix
-        double[] covariances = getDiagonalCovariances(convertParameterDistributions(parameterDistributions, constrainedParameters));
+        double[] covariances = getDiagonalCovariances(resultsholder.getCovariances());
 
+        //the degrees of freedom is the amount of data points minus the number of parameters fit
+        int degreesFreedom = experimentalXS.length - covariances.length;
+
+        
         //second to last and last value of covariances array will always be of logEC50 and hillslope
         //size of distributions map is always equal to lenght of covariances array
         result[2] = Math.sqrt((ssRes / degreesFreedom) * covariances[parameterDistributions.size() - 2]);
@@ -671,9 +645,9 @@ public class AnalysisUtils {
 
         //if the parameter was constrained in the fitting, there is no distribution
         //the standard error will be set to 0, so that later it can be correctly displayed in the GUI
-        if (bottomDistribution == null) {
+        if (constrainedParameters.contains("bottom")) {
             result[0] = 0;
-            if (topDistribution == null) {
+            if (constrainedParameters.contains("top")) {
                 result[1] = 0;
             } else {
                 result[1] = Math.sqrt((ssRes / degreesFreedom) * covariances[0]);
@@ -681,7 +655,7 @@ public class AnalysisUtils {
         } else {
             //calculate the standard error
             result[0] = Math.sqrt((ssRes / degreesFreedom) * covariances[0]);
-            if (topDistribution == null) {
+            if (constrainedParameters.contains("top")) {
                 result[1] = 0;
             } else {
                 result[1] = Math.sqrt((ssRes / degreesFreedom) * covariances[1]);
@@ -690,38 +664,5 @@ public class AnalysisUtils {
         return result;
     }
 
-    /**
-     * Convert type so that correlation matrix can be constructed. The columns
-     * of the result array contain the the variable values per parameter. The
-     * amount of columns thus is equal to the number of parameters estimated.
-     *
-     * @param parameterDistributions
-     * @return
-     */
-    private static double[][] convertParameterDistributions(HashMap<String, List<Double>> parameterDistributions, List<String> contrainedParameters) {
-        double[][] result = new double[parameterDistributions.size()][];
-        //Intermediate array to help convert from Double to double
-        Double[] tempArray = new Double[parameterDistributions.get("logec50").size()];
-
-        if (contrainedParameters.isEmpty()) {
-            parameterDistributions.get("bottom").toArray(tempArray);
-            result[0] = ArrayUtils.toPrimitive(tempArray.clone());
-            parameterDistributions.get("top").toArray(tempArray);
-            result[1] = ArrayUtils.toPrimitive(tempArray.clone());
-        } else if (contrainedParameters.size() == 1) {
-            if (contrainedParameters.contains("bottom")) {
-                parameterDistributions.get("top").toArray(tempArray);
-                result[0] = ArrayUtils.toPrimitive(tempArray.clone());
-            } else {
-                parameterDistributions.get("bottom").toArray(tempArray);
-                result[0] = ArrayUtils.toPrimitive(tempArray.clone());
-            }
-        }
-        parameterDistributions.get("logec50").toArray(tempArray);
-        result[result.length - 2] = ArrayUtils.toPrimitive(tempArray.clone());
-        parameterDistributions.get("hillslope").toArray(tempArray);
-        result[result.length - 1] = ArrayUtils.toPrimitive(tempArray.clone());
-        //currently the estimates per parameter are in the rows, while they should be in the columns
-        return transpose2DArray(result);
-    }
+   
 }

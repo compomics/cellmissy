@@ -11,7 +11,6 @@ import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHo
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -19,7 +18,6 @@ import org.apache.commons.math3.fitting.AbstractCurveFitter;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.fitting.WeightedObservedPoint;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer.Optimum;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
 import org.apache.commons.math3.linear.DiagonalMatrix;
 import org.springframework.stereotype.Component;
@@ -138,7 +136,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
             }
         };
 
-        OptimumImpl bestFit = fitter.fit(observations, resultsHolder);
+        OptimumImpl bestFit = fitter.performRegression(observations);
         //get the best-fit parameters
         double[] params = bestFit.getPoint().toArray();
         double bottom = params[0];
@@ -146,20 +144,15 @@ public class SigmoidFitterImpl implements SigmoidFitter {
         double logEC50 = params[2];
         double hillslope = params[3];
 
-        //get the distributions of the estimated parameters
-        HashMap<Integer, ArrayList<Double>> parameterDistr = bestFit.getParameterDistr();
-        HashMap<String, List<Double>> actualMap = new HashMap<>();
-        actualMap.put("bottom", parameterDistr.get(0));
-        actualMap.put("top", parameterDistr.get(1));
-        actualMap.put("logec50", parameterDistr.get(2));
-        actualMap.put("hillslope", parameterDistr.get(3));
-
         //set the fields of the fitting results holder
         resultsHolder.setBottom(bottom);
         resultsHolder.setTop(top);
         resultsHolder.setLogEC50(logEC50);
         resultsHolder.setHillslope(hillslope);
-        resultsHolder.setParameterDistributions(actualMap);
+        //no parameters were constrained
+        resultsHolder.setConstrainedParameters(new ArrayList<String>());
+        //TEST: what is the effect of the singularity threshold argument?
+        resultsHolder.setCovariances(bestFit.getCovariances(0).getData());
     }
 
     @Override
@@ -261,23 +254,21 @@ public class SigmoidFitterImpl implements SigmoidFitter {
             }
         };
 
-        OptimumImpl bestFit = fitter.fit(observations, resultsHolder);
+        OptimumImpl bestFit = fitter.performRegression(observations);
         double[] params = bestFit.getPoint().toArray();
         double top = params[0];
         double logEC50 = params[1];
         double hillslope = params[2];
 
-        HashMap<Integer, ArrayList<Double>> parameterDistr = bestFit.getParameterDistr();
-        HashMap<String, List<Double>> actualMap = new HashMap<>();
-        actualMap.put("top", parameterDistr.get(0));
-        actualMap.put("logec50", parameterDistr.get(1));
-        actualMap.put("hillslope", parameterDistr.get(2));
-
         resultsHolder.setBottom(bottom);
         resultsHolder.setTop(top);
         resultsHolder.setLogEC50(logEC50);
         resultsHolder.setHillslope(hillslope);
-        resultsHolder.setParameterDistributions(actualMap);
+        //bottom parameter was constrained
+        List<String> constrainedParam = new ArrayList<>();
+        constrainedParam.add("bottom");
+        resultsHolder.setConstrainedParameters(constrainedParam);
+        resultsHolder.setCovariances(bestFit.getCovariances(0).getData());
     }
 
     @Override
@@ -378,23 +369,21 @@ public class SigmoidFitterImpl implements SigmoidFitter {
             }
         };
 
-        OptimumImpl bestFit = fitter.fit(observations, resultsHolder);
+        OptimumImpl bestFit = fitter.performRegression(observations);
         double[] params = bestFit.getPoint().toArray();
         double bottom = params[0];
         double logEC50 = params[1];
         double hillslope = params[2];
 
-        HashMap<Integer, ArrayList<Double>> parameterDistr = bestFit.getParameterDistr();
-        HashMap<String, List<Double>> actualMap = new HashMap<>();
-        actualMap.put("bottom", parameterDistr.get(0));
-        actualMap.put("logec50", parameterDistr.get(1));
-        actualMap.put("hillslope", parameterDistr.get(2));
-
         resultsHolder.setBottom(bottom);
         resultsHolder.setTop(top);
         resultsHolder.setLogEC50(logEC50);
         resultsHolder.setHillslope(hillslope);
-        resultsHolder.setParameterDistributions(actualMap);
+        //top parameter was constrained
+        List<String> constrainedParam = new ArrayList<>();
+        constrainedParam.add("top");
+        resultsHolder.setConstrainedParameters(constrainedParam);
+        resultsHolder.setCovariances(bestFit.getCovariances(0).getData());
     }
 
     @Override
@@ -489,26 +478,24 @@ public class SigmoidFitterImpl implements SigmoidFitter {
                         build();
             }
         };
-        
-        OptimumImpl bestFit = fitter.fit(observations, resultsHolder);
+
+        OptimumImpl bestFit = fitter.performRegression(observations);
         //get best-fit parameters
         double[] params = bestFit.getPoint().toArray();
         double logEC50 = params[0];
         double hillslope = params[1];
 
-        //get the distributions of the estimated parameters
-        HashMap<Integer, ArrayList<Double>> parameterDistr = bestFit.getParameterDistr();
-        HashMap<String, List<Double>> actualMap = new HashMap<>();
-        actualMap.put("logec50", parameterDistr.get(0));
-        actualMap.put("hillslope", parameterDistr.get(1));
-        
         //set the values in the fitting results holder
         resultsHolder.setBottom(bottom);
         resultsHolder.setTop(top);
         resultsHolder.setLogEC50(logEC50);
         resultsHolder.setHillslope(hillslope);
-        resultsHolder.setParameterDistributions(actualMap);
-        
+        //bottom and top parameter were constrained
+        List<String> constrainedParam = new ArrayList<>();
+        constrainedParam.add("bottom");
+        constrainedParam.add("top");
+        resultsHolder.setConstrainedParameters(constrainedParam);
+        resultsHolder.setCovariances(bestFit.getCovariances(0).getData());
     }
 
 }
