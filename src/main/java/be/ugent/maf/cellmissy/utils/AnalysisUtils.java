@@ -640,8 +640,8 @@ public class AnalysisUtils {
         
         //second to last and last value of covariances array will always be of logEC50 and hillslope
         //size of distributions map is always equal to lenght of covariances array
-        result[2] = Math.sqrt((ssRes / degreesFreedom) * covariances[parameterDistributions.size() - 2]);
-        result[3] = Math.sqrt((ssRes / degreesFreedom) * covariances[parameterDistributions.size() - 1]);
+        result[2] = Math.sqrt((ssRes / degreesFreedom) * covariances[covariances.length - 2]);
+        result[3] = Math.sqrt((ssRes / degreesFreedom) * covariances[covariances.length - 1]);
 
         //if the parameter was constrained in the fitting, there is no distribution
         //the standard error will be set to 0, so that later it can be correctly displayed in the GUI
