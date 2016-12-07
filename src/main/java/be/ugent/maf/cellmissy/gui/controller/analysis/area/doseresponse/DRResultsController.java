@@ -448,7 +448,7 @@ public class DRResultsController {
         PdfUtils.addEmptyLines(document, 1);
         // add conditions number
         lines.clear();
-        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + experiment.getPlateConditionList().size();
+        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getConcentrationsMap().size();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -480,17 +480,17 @@ public class DRResultsController {
         List<String> lines = new ArrayList<>();
         String parameters = "BOTTOM = ";
         if (constrainValues.get(0) == null) {
-            parameters += "-";
+            parameters += "--";
         } else {
             parameters += constrainValues.get(0);
         }
         parameters += "    TOP = ";
         if (constrainValues.get(1) == null) {
-            parameters += "-";
+            parameters += "--";
         } else {
             parameters += constrainValues.get(1);
         }
-        String line = "CONSTRAINED PARAMETERS: " + parameters;
+        String line = "CONSTRAINED PARAMETERS:   " + parameters;
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -526,17 +526,17 @@ public class DRResultsController {
         //add information about constraining
         String parameters = "BOTTOM = ";
         if (constrainValues.get(0) == null) {
-            parameters += "-";
+            parameters += "--";
         } else {
             parameters += constrainValues.get(0);
         }
         parameters += "    TOP = ";
         if (constrainValues.get(1) == null) {
-            parameters += "-";
+            parameters += "--";
         } else {
             parameters += constrainValues.get(1);
         }
-        String line = "CONSTRAINED PARAMETERS: " + parameters;
+        String line = "CONSTRAINED PARAMETERS:   " + parameters;
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
