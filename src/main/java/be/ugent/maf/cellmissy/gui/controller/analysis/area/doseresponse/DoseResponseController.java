@@ -15,7 +15,7 @@ import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisRes
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -337,7 +337,7 @@ public class DoseResponseController {
 
         // show the r squared value
         SigmoidFittingResultsHolder resultsholder = analysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
-        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsholder)), -4, 1.0));
+        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsholder)), -4, 10.0));
 
         // Create the chart with the plot and no legend
         JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);

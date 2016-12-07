@@ -10,7 +10,7 @@ import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGro
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse.DRResultsPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRResultsPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -448,7 +448,7 @@ public class DRResultsController {
         PdfUtils.addEmptyLines(document, 1);
         // add conditions number
         lines.clear();
-        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getConcentrationsMap().size();
+        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getVelocitiesMap().size();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -495,7 +495,7 @@ public class DRResultsController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-        line = "R SQUARED (GOODNESS OF FIT)= " + AnalysisUtils.roundThreeDecimals(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(false).getGoodnessOfFit());
+        line = "R SQUARED (GOODNESS OF FIT) = " + AnalysisUtils.roundThreeDecimals(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(false).getGoodnessOfFit());
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -541,7 +541,7 @@ public class DRResultsController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-        line = "R SQUARED (GOODNESS OF FIT)= " + AnalysisUtils.roundThreeDecimals(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(true).getGoodnessOfFit());
+        line = "R SQUARED (GOODNESS OF FIT) = " + AnalysisUtils.roundThreeDecimals(doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getStatistics(true).getGoodnessOfFit());
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);

@@ -223,7 +223,7 @@ public class AnalysisUtils {
             return (lower + upper) / 2;
         }
     }
-    
+
     /**
      * Compute median value of a list of double
      *
@@ -523,21 +523,6 @@ public class AnalysisUtils {
     }
 
     /**
-     * Return a comparator for comparing Doubles. This method can be used to
-     * find a max or min value in a list.
-     *
-     * @return
-     */
-    public static Comparator doublesComparator() {
-        return new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return Double.valueOf(o1).compareTo(Double.valueOf(o2));
-            }
-        };
-    }
-
-    /**
      * Compute the R² of a non-linear fitting.
      *
      * @param data Log transformed concentrations mapped to replicate velocities
@@ -555,7 +540,7 @@ public class AnalysisUtils {
 
         for (int i = 0; i < experimentalYS.length; i++) {
             ssTot += (experimentalYS[i] - mean) * (experimentalYS[i] - mean);
-            ssRes += Math.pow(experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder),2);
+            ssRes += Math.pow(experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder), 2);
         }
 
         return 1 - (ssRes / ssTot);
@@ -578,8 +563,8 @@ public class AnalysisUtils {
     /**
      * Calculate a confidence interval given an estimated value, it's standard
      * error and the quantile which determines the confidence level. A possible
-     * extra param is the quantile of the normal distribution. This is 1.96 for a
-     * standard 95% confidence interval
+     * extra param is the quantile of the normal distribution. This is 1.96 for
+     * a standard 95% confidence interval
      *
      * @param value
      * @param standardError
@@ -593,7 +578,6 @@ public class AnalysisUtils {
         return result;
     }
 
-   
     /**
      * Acquire the diagonal covariances for a given data set. These can be used
      * for calculating standard errors.
@@ -629,7 +613,7 @@ public class AnalysisUtils {
         double[] experimentalYS = generateYValues(data);
         double[] experimentalXS = generateXValues(data);
         for (int i = 0; i < experimentalYS.length; i++) {
-            ssRes += Math.pow(experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder),2);
+            ssRes += Math.pow(experimentalYS[i] - calculatePredictedValue(experimentalXS[i], resultsholder), 2);
         }
         //get the diagonal values from the covariance matrix
         double[] covariances = getDiagonalCovariances(resultsholder.getCovariances());
@@ -637,7 +621,6 @@ public class AnalysisUtils {
         //the degrees of freedom is the amount of data points minus the number of parameters fit
         int degreesFreedom = experimentalXS.length - covariances.length;
 
-        
         //second to last and last value of covariances array will always be of logEC50 and hillslope
         //size of distributions map is always equal to lenght of covariances array
         result[2] = Math.sqrt((ssRes / degreesFreedom) * covariances[covariances.length - 2]);
@@ -664,5 +647,4 @@ public class AnalysisUtils {
         return result;
     }
 
-   
 }

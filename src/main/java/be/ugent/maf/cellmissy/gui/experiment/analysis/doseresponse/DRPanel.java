@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

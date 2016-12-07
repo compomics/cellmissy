@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis.area.doseresponse;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -15,12 +16,12 @@ import javax.swing.JTextField;
  *
  * @author Gwendolien
  */
-public class DRInitialPlotPanel extends javax.swing.JPanel {
+public class DRNormalizedPlotPanel extends javax.swing.JPanel {
 
     /**
-     * Creates new form DRInitialPlotPanel
+     * Creates new form DRNormalizedPlotPanel
      */
-    public DRInitialPlotPanel() {
+    public DRNormalizedPlotPanel() {
         initComponents();
     }
 
@@ -28,20 +29,28 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         return doseResponseChartParentPanel;
     }
 
-    public JCheckBox getBottomCheckBox() {
-        return bottomCheckBox;
+    public JComboBox getBottomComboBox() {
+        return bottomComboBox;
     }
 
     public JTextField getBottomTextField() {
         return bottomTextField;
     }
 
-    public JCheckBox getTopCheckBox() {
-        return topCheckBox;
+    public JCheckBox getBottomConstrainCheckBox() {
+        return bottomConstrainCheckBox;
+    }
+
+    public JComboBox getTopComboBox() {
+        return topComboBox;
     }
 
     public JTextField getTopTextField() {
         return topTextField;
+    }
+
+    public JCheckBox getTopConstrainCheckBox() {
+        return topConstrainCheckBox;
     }
 
     public JButton getPlotGraphButton() {
@@ -58,17 +67,18 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jComboBox1 = new javax.swing.JComboBox();
         leftPanel = new javax.swing.JPanel();
         plotGraphButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        bottomCheckBox = new javax.swing.JCheckBox();
-        topCheckBox = new javax.swing.JCheckBox();
+        bottomComboBox = new javax.swing.JComboBox();
+        topComboBox = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        bottomConstrainCheckBox = new javax.swing.JCheckBox();
+        topConstrainCheckBox = new javax.swing.JCheckBox();
         bottomTextField = new javax.swing.JTextField();
         topTextField = new javax.swing.JTextField();
         doseResponseChartParentPanel = new javax.swing.JPanel();
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -79,56 +89,80 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         leftPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         leftPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        plotGraphButton.setText("Plot New Graph");
+        plotGraphButton.setText("Renormalize and Plot New Graph");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel1.setText("Constrain Fit");
+        jLabel1.setText("Normalization");
 
-        bottomCheckBox.setBackground(new java.awt.Color(255, 255, 255));
-        bottomCheckBox.setText("Bottom");
+        bottomComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Smallest Mean Value", "Smallest Median Value", "Other Value" }));
 
-        topCheckBox.setBackground(new java.awt.Color(255, 255, 255));
-        topCheckBox.setText("Top");
+        topComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Largest Mean Value", "Largest Median Value", "Other Value" }));
+
+        jLabel2.setText("0 %");
+
+        jLabel3.setText("100 %");
+
+        bottomConstrainCheckBox.setBackground(new java.awt.Color(255, 255, 255));
+        bottomConstrainCheckBox.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        bottomConstrainCheckBox.setLabel("Constrain Bottom to 0");
+
+        topConstrainCheckBox.setBackground(new java.awt.Color(255, 255, 255));
+        topConstrainCheckBox.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        topConstrainCheckBox.setLabel("Constrain Top to 100");
 
         javax.swing.GroupLayout leftPanelLayout = new javax.swing.GroupLayout(leftPanel);
         leftPanel.setLayout(leftPanelLayout);
         leftPanelLayout.setHorizontalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(leftPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(plotGraphButton)
-                            .addGroup(leftPanelLayout.createSequentialGroup()
-                                .addGap(7, 7, 7)
-                                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(bottomCheckBox)
-                                    .addComponent(topCheckBox)))
-                            .addComponent(jLabel1)))
+                        .addComponent(bottomComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bottomTextField))
                     .addGroup(leftPanelLayout.createSequentialGroup()
-                        .addGap(59, 59, 59)
-                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(topTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(bottomTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(50, Short.MAX_VALUE))
+                        .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(plotGraphButton)
+                            .addComponent(jLabel3)
+                            .addGroup(leftPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(topConstrainCheckBox)
+                                    .addComponent(bottomConstrainCheckBox))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(leftPanelLayout.createSequentialGroup()
+                        .addComponent(topComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(topTextField)))
+                .addContainerGap())
         );
         leftPanelLayout.setVerticalGroup(
             leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftPanelLayout.createSequentialGroup()
-                .addGap(59, 59, 59)
+                .addGap(50, 50, 50)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(bottomCheckBox)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bottomTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
-                .addComponent(topCheckBox)
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(bottomComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(bottomTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(topTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addComponent(bottomConstrainCheckBox)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(leftPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(topComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(topTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(topConstrainCheckBox)
+                .addGap(18, 18, 18)
                 .addComponent(plotGraphButton)
-                .addContainerGap(160, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -136,7 +170,7 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.15;
+        gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 1.0;
         add(leftPanel, gridBagConstraints);
 
@@ -149,21 +183,24 @@ public class DRInitialPlotPanel extends javax.swing.JPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.85;
+        gridBagConstraints.weightx = 0.8;
         gridBagConstraints.weighty = 1.0;
         add(doseResponseChartParentPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox bottomCheckBox;
+    private javax.swing.JComboBox bottomComboBox;
+    private javax.swing.JCheckBox bottomConstrainCheckBox;
     private javax.swing.JTextField bottomTextField;
     private javax.swing.JPanel doseResponseChartParentPanel;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel leftPanel;
     private javax.swing.JButton plotGraphButton;
-    private javax.swing.JCheckBox topCheckBox;
+    private javax.swing.JComboBox topComboBox;
+    private javax.swing.JCheckBox topConstrainCheckBox;
     private javax.swing.JTextField topTextField;
     // End of variables declaration//GEN-END:variables
 }
