@@ -31,7 +31,7 @@ import org.springframework.stereotype.Controller;
  *
  * @author Gwendolien
  */
-@Controller("dRNormalizedController")
+@Controller("areaDRNormalizedController")
 public class AreaDRNormalizedController implements DRNormalizedController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRNormalizedController.class);

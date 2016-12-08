@@ -303,36 +303,7 @@ public class DoseResponseController {
      * @return
      */
     protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, boolean normalized) {
-
-        //setup scatter data of experimental concentrations/slopes, renderer and axis
-        XYSeriesCollection experimentalData = new XYSeriesCollection();
-        XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(AnalysisUtils.generateXValues(dataToPlot), AnalysisUtils.generateYValues(dataToPlot));
-        scatterXYSeries.setKey("Experimental data");
-        experimentalData.addSeries(scatterXYSeries);
-
-        // Create the line data, renderer, and axis
-        XYSeriesCollection fitting = new XYSeriesCollection();
-        // create xy series of simulated data from the parameters from the fitting
-        XYSeries fittingData = simulateData(normalized);
-        fittingData.setKey("Fitting");
-        fitting.addSeries(fittingData);
-
-        XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, normalized);
-
-        // show the r squared value
-        SigmoidFittingResultsHolder resultsholder = dRAnalysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
-        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsholder)), -4, 10.0));
-
-        // Create the chart with the plot and no legend
-        JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
-        String title = "";
-        if (normalized) {
-            title = "Normalized fitting";
-        } else {
-            title = "Initial fitting";
-        }
-        JFreeChartUtils.setupDoseResponseChart(chart, title);
-        return chart;
+        return sharedDoseResponse.createDoseResponseChart(dataToPlot, dRAnalysisGroup, normalized);
     }
 
     /**
@@ -344,8 +315,7 @@ public class DoseResponseController {
      * normalized or initial fitting
      */
     protected XYSeries simulateData(boolean normalized) {
-        SigmoidFittingResultsHolder resultsholder = dRAnalysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
-        return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50());
+        return sharedDoseResponse.simulateData(normalized);
     }
 
     /**

@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author Gwendolien
  */
-public class AreaDoseResponseAnalysisGroup {
+public class AreaDoseResponseAnalysisGroup implements DoseResponseAnalysisGroup {
 
     //An experiment might have multiple treatments. Per condition the concentrations for a treatment may vary.
     //The concentration value is mapped to his unit of measurement.

@@ -19,7 +19,6 @@ import be.ugent.maf.cellmissy.utils.PdfUtils;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
-import com.lowagie.text.Font;
 import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -48,30 +47,18 @@ import org.springframework.stereotype.Controller;
  *
  * @author Gwendolien
  */
-@Controller("dRResultsController")
-public class AreaDRResultsController implements DRResultsController {
+@Controller("areaDRResultsController")
+public class AreaDRResultsController extends DRResultsController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRResultsController.class);
 
-    //model
-    private NonEditableTableModel tableModel;
-    private ChartPanel dupeInitialChartPanel;
-    private ChartPanel dupeNormalizedChartPanel;
-    private Experiment experiment;
-    private Document document;
-    private PdfWriter writer;
-    private static final Font bodyFont = new Font(Font.HELVETICA, 8);
-    private static final Font boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
-    private static final Font titleFont = new Font(Font.HELVETICA, 10, Font.BOLD);
-    private static final int chartWidth = 500;
-    private static final int chartHeight = 450;
+    //model: all in super class
     //view
     private DRResultsPanel dRResultsPanel;
     // parent controller
     @Autowired
     private DoseResponseController doseResponseController;
-    // services
-    private GridBagConstraints gridBagConstraints;
+    
 
     /**
      * Initialise controller
@@ -206,40 +193,7 @@ public class AreaDRResultsController implements DRResultsController {
         });
     }
 
-    private void calculateStatistics(DoseResponseStatisticsHolder statisticsHolder, SigmoidFittingResultsHolder resultsHolder, LinkedHashMap<Double, List<Double>> dataToFit) {
-        //calculate and set R² and EC50
-        statisticsHolder.setGoodnessOfFit(AnalysisUtils.computeRSquared(dataToFit, resultsHolder));
-        statisticsHolder.setEc50(Math.pow(10, resultsHolder.getLogEC50()));
-
-        //calculate and set standard errors of parameters
-        //calculate and set 95% confidence interval boundaries
-        double[] standardErrors = AnalysisUtils.calculateStandardErrors(dataToFit, resultsHolder);
-        statisticsHolder.setStdErrBottom(standardErrors[0]);
-        statisticsHolder.setcIBottom(checkAndGetCI(resultsHolder.getBottom(), standardErrors[0]));
-        statisticsHolder.setStdErrTop(standardErrors[1]);
-        statisticsHolder.setcITop(checkAndGetCI(resultsHolder.getTop(), standardErrors[1]));
-        statisticsHolder.setStdErrLogEC50(standardErrors[2]);
-        statisticsHolder.setcILogEC50(checkAndGetCI(resultsHolder.getLogEC50(), standardErrors[2]));
-        statisticsHolder.setStdErrHillslope(standardErrors[3]);
-        statisticsHolder.setcIHillslope(checkAndGetCI(resultsHolder.getHillslope(), standardErrors[3]));
-
-        //confidence interval for ec50 (antilog of logec50 ci)
-        double[] cILogEc50 = statisticsHolder.getcILogEC50();
-        double[] cIEc50 = new double[2];
-        for (int i = 0; i < cILogEc50.length; i++) {
-            cIEc50[i] = Math.pow(10, cILogEc50[i]);
-        }
-        statisticsHolder.setcIEC50(cIEc50);
-    }
-
-    private double[] checkAndGetCI(double parameter, double standardError) {
-        if (standardError != 0.0) {
-            return AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, standardError);
-        } else {
-            return null;
-        }
-    }
-
+    
     /**
      * Create the table model for the top panel table. Table contains icon,
      * log-transformed concentration and normalized slopes per condition

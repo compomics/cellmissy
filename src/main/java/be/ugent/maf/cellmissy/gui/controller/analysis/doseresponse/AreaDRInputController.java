@@ -47,7 +47,7 @@ import org.springframework.stereotype.Controller;
  *
  * @author Gwendolien
  */
-@Controller("dRInputController")
+@Controller("areaDRInputController")
 public class AreaDRInputController implements DRInputController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRInputController.class);
