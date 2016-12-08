@@ -26,25 +26,28 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="writeCellTracksToFileButton" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="areaAnalysisButton" linkSize="4" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="loadAreaButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="createExpButton" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jButton1" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="aboutButton" max="32767" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="writeCellTracksToFileButton" alignment="0" max="32767" attributes="0"/>
-                          <Component id="areaAnalysisButton" linkSize="4" alignment="0" max="32767" attributes="0"/>
-                          <Component id="loadAreaButton" alignment="0" max="32767" attributes="0"/>
-                          <Component id="createExpButton" alignment="0" max="32767" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="cellMiaButton" alignment="1" max="32767" attributes="0"/>
-                          <Component id="singleCellAnalysisButton" linkSize="4" alignment="1" max="32767" attributes="0"/>
-                          <Component id="loadTracksButton" alignment="1" max="32767" attributes="0"/>
-                          <Component id="overviewButton" alignment="1" max="32767" attributes="0"/>
-                      </Group>
+                  <Component id="cellMiaButton" alignment="1" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="singleCellAnalysisButton" linkSize="4" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
+                  <Component id="loadTracksButton" alignment="1" max="32767" attributes="0"/>
+                  <Component id="overviewButton" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -74,7 +77,10 @@
                   <Component id="cellMiaButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="aboutButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="aboutButton" linkSize="2" max="32767" attributes="0"/>
+                  <Component id="jButton1" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -151,6 +157,23 @@
           <Image iconType="3" name="/icons/genericInputIcon.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Load Tracks"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButton1">
+      <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/icons/dr.png"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Dose-Response"/>
+        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[143, 41]"/>
+        </Property>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[143, 41]"/>
+        </Property>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[143, 41]"/>
+        </Property>
       </Properties>
     </Component>
   </SubComponents>

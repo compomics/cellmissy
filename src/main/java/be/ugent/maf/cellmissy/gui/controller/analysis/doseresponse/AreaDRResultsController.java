@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
-import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
@@ -49,9 +49,9 @@ import org.springframework.stereotype.Controller;
  * @author Gwendolien
  */
 @Controller("dRResultsController")
-public class DRResultsController {
+public class AreaDRResultsController implements DRResultsController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRResultsController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRResultsController.class);
 
     //model
     private NonEditableTableModel tableModel;
@@ -107,7 +107,7 @@ public class DRResultsController {
         return dupeNormalizedChartPanel;
     }
 
-    public NonEditableTableModel reCreateTableModel(DoseResponseAnalysisGroup analysisGroup) {
+    public NonEditableTableModel reCreateTableModel(AreaDoseResponseAnalysisGroup analysisGroup) {
         return createTableModel(analysisGroup);
     }
 
@@ -126,7 +126,7 @@ public class DRResultsController {
      *
      * @param analysisGroup
      */
-    public void setStatistics(DoseResponseAnalysisGroup analysisGroup) {
+    public void setStatistics(AreaDoseResponseAnalysisGroup analysisGroup) {
 
         //calculate and set statistics for initial fitting
         calculateStatistics(analysisGroup.getDoseResponseAnalysisResults().getStatistics(false), analysisGroup.getDoseResponseAnalysisResults().getFittingResults(false), doseResponseController.getDataToFit(false));
@@ -137,8 +137,8 @@ public class DRResultsController {
     }
 
     public void plotCharts() {
-        JFreeChart initialChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), doseResponseController.getdRAnalysisGroup(), false);
-        JFreeChart normalizedChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), doseResponseController.getdRAnalysisGroup(), true);
+        JFreeChart initialChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), false);
+        JFreeChart normalizedChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), true);
         dupeInitialChartPanel.setChart(initialChart);
         dupeNormalizedChartPanel.setChart(normalizedChart);
         gridBagConstraints.gridx = 0;
@@ -247,7 +247,7 @@ public class DRResultsController {
      * @param dataToFit
      * @return the model
      */
-    private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
+    private NonEditableTableModel createTableModel(AreaDoseResponseAnalysisGroup analysisGroup) {
         DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
         //specify decimal format for scientific notation
         DecimalFormat df = new DecimalFormat("00.00E00");
@@ -504,7 +504,7 @@ public class DRResultsController {
         addTable(initialFittingInfoTable);
         PdfUtils.addEmptyLines(document, 1);
         //add graphical plot
-        addImageFromChart(doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), doseResponseController.getdRAnalysisGroup(), false), chartWidth, chartHeight);
+        addImageFromChart(doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), false), chartWidth, chartHeight);
     }
 
     /**
@@ -550,7 +550,7 @@ public class DRResultsController {
         addTable(normalizedFittingInfoTable);
         PdfUtils.addEmptyLines(document, 1);
         //add graphical plot
-        addImageFromChart(doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), doseResponseController.getdRAnalysisGroup(), true), chartWidth, chartHeight);
+        addImageFromChart(doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), true), chartWidth, chartHeight);
     }
 
     /**

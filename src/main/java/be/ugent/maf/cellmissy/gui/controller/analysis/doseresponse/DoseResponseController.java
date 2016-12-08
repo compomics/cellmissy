@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
+import be.ugent.maf.cellmissy.analysis.doseresponse.SharedDoseResponse;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
@@ -68,9 +69,9 @@ public class DoseResponseController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DoseResponseController.class);
     //model
     private JTable dataTable;
-    private int standardHillslope;
-    private DoseResponseAnalysisGroup dRAnalysisGroup;
+    private AreaDoseResponseAnalysisGroup dRAnalysisGroup;
     private boolean firstFitting;
+    private SharedDoseResponse sharedDoseResponse;
     //view
     private DRPanel dRPanel;
     // parent controller
@@ -78,13 +79,13 @@ public class DoseResponseController {
     private AreaMainController areaMainController;
     // child controller
     @Autowired
-    private DRInputController dRInputController;
+    private AreaDRInputController dRInputController;
     @Autowired
-    private DRInitialController dRInitialController;
+    private AreaDRInitialController dRInitialController;
     @Autowired
-    private DRNormalizedController dRNormalizedController;
+    private AreaDRNormalizedController dRNormalizedController;
     @Autowired
-    private DRResultsController dRResultsController;
+    private AreaDRResultsController dRResultsController;
     // services
     @Autowired
     private SigmoidFitter sigmoidFitter;
@@ -113,19 +114,15 @@ public class DoseResponseController {
         return dRPanel;
     }
 
-    public int getStandardHillslope() {
-        return standardHillslope;
-    }
-
     public void setStandardHillslope(int standardHillslope) {
-        this.standardHillslope = standardHillslope;
+        sharedDoseResponse.setStandardHillslope(standardHillslope);
     }
 
-    public void setdRAnalysisGroup(DoseResponseAnalysisGroup dRAnalysisGroup) {
+    public void setdRAnalysisGroup(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
         this.dRAnalysisGroup = dRAnalysisGroup;
     }
 
-    public DoseResponseAnalysisGroup getdRAnalysisGroup() {
+    public AreaDoseResponseAnalysisGroup getdRAnalysisGroup() {
         return dRAnalysisGroup;
     }
 
@@ -241,8 +238,8 @@ public class DoseResponseController {
     /**
      * Plots the fitted data.
      */
-    protected void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
-        JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, analysisGroup, normalized);
+    protected void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, LinkedHashMap<Double, List<Double>> dataToPlot, AreaDoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+        JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, normalized);
         chartPanel.setChart(doseResponseChart);
         //add chartpanel to graphics parent panel and repaint
         subviewPanel.add(chartPanel, gridBagConstraints);
@@ -251,9 +248,7 @@ public class DoseResponseController {
     }
 
     /**
-     * Perform fitting according to user specifications. This method will check
-     * how many parameters have been constrained and pick the right fitter
-     * class.
+     * Perform fitting according to user specifications. Called by subclasses.
      *
      * @param dataToFit The data (log-transformed concentration - velocity)
      * @param resultsHolder The class that will contain the results from fitting
@@ -262,18 +257,8 @@ public class DoseResponseController {
      *
      */
     protected void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
-
-        if (topConstrained != null) {
-            if (bottomConstrained != null) {
-                sigmoidFitter.fitBotTopConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, getStandardHillslope());
-            } else {
-                sigmoidFitter.fitTopConstrain(dataToFit, resultsHolder, topConstrained, getStandardHillslope());
-            }
-        } else if (bottomConstrained != null) {
-            sigmoidFitter.fitBotConstrain(dataToFit, resultsHolder, bottomConstrained, getStandardHillslope());
-        } else {
-            sigmoidFitter.fitNoConstrain(dataToFit, resultsHolder, getStandardHillslope());
-        }
+        sharedDoseResponse.performFitting(sigmoidFitter, dataToFit, resultsHolder, bottomConstrained, topConstrained);
+        
     }
 
     /**
@@ -288,7 +273,7 @@ public class DoseResponseController {
      * Reset views on cancel
      */
     public void resetOnCancel() {
-        dRAnalysisGroup = new DoseResponseAnalysisGroup();
+        dRAnalysisGroup = null;
         dataTable.setModel(new DefaultTableModel());
         dRInputController.onCancel();
         //remove tables, graphs and subpanels
@@ -314,11 +299,10 @@ public class DoseResponseController {
      *
      * @param dataToPlot Maps log-transformed concentration to replicate
      * (normalized) velocities.
-     * @param analysisGroup The dose-response analysis group
      * @param normalized Whether the data is normalized or not
      * @return
      */
-    protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+    protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, boolean normalized) {
 
         //setup scatter data of experimental concentrations/slopes, renderer and axis
         XYSeriesCollection experimentalData = new XYSeriesCollection();
@@ -329,19 +313,19 @@ public class DoseResponseController {
         // Create the line data, renderer, and axis
         XYSeriesCollection fitting = new XYSeriesCollection();
         // create xy series of simulated data from the parameters from the fitting
-        XYSeries fittingData = simulateData(analysisGroup, normalized);
+        XYSeries fittingData = simulateData(normalized);
         fittingData.setKey("Fitting");
         fitting.addSeries(fittingData);
 
         XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, normalized);
 
         // show the r squared value
-        SigmoidFittingResultsHolder resultsholder = analysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
+        SigmoidFittingResultsHolder resultsholder = dRAnalysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
         plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsholder)), -4, 10.0));
 
         // Create the chart with the plot and no legend
         JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
-        String title = new String();
+        String title = "";
         if (normalized) {
             title = "Normalized fitting";
         } else {
@@ -356,13 +340,11 @@ public class DoseResponseController {
      * function from the analysis group results holder and creates x and y
      * values. This is needed to put the fitted function curve on the plot.
      *
-     * @param analysisGroup
      * @param normalized Whether the method takes the fitted parameters from the
      * normalized or initial fitting
      */
-    protected XYSeries simulateData(DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
-        DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
-        SigmoidFittingResultsHolder resultsholder = analysisResults.getFittingResults(normalized);
+    protected XYSeries simulateData(boolean normalized) {
+        SigmoidFittingResultsHolder resultsholder = dRAnalysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
         return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50());
     }
 

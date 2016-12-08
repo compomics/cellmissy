@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
-import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -32,9 +32,9 @@ import org.springframework.stereotype.Controller;
  * @author Gwendolien
  */
 @Controller("dRNormalizedController")
-public class DRNormalizedController {
+public class AreaDRNormalizedController implements DRNormalizedController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRNormalizedController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRNormalizedController.class);
 
     //model
     private Double bottomConstrainValue;
@@ -238,7 +238,7 @@ public class DRNormalizedController {
      * Compute mean values of every condition in the dose response analysis
      * group
      */
-    private List<Double> computeMeans(DoseResponseAnalysisGroup doseResponseAnalysisGroup) {
+    private List<Double> computeMeans(AreaDoseResponseAnalysisGroup doseResponseAnalysisGroup) {
         List<Double> allMeans = new ArrayList();
         for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
             List<Double> tempData = new ArrayList();
@@ -259,7 +259,7 @@ public class DRNormalizedController {
     /**
      * Compute median values of every condition in DR analysis group
      */
-    private List<Double> computeMedians(DoseResponseAnalysisGroup doseResponseAnalysisGroup) {
+    private List<Double> computeMedians(AreaDoseResponseAnalysisGroup doseResponseAnalysisGroup) {
         List<Double> allMedians = new ArrayList();
         for (List<Double> velocities : doseResponseAnalysisGroup.getVelocitiesMap().values()) {
             List<Double> tempData = new ArrayList();
@@ -284,7 +284,7 @@ public class DRNormalizedController {
      * @return LinkedHashMap That maps the concentration (log-transformed!) to
      * the normalized replicate velocites
      */
-    private LinkedHashMap<Double, List<Double>> prepareFittingData(DoseResponseAnalysisGroup dRAnalysisGroup) {
+    private LinkedHashMap<Double, List<Double>> prepareFittingData(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
         LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
 
         //!! control concentrations (10 * lower than lowest treatment conc) also need to be added

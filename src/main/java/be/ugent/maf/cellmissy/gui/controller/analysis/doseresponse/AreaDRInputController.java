@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.area.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
-import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
@@ -48,9 +48,9 @@ import org.springframework.stereotype.Controller;
  * @author Gwendolien
  */
 @Controller("dRInputController")
-public class DRInputController {
+public class AreaDRInputController implements DRInputController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DRInputController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRInputController.class);
     //model
     private BindingGroup bindingGroup;
     private List<PlateCondition> plateConditionsList;
@@ -148,7 +148,6 @@ public class DRInputController {
         experimentTypeRadioButtonGroup.add(dRInputPanel.getInhibitionRadioButton());
         //select as default first button (Stimulation)
         dRInputPanel.getStimulationRadioButton().setSelected(true);
-        doseResponseController.setStandardHillslope(1);
 
         //initialize treatment choice dialog
         chooseTreatmentDialog = new ChooseTreatmentDialog(doseResponseController.getCellMissyFrame(), true);
@@ -227,7 +226,7 @@ public class DRInputController {
             }
             // make a new analysis group, with those conditions and those results
             // override variable if one existed already
-            doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
+            doseResponseController.setdRAnalysisGroup(new AreaDoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
 
             // check treatments, dialog pops up if necessary
             checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
@@ -252,7 +251,7 @@ public class DRInputController {
         }
         //only make new analysis group if you have not removed all
         if (!plateConditionsList.isEmpty()){
-            doseResponseController.setdRAnalysisGroup(new DoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
+            doseResponseController.setdRAnalysisGroup(new AreaDoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
         //check treatments, dialog pops up if necessary
         checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
         // populate bottom table with the analysis group
@@ -355,7 +354,7 @@ public class DRInputController {
      * @param analysisGroup
      * @return
      */
-    private NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
+    private NonEditableTableModel createTableModel(AreaDoseResponseAnalysisGroup analysisGroup) {
         LinkedHashMap<Double, String> concentrationsMap = analysisGroup.getConcentrationsMap().get(analysisGroup.getTreatmentToAnalyse());
         LinkedHashMap<PlateCondition, List<Double>> velocitiesMap = analysisGroup.getVelocitiesMap();
         //when removing all conditions
@@ -442,7 +441,7 @@ public class DRInputController {
      * control), a dialog must pop up where the user must choose which treatment
      * to analyse.
      */
-    private void checkTreatments(DoseResponseAnalysisGroup analysisGroup, ChooseTreatmentDialog dialog) {
+    private void checkTreatments(AreaDoseResponseAnalysisGroup analysisGroup, ChooseTreatmentDialog dialog) {
         Set<String> treatmentSet = analysisGroup.getConcentrationsMap().keySet();
         //remove all so that items are not duplicated, because this method can be called several times
         dialog.getTreatmentComboBox().removeAllItems();

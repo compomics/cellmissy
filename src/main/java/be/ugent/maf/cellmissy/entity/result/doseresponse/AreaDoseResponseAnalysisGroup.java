@@ -21,7 +21,7 @@ import java.util.Set;
  *
  * @author Gwendolien
  */
-public class DoseResponseAnalysisGroup {
+public class AreaDoseResponseAnalysisGroup {
 
     //An experiment might have multiple treatments. Per condition the concentrations for a treatment may vary.
     //The concentration value is mapped to his unit of measurement.
@@ -36,19 +36,14 @@ public class DoseResponseAnalysisGroup {
     //The results of the analysis
     private DoseResponseAnalysisResults doseResponseAnalysisResults;
 
-    /**
-     * Constructor
-     */
-    public DoseResponseAnalysisGroup() {
-    }
-
+    
     /**
      * Constructor
      *
      * @param plateConditions
      * @param areaAnalysisResults
      */
-    public DoseResponseAnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> areaAnalysisResults) {
+    public AreaDoseResponseAnalysisGroup(List<PlateCondition> plateConditions, List<AreaAnalysisResults> areaAnalysisResults) {
 
         //PlateCondition has List<Treatment>, Treatment has double concentration AND concentrationunit
         this.concentrationsMap = new LinkedHashMap<>();
@@ -87,7 +82,6 @@ public class DoseResponseAnalysisGroup {
 
             //put in map
             velocitiesMap.put(condition, replicateVelocities);
-            this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
         }
         this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
     }
