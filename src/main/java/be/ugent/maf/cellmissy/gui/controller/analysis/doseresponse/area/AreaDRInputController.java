@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInputController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
@@ -62,7 +63,7 @@ public class AreaDRInputController implements DRInputController {
     private ChooseTreatmentDialog chooseTreatmentDialog;
     // parent controller
     @Autowired
-    private DoseResponseController doseResponseController;
+    private AreaDoseResponseController doseResponseController;
 
     /**
      * Initialise controller

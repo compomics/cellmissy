@@ -107,14 +107,17 @@ public class AreaDoseResponseAnalysisGroup implements DoseResponseAnalysisGroup 
         this.velocitiesMap = velocitiesMap;
     }
 
+    @Override
     public String getTreatmentToAnalyse() {
         return treatmentToAnalyse;
     }
 
+    @Override
     public void setTreatmentToAnalyse(String treatmentToAnalyse) {
         this.treatmentToAnalyse = treatmentToAnalyse;
     }
 
+    @Override
     public DoseResponseAnalysisResults getDoseResponseAnalysisResults() {
         return doseResponseAnalysisResults;
     }

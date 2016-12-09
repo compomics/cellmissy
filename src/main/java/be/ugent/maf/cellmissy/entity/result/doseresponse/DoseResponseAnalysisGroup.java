@@ -6,9 +6,16 @@
 package be.ugent.maf.cellmissy.entity.result.doseresponse;
 
 /**
- * An empty interface for generic/area delegation purposes.
+ * An interface for generic/area delegation purposes.
+ * Contains method signatures all implementations should have.
  * @author Gwendolien Sergeant
  */
 public interface DoseResponseAnalysisGroup {
     
+    //analysis group is always linked with the results from the analyis
+    public DoseResponseAnalysisResults getDoseResponseAnalysisResults();
+    //String of treatment for getting data or purely for display in GUI
+    public String getTreatmentToAnalyse();
+    //user defines name of treatment
+    public void setTreatmentToAnalyse(String treatmentToAnalyse);
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 
 import be.ugent.maf.cellmissy.analysis.doseresponse.SharedDoseResponse;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
@@ -12,18 +12,15 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
-import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
-import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
-import java.awt.BorderLayout;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -50,10 +47,7 @@ import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.annotations.XYTextAnnotation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,9 +58,9 @@ import org.springframework.stereotype.Controller;
  * @author Gwendolien
  */
 @Controller("doseResponseController")
-public class DoseResponseController {
+public class AreaDoseResponseController {
 
-    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(DoseResponseController.class);
+    private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDoseResponseController.class);
     //model
     private JTable dataTable;
     private AreaDoseResponseAnalysisGroup dRAnalysisGroup;
@@ -258,7 +252,7 @@ public class DoseResponseController {
      */
     protected void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
         sharedDoseResponse.performFitting(sigmoidFitter, dataToFit, resultsHolder, bottomConstrained, topConstrained);
-        
+
     }
 
     /**

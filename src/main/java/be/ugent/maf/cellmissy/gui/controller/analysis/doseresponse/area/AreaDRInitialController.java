@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInitialController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -32,22 +33,15 @@ import org.springframework.stereotype.Controller;
  * @author Gwendolien
  */
 @Controller("areaDRInitialController")
-public class AreaDRInitialController implements DRInitialController {
+public class AreaDRInitialController extends DRInitialController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRInitialController.class);
     //model
-    private Double bottomConstrainValue;
-    private Double topConstrainValue;
-    private NonEditableTableModel tableModel;
     private LinkedHashMap<Double, List<Double>> dataToFit;
-    //view
-    private DRInitialPlotPanel dRInitialPlotPanel;
-    private ChartPanel initialChartPanel;
+    //view: in super class
     // parent controller
     @Autowired
-    private DoseResponseController doseResponseController;
-    // services
-    private GridBagConstraints gridBagConstraints;
+    private AreaDoseResponseController doseResponseController;
 
     /**
      * Initialize controller
@@ -63,34 +57,10 @@ public class AreaDRInitialController implements DRInitialController {
      *
      * @return
      */
-    public DRInitialPlotPanel getDRInitialPlotPanel() {
-        return dRInitialPlotPanel;
-    }
-
-    public NonEditableTableModel getTableModel() {
-        return tableModel;
-    }
-
-    private void setTableModel(NonEditableTableModel tableModel) {
-        this.tableModel = tableModel;
-    }
-
-    public ChartPanel getInitialChartPanel() {
-        return initialChartPanel;
-    }
-
     public LinkedHashMap<Double, List<Double>> getDataToFit() {
         return dataToFit;
     }
 
-    public Double getBottomConstrainValue() {
-        return bottomConstrainValue;
-    }
-
-    public Double getTopConstrainValue() {
-        return topConstrainValue;
-    }
-    
     /**
      * When changing view from input panel: make dataset, do fitting and plot
      * according to starting parameters.
@@ -182,8 +152,8 @@ public class AreaDRInitialController implements DRInitialController {
     private LinkedHashMap<Double, List<Double>> prepareFittingData(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
         LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
 
-        List<List<Double>> allVelocities = new ArrayList<List<Double>>();
-        List<Double> allLogConcentrations = new ArrayList<Double>();
+        List<List<Double>> allVelocities = new ArrayList<>();
+        List<Double> allLogConcentrations = new ArrayList<>();
 
         //put concentrations of treatment to analyze (control not included!) in list
         LinkedHashMap<Double, String> nestedMap = dRAnalysisGroup.getConcentrationsMap().get(dRAnalysisGroup.getTreatmentToAnalyse());
@@ -218,52 +188,5 @@ public class AreaDRInitialController implements DRInitialController {
         return result;
     }
 
-    /**
-     * Create the table model for the top panel table. Table contains
-     * log-transformed concentration and replicate slopes per condition
-     *
-     * @param dataToFit
-     * @return the model
-     */
-    private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
-        int maxReplicates = 0;
-        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
-            int replicates = entry.getValue().size();
-            if (replicates > maxReplicates) {
-                maxReplicates = replicates;
-            }
-        }
-        Object[][] data = new Object[dataToFit.size()][maxReplicates + 1];
-
-        int rowIndex = 0;
-        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
-            //log concentration is put on 1st column
-            data[rowIndex][0] = AnalysisUtils.roundThreeDecimals(entry.getKey());
-
-            for (int columnIndex = 1; columnIndex < entry.getValue().size() + 1; columnIndex++) {
-                Double slope = entry.getValue().get(columnIndex - 1);
-                if (slope != null && !slope.isNaN()) {
-                    // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 1));
-                    // show in table slope + (coefficient)
-                    data[rowIndex][columnIndex] = slope;
-                } else if (slope == null) {
-                    data[rowIndex][columnIndex] = "excluded";
-                } else if (slope.isNaN()) {
-                    data[rowIndex][columnIndex] = "NaN";
-                }
-            }
-            rowIndex++;
-        }
-        // array of column names for table model
-        String[] columnNames = new String[data[0].length];
-        columnNames[0] = "Log-concentration";
-        for (int x = 1; x < columnNames.length; x++) {
-            columnNames[x] = "Repl " + (x);
-        }
-
-        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
-        nonEditableTableModel.setDataVector(data, columnNames);
-        return nonEditableTableModel;
-    }
+    
 }

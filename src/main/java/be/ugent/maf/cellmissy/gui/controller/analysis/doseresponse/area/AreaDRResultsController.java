@@ -3,17 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 
-import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
-import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
-import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRResultsController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRResultsPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.PdfUtils;
 
 import com.lowagie.text.Document;
@@ -23,7 +21,6 @@ import com.lowagie.text.Image;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -52,56 +49,17 @@ public class AreaDRResultsController extends DRResultsController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRResultsController.class);
 
-    //model: all in super class
-    //view
-    private DRResultsPanel dRResultsPanel;
+    //model: all in super class, along with getters/setters
+    //view: in super class
     // parent controller
     @Autowired
-    private DoseResponseController doseResponseController;
-    
-
-    /**
-     * Initialise controller
-     */
-    public void init() {
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        //init view
-        initDRResultsPanel();
-    }
-
-    /**
-     * Getters and setters
-     *
-     * @return
-     */
-    public DRResultsPanel getdRResultsPanel() {
-        return dRResultsPanel;
-    }
-
-    public NonEditableTableModel getTableModel() {
-        return tableModel;
-    }
-
-    public void setTableModel(NonEditableTableModel tableModel) {
-        this.tableModel = tableModel;
-    }
-
-    public ChartPanel getDupeInitialChartPanel() {
-        return dupeInitialChartPanel;
-    }
-
-    public ChartPanel getDupeNormalizedChartPanel() {
-        return dupeNormalizedChartPanel;
-    }
-
-    public NonEditableTableModel reCreateTableModel(AreaDoseResponseAnalysisGroup analysisGroup) {
-        return createTableModel(analysisGroup);
-    }
+    private AreaDoseResponseController doseResponseController;
 
     /**
      * When changing view to results panel, calculate statistics, set table
      * model and re-plot fittings.
      */
+    @Override
     public void initDRResultsData() {
         setStatistics(doseResponseController.getdRAnalysisGroup());
         setTableModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
@@ -113,7 +71,8 @@ public class AreaDRResultsController extends DRResultsController {
      *
      * @param analysisGroup
      */
-    public void setStatistics(AreaDoseResponseAnalysisGroup analysisGroup) {
+    @Override
+    public void setStatistics(DoseResponseAnalysisGroup analysisGroup) {
 
         //calculate and set statistics for initial fitting
         calculateStatistics(analysisGroup.getDoseResponseAnalysisResults().getStatistics(false), analysisGroup.getDoseResponseAnalysisResults().getFittingResults(false), doseResponseController.getDataToFit(false));
@@ -123,6 +82,7 @@ public class AreaDRResultsController extends DRResultsController {
 
     }
 
+    @Override
     public void plotCharts() {
         JFreeChart initialChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(false), false);
         JFreeChart normalizedChart = doseResponseController.createDoseResponseChart(doseResponseController.getDataToFit(true), true);
@@ -145,6 +105,7 @@ public class AreaDRResultsController extends DRResultsController {
      * @param reportName
      * @return the file created
      */
+    @Override
     public File createAnalysisReport(File directory, String reportName) {
         this.experiment = doseResponseController.getExperiment();
         File pdfFile = new File(directory, reportName);
@@ -166,7 +127,8 @@ public class AreaDRResultsController extends DRResultsController {
     /**
      * Initialize view
      */
-    private void initDRResultsPanel() {
+    @Override
+    protected void initDRResultsPanel() {
         dRResultsPanel = new DRResultsPanel();
         //init chart panels
         dupeInitialChartPanel = new ChartPanel(null);
@@ -193,125 +155,11 @@ public class AreaDRResultsController extends DRResultsController {
         });
     }
 
-    
-    /**
-     * Create the table model for the top panel table. Table contains icon,
-     * log-transformed concentration and normalized slopes per condition
-     *
-     * @param dataToFit
-     * @return the model
-     */
-    private NonEditableTableModel createTableModel(AreaDoseResponseAnalysisGroup analysisGroup) {
-        DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
-        //specify decimal format for scientific notation
-        DecimalFormat df = new DecimalFormat("00.00E00");
-        Object[][] data = new Object[18][3];
-
-        //set fields in first column
-        data[0][0] = "Best-fit value";
-        data[1][0] = "    Bottom";
-        data[2][0] = "    Top";
-        data[3][0] = "    Hillslope";
-        data[4][0] = "    LogEC50";
-        data[5][0] = "EC50";
-        data[6][0] = "R² (goodness of fit)";
-        data[7][0] = "Standard error";
-        data[8][0] = "    Bottom";
-        data[9][0] = "    Top";
-        data[10][0] = "    Hillslope";
-        data[11][0] = "    LogEC50";
-        data[12][0] = "95% Confidence interval";
-        data[13][0] = "    Bottom";
-        data[14][0] = "    Top";
-        data[15][0] = "    Hillslope";
-        data[16][0] = "    LogEC50";
-        data[17][0] = "    EC50";
-
-        //set second column (initial fitting results)
-        SigmoidFittingResultsHolder fittingResults = analysisResults.getFittingResults(false);
-        DoseResponseStatisticsHolder statistics = analysisResults.getStatistics(false);
-        data[1][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getBottom());
-        data[2][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getTop());
-        data[3][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getHillslope());
-        data[4][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getLogEC50());
-        data[5][1] = df.format(analysisResults.getStatistics(false).getEc50());
-        data[6][1] = AnalysisUtils.roundThreeDecimals(statistics.getGoodnessOfFit());
-        if (statistics.getStdErrBottom() != 0) {
-            data[8][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrBottom());
-        } else {
-            data[8][1] = "--";
-        }
-        if (statistics.getStdErrTop() != 0) {
-            data[9][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrTop());
-        } else {
-            data[9][1] = "--";
-        }
-        data[10][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrHillslope());
-        data[11][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
-        if (statistics.getcIBottom() != null) {
-            data[13][1] = AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[1]);
-        } else {
-            data[13][1] = "--";
-        }
-        if (statistics.getcITop() != null) {
-            data[14][1] = AnalysisUtils.roundThreeDecimals(statistics.getcITop()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcITop()[1]);
-        } else {
-            data[14][1] = "--";
-        }
-        data[15][1] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
-        data[16][1] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
-        data[17][1] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
-
-        //set third column (normalized fitting results)
-        fittingResults = analysisResults.getFittingResults(true);
-        statistics = analysisResults.getStatistics(true);
-        data[1][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getBottom());
-        data[2][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getTop());
-        data[3][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getHillslope());
-        data[4][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getLogEC50());
-        data[5][2] = df.format(statistics.getEc50());
-        data[6][2] = AnalysisUtils.roundThreeDecimals(statistics.getGoodnessOfFit());
-        if (statistics.getStdErrBottom() != 0) {
-            data[8][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrBottom());
-        } else {
-            data[8][2] = "--";
-        }
-        if (statistics.getStdErrTop() != 0) {
-            data[9][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrTop());
-        } else {
-            data[9][2] = "--";
-        }
-        data[10][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrHillslope());
-        data[11][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
-        if (statistics.getcIBottom() != null) {
-            data[13][2] = AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[1]);
-        } else {
-            data[13][2] = "--";
-        }
-        if (statistics.getcITop() != null) {
-            data[14][2] = AnalysisUtils.roundThreeDecimals(statistics.getcITop()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcITop()[1]);
-        } else {
-            data[14][2] = "--";
-        }
-        data[15][2] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
-        data[16][2] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
-        data[17][2] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
-        
-        
-        String[] columnNames = new String[data[0].length];
-        columnNames[0] = "";
-        columnNames[1] = "Initial fitting";
-        columnNames[2] = "Normalized fitting";
-
-        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
-        nonEditableTableModel.setDataVector(data, columnNames);
-        return nonEditableTableModel;
-    }
-
     /**
      * @param pdfFile
      */
-    private void tryToCreateFile(File pdfFile) {
+    @Override
+    protected void tryToCreateFile(File pdfFile) {
         try {
             boolean success = pdfFile.createNewFile();
             if (success) {
@@ -345,7 +193,7 @@ public class AreaDRResultsController extends DRResultsController {
     /**
      * @param outputStream
      */
-    private void createPdfFile(FileOutputStream outputStream) {
+    protected void createPdfFile(FileOutputStream outputStream) {
         document = null;
         writer = null;
         try {
@@ -369,28 +217,10 @@ public class AreaDRResultsController extends DRResultsController {
     }
 
     /**
-     * Add content to document.
-     */
-    private void addContent() {
-        // overview: title, dataset,  brief summary of the analysis group
-        addOverview();
-        // table with info from analysis group
-        addAnalysisGroupInfoTable();
-        // we go here to a new page
-        document.newPage();
-        // we add the initial fitting information
-        addInitialFittingInfo();
-        // then, we move to next page
-        document.newPage();
-        // we add the normalized fitting information
-        addNormalizedFittingInfo();
-
-    }
-
-    /**
      * Overview of Report: experiment and project numbers + some details.
      */
-    private void addOverview() {
+    @Override
+    protected void addOverview() {
         String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
         PdfUtils.addTitle(document, title, titleFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -414,19 +244,12 @@ public class AreaDRResultsController extends DRResultsController {
         PdfUtils.addEmptyLines(document, 1);
     }
 
-    private void addAnalysisGroupInfoTable() {
-        //add title before the table
-        PdfUtils.addTitle(document, "ANALYSIS GROUP SUMMARY", boldFont);
-        PdfUtils.addEmptyLines(document, 1);
-        PdfPTable conditionsInfoTable = createAnalysisGroupInfoTable();
-        addTable(conditionsInfoTable);
-    }
-
     /**
      * Add information on the initial fitting: parameters constrained Y/N +
      * values, table with statistical values and the graphical plot
      */
-    private void addInitialFittingInfo() {
+    @Override
+    protected void addInitialFittingInfo() {
         //add title before the table
         PdfUtils.addTitle(document, "INITIAL FIT", boldFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -466,7 +289,8 @@ public class AreaDRResultsController extends DRResultsController {
      * parameters constrained Y/N, table with statistical values and the
      * graphical plot
      */
-    private void addNormalizedFittingInfo() {
+    @Override
+    protected void addNormalizedFittingInfo() {
         //add title before the table
         PdfUtils.addTitle(document, "NORMALIZED FIT", boldFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -512,7 +336,7 @@ public class AreaDRResultsController extends DRResultsController {
      *
      * @param dataTable
      */
-    private void addTable(PdfPTable dataTable) {
+    protected void addTable(PdfPTable dataTable) {
         try {
             document.add(dataTable);
         } catch (DocumentException ex) {
@@ -524,12 +348,12 @@ public class AreaDRResultsController extends DRResultsController {
      * Create PdfTable with info on each condition of the analysis group;
      */
     //possibly reuse dRInputController's createTableModel(List<PlateCondition> processedConditions)
-    private PdfPTable createAnalysisGroupInfoTable() {
+    protected PdfPTable createAnalysisGroupInfoTable() {
         //maps log transformed conc (double) to list of velocities (double)
         LinkedHashMap<Double, List<Double>> fittedData = doseResponseController.getDataToFit(false);
         //CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES: find control concentration
         Double controlConcentration = Collections.min(fittedData.keySet());
-        
+
         // new table with 6 columns
         PdfPTable dataTable = new PdfPTable(6);
         PdfUtils.setUpPdfPTable(dataTable);
@@ -560,7 +384,7 @@ public class AreaDRResultsController extends DRResultsController {
             } else {
                 excluded = "YES, " + excludedCount;
             }
-            
+
             //put log-value of the concentration back to an understandable format
             String concentration;
             Double logConc = condition.getKey();
@@ -568,13 +392,13 @@ public class AreaDRResultsController extends DRResultsController {
             //check which concentration unit is to be used
             //if lower than 0.1 µM: use nM unit
             if (transformed < Math.pow(10, -7)) {
-                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,9)) + " nM";
+                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10, 9)) + " nM";
             } //if lower than 0.1 mM: use µM unit
             else if (transformed < Math.pow(10, -3)) {
-                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,6)) + " µM";
+                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10, 6)) + " µM";
             } //else for everything >= 1 mM use mM unit
             else {
-                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10,3)) + " mM";
+                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10, 3)) + " mM";
             }
             //if this is the control, replace concentration string
             if (logConc == controlConcentration) {
@@ -600,7 +424,8 @@ public class AreaDRResultsController extends DRResultsController {
      *
      * @return
      */
-    private PdfPTable createFittingInfoTable(boolean normalized) {
+    @Override
+    protected PdfPTable createFittingInfoTable(boolean normalized) {
         // 4 columns
         PdfPTable dataTable = new PdfPTable(4);
         PdfUtils.setUpPdfPTable(dataTable);
@@ -661,26 +486,12 @@ public class AreaDRResultsController extends DRResultsController {
         return dataTable;
     }
 
-    private List<Double> addArrayToList(List<Double> list, double[] array) {
-        List<Double> copiedList = new ArrayList<>(list);
-        //if parameter is constrained there is a null instead of an array
-        if (array == null) {
-            copiedList.add(null);
-            copiedList.add(null);
-        } else {
-            for (int i = 0; i < array.length; i++) {
-                copiedList.add(array[i]);
-            }
-        }
-        return copiedList;
-    }
-
     /**
      * Create Image from a aJFreeChart and add it to document
      *
      * @param chart
      */
-    private void addImageFromChart(JFreeChart chart, int imageWidth, int imageHeight) {
+    protected void addImageFromChart(JFreeChart chart, int imageWidth, int imageHeight) {
         Image imageFromChart = PdfUtils.getImageFromJFreeChart(writer, chart, imageWidth, imageHeight);
         // put image in the center
         imageFromChart.setAlignment(Element.ALIGN_CENTER);

@@ -31,7 +31,7 @@ import org.jfree.data.xy.XYSeriesCollection;
  */
 public class SharedDoseResponse {
 
-    //fields: interfaces of the subclasses, for correct delegation of methods
+    //fields: abstracts of the subclasses, for correct delegation of methods
     private final DRInputController inputController;
     private final DRInitialController initialController;
     private final DRNormalizedController normalizedController;

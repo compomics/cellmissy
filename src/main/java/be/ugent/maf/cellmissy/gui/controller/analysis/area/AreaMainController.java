@@ -4,7 +4,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.area;
 
-import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DoseResponseController;
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area.AreaDoseResponseController;
 import be.ugent.maf.cellmissy.analysis.area.AreaUnitOfMeasurement;
 import be.ugent.maf.cellmissy.analysis.factory.DistanceMetricFactory;
 import be.ugent.maf.cellmissy.analysis.factory.KernelDensityEstimatorFactory;
@@ -124,7 +124,7 @@ public class AreaMainController {
     @Autowired
     private AreaAnalysisController areaAnalysisController;
     @Autowired
-    private DoseResponseController doseResponseController;
+    private AreaDoseResponseController doseResponseController;
     //services
     @Autowired
     private ExperimentService experimentService;

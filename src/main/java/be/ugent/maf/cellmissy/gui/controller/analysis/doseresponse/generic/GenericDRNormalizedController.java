@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
+package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRNormalizedController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -12,9 +14,15 @@ import org.springframework.stereotype.Controller;
  * @author CompOmics Gwen
  */
 @Controller("genericDRNormalizedController")
-public class GenericDRNormalizedController {
+public class GenericDRNormalizedController extends DRNormalizedController {
     
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericDRNormalizedController.class);
+    
+    //model: in super class
+    //view: in super class
+    //parent controller: to be created
+    @Autowired
+    private ;
     
     
 }
