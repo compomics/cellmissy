@@ -10,12 +10,12 @@ import java.util.List;
 
 /**
  *
- * @author CompOmics Gwen
+ * @author Gwendolien Sergeant
  */
 public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGroup {
     
-//    The dose and response data, most likely as LinkedHashMap<Double, List<Double>>, removing the need for prepareFittingData methods
-//    depending on whether the replicates are in the rows or columns
+//    The dose and response data, most likely as LinkedHashMap<Double, List<Double>>, removing the need for prepareFittingData method 
+//    in the "initial" controller depending on whether the replicates are in the rows or columns
     private LinkedHashMap<Double, List<Double>> doseResponseData;
     
     //The name of the treatment to be analyzed

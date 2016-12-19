@@ -333,7 +333,7 @@ public class AreaDRInputController extends DRInputController {
         LinkedHashMap<Double, String> concentrationsMap = analysisGroup.getConcentrationsMap().get(analysisGroup.getTreatmentToAnalyse());
         LinkedHashMap<PlateCondition, List<Double>> velocitiesMap = analysisGroup.getVelocitiesMap();
         //when removing all conditions
-        if (velocitiesMap.size() == 0) {
+        if (velocitiesMap.isEmpty()) {
             return new NonEditableTableModel();
         }
 

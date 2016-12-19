@@ -16,7 +16,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -40,7 +39,7 @@ import org.springframework.stereotype.Controller;
 
 /**
  *
- * @author CompOmics Gwen
+ * @author Gwendolien Sergeant
  */
 @Controller("genericDoseResponseController")
 public class GenericDoseResponseController extends DoseResponseController {
@@ -65,7 +64,6 @@ public class GenericDoseResponseController extends DoseResponseController {
     // services
     @Autowired
     private SigmoidFitter sigmoidFitter;
-    private GridBagConstraints gridBagConstraints;
 
     /**
      * Getters and setters
@@ -79,6 +77,13 @@ public class GenericDoseResponseController extends DoseResponseController {
         return dRAnalysisGroup;
     }
     
+    public void showMessage(String message, String title, Integer messageType) {
+        cellMissyController.showMessage(message, title, messageType);
+    }
+    
+    protected String getNormalizationInfo() {
+        return dRNormalizedController.getNormalizationInfo();
+    }    
 
     /**
      * Do a fitting according to initial, standard parameters and calculate
@@ -134,7 +139,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         if (normalized) {
             return dRNormalizedController.getDataToFit();
         } else {
-            return dRInitialController.getDataToFit();
+            return dRAnalysisGroup.getDoseResponseData();
         }
     }
 

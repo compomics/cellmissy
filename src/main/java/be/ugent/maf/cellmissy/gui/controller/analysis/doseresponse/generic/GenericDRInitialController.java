@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.LinkedHashMap;
+import java.util.List;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +27,8 @@ public class GenericDRInitialController extends DRInitialController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericDRInitialController.class);
 
     //model
+    //the data to fit, essentially the data that was loaded at start
+    private LinkedHashMap<Double, List<Double>> dataToFit;
     //view
     //parent controller
     @Autowired
@@ -33,7 +37,7 @@ public class GenericDRInitialController extends DRInitialController {
     @Override
     public void initDRInitialData() {
         //Log transform concentrations, keeping slopes the same
-        dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+        dataToFit = doseResponseController.getdRAnalysisGroup().getDoseResponseData();
         //create and set the table model for the top panel table
         setTableModel(createTableModel(dataToFit));
         //Fit data according to initial parameters (standard hillslope, no constraints)

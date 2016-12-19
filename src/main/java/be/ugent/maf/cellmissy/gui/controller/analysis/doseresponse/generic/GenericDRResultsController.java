@@ -196,7 +196,7 @@ public class GenericDRResultsController extends DRResultsController {
         PdfUtils.addEmptyLines(document, 1);
         // add conditions number
         lines.clear();
-        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getVelocitiesMap().size();
+        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getDoseResponseData().size();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -246,7 +246,7 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     protected void addNormalizedFittingInfo() {
-//add title before the table
+        //add title before the table
         PdfUtils.addTitle(document, "NORMALIZED FIT", boldFont);
         PdfUtils.addEmptyLines(document, 1);
         List<Double> constrainValues = doseResponseController.getConstrainValues(true);

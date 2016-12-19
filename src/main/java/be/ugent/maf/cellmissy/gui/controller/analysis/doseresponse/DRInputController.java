@@ -5,7 +5,6 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
-import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;

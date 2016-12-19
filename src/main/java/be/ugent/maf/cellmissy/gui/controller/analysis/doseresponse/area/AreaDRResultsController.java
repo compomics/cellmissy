@@ -5,12 +5,11 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 
-import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRResultsController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRResultsPanel;
-import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.PdfUtils;
 
@@ -32,6 +31,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import javax.swing.JOptionPane;
 
 import org.jfree.chart.ChartPanel;
@@ -49,7 +49,8 @@ public class AreaDRResultsController extends DRResultsController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRResultsController.class);
 
-    //model: all in super class, along with getters/setters
+    //model: in super class, along with getters/setters
+    private Experiment experiment;
     //view: in super class
     // parent controller
     @Autowired
@@ -193,6 +194,7 @@ public class AreaDRResultsController extends DRResultsController {
     /**
      * @param outputStream
      */
+    @Override
     protected void createPdfFile(FileOutputStream outputStream) {
         document = null;
         writer = null;
@@ -336,6 +338,7 @@ public class AreaDRResultsController extends DRResultsController {
      *
      * @param dataTable
      */
+    @Override
     protected void addTable(PdfPTable dataTable) {
         try {
             document.add(dataTable);
@@ -346,8 +349,10 @@ public class AreaDRResultsController extends DRResultsController {
 
     /**
      * Create PdfTable with info on each condition of the analysis group;
+     * @return 
      */
     //possibly reuse dRInputController's createTableModel(List<PlateCondition> processedConditions)
+    @Override
     protected PdfPTable createAnalysisGroupInfoTable() {
         //maps log transformed conc (double) to list of velocities (double)
         LinkedHashMap<Double, List<Double>> fittedData = doseResponseController.getDataToFit(false);
@@ -401,7 +406,7 @@ public class AreaDRResultsController extends DRResultsController {
                 concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10, 3)) + " mM";
             }
             //if this is the control, replace concentration string
-            if (logConc == controlConcentration) {
+            if (logConc.equals(controlConcentration)) {
                 concentration = "Control";
             }
             //remove null's (excluded replicates) from velocities collection
@@ -422,6 +427,7 @@ public class AreaDRResultsController extends DRResultsController {
     /**
      * Create info table for the corresponding fitting mode (initial/normalized)
      *
+     * @param normalized
      * @return
      */
     @Override
@@ -491,6 +497,7 @@ public class AreaDRResultsController extends DRResultsController {
      *
      * @param chart
      */
+    @Override
     protected void addImageFromChart(JFreeChart chart, int imageWidth, int imageHeight) {
         Image imageFromChart = PdfUtils.getImageFromJFreeChart(writer, chart, imageWidth, imageHeight);
         // put image in the center

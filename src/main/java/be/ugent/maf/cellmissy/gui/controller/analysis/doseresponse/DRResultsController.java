@@ -5,7 +5,6 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
-import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
@@ -48,12 +47,10 @@ public abstract class DRResultsController {
     protected NonEditableTableModel tableModel;
     protected ChartPanel dupeInitialChartPanel;
     protected ChartPanel dupeNormalizedChartPanel;
-    protected Experiment experiment;
     protected Document document;
     protected PdfWriter writer;
     //view
     protected DRResultsPanel dRResultsPanel;
-
     // services
     protected GridBagConstraints gridBagConstraints;
 
@@ -133,7 +130,7 @@ public abstract class DRResultsController {
      * Create the table model for the top panel table. Table contains icon,
      * log-transformed concentration and normalized slopes per condition
      *
-     * @param dataToFit
+     * @param analysisGroup
      * @return the model
      */
     protected NonEditableTableModel createTableModel(DoseResponseAnalysisGroup analysisGroup) {
