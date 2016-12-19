@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,7 +60,14 @@ public abstract class DRInitialController {
         return dRInitialPlotPanel;
     }
     
-    
+    /**
+     * Initialize controller
+     */
+    public void init() {
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+        initDRInitialPanel();
+
+    }
     /**
      * Shared methods (protected)
      */
@@ -111,4 +119,11 @@ public abstract class DRInitialController {
         nonEditableTableModel.setDataVector(data, columnNames);
         return nonEditableTableModel;
     }
+    
+    /**
+     * Abstract methods
+     */
+    public abstract void initDRInitialData();
+    
+    protected abstract void initDRInitialPanel();
 }

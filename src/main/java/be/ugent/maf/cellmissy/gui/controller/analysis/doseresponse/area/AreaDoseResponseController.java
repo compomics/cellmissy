@@ -5,7 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 
-import be.ugent.maf.cellmissy.analysis.doseresponse.SharedDoseResponse;
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DoseResponseController;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Experiment;
@@ -17,14 +17,12 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
-import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -38,16 +36,13 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.xy.XYSeries;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,17 +52,13 @@ import org.springframework.stereotype.Controller;
  *
  * @author Gwendolien
  */
-@Controller("doseResponseController")
-public class AreaDoseResponseController {
+@Controller("areaDoseResponseController")
+public class AreaDoseResponseController extends DoseResponseController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDoseResponseController.class);
-    //model
-    private JTable dataTable;
+    //model: in super class
     private AreaDoseResponseAnalysisGroup dRAnalysisGroup;
-    private boolean firstFitting;
-    private SharedDoseResponse sharedDoseResponse;
-    //view
-    private DRPanel dRPanel;
+    //view: in super class
     // parent controller
     @Autowired
     private AreaMainController areaMainController;
@@ -83,7 +74,7 @@ public class AreaDoseResponseController {
     // services
     @Autowired
     private SigmoidFitter sigmoidFitter;
-    private GridBagConstraints gridBagConstraints;
+    
 
     /**
      * Initialize controller
@@ -102,22 +93,13 @@ public class AreaDoseResponseController {
     /**
      * Getters and setters
      *
-     * @return
      */
-    public DRPanel getDRPanel() {
-        return dRPanel;
-    }
-
-    public void setStandardHillslope(int standardHillslope) {
-        sharedDoseResponse.setStandardHillslope(standardHillslope);
-    }
-
-    public void setdRAnalysisGroup(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
-        this.dRAnalysisGroup = dRAnalysisGroup;
-    }
-
     public AreaDoseResponseAnalysisGroup getdRAnalysisGroup() {
         return dRAnalysisGroup;
+    }
+    
+    public void setdRAnalysisGroup(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
+        this.dRAnalysisGroup = dRAnalysisGroup;
     }
 
     public List<PlateCondition> getProcessedConditions() {
@@ -148,20 +130,6 @@ public class AreaDoseResponseController {
         return areaMainController.getSelectedALgorithm();
     }
 
-    public boolean isFirstFitting() {
-        return firstFitting;
-    }
-
-    /**
-     * Set wheter the data needs to be fit for a first time. Is set to true when
-     * creating a analysis group, set to false after performing first fit.
-     *
-     * @param firstFitting
-     */
-    public void setFirstFitting(boolean firstFitting) {
-        this.firstFitting = firstFitting;
-    }
-
     public LinkedHashMap<Double, List<Double>> getDataToFit(boolean normalized) {
         if (normalized) {
             return dRNormalizedController.getDataToFit();
@@ -186,30 +154,14 @@ public class AreaDoseResponseController {
      * statistics. This method is called when the user switches to the initial
      * or normalized subview for the first time.
      */
-    private void initFirstFitting() {
+    @Override
+    protected void initFirstFitting() {
         dRInitialController.initDRInitialData();
         dRNormalizedController.initDRNormalizedData();
         dRResultsController.initDRResultsData();
     }
 
-    /**
-     * update information message above table. Message will be different for
-     * each subview
-     *
-     * @param messageToShow
-     */
-    private void updateTableInfoMessage(String messageToShow) {
-        dRPanel.getTableInfoLabel().setText(messageToShow);
-    }
-
-    /**
-     * When switching to a different subview, change the model for the main
-     * table.
-     */
-    protected void updateModelInTable(NonEditableTableModel tableModel) {
-        dataTable.setModel(tableModel);
-    }
-
+    
     /**
      * Get the constrain values for the bottom and top parameter. (Double number
      * or null if not constrained)
@@ -217,6 +169,7 @@ public class AreaDoseResponseController {
      * @param normalized True if from normalized fit
      * @return
      */
+    @Override
     protected List<Double> getConstrainValues(boolean normalized) {
         List<Double> result = new ArrayList<>();
         if (!normalized) {
@@ -229,18 +182,7 @@ public class AreaDoseResponseController {
         return result;
     }
 
-    /**
-     * Plots the fitted data.
-     */
-    protected void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, LinkedHashMap<Double, List<Double>> dataToPlot, AreaDoseResponseAnalysisGroup analysisGroup, boolean normalized) {
-        JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, normalized);
-        chartPanel.setChart(doseResponseChart);
-        //add chartpanel to graphics parent panel and repaint
-        subviewPanel.add(chartPanel, gridBagConstraints);
-        dRPanel.getGraphicsDRParentPanel().repaint();
-        dRPanel.getGraphicsDRParentPanel().revalidate();
-    }
-
+    
     /**
      * Perform fitting according to user specifications. Called by subclasses.
      *
@@ -251,14 +193,14 @@ public class AreaDoseResponseController {
      *
      */
     protected void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
-        sharedDoseResponse.performFitting(sigmoidFitter, dataToFit, resultsHolder, bottomConstrained, topConstrained);
-
+        performFitting(sigmoidFitter, dataToFit, resultsHolder, bottomConstrained, topConstrained);
     }
 
     /**
      * Calculate statistics, method from results controller is called by other
      * child controllers on new fitting.
      */
+    @Override
     protected void calculateStatistics() {
         dRResultsController.setStatistics(dRAnalysisGroup);
     }
@@ -266,9 +208,10 @@ public class AreaDoseResponseController {
     /**
      * Reset views on cancel
      */
+    @Override
     public void resetOnCancel() {
+        super.resetOnCancel();
         dRAnalysisGroup = null;
-        dataTable.setModel(new DefaultTableModel());
         dRInputController.onCancel();
         //remove tables, graphs and subpanels
         dRInputController.getdRInputPanel().getSlopesTable().setModel(new DefaultTableModel());
@@ -276,10 +219,6 @@ public class AreaDoseResponseController {
         dRNormalizedController.getNormalizedChartPanel().setChart(null);
         dRResultsController.getDupeInitialChartPanel().setChart(null);
         dRResultsController.getDupeNormalizedChartPanel().setChart(null);
-        dRPanel.getGraphicsDRParentPanel().remove(dRInputController.getdRInputPanel());
-        dRPanel.getGraphicsDRParentPanel().remove(dRInitialController.getDRInitialPlotPanel());
-        dRPanel.getGraphicsDRParentPanel().remove(dRNormalizedController.getDRNormalizedPlotPanel());
-        dRPanel.getGraphicsDRParentPanel().remove(dRResultsController.getdRResultsPanel());
         //set view back to first one
         dRPanel.getInputDRButton().setSelected(true);
         dRPanel.revalidate();
@@ -296,21 +235,11 @@ public class AreaDoseResponseController {
      * @param normalized Whether the data is normalized or not
      * @return
      */
+    @Override
     protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, boolean normalized) {
-        return sharedDoseResponse.createDoseResponseChart(dataToPlot, dRAnalysisGroup, normalized);
+        return createDoseResponseChart(dataToPlot, dRAnalysisGroup, normalized);
     }
 
-    /**
-     * This method takes the fitted parameters that make up the dose-response
-     * function from the analysis group results holder and creates x and y
-     * values. This is needed to put the fitted function curve on the plot.
-     *
-     * @param normalized Whether the method takes the fitted parameters from the
-     * normalized or initial fitting
-     */
-    protected XYSeries simulateData(boolean normalized) {
-        return sharedDoseResponse.simulateData(normalized);
-    }
 
     /**
      * Ask user to choose for a directory and invoke swing worker for creating
@@ -342,7 +271,7 @@ public class AreaDoseResponseController {
     /**
      * Initialize main view
      */
-    private void initMainView() {
+    protected void initMainView() {
         dRPanel = new DRPanel();
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup mainDRRadioButtonGroup = new ButtonGroup();

@@ -10,10 +10,7 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInitialController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
-import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -22,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,15 +40,6 @@ public class AreaDRInitialController extends DRInitialController {
     private AreaDoseResponseController doseResponseController;
 
     /**
-     * Initialize controller
-     */
-    public void init() {
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        initDRInitialPanel();
-
-    }
-
-    /**
      * Getters and setters
      *
      * @return
@@ -65,6 +52,7 @@ public class AreaDRInitialController extends DRInitialController {
      * When changing view from input panel: make dataset, do fitting and plot
      * according to starting parameters.
      */
+    @Override
     public void initDRInitialData() {
         //Log transform concentrations, keeping slopes the same
         dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
@@ -78,7 +66,8 @@ public class AreaDRInitialController extends DRInitialController {
     /**
      * Initialize view
      */
-    private void initDRInitialPanel() {
+    @Override
+    protected void initDRInitialPanel() {
         dRInitialPlotPanel = new DRInitialPlotPanel();
 
         //init chart panel
@@ -188,5 +177,4 @@ public class AreaDRInitialController extends DRInitialController {
         return result;
     }
 
-    
 }

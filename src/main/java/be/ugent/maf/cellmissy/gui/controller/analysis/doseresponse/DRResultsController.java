@@ -100,13 +100,13 @@ public abstract class DRResultsController {
      */
     protected abstract void initDRResultsPanel();
 
-    abstract void initDRResultsData();
+    protected abstract void initDRResultsData();
 
-    abstract void setStatistics(DoseResponseAnalysisGroup analysisGroup);
+    protected abstract void setStatistics(DoseResponseAnalysisGroup analysisGroup);
 
-    abstract void plotCharts();
+    protected abstract void plotCharts();
 
-    abstract File createAnalysisReport(File directory, String reportName);
+    protected abstract File createAnalysisReport(File directory, String reportName);
 
     protected abstract void tryToCreateFile(File pdfFile);
 

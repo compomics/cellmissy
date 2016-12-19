@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +69,14 @@ public abstract class DRNormalizedController {
     /**
      * Public methods
      */
+    /**
+     * Initialize controller
+     */
+    public void init() {
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+        //init view
+        initDRNormalizedPanel();
+    }
     /**
      * Give information on how normalization was performed for the PDF report.
      *
@@ -192,4 +201,11 @@ public abstract class DRNormalizedController {
         }
         return allMedians;
     }
+    
+    /**
+     * Abstract methods
+     */
+    public abstract void initDRNormalizedData();
+    
+    protected abstract void initDRNormalizedPanel();
 }

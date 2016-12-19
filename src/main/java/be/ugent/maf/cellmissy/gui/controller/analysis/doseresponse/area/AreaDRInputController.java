@@ -28,12 +28,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import org.jdesktop.beansbinding.AutoBinding;
-import org.jdesktop.beansbinding.BindingGroup;
 import org.jdesktop.observablecollections.ObservableCollections;
 import org.jdesktop.observablecollections.ObservableList;
 import org.jdesktop.swingbinding.JListBinding;
@@ -49,18 +47,13 @@ import org.springframework.stereotype.Controller;
  * @author Gwendolien
  */
 @Controller("areaDRInputController")
-public class AreaDRInputController implements DRInputController {
+public class AreaDRInputController extends DRInputController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRInputController.class);
     //model
-    private BindingGroup bindingGroup;
     private List<PlateCondition> plateConditionsList;
     private List<AreaAnalysisResults> areaAnalysisResultsList;
-    private NonEditableTableModel sharedTableModel;
-    private JTable slopesTable;
-    //view
-    private DRInputPanel dRInputPanel;
-    private ChooseTreatmentDialog chooseTreatmentDialog;
+    //view: in super class
     // parent controller
     @Autowired
     private AreaDoseResponseController doseResponseController;
@@ -68,13 +61,11 @@ public class AreaDRInputController implements DRInputController {
     /**
      * Initialise controller
      */
+    @Override
     public void init() {
         plateConditionsList = new ArrayList<>();
         areaAnalysisResultsList = new ArrayList<>();
-        bindingGroup = new BindingGroup();
-        sharedTableModel = new NonEditableTableModel();
-        //init view
-        initDRInputPanel();
+        super.init();
     }
 
     /**
@@ -87,29 +78,9 @@ public class AreaDRInputController implements DRInputController {
     }
 
     /**
-     * getters and setters
-     *
-     * @return
-     */
-    public DRInputPanel getdRInputPanel() {
-        return dRInputPanel;
-    }
-
-    public ChooseTreatmentDialog getChooseTreatmentDialog() {
-        return chooseTreatmentDialog;
-    }
-
-    public NonEditableTableModel getTableModel() {
-        return sharedTableModel;
-    }
-
-    private void setTableModel(NonEditableTableModel tableModel) {
-        this.sharedTableModel = tableModel;
-    }
-
-    /**
      * Initialise data, called on switch from linear regression to dose-response
      */
+    @Override
     public void initDRInputData() {
         //get conditions processed in area analysis
         List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
@@ -132,7 +103,8 @@ public class AreaDRInputController implements DRInputController {
     /**
      * Initialize view
      */
-    private void initDRInputPanel() {
+    @Override
+    protected void initDRInputPanel() {
         dRInputPanel = new DRInputPanel();
         // control opaque property of bottom table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
@@ -214,7 +186,8 @@ public class AreaDRInputController implements DRInputController {
      * Get conditions according to selection in list and add to the
      * dose-response analysis group
      */
-    private void addToDRAnalysis() {
+    @Override
+    protected void addToDRAnalysis() {
         List<PlateCondition> selectedConditions = getSelectedConditions();
         if (selectedConditions != null) {
             for (PlateCondition selectedCondition : selectedConditions) {
@@ -240,7 +213,8 @@ public class AreaDRInputController implements DRInputController {
     /**
      * Remove selected condition(s) from the dose-response analysis group
      */
-    private void removeFromDRAnalysis() {
+    @Override
+    protected void removeFromDRAnalysis() {
         List<PlateCondition> selectedConditions = getSelectedConditions();
         for (PlateCondition selectedCondition : selectedConditions) {
             //only possible to remove if group contains selected condition
@@ -251,13 +225,13 @@ public class AreaDRInputController implements DRInputController {
             }
         }
         //only make new analysis group if you have not removed all
-        if (!plateConditionsList.isEmpty()){
+        if (!plateConditionsList.isEmpty()) {
             doseResponseController.setdRAnalysisGroup(new AreaDoseResponseAnalysisGroup(plateConditionsList, areaAnalysisResultsList));
-        //check treatments, dialog pops up if necessary
-        checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
-        // populate bottom table with the analysis group
-        slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-        slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+            //check treatments, dialog pops up if necessary
+            checkTreatments(doseResponseController.getdRAnalysisGroup(), chooseTreatmentDialog);
+            // populate bottom table with the analysis group
+            slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+            slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         } else {
             //otherwise show new empty table
             slopesTable.setModel(new NonEditableTableModel());

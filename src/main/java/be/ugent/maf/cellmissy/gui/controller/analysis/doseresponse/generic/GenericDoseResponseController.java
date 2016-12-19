@@ -5,33 +5,51 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
-import be.ugent.maf.cellmissy.analysis.doseresponse.SharedDoseResponse;
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DoseResponseController;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRPanel;
+import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.GridBagConstraints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
+import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.JFreeChart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 /**
  *
  * @author CompOmics Gwen
  */
-public class GenericDoseResponseController {
-    
+@Controller("genericDoseResponseController")
+public class GenericDoseResponseController extends DoseResponseController {
+
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericDoseResponseController.class);
-    
-    //model
-    private SharedDoseResponse sharedDoseResponse;
-    //view
-    
+
+    //model: in super class
+    private GenericDoseResponseAnalysisGroup dRAnalysisGroup;
+    //view: in super class
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -48,23 +66,265 @@ public class GenericDoseResponseController {
     @Autowired
     private SigmoidFitter sigmoidFitter;
     private GridBagConstraints gridBagConstraints;
+
+    /**
+     * Getters and setters
+     *
+     */
+    public void setdRAnalysisGroup(GenericDoseResponseAnalysisGroup dRAnalysisGroup) {
+        this.dRAnalysisGroup = dRAnalysisGroup;
+    }
+
+    public GenericDoseResponseAnalysisGroup getdRAnalysisGroup() {
+        return dRAnalysisGroup;
+    }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+    /**
+     * Do a fitting according to initial, standard parameters and calculate
+     * statistics. This method is called when the user switches to the initial
+     * or normalized subview for the first time.
+     */
+    @Override
+    protected void initFirstFitting() {
+        dRInitialController.initDRInitialData();
+        dRNormalizedController.initDRNormalizedData();
+        dRResultsController.initDRResultsData();
+    }
+
+    /**
+     * Perform fitting according to user specifications. Called by subclasses.
+     *
+     * @param dataToFit The data (log-transformed concentration - velocity)
+     * @param resultsHolder The class that will contain the results from fitting
+     * @param bottomConstrained Double if user constrains, otherwise null
+     * @param topConstrained Double if user constrains, otherwise null
+     *
+     */
+    protected void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
+        performFitting(sigmoidFitter, dataToFit, resultsHolder, bottomConstrained, topConstrained);
+    }
+
+    /**
+     * Returns a dose-response chart containing scattered xy experimental values
+     * and the curve (line) from the fitting. To be visible in the program,
+     * another method adds the chart to the right panel.
+     *
+     * @param dataToPlot Maps log-transformed concentration to replicate
+     * (normalized) velocities.
+     * @param normalized Whether the data is normalized or not
+     * @return
+     */
+    @Override
+    protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, boolean normalized) {
+        return createDoseResponseChart(dataToPlot, dRAnalysisGroup, normalized);
+    }
+
+    /**
+     * Calculate statistics, method from results controller is called by other
+     * child controllers on new fitting.
+     */
+    @Override
+    protected void calculateStatistics() {
+        dRResultsController.setStatistics(dRAnalysisGroup);
+    }
+
+    @Override
+    public LinkedHashMap<Double, List<Double>> getDataToFit(boolean normalized) {
+        if (normalized) {
+            return dRNormalizedController.getDataToFit();
+        } else {
+            return dRInitialController.getDataToFit();
+        }
+    }
+
+    /**
+     * Get the constrain values for the bottom and top parameter. (Double number
+     * or null if not constrained)
+     *
+     * @param normalized True if from normalized fit
+     * @return
+     */
+    @Override
+    protected List<Double> getConstrainValues(boolean normalized) {
+        List<Double> result = new ArrayList<>();
+        if (!normalized) {
+            result.add(dRInitialController.getBottomConstrainValue());
+            result.add(dRInitialController.getTopConstrainValue());
+        } else {
+            result.add(dRNormalizedController.getBottomConstrainValue());
+            result.add(dRNormalizedController.getTopConstrainValue());
+        }
+        return result;
+    }
+
+    /**
+     * Reset views on cancel
+     */
+    @Override
+    public void resetOnCancel() {
+        super.resetOnCancel();
+        dRAnalysisGroup = null;
+        //remove tables, graphs and subpanels
+        dRInputController.getdRInputPanel().getSlopesTable().setModel(new DefaultTableModel());
+        dRInitialController.getInitialChartPanel().setChart(null);
+        dRNormalizedController.getNormalizedChartPanel().setChart(null);
+        dRResultsController.getDupeInitialChartPanel().setChart(null);
+        dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+        //set view back to first one
+        dRPanel.getInputDRButton().setSelected(true);
+        dRPanel.revalidate();
+        dRPanel.repaint();
+    }
+
+    /**
+     * Initialize main view
+     */
+    @Override
+    protected void initMainView() {
+        dRPanel = new DRPanel();
+        //create a ButtonGroup for the radioButtons used for analysis
+        ButtonGroup mainDRRadioButtonGroup = new ButtonGroup();
+        //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
+        mainDRRadioButtonGroup.add(dRPanel.getInputDRButton());
+        mainDRRadioButtonGroup.add(dRPanel.getInitialPlotDRButton());
+        mainDRRadioButtonGroup.add(dRPanel.getNormalizedPlotDRButton());
+        mainDRRadioButtonGroup.add(dRPanel.getResultsDRButton());
+        //select as default first button
+        dRPanel.getInputDRButton().setSelected(true);
+        //init dataTable
+        dataTable = new JTable();
+        JScrollPane scrollPane = new JScrollPane(dataTable);
+        //the table will take all the viewport height available
+        dataTable.setFillsViewportHeight(true);
+        scrollPane.getViewport().setBackground(Color.white);
+        dataTable.getTableHeader().setReorderingAllowed(false);
+        //row and column selection must be false
+        //dataTable.setColumnSelectionAllowed(false);
+        //dataTable.setRowSelectionAllowed(false);
+        dRPanel.getDatatableDRPanel().add(scrollPane, BorderLayout.CENTER);
+
+        /**
+         * When button is selected, switch view to corresponding subview
+         */
+        dRPanel.getInputDRButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //switch shared table view
+                updateModelInTable(dRInputController.getTableModel());
+                updateTableInfoMessage("This table contains all conditions and their respective slopes");
+                /**
+                 * for (int columnIndex = 0; columnIndex <
+                 * dataTable.getColumnCount(); columnIndex++) {
+                 * GuiUtils.packColumn(dataTable, columnIndex); }
+                 */
+                dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+                //remove other panels
+                dRInitialController.getInitialChartPanel().setChart(null);
+                dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                dRResultsController.getDupeInitialChartPanel().setChart(null);
+                dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                dRPanel.getGraphicsDRParentPanel().removeAll();
+                dRPanel.getGraphicsDRParentPanel().revalidate();
+                dRPanel.getGraphicsDRParentPanel().repaint();
+                //add panel to view
+                dRPanel.getGraphicsDRParentPanel().add(dRInputController.getdRInputPanel(), gridBagConstraints);
+            }
+        });
+
+        dRPanel.getInitialPlotDRButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (dRAnalysisGroup != null) {
+                    if (isFirstFitting()) {
+                        initFirstFitting();
+                        setFirstFitting(false);
+                    }
+                    //switch shared table view
+                    updateModelInTable(dRInitialController.getTableModel());
+                    updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
+                    /**
+                     * for (int columnIndex = 0; columnIndex <
+                     * dataTable.getColumnCount(); columnIndex++) {
+                     * GuiUtils.packColumn(dataTable, columnIndex); }
+                     */
+                    dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+                    //remove other panels
+                    dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                    dRResultsController.getDupeInitialChartPanel().setChart(null);
+                    dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                    dRPanel.getGraphicsDRParentPanel().removeAll();
+                    dRPanel.getGraphicsDRParentPanel().revalidate();
+                    dRPanel.getGraphicsDRParentPanel().repaint();
+                    dRPanel.getGraphicsDRParentPanel().add(dRInitialController.getDRInitialPlotPanel(), gridBagConstraints);
+                    //Plot fitted data in dose-response curve, along with R² annotation
+                    plotDoseResponse(dRInitialController.getInitialChartPanel(), dRInitialController.getDRInitialPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(false), getdRAnalysisGroup(), false);
+                }
+            }
+        });
+
+        dRPanel.getNormalizedPlotDRButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (dRAnalysisGroup != null) {
+                    //in case user skips "initial" subview and goes straight to normalization
+                    if (isFirstFitting()) {
+                        initFirstFitting();
+                        setFirstFitting(false);
+                    }
+                    //switch shared table view
+                    updateModelInTable(dRNormalizedController.getTableModel());
+                    updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
+                    /**
+                     * for (int columnIndex = 0; columnIndex <
+                     * dataTable.getColumnCount(); columnIndex++) {
+                     * GuiUtils.packColumn(dataTable, columnIndex); }
+                     */
+                    dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+                    //remove other panels
+                    dRInitialController.getInitialChartPanel().setChart(null);
+                    dRResultsController.getDupeInitialChartPanel().setChart(null);
+                    dRResultsController.getDupeNormalizedChartPanel().setChart(null);
+                    dRPanel.getGraphicsDRParentPanel().removeAll();
+                    dRPanel.getGraphicsDRParentPanel().revalidate();
+                    dRPanel.getGraphicsDRParentPanel().repaint();
+                    dRPanel.getGraphicsDRParentPanel().add(dRNormalizedController.getDRNormalizedPlotPanel(), gridBagConstraints);
+                    //Plot fitted data in dose-response curve, along with R² annotation
+                    plotDoseResponse(dRNormalizedController.getNormalizedChartPanel(), dRNormalizedController.getDRNormalizedPlotPanel().getDoseResponseChartParentPanel(), getDataToFit(true), getdRAnalysisGroup(), true);
+                }
+            }
+        });
+
+        dRPanel.getResultsDRButton().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (dRAnalysisGroup != null) {
+                    //switch shared table view: create and set new table model with most recent statistical values
+                    // (these values get recalculated after each new fitting)
+                    dRResultsController.setTableModel(dRResultsController.reCreateTableModel(dRAnalysisGroup));
+                    updateModelInTable(dRResultsController.getTableModel());
+                    updateTableInfoMessage("Statistical values from the curve fit of the initial and normalized data.");
+
+                    //remove other panels
+                    dRInitialController.getInitialChartPanel().setChart(null);
+                    dRNormalizedController.getNormalizedChartPanel().setChart(null);
+                    dRPanel.getGraphicsDRParentPanel().removeAll();
+                    dRPanel.getGraphicsDRParentPanel().revalidate();
+                    dRPanel.getGraphicsDRParentPanel().repaint();
+                    dRPanel.getGraphicsDRParentPanel().add(dRResultsController.getdRResultsPanel(), gridBagConstraints);
+                    //plot curves
+                    dRResultsController.plotCharts();
+                }
+            }
+        });
+
+        //add view to parent panel
+    }
+
     /**
      * Ask user to choose for a directory and invoke swing worker for creating
      * PDF report
@@ -89,6 +349,7 @@ public class GenericDoseResponseController {
             cellMissyController.showMessage("Open command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
         }
     }
+
     /**
      * Swing Worker to generate PDF report
      */

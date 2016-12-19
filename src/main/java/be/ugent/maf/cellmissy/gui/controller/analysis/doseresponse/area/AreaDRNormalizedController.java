@@ -10,20 +10,15 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRNormalizedController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRNormalizedPlotPanel;
-import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
-import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,14 +40,7 @@ public class AreaDRNormalizedController extends DRNormalizedController {
     @Autowired
     private AreaDoseResponseController doseResponseController;
 
-    /**
-     * Initialize controller
-     */
-    public void init() {
-        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
-        //init view
-        initDRNormalizedPanel();
-    }
+    
 
     /**
      * Getters and setters
@@ -67,6 +55,7 @@ public class AreaDRNormalizedController extends DRNormalizedController {
      * When changing view from input panel after creating new analysis group:
      * make dataset, do fitting and plot according to default parameters.
      */
+    @Override
     public void initDRNormalizedData() {
         //set constrain combo boxes to standard setting: means
         dRNormalizedPlotPanel.getBottomComboBox().setSelectedIndex(0);
@@ -86,7 +75,8 @@ public class AreaDRNormalizedController extends DRNormalizedController {
     /**
      * Initialize view
      */
-    private void initDRNormalizedPanel() {
+    @Override
+    protected void initDRNormalizedPanel() {
         dRNormalizedPlotPanel = new DRNormalizedPlotPanel();
         //init chart panel
         normalizedChartPanel = new ChartPanel(null);
