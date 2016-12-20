@@ -54,7 +54,7 @@
                           <Component id="resultsDRButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="59" max="32767" attributes="0"/>
+                  <EmptySpace pref="61" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -68,7 +68,7 @@
                       <Component id="initialPlotDRButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="inputDRButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="21" max="32767" attributes="0"/>
                   <Component id="tableInfoLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

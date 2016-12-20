@@ -92,6 +92,14 @@
                     <Property name="text" type="java.lang.String" value="... single cell"/>
                   </Properties>
                 </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="doseResponseMenuItem">
+                  <Properties>
+                    <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                      <KeyStroke key="Ctrl+D"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="... dose-response"/>
+                  </Properties>
+                </MenuItem>
               </SubComponents>
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
@@ -501,6 +509,21 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
               <CardConstraints cardName="singleCellAnalysisParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+        </Container>
+        <Container class="javax.swing.JPanel" name="doseResponseAnalysisParentPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="doseResponseAnalysisParentPanel" noResource="true"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="doseResponseAnalysisParentPanel"/>
             </Constraint>
           </Constraints>
 

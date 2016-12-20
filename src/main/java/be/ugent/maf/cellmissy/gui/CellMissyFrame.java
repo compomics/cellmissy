@@ -85,12 +85,20 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return singleCellAnalysisParentPanel;
     }
 
+    public JPanel getDoseResponseAnalysisParentPanel() {
+        return doseResponseAnalysisParentPanel;
+    }
+
     public JMenuItem getAreaAnalysisMenuItem() {
         return areaAnalysisMenuItem;
     }
 
     public JMenuItem getSingleCellAnalysisMenuItem() {
         return singleCellAnalysisMenuItem;
+    }
+
+    public JMenuItem getDoseResponseMenuItem() {
+        return doseResponseMenuItem;
     }
 
     public JPanel getLoadFromCellMiaParentPanel() {
@@ -161,6 +169,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         loadFromGenericInputParentPanel = new javax.swing.JPanel();
         areaAnalysisParentPanel = new javax.swing.JPanel();
         singleCellAnalysisParentPanel = new javax.swing.JPanel();
+        doseResponseAnalysisParentPanel = new javax.swing.JPanel();
         cellMissyMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newExperimentMenuItem = new javax.swing.JMenuItem();
@@ -174,6 +183,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         areaAnalysisMenuItem = new javax.swing.JMenuItem();
         singleCellAnalysisMenuItem = new javax.swing.JMenuItem();
+        doseResponseMenuItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         overviewMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -310,6 +320,11 @@ public class CellMissyFrame extends javax.swing.JFrame {
         backgroundPanel.add(singleCellAnalysisParentPanel, "singleCellAnalysisParentPanel");
         singleCellAnalysisParentPanel.getAccessibleContext().setAccessibleName("singleCellAnalysisParentPanel");
 
+        doseResponseAnalysisParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        doseResponseAnalysisParentPanel.setName("doseResponseAnalysisParentPanel"); // NOI18N
+        doseResponseAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
+        backgroundPanel.add(doseResponseAnalysisParentPanel, "doseResponseAnalysisParentPanel");
+
         cellMissyMenuBar.setBackground(java.awt.Color.white);
         cellMissyMenuBar.setAlignmentY(0.5F);
         cellMissyMenuBar.setMinimumSize(new java.awt.Dimension(5, 2));
@@ -356,6 +371,10 @@ public class CellMissyFrame extends javax.swing.JFrame {
         singleCellAnalysisMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         singleCellAnalysisMenuItem.setText("... single cell");
         jMenu1.add(singleCellAnalysisMenuItem);
+
+        doseResponseMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.CTRL_MASK));
+        doseResponseMenuItem.setText("... dose-response");
+        jMenu1.add(doseResponseMenuItem);
 
         fileMenu.add(jMenu1);
         fileMenu.add(jSeparator5);
@@ -492,6 +511,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
+    private javax.swing.JPanel doseResponseAnalysisParentPanel;
+    private javax.swing.JMenuItem doseResponseMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JMenuItem exportExperimentMenuItem;

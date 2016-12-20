@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.gui.AboutDialog;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.HelpDialog;
 import be.ugent.maf.cellmissy.gui.StartupDialog;
+import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic.GenericDoseResponseController;
 import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellMainController;
 import be.ugent.maf.cellmissy.gui.controller.management.AssayManagementController;
 import be.ugent.maf.cellmissy.gui.controller.management.PlateManagementController;
@@ -60,6 +61,7 @@ public class CellMissyController {
     private boolean firstSetup;
     private boolean firstAreaAnalysis;
     private boolean firstSingleCellAnalysis;
+    private boolean firstDoseResponseAnalysis;
     private boolean firstLoadingFromCellMia;
     private boolean firstLoadingFromGenericInput;
     //view
@@ -93,6 +95,8 @@ public class CellMissyController {
     private AreaMainController areaMainController;
     @Autowired
     private SingleCellMainController singleCellMainController;
+    @Autowired
+    private GenericDoseResponseController genericDoseResponseController;
     @Autowired
     private ImportExportController importExportController;
     @Autowired
@@ -160,6 +164,7 @@ public class CellMissyController {
         firstSetup = true;
         firstAreaAnalysis = true;
         firstSingleCellAnalysis = true;
+        firstDoseResponseAnalysis = true;
         firstLoadingFromCellMia = true;
         firstLoadingFromGenericInput = true;
         //init child controllers
@@ -368,6 +373,8 @@ public class CellMissyController {
         cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
         // single cell analysis
         cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
+        //generic dose-response analysis
+        cellMissyFrame.getDoseResponseMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -515,6 +522,14 @@ public class CellMissyController {
             }
         });
 
+        //generic dose-response analysis
+        startupDialog.getDoseResponseButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onDoseResponse();
+            }
+        });
+
         // overview
         startupDialog.getOverviewButton().addActionListener(new ActionListener() {
             @Override
@@ -561,6 +576,8 @@ public class CellMissyController {
             } else if (menuItemText.contains("generic input") && switchCard(menuItemText)) {
                 onLoadingFromGenericInput();
                 genericArea = menuItemText.equalsIgnoreCase("... area from generic input");
+            } else if (menuItemText.equalsIgnoreCase("... dose-response") && switchCard(menuItemText)) {
+                onDoseResponse();
             }
         }
     }
@@ -617,6 +634,17 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getSingleCellAnalysisParentPanel().getName());
         firstSingleCellAnalysis = false;
+    }
+
+    /**
+     * Action performed on generic dose-response analysis.
+     */
+    private void onDoseResponse() {
+        if (!firstDoseResponseAnalysis) {
+            genericDoseResponseController.resetOnCancel();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getDoseResponseAnalysisParentPanel().getName());
+        firstDoseResponseAnalysis = false;
     }
 
     /**

@@ -9,10 +9,14 @@ import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DoseResponseC
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
+import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.GenericDRParentPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -49,6 +53,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     //model: in super class
     private GenericDoseResponseAnalysisGroup dRAnalysisGroup;
     //view: in super class
+    private GenericDRParentPanel genericDRParentPanel;
     //parent controller
     @Autowired
     private CellMissyController cellMissyController;
@@ -76,14 +81,18 @@ public class GenericDoseResponseController extends DoseResponseController {
     public GenericDoseResponseAnalysisGroup getdRAnalysisGroup() {
         return dRAnalysisGroup;
     }
-    
+
     public void showMessage(String message, String title, Integer messageType) {
         cellMissyController.showMessage(message, title, messageType);
     }
-    
+
     protected String getNormalizationInfo() {
         return dRNormalizedController.getNormalizationInfo();
-    }    
+    }
+    
+    public CellMissyFrame getCellMissyFrame() {
+        return cellMissyController.getCellMissyFrame();
+    }
 
     /**
      * Do a fitting according to initial, standard parameters and calculate
@@ -169,6 +178,8 @@ public class GenericDoseResponseController extends DoseResponseController {
     @Override
     public void resetOnCancel() {
         super.resetOnCancel();
+        getCardLayout().first(genericDRParentPanel.getContentPanel());
+        genericDRParentPanel.getCancelButton().setEnabled(false);
         dRAnalysisGroup = null;
         //remove tables, graphs and subpanels
         dRInputController.getdRInputPanel().getSlopesTable().setModel(new DefaultTableModel());
@@ -183,11 +194,26 @@ public class GenericDoseResponseController extends DoseResponseController {
     }
 
     /**
+     * Initialise tables when switching to analysis card.
+     */
+    public void onDoseResponse() {
+        dRInputController.initDRInputData();
+        //switch shared table view
+        updateModelInTable(dRInputController.getTableModel());
+        dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        updateTableInfoMessage("This table contains all conditions and their respective slopes");
+    }
+
+    /**
      * Initialize main view
      */
     @Override
     protected void initMainView() {
+        genericDRParentPanel = new GenericDRParentPanel();
         dRPanel = new DRPanel();
+        //buttons disabled at start
+        genericDRParentPanel.getCancelButton().setEnabled(false);
+        genericDRParentPanel.getNextButton().setEnabled(false);
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup mainDRRadioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected
@@ -210,7 +236,35 @@ public class GenericDoseResponseController extends DoseResponseController {
         dRPanel.getDatatableDRPanel().add(scrollPane, BorderLayout.CENTER);
 
         /**
-         * When button is selected, switch view to corresponding subview
+         * Action listeners for uppermost panel.
+         */
+        genericDRParentPanel.getNextButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                genericDRParentPanel.getNextButton().setEnabled(false);
+                genericDRParentPanel.getCancelButton().setEnabled(true);
+                //switch between child panels
+                getCardLayout().next(genericDRParentPanel.getContentPanel());
+                onCardSwitch();
+            }
+        });
+
+        genericDRParentPanel.getCancelButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // warn the user and reset everything
+                Object[] options = {"Yes", "No"};
+                int showOptionDialog = JOptionPane.showOptionDialog(null, "Current analysis won't be saved. Continue?", "", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                if (showOptionDialog == 0) {
+                    // reset everything
+                    resetOnCancel();
+                }
+            }
+        });
+
+        /**
+         * Action listeners for shared panel. When button is selected, switch
+         * view to corresponding subview
          */
         dRPanel.getInputDRButton().addActionListener(new ActionListener() {
 
@@ -327,7 +381,51 @@ public class GenericDoseResponseController extends DoseResponseController {
             }
         });
 
-        //add view to parent panel
+        //add views to parent panels
+        cellMissyController.getCellMissyFrame().getDoseResponseAnalysisParentPanel().add(genericDRParentPanel, gridBagConstraints);
+        genericDRParentPanel.add(dRPanel, gridBagConstraints);
+    }
+
+    /**
+     * Update information message in the top panel.
+     *
+     * @param messageToShow
+     */
+    private void updateInfoMessage(String messageToShow) {
+        cellMissyController.updateInfoLabel(genericDRParentPanel.getCardInfoLabel(), messageToShow);
+    }
+
+    /**
+     * get Card Layout
+     *
+     * @return
+     */
+    private CardLayout getCardLayout() {
+        return (CardLayout) genericDRParentPanel.getContentPanel().getLayout();
+    }
+
+    /**
+     * Check for card name when switching.
+     */
+    private void onCardSwitch() {
+        String currentCardName = GuiUtils.getCurrentCardName(genericDRParentPanel.getContentPanel());
+        switch (currentCardName) {
+            case "dataLoadingPanel":
+                GuiUtils.highlightLabel(genericDRParentPanel.getDataLoadingLabel());
+                GuiUtils.resetLabel(genericDRParentPanel.getDoseResponseLabel());
+                updateInfoMessage("Load the dose-response data you want to analyze");
+                break;
+
+            case "doseResponseParentPanel":
+                //next button disabled
+                genericDRParentPanel.getNextButton().setEnabled(false);
+                onDoseResponse();
+                //highlight and reset labels
+                GuiUtils.highlightLabel(genericDRParentPanel.getDoseResponseLabel());
+                GuiUtils.resetLabel(genericDRParentPanel.getDataLoadingLabel());
+                updateInfoMessage("Quantify the effect of a dose by fitting the responses to a sigmoid model");
+                break;
+        }
     }
 
     /**

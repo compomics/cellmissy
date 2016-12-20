@@ -135,7 +135,7 @@ public class GenericDRInputController extends DRInputController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                setTreatment(chooseTreatmentDialog.getTreatmentComboBox().getSelectedItem().toString());
+                doseResponseController.getdRAnalysisGroup().setTreatmentToAnalyse(chooseTreatmentDialog.getTreatmentComboBox().getSelectedItem().toString());
                 chooseTreatmentDialog.setVisible(false);
                 doseResponseController.setFirstFitting(true);
             }
