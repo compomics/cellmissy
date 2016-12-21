@@ -5,7 +5,6 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
-import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInputController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.ChooseTreatmentDialog;
@@ -16,6 +15,8 @@ import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.ListSelectionModel;
@@ -45,12 +46,12 @@ public class GenericDRInputController extends DRInputController {
 
     @Override
     public void initDRInputData() {
-        //get conditions processed in area analysis
-        List<PlateCondition> processedConditions = doseResponseController.getProcessedConditions();
+        //get the loaded starting data
+        startingData = doseResponseController.getStartingData;
         //number of replicates per condition will be added to list as information
-        List<Integer> numberOfReplicates = doseResponseController.getNumberOfReplicates();
+        List<Integer> numberOfReplicates = getNumberOfReplicates(startingData);
         //create and set the table model for the top panel table
-        setTableModel(createTableModel(processedConditions));
+        setTableModel(createTableModel(startingData));
         // put conditions in selectable list
         ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
         JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
@@ -157,8 +158,15 @@ public class GenericDRInputController extends DRInputController {
      *
      * @return List of ??? to be added to the DR analysis group
      */
-    private List<> getSelectedConditions() {
-        
+    private List<Object> getSelectedConditions() {
+        // get selected indices from rect icon list
+        int[] selectedIndices = dRInputPanel.getConditionsList().getSelectedIndices();
+        List<> selectedConditions = new ArrayList<>();
+        for (int selectedIndex : selectedIndices) {
+             selectedCondition = doseResponseController.getSOMETHING().get(selectedIndex);
+            selectedConditions.add(selectedCondition);
+        }
+        return selectedConditions;
     }
     
     /**
@@ -174,7 +182,93 @@ public class GenericDRInputController extends DRInputController {
      * @return 
      */
     private NonEditableTableModel createTableModel(GenericDoseResponseAnalysisGroup analysisGroup) {
+        LinkedHashMap<Double, List<Double>> dataToShow = analysisGroup.getDoseResponseData();
+        //when removing all conditions
+        if (dataToShow.isEmpty()) {
+            return new NonEditableTableModel();
+        }
+        //the number of columns is dependent on the maximum number of replicates of the dataset
+        int maxReplicates = 0;
+        for (List<Double> value : dataToShow.values()) {
+            int replicates = value.size();
+            if (replicates > maxReplicates) {
+                maxReplicates = replicates;
+            }
+        }
         
+        //THE 2 EXTRA COLUMNS ARE FOR CONCENTRATION AND UNIT, IS UNIT NECESSARY OR EVEN DEFINED???
+        //HOW WILL THE CONTROL BE DEFINED IN THE LOADED DATA?
+        Object[][] data = new Object[dataToShow.size()][maxReplicates + 2];
+        int i = 0;
+        int controlIndex = 100;
+        int rowIndex = 0;
+
+        for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
+            //check if this platecondition is the control, save index for table
+            for (Treatment treatment : entry.getKey().getTreatmentList()) {
+                if (treatment.getTreatmentType().getName().contains("ontrol")) {
+                    controlIndex = i;
+                }
+            }
+            i++;
+
+            int columnIndex = 2;
+            for (Double velocity : entry.getValue()) {
+
+                if (velocity != null && !velocity.isNaN()) {
+                    // round to three decimals slopes and coefficients
+                    Double slope = AnalysisUtils.roundThreeDecimals(velocity);
+                    // show in table slope + (coefficient)
+                    data[rowIndex][columnIndex] = slope;
+                } else if (velocity == null) {
+                    data[rowIndex][columnIndex] = "excluded";
+                } else if (velocity.isNaN()) {
+                    data[rowIndex][columnIndex] = "NaN";
+                }
+
+                columnIndex++;
+            }
+            rowIndex++;
+        }
+
+        if (controlIndex != 100) {
+            data[controlIndex][0] = 0.0;
+            data[controlIndex][1] = "--";
+        }
+        rowIndex = 0;
+        //if user only selects control, the concentrationsmap is null
+        if (concentrationsMap != null) {
+            for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
+                if (rowIndex >= controlIndex) {
+                    data[rowIndex + 1][0] = entry.getKey();
+                    data[rowIndex + 1][1] = entry.getValue();
+                } else {
+                    data[rowIndex][0] = entry.getKey();
+                    data[rowIndex][1] = entry.getValue();
+                }
+
+                rowIndex++;
+            }
+        }
+        // array of column names for table model
+        String[] columnNames = new String[data[0].length];
+        columnNames[0] = "Conc of " + analysisGroup.getTreatmentToAnalyse();
+        columnNames[1] = "Unit";
+        for (int x = 2; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x - 1);
+        }
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
+    }
+
+    private List<Integer> getNumberOfReplicates(LinkedHashMap<Double, List<Double>> allConditions) {
+        List<Integer> result = new ArrayList<>();
+        for (List<Double> value :allConditions.values()) {
+            result.add(value.size());
+        }
+        return result;
     }
 
 }

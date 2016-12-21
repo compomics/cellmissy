@@ -338,8 +338,8 @@ public class AreaDRInputController extends DRInputController {
         }
 
         int maxReplicates = 0;
-        for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
-            int replicates = entry.getValue().size();
+        for (List<Double> value : velocitiesMap.values()) {
+            int replicates = value.size();
             if (replicates > maxReplicates) {
                 maxReplicates = replicates;
             }
