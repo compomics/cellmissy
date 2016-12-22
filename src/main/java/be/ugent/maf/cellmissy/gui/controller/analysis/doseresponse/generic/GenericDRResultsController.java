@@ -49,6 +49,9 @@ public class GenericDRResultsController extends DRResultsController {
     @Autowired
     private GenericDoseResponseController doseResponseController;
 
+    /**
+     * Initialize view.
+     */
     @Override
     protected void initDRResultsPanel() {
         dRResultsPanel = new DRResultsPanel();

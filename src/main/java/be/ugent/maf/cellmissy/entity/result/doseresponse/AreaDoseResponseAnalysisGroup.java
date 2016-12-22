@@ -24,7 +24,8 @@ import java.util.Set;
 public class AreaDoseResponseAnalysisGroup implements DoseResponseAnalysisGroup {
 
     //An experiment might have multiple treatments. Per condition the concentrations for a treatment may vary.
-    //The concentration value is mapped to his unit of measurement.
+    //Outer map: treatment name mapped to inner map
+    //Inner map: concentration value is mapped to his unit of measurement.
     private LinkedHashMap<String, LinkedHashMap<Double, String>> concentrationsMap;
 
     //A condition can have multiple replicates, each with their own velocity.

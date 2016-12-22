@@ -38,6 +38,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
 
     /**
      * Getters and setters
+     * @return 
      */
     
     public LinkedHashMap<Double, List<Double>> getDataToFit() {
@@ -60,6 +61,9 @@ public class GenericDRNormalizedController extends DRNormalizedController {
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(true), null, null);
     }
 
+    /**
+     * Initialize view.
+     */
     @Override
     protected void initDRNormalizedPanel() {
         dRNormalizedPlotPanel = new DRNormalizedPlotPanel();

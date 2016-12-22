@@ -44,6 +44,9 @@ public class GenericDRInitialController extends DRInitialController {
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(false), null, null);
     }
 
+    /**
+     * Initialize view.
+     */
     @Override
     protected void initDRInitialPanel() {
         dRInitialPlotPanel = new DRInitialPlotPanel();

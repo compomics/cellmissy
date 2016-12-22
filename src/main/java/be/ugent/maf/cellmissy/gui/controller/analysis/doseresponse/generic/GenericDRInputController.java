@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +40,7 @@ public class GenericDRInputController extends DRInputController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericDRInputController.class);
 
     //model
+    private List<> conditionsList;      //contains the conditions that are currently in the analysis group
     //view: in super class
     //parent controller
     @Autowired

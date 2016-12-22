@@ -64,7 +64,7 @@ public class AreaDRInitialController extends DRInitialController {
     }
 
     /**
-     * Initialize view
+     * Initialize view.
      */
     @Override
     protected void initDRInitialPanel() {
