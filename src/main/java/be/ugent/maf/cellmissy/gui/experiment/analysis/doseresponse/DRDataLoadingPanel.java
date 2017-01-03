@@ -194,7 +194,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(chooseFileButton))
                     .addComponent(infoLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         chooseFilePanelLayout.setVerticalGroup(
             chooseFilePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -352,7 +352,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                             .addComponent(matrixTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                             .addComponent(expNumberTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                             .addComponent(jScrollPane5))
-                        .addGap(18, 37, Short.MAX_VALUE)
+                        .addGap(18, 71, Short.MAX_VALUE)
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
                             .addComponent(jLabel6)
@@ -377,7 +377,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                                     .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(conditionsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                                 .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
                                         .addComponent(jLabel9)
@@ -391,7 +391,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                                             .addComponent(algorithmsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(imagingTypesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addContainerGap(30, Short.MAX_VALUE))))))))
+                                        .addContainerGap(55, Short.MAX_VALUE))))))))
         );
         experimentDetailsPanelLayout.setVerticalGroup(
             experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -463,7 +463,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                         .addComponent(jLabel19))
                     .addComponent(jLabel17)
                     .addComponent(matrixTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
