@@ -194,7 +194,8 @@ public class GenericDRNormalizedController extends DRNormalizedController {
     
     //WHAT IF THE CONCENTRATIONS ARE ALREADY LOG-VALUES UPON LOADING??????
     private LinkedHashMap<Double, List<Double>> prepareFittingData(GenericDoseResponseAnalysisGroup analysisGroup) {
-
+        
+        return null;
     }
 
 }

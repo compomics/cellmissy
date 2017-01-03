@@ -40,7 +40,7 @@ public class GenericDRInputController extends DRInputController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericDRInputController.class);
 
     //model
-    private List<> conditionsList;      //contains the conditions that are currently in the analysis group
+//    private List<> conditionsList;      //contains the conditions that are currently in the analysis group
     //view: in super class
     //parent controller
     @Autowired
@@ -48,18 +48,18 @@ public class GenericDRInputController extends DRInputController {
 
     @Override
     public void initDRInputData() {
-        //get the loaded starting data
-        startingData = doseResponseController.getStartingData;
-        //number of replicates per condition will be added to list as information
-        List<Integer> numberOfReplicates = getNumberOfReplicates(startingData);
-        //create and set the table model for the top panel table
-        setTableModel(createTableModel(startingData));
-        // put conditions in selectable list
-        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
-        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
-        bindingGroup.addBinding(jListBinding);
-        bindingGroup.bind();
-        dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
+//        //get the loaded starting data
+//        startingData = doseResponseController.getStartingData;
+//        //number of replicates per condition will be added to list as information
+//        List<Integer> numberOfReplicates = getNumberOfReplicates(startingData);
+//        //create and set the table model for the top panel table
+//        setTableModel(createTableModel(startingData));
+//        // put conditions in selectable list
+//        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
+//        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
+//        bindingGroup.addBinding(jListBinding);
+//        bindingGroup.bind();
+//        dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
         dRInputPanel.getConditionsList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel);
         doseResponseController.getDRPanel().revalidate();
@@ -160,23 +160,23 @@ public class GenericDRInputController extends DRInputController {
      *
      * @return List of ??? to be added to the DR analysis group
      */
-    private List<Object> getSelectedConditions() {
-        // get selected indices from rect icon list
-        int[] selectedIndices = dRInputPanel.getConditionsList().getSelectedIndices();
-        List<> selectedConditions = new ArrayList<>();
-        for (int selectedIndex : selectedIndices) {
-             selectedCondition = doseResponseController.getSOMETHING().get(selectedIndex);
-            selectedConditions.add(selectedCondition);
-        }
-        return selectedConditions;
-    }
+//    private List<Object> getSelectedConditions() {
+//        // get selected indices from rect icon list
+//        int[] selectedIndices = dRInputPanel.getConditionsList().getSelectedIndices();
+//        List<> selectedConditions = new ArrayList<>();
+//        for (int selectedIndex : selectedIndices) {
+//             selectedCondition = doseResponseController.getSOMETHING().get(selectedIndex);
+//            selectedConditions.add(selectedCondition);
+//        }
+//        return selectedConditions;
+//    }
     
     /**
      * Create model for overview table (top one)
      * @return 
      */
     private NonEditableTableModel createTableModel() {
-        
+        return null;
     }
     
     /**
@@ -205,53 +205,53 @@ public class GenericDRInputController extends DRInputController {
         int controlIndex = 100;
         int rowIndex = 0;
 
-        for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
-            //check if this platecondition is the control, save index for table
-            for (Treatment treatment : entry.getKey().getTreatmentList()) {
-                if (treatment.getTreatmentType().getName().contains("ontrol")) {
-                    controlIndex = i;
-                }
-            }
-            i++;
-
-            int columnIndex = 2;
-            for (Double velocity : entry.getValue()) {
-
-                if (velocity != null && !velocity.isNaN()) {
-                    // round to three decimals slopes and coefficients
-                    Double slope = AnalysisUtils.roundThreeDecimals(velocity);
-                    // show in table slope + (coefficient)
-                    data[rowIndex][columnIndex] = slope;
-                } else if (velocity == null) {
-                    data[rowIndex][columnIndex] = "excluded";
-                } else if (velocity.isNaN()) {
-                    data[rowIndex][columnIndex] = "NaN";
-                }
-
-                columnIndex++;
-            }
-            rowIndex++;
-        }
-
-        if (controlIndex != 100) {
-            data[controlIndex][0] = 0.0;
-            data[controlIndex][1] = "--";
-        }
-        rowIndex = 0;
-        //if user only selects control, the concentrationsmap is null
-        if (concentrationsMap != null) {
-            for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
-                if (rowIndex >= controlIndex) {
-                    data[rowIndex + 1][0] = entry.getKey();
-                    data[rowIndex + 1][1] = entry.getValue();
-                } else {
-                    data[rowIndex][0] = entry.getKey();
-                    data[rowIndex][1] = entry.getValue();
-                }
-
-                rowIndex++;
-            }
-        }
+//        for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
+//            //check if this platecondition is the control, save index for table
+//            for (Treatment treatment : entry.getKey().getTreatmentList()) {
+//                if (treatment.getTreatmentType().getName().contains("ontrol")) {
+//                    controlIndex = i;
+//                }
+//            }
+//            i++;
+//
+//            int columnIndex = 2;
+//            for (Double velocity : entry.getValue()) {
+//
+//                if (velocity != null && !velocity.isNaN()) {
+//                    // round to three decimals slopes and coefficients
+//                    Double slope = AnalysisUtils.roundThreeDecimals(velocity);
+//                    // show in table slope + (coefficient)
+//                    data[rowIndex][columnIndex] = slope;
+//                } else if (velocity == null) {
+//                    data[rowIndex][columnIndex] = "excluded";
+//                } else if (velocity.isNaN()) {
+//                    data[rowIndex][columnIndex] = "NaN";
+//                }
+//
+//                columnIndex++;
+//            }
+//            rowIndex++;
+//        }
+//
+//        if (controlIndex != 100) {
+//            data[controlIndex][0] = 0.0;
+//            data[controlIndex][1] = "--";
+//        }
+//        rowIndex = 0;
+//        //if user only selects control, the concentrationsmap is null
+//        if (concentrationsMap != null) {
+//            for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
+//                if (rowIndex >= controlIndex) {
+//                    data[rowIndex + 1][0] = entry.getKey();
+//                    data[rowIndex + 1][1] = entry.getValue();
+//                } else {
+//                    data[rowIndex][0] = entry.getKey();
+//                    data[rowIndex][1] = entry.getValue();
+//                }
+//
+//                rowIndex++;
+//            }
+//        }
         // array of column names for table model
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "Conc of " + analysisGroup.getTreatmentToAnalyse();

@@ -28,10 +28,10 @@ public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGro
      * Constructor
      * Sets the doseResponseData when creating analysis group (after data loading)
      */
-    public GenericDoseResponseAnalysisGroup(argument data) {
-        this.doseResponseData = new LinkedHashMap<>();
-    }
-    
+//    public GenericDoseResponseAnalysisGroup(argument data) {
+//        this.doseResponseData = new LinkedHashMap<>();
+//    }
+//    
     @Override
     public DoseResponseAnalysisResults getDoseResponseAnalysisResults() {
         return doseResponseAnalysisResults;

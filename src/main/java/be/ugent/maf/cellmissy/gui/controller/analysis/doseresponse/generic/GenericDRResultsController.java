@@ -113,7 +113,7 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     public File createAnalysisReport(File directory, String reportName) {
-        this.experiment = doseResponseController.getExperiment();
+//        this.experiment = doseResponseController.getExperiment();
         File pdfFile = new File(directory, reportName);
         if (reportName.endsWith(".pdf")) {
             tryToCreateFile(pdfFile);
@@ -188,27 +188,27 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     protected void addOverview() {
-        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
-        PdfUtils.addTitle(document, title, titleFont);
-        PdfUtils.addEmptyLines(document, 1);
-        // add information on dataset (algorithm) and imaging type analyzed
-        List<String> lines = new ArrayList<>();
-        String line = "DATASET: " + doseResponseController.getSelectedAlgorithm();
-        lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
-        PdfUtils.addEmptyLines(document, 1);
-        // add conditions number
-        lines.clear();
-        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getDoseResponseData().size();
-        lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
-        PdfUtils.addEmptyLines(document, 1);
-        lines.clear();
-        line = "DRUG ANALYSED: " + doseResponseController.getdRAnalysisGroup().getTreatmentToAnalyse();
-        lines.add(line);
-        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
-        PdfUtils.addEmptyLines(document, 1);
-        PdfUtils.addEmptyLines(document, 1);
+//        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
+//        PdfUtils.addTitle(document, title, titleFont);
+//        PdfUtils.addEmptyLines(document, 1);
+//        // add information on dataset (algorithm) and imaging type analyzed
+//        List<String> lines = new ArrayList<>();
+//        String line = "DATASET: " + doseResponseController.getSelectedAlgorithm();
+//        lines.add(line);
+//        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+//        PdfUtils.addEmptyLines(document, 1);
+//        // add conditions number
+//        lines.clear();
+//        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getDoseResponseData().size();
+//        lines.add(line);
+//        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+//        PdfUtils.addEmptyLines(document, 1);
+//        lines.clear();
+//        line = "DRUG ANALYSED: " + doseResponseController.getdRAnalysisGroup().getTreatmentToAnalyse();
+//        lines.add(line);
+//        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+//        PdfUtils.addEmptyLines(document, 1);
+//        PdfUtils.addEmptyLines(document, 1);
     }
 
     @Override
