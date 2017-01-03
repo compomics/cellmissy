@@ -173,6 +173,7 @@ public class CellMissyController {
         loadExperimentFromGenericInputController.init();
         areaMainController.init();
         singleCellMainController.init();
+        genericDoseResponseController.init();
         overviewController.init();
         loginController.init();
         userManagementController.init();
@@ -526,6 +527,7 @@ public class CellMissyController {
         startupDialog.getDoseResponseButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                startupDialog.setVisible(false);
                 onDoseResponse();
             }
         });

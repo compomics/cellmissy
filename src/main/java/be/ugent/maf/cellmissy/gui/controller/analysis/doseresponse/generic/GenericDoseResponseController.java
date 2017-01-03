@@ -89,7 +89,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     protected String getNormalizationInfo() {
         return dRNormalizedController.getNormalizationInfo();
     }
-    
+
     public CellMissyFrame getCellMissyFrame() {
         return cellMissyController.getCellMissyFrame();
     }
@@ -202,6 +202,20 @@ public class GenericDoseResponseController extends DoseResponseController {
         updateModelInTable(dRInputController.getTableModel());
         dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
         updateTableInfoMessage("This table contains all conditions and their respective slopes");
+    }
+
+    /**
+     * Initialize controller
+     */
+    public void init() {
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+        //init view
+        initMainView();
+        //init child controllers
+        dRInputController.init();
+        dRInitialController.init();
+        dRNormalizedController.init();
+        dRResultsController.init();
     }
 
     /**

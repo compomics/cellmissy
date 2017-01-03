@@ -271,6 +271,7 @@ public class AreaDoseResponseController extends DoseResponseController {
     /**
      * Initialize main view
      */
+    @Override
     protected void initMainView() {
         dRPanel = new DRPanel();
         //create a ButtonGroup for the radioButtons used for analysis
