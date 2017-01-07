@@ -33,6 +33,7 @@ Look at how to import single-cell migration data into CellMissy here: https://fi
 **CellMissy**: DB schema has been modified to take into account users privileges in relation to projects and experiments. Download the new SQL script to create your *CellMissy* DB (see more in the [downloads section](#downloads)).
 
 ## Downloads
+Download *CellMissy* 1.1.0 [here](http://genesis.ugent.be/uvpublicdata/cellmissy/CellMissy-1.1.0.zip).
 Download *CellMissy* 1.0.4 [here](http://genesis.ugent.be/uvpublicdata/cellmissy/CellMissy-1.0.4.zip).
 
 ### Supportive Files
