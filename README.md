@@ -34,6 +34,7 @@ Look at how to import single-cell migration data into CellMissy here: https://fi
 
 ## Downloads
 Download *CellMissy* 1.1.0 [here](http://genesis.ugent.be/uvpublicdata/cellmissy/CellMissy-1.1.0.zip).
+
 Download *CellMissy* 1.0.4 [here](http://genesis.ugent.be/uvpublicdata/cellmissy/CellMissy-1.0.4.zip).
 
 ### Supportive Files
