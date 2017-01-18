@@ -69,8 +69,8 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         doseResponseLabel = new javax.swing.JLabel();
         cardInfoLabel = new javax.swing.JLabel();
         contentPanel = new javax.swing.JPanel();
-        doseResponseParentPanel = new javax.swing.JPanel();
         dataLoadingPanel = new javax.swing.JPanel();
+        doseResponseParentPanel = new javax.swing.JPanel();
         bottomPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         nextButton = new javax.swing.JButton();
@@ -131,19 +131,6 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         contentPanel.setPreferredSize(new java.awt.Dimension(20, 60));
         contentPanel.setLayout(new java.awt.CardLayout());
 
-        javax.swing.GroupLayout doseResponseParentPanelLayout = new javax.swing.GroupLayout(doseResponseParentPanel);
-        doseResponseParentPanel.setLayout(doseResponseParentPanelLayout);
-        doseResponseParentPanelLayout.setHorizontalGroup(
-            doseResponseParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 924, Short.MAX_VALUE)
-        );
-        doseResponseParentPanelLayout.setVerticalGroup(
-            doseResponseParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 560, Short.MAX_VALUE)
-        );
-
-        contentPanel.add(doseResponseParentPanel, "card3");
-
         javax.swing.GroupLayout dataLoadingPanelLayout = new javax.swing.GroupLayout(dataLoadingPanel);
         dataLoadingPanel.setLayout(dataLoadingPanelLayout);
         dataLoadingPanelLayout.setHorizontalGroup(
@@ -156,6 +143,19 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         );
 
         contentPanel.add(dataLoadingPanel, "card2");
+
+        javax.swing.GroupLayout doseResponseParentPanelLayout = new javax.swing.GroupLayout(doseResponseParentPanel);
+        doseResponseParentPanel.setLayout(doseResponseParentPanelLayout);
+        doseResponseParentPanelLayout.setHorizontalGroup(
+            doseResponseParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 924, Short.MAX_VALUE)
+        );
+        doseResponseParentPanelLayout.setVerticalGroup(
+            doseResponseParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 560, Short.MAX_VALUE)
+        );
+
+        contentPanel.add(doseResponseParentPanel, "card3");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

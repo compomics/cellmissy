@@ -117,10 +117,10 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignCardLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="doseResponseParentPanel">
+        <Container class="javax.swing.JPanel" name="dataLoadingPanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="card3"/>
+              <CardConstraints cardName="card2"/>
             </Constraint>
           </Constraints>
 
@@ -137,10 +137,10 @@
             </DimensionLayout>
           </Layout>
         </Container>
-        <Container class="javax.swing.JPanel" name="dataLoadingPanel">
+        <Container class="javax.swing.JPanel" name="doseResponseParentPanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-              <CardConstraints cardName="card2"/>
+              <CardConstraints cardName="card3"/>
             </Constraint>
           </Constraints>
 

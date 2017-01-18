@@ -120,6 +120,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         fileLabel = new javax.swing.JLabel();
         chooseFileButton = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         choosePanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         instrumentComboBox = new javax.swing.JComboBox();
@@ -180,6 +181,8 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         infoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         infoLabel.setText("Choose a file that CellMissy can use for the import of dose-response data");
 
+        jLabel5.setText("No data will be saved to the database. Please make sure to create an analysis report when you finish.");
+
         javax.swing.GroupLayout chooseFilePanelLayout = new javax.swing.GroupLayout(chooseFilePanel);
         chooseFilePanel.setLayout(chooseFilePanelLayout);
         chooseFilePanelLayout.setHorizontalGroup(
@@ -193,7 +196,8 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                         .addComponent(fileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(chooseFileButton))
-                    .addComponent(infoLabel))
+                    .addComponent(infoLabel)
+                    .addComponent(jLabel5))
                 .addContainerGap(74, Short.MAX_VALUE))
         );
         chooseFilePanelLayout.setVerticalGroup(
@@ -206,7 +210,9 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addComponent(infoLabel)
-                .addGap(30, 30, 30))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -463,7 +469,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                         .addComponent(jLabel19))
                     .addComponent(jLabel17)
                     .addComponent(matrixTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -516,6 +522,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;

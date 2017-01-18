@@ -59,6 +59,8 @@ public class GenericDoseResponseController extends DoseResponseController {
     private CellMissyController cellMissyController;
     //child controllers
     @Autowired
+    private LoadGenericDRDataController loadGenericDRDataController;
+    @Autowired
     private GenericDRInputController dRInputController;
     @Autowired
     private GenericDRInitialController dRInitialController;
@@ -212,6 +214,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         //init view
         initMainView();
         //init child controllers
+        loadGenericDRDataController.init();
         dRInputController.init();
         dRInitialController.init();
         dRNormalizedController.init();
@@ -397,7 +400,8 @@ public class GenericDoseResponseController extends DoseResponseController {
 
         //add views to parent panels
         cellMissyController.getCellMissyFrame().getDoseResponseAnalysisParentPanel().add(genericDRParentPanel, gridBagConstraints);
-        genericDRParentPanel.add(dRPanel, gridBagConstraints);
+        genericDRParentPanel.getDataLoadingPanel().add(loadGenericDRDataController.getDataLoadingPanel(), gridBagConstraints);
+        genericDRParentPanel.getDoseResponseParentPanel().add(dRPanel, gridBagConstraints);
     }
 
     /**

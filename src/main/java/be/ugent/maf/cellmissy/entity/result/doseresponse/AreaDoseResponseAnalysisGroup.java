@@ -84,6 +84,7 @@ public class AreaDoseResponseAnalysisGroup implements DoseResponseAnalysisGroup 
             //put in map
             velocitiesMap.put(condition, replicateVelocities);
         }
+        //reset results class
         this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
     }
 
