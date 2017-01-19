@@ -33,4 +33,13 @@ public interface GenericInputFileParser {
      * @throws FileParserException
      */
     List<Track> parseTrackFile(File trackFile) throws FileParserException;
+    
+    /**
+     * Parse generic input dose-response file
+     * 
+     * @param doseResponseFile 
+     * @return 
+     * @throws FileParserException
+     */
+    datastructure parseDoseResponseFile(File doseResponseFile) throws FileParserException;
 }

@@ -105,7 +105,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Tahoma" size="11" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Choose a file that CellMissy can use for the import of dose-response data"/>
+            <Property name="text" type="java.lang.String" value="Choose a file that CellMissy can use for the import of dose-response data (CSV, TSV, XLS)"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel5">

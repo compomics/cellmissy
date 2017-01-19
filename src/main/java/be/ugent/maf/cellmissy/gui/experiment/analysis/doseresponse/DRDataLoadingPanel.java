@@ -179,7 +179,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         chooseFileButton.setText("choose file");
 
         infoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        infoLabel.setText("Choose a file that CellMissy can use for the import of dose-response data");
+        infoLabel.setText("Choose a file that CellMissy can use for the import of dose-response data (CSV, TSV, XLS)");
 
         jLabel5.setText("No data will be saved to the database. Please make sure to create an analysis report when you finish.");
 

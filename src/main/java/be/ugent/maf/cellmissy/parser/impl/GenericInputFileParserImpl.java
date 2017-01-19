@@ -126,4 +126,9 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
         }
         return trackList;
     }
+
+    @Override
+    public datastructure parseDoseResponseFile(File doseResponseFile) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
