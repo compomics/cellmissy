@@ -9,6 +9,8 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,6 +56,24 @@ public class GenericInputFileParserTest {
 
             Track lastTrack = trackList.get(trackList.size() - 1);
             Assert.assertEquals(58, lastTrack.getTrackPointList().size());
+        } catch (FileParserException ex) {
+            Logger.getLogger(GenericInputFileParserTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Test
+    public void testParseDoseResponseFile() {
+        File genericDoseResponseFile = new File(GenericInputFileParserTest.class.getClassLoader().getResource("generic_doseresponse.csv").getPath());
+        try {
+            LinkedHashMap<Double, List<Double>> doseResponseData = genericInputFileParser.parseDoseResponseFile(genericDoseResponseFile);
+
+            assertEquals(x, doseResponseData.size());
+            List<Double> controlResponses = doseResponseData.get(0.0);
+            List<Double> expected = new ArrayList<>();
+            expected.add(1.2);
+            expected.add(1.3);
+            expected.add(1.0);
+            assertEquals(expected, controlResponses);
         } catch (FileParserException ex) {
             Logger.getLogger(GenericInputFileParserTest.class.getName()).log(Level.SEVERE, null, ex);
         }
