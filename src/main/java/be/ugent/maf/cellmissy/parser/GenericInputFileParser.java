@@ -8,6 +8,7 @@ import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import java.io.File;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -37,9 +38,9 @@ public interface GenericInputFileParser {
     /**
      * Parse generic input dose-response file
      * 
-     * @param doseResponseFile 
+     * @param doseResponseFile Possible formats are tsv, csv, xls and xlsx
      * @return 
      * @throws FileParserException
      */
-    datastructure parseDoseResponseFile(File doseResponseFile) throws FileParserException;
+    LinkedHashMap<Double, List<Double>> parseDoseResponseFile(File doseResponseFile) throws FileParserException;
 }

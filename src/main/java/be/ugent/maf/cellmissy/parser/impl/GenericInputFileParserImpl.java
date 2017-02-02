@@ -11,11 +11,23 @@ import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Objects;
 import org.apache.log4j.Logger;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 /**
@@ -128,7 +140,119 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
     }
 
     @Override
-    public datastructure parseDoseResponseFile(File doseResponseFile) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public LinkedHashMap<Double, List<Double>> parseDoseResponseFile(File doseResponseFile) throws FileParserException {
+
+        LinkedHashMap<Double, List<Double>> doseResponseData = new LinkedHashMap<>();
+        String fileName = doseResponseFile.getName();
+        Double dose = 0.0;
+        List<Double> responses = new ArrayList<>();
+
+        //case CSV and TSV
+        if (fileName.endsWith(".tsv") || fileName.endsWith(".csv")) {
+            CSVParser csvFileParser;
+            FileReader fileReader;
+            CSVFormat csvFileFormat;
+            //different fileformat specification depending on delimination
+            if (fileName.endsWith(".csv")) {
+                csvFileFormat = CSVFormat.DEFAULT.withHeader();
+            } else {
+                csvFileFormat = CSVFormat.TDF.withHeader();
+            }
+            try {
+                // initialize the file reader
+                fileReader = new FileReader(doseResponseFile);
+                //initialize CSVParser object
+                csvFileParser = new CSVParser(fileReader, csvFileFormat);
+                // get the csv records
+                List<CSVRecord> csvRecords = csvFileParser.getRecords();
+
+                // read the CSV file records starting from the second record to skip the header
+                for (int i = 1; i < csvRecords.size(); i++) {
+                    CSVRecord cSVRecord = csvRecords.get(i);
+                    //create an iterator for the record values
+                    Iterator iter = cSVRecord.iterator();
+                    // the dose is in the first column, if this is a new dose: create new responses list and save old one
+                    // NOTE: in case of no control (dose = 0.0) condition, 0.0 will get mapped to an empty list, which will (hopefully) have no consequences for the program
+                    Double firstColumn = Double.parseDouble((String) iter.next());
+                    if (!Objects.equals(dose, firstColumn)) {
+                        doseResponseData.put(dose, responses);
+                        responses = new ArrayList<>();
+                        //save first column to doses, other(s) to responses
+                        dose = firstColumn;
+                    }
+
+                    //read the rest of the rows as long as they contain numbers
+                    while (iter.hasNext()) {
+                        responses.add(Double.parseDouble((String) iter.next()));
+                    }
+
+                }
+                //put info of last row in map
+                doseResponseData.put(dose, responses);
+            } catch (IOException ex) {
+                LOG.error(ex.getMessage(), ex);
+            } catch (NumberFormatException ex) {
+                LOG.error(ex.getMessage(), ex);
+                throw new FileParserException("It seems like a line does not contain a number!\nPlease check your files!");
+            }
+
+            return doseResponseData;
+        }
+
+        //CASE XLS or XLSX
+        try {
+            FileInputStream fileInputStream = new FileInputStream(doseResponseFile);
+            Workbook workbook = null;
+            // xls extension
+            if (fileName.endsWith("xls")) {
+                workbook = new HSSFWorkbook(fileInputStream);
+            } else if (fileName.endsWith("xlsx")) { // xlsx extension
+                workbook = new XSSFWorkbook(fileInputStream);
+            }
+            if (workbook != null) {
+                // check that at least one sheet is present
+                if (workbook.getNumberOfSheets() > 0) {
+                    Sheet sheet = workbook.getSheetAt(0);
+                    // iterate through all the rows, starting from the second one to skip the header
+                    // we need to remember the dose value in case of a pure 2 column file (rows contain repeated doses)
+                    for (int i = 1; i < sheet.getLastRowNum() + 1; i++) {
+                        // get the row
+                        Row row = sheet.getRow(i);
+
+                        // if this is a new dose: create new responses list and save old one
+                        if (dose != row.getCell(0).getNumericCellValue()) {
+                            doseResponseData.put(dose, responses);
+                            responses = new ArrayList<>();
+                            //save first column to doses, other(s) to responses
+                            dose = row.getCell(0).getNumericCellValue();
+                        }
+
+                        //read the rest of the rows as long as they contain numbers
+                        int column = 1;
+                        //blank cells return 0
+                        while (row.getCell(column).getNumericCellValue() != 0) {
+                            responses.add(row.getCell(column).getNumericCellValue());
+                            column++;
+                        }
+
+                    }
+                    //put info of last row in map
+                    doseResponseData.put(dose, responses);
+                } else {
+                    throw new FileParserException("It seems an Excel file does not have any sheets!\nPlease check your files!");
+                }
+            } else {
+                throw new FileParserException("The parser did not find a single workbook!\nCheck your files!!");
+            }
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+        } catch (NumberFormatException ex) {
+            LOG.error(ex.getMessage(), ex);
+            throw new FileParserException("It seems like a line does not contain a number!\nPlease check your files!");
+        } catch (IllegalStateException ex) {
+            LOG.error("Only numbers are allowed in the input file, no letters or words.\nPlease check your files!", ex);
+        }
+        return doseResponseData;
     }
+    
 }
