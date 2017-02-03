@@ -96,6 +96,16 @@ public class GenericDoseResponseController extends DoseResponseController {
         return cellMissyController.getCellMissyFrame();
     }
 
+    public GenericDRParentPanel getGenericDRParentPanel() {
+        return genericDRParentPanel;
+    }
+    
+    //NOTE THIS IS NOT ENOUGH, THE METADATA WILL ALSO NEED TO BE TRANSMITTED FOR REPORTING
+    //TODO CREATE NEW CLASS WHICH SAVES ALL THIS INFORMATION AND LIST THIS AS A FIELD HERE!!!!!
+    public LinkedHashMap<Double, List<Double>> getImportedData() {
+        return loadGenericDRDataController.getImportedData();
+    }
+
     /**
      * Do a fitting according to initial, standard parameters and calculate
      * statistics. This method is called when the user switches to the initial
@@ -180,6 +190,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     @Override
     public void resetOnCancel() {
         super.resetOnCancel();
+        loadGenericDRDataController.reset();
         getCardLayout().first(genericDRParentPanel.getContentPanel());
         genericDRParentPanel.getCancelButton().setEnabled(false);
         dRAnalysisGroup = null;

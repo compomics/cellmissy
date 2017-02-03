@@ -36,10 +36,6 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         return chooseFileButton;
     }
 
-    public JTextField getConditionsTextField() {
-        return conditionsTextField;
-    }
-
     public JTextField getDurationTextField() {
         return durationTextField;
     }
@@ -54,10 +50,6 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
 
     public JTextField getExpNumberTextField() {
         return expNumberTextField;
-    }
-
-    public JTextField getImagingTypesTextField() {
-        return imagingTypesTextField;
     }
 
     public JComboBox getInstrumentComboBox() {
@@ -96,10 +88,6 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         return purposeTextArea;
     }
 
-    public JTextField getTimeFramesTextField() {
-        return timeFramesTextField;
-    }
-
     public JTextField getTreatmentTextField() {
         return treatmentTextField;
     }
@@ -135,11 +123,8 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         jScrollPane5 = new javax.swing.JScrollPane();
         purposeTextArea = new javax.swing.JTextArea();
         jLabel20 = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         infoLabel2 = new javax.swing.JLabel();
@@ -151,12 +136,9 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         jLabel22 = new javax.swing.JLabel();
         instrumentTextField = new javax.swing.JTextField();
         plateFormatTextField = new javax.swing.JTextField();
-        conditionsTextField = new javax.swing.JTextField();
-        timeFramesTextField = new javax.swing.JTextField();
         durationTextField = new javax.swing.JTextField();
         intervalTextField = new javax.swing.JTextField();
         algorithmsTextField = new javax.swing.JTextField();
-        imagingTypesTextField = new javax.swing.JTextField();
         ecmCompositionTextField = new javax.swing.JTextField();
         ecmDensityTextField = new javax.swing.JTextField();
         treatmentTextField = new javax.swing.JTextField();
@@ -179,7 +161,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         chooseFileButton.setText("choose file");
 
         infoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        infoLabel.setText("Choose a file that CellMissy can use for the import of dose-response data (CSV, TSV, XLS)");
+        infoLabel.setText("Choose a file that CellMissy can use for the import of dose-response data (CSV, TSV, XLS, XLSX)");
 
         jLabel5.setText("No data will be saved to the database. Please make sure to create an analysis report when you finish.");
 
@@ -295,9 +277,10 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
 
         jScrollPane5.setOpaque(false);
 
-        purposeTextArea.setEditable(false);
         purposeTextArea.setColumns(20);
+        purposeTextArea.setLineWrap(true);
         purposeTextArea.setRows(5);
+        purposeTextArea.setWrapStyleWord(true);
         purposeTextArea.setBorder(null);
         purposeTextArea.setFocusable(false);
         purposeTextArea.setPreferredSize(new java.awt.Dimension(170, 94));
@@ -305,15 +288,9 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
 
         jLabel20.setText("# algorithms");
 
-        jLabel21.setText("# imaging types");
-
         jLabel14.setText("interval");
 
         jLabel10.setText("duration");
-
-        jLabel9.setText("# time frames");
-
-        jLabel7.setText("# conditions");
 
         jLabel6.setText("plate format");
 
@@ -324,7 +301,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
 
         jLabel15.setText("cell line");
 
-        jLabel16.setText("migration assay");
+        jLabel16.setText("assay type");
 
         jLabel17.setText("bottom matrix");
 
@@ -358,13 +335,10 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                             .addComponent(matrixTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                             .addComponent(expNumberTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                             .addComponent(jScrollPane5))
-                        .addGap(18, 71, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
                             .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel10)
-                            .addComponent(jLabel14)
                             .addComponent(jLabel19)
                             .addComponent(jLabel22)
                             .addComponent(jLabel18))
@@ -375,29 +349,22 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                                     .addComponent(ecmCompositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(ecmDensityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(treatmentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap())
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
                                 .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(conditionsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                                    .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                                 .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
-                                        .addComponent(jLabel9)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
-                                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel20)
-                                            .addComponent(jLabel21))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(algorithmsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(imagingTypesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addContainerGap(55, Short.MAX_VALUE))))))))
+                                    .addComponent(jLabel20)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel14))
+                                .addGap(27, 27, 27)
+                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(durationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                                    .addComponent(intervalTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                                    .addComponent(algorithmsTextField))
+                                .addContainerGap(43, Short.MAX_VALUE))))))
         );
         experimentDetailsPanelLayout.setVerticalGroup(
             experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -405,7 +372,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(infoLabel2)
                 .addGap(18, 18, 18)
-                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
@@ -415,41 +382,28 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                                 .addGap(18, 18, 18)
                                 .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel6)
-                                    .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(59, 59, 59)
+                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel22)
+                                    .addComponent(treatmentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(88, 88, 88)
+                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel18)
+                                    .addComponent(ecmCompositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
                                 .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(algorithmsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel21)
-                                    .addComponent(imagingTypesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(conditionsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(timeFramesTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel9)))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel22)
-                            .addComponent(treatmentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(21, 21, 21)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel14)
-                            .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel18)
-                            .addComponent(ecmCompositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel16)
-                            .addComponent(assayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel10))
+                                .addGap(18, 18, 18)
+                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel14))))
+                        .addGap(18, 18, 18))
                     .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -461,15 +415,19 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cellLineTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel15))))
-                .addGap(18, 18, 18)
+                            .addComponent(jLabel15))
+                        .addGap(18, 18, 18)
+                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(assayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16))
+                        .addGap(18, 18, 18)))
                 .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(ecmDensityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel19))
                     .addComponent(jLabel17)
                     .addComponent(matrixTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(94, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -491,14 +449,12 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
     private javax.swing.JButton chooseFileButton;
     private javax.swing.JPanel chooseFilePanel;
     private javax.swing.JPanel choosePanel;
-    private javax.swing.JTextField conditionsTextField;
     private javax.swing.JTextField durationTextField;
     private javax.swing.JTextField ecmCompositionTextField;
     private javax.swing.JTextField ecmDensityTextField;
     private javax.swing.JTextField expNumberTextField;
     private javax.swing.JPanel experimentDetailsPanel;
     private javax.swing.JLabel fileLabel;
-    private javax.swing.JTextField imagingTypesTextField;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel infoLabel1;
     private javax.swing.JLabel infoLabel2;
@@ -518,14 +474,11 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JComboBox magnificationComboBox;
@@ -533,7 +486,6 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
     private javax.swing.JTextField plateFormatTextField;
     private javax.swing.JComboBox projectComboBox;
     private javax.swing.JTextArea purposeTextArea;
-    private javax.swing.JTextField timeFramesTextField;
     private javax.swing.JTextField treatmentTextField;
     // End of variables declaration//GEN-END:variables
 }

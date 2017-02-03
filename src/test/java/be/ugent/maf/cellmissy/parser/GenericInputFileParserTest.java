@@ -67,7 +67,7 @@ public class GenericInputFileParserTest {
         try {
             LinkedHashMap<Double, List<Double>> doseResponseData = genericInputFileParser.parseDoseResponseFile(genericDoseResponseFile);
 
-            assertEquals(x, doseResponseData.size());
+            assertEquals(4, doseResponseData.size());
             List<Double> controlResponses = doseResponseData.get(0.0);
             List<Double> expected = new ArrayList<>();
             expected.add(1.2);

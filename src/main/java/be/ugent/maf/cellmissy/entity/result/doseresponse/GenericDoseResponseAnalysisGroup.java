@@ -18,7 +18,7 @@ public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGro
 //    in the "initial" controller depending on whether the replicates are in the rows or columns
     private LinkedHashMap<Double, List<Double>> doseResponseData;
     
-    //The name of the treatment to be analyzed
+    //The name of the treatment to be analyzed, only for display purposes
     private String treatmentToAnalyse;
 
     //The results of the analysis
@@ -28,10 +28,11 @@ public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGro
      * Constructor
      * Sets the doseResponseData when creating analysis group (after data loading)
      */
-//    public GenericDoseResponseAnalysisGroup(argument data) {
-//        this.doseResponseData = new LinkedHashMap<>();
-//    }
-//    
+    public GenericDoseResponseAnalysisGroup(ImportedDoseResponseData importedData) {
+        this.doseResponseData = importedData.getDoseResponseData();
+        setTreatmentToAnalyse(importedData.getTreatmentName());
+    }
+    
     @Override
     public DoseResponseAnalysisResults getDoseResponseAnalysisResults() {
         return doseResponseAnalysisResults;
@@ -42,6 +43,10 @@ public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGro
         return treatmentToAnalyse;
     }
 
+    /**
+     * Exclusively used in constructor but implementation was necessary because of interface.
+     * @param treatmentToAnalyse 
+     */
     @Override
     public void setTreatmentToAnalyse(String treatmentToAnalyse) {
         this.treatmentToAnalyse = treatmentToAnalyse;

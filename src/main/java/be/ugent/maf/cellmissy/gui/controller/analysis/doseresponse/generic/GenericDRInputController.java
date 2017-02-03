@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
 import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInputController;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
@@ -85,8 +84,6 @@ public class GenericDRInputController extends DRInputController {
         //select as default first button (Stimulation)
         dRInputPanel.getStimulationRadioButton().setSelected(true);
 
-        //initialize treatment choice dialog
-        chooseTreatmentDialog = new ChooseTreatmentDialog(doseResponseController.getCellMissyFrame(), true);
 
 
         /*
@@ -130,19 +127,7 @@ public class GenericDRInputController extends DRInputController {
             }
         });
 
-        /**
-         * When button is pressed, selection of combo box gets taken into
-         * account as treatment to analyse and dialog closes.
-         */
-        chooseTreatmentDialog.getSelectTreatmentButton().addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                doseResponseController.getdRAnalysisGroup().setTreatmentToAnalyse(chooseTreatmentDialog.getTreatmentComboBox().getSelectedItem().toString());
-                chooseTreatmentDialog.setVisible(false);
-                doseResponseController.setFirstFitting(true);
-            }
-        });
+        
     }
 
     @Override
