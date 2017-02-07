@@ -47,18 +47,16 @@ public class GenericDRInputController extends DRInputController {
 
     @Override
     public void initDRInputData() {
-//        //get the loaded starting data
-//        startingData = doseResponseController.getStartingData;
-//        //number of replicates per condition will be added to list as information
-//        List<Integer> numberOfReplicates = getNumberOfReplicates(startingData);
-//        //create and set the table model for the top panel table
-//        setTableModel(createTableModel(startingData));
-//        // put conditions in selectable list
-//        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
-//        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
-//        bindingGroup.addBinding(jListBinding);
-//        bindingGroup.bind();
-//        dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
+        // create and set the table model for the top panel table using the loaded data
+        setTableModel(createTableModel(doseResponseController.getImportedDRDataHolder().getDoseResponseData()));
+        //number of replicates per condition will be added to a list as information
+        List<Integer> numberOfReplicates = getNumberOfReplicates(doseResponseController.getImportedDRDataHolder().getDoseResponseData());
+        // put conditions in selectable list
+        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
+        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
+        bindingGroup.addBinding(jListBinding);
+        bindingGroup.bind();
+        dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
         dRInputPanel.getConditionsList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel);
         doseResponseController.getDRPanel().revalidate();
@@ -160,7 +158,7 @@ public class GenericDRInputController extends DRInputController {
      * Create model for overview table (top one)
      * @return 
      */
-    private NonEditableTableModel createTableModel() {
+    private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> importedData) {
         List<Integer> conditionNumberList = new ArrayList();
         List<String> treatmentNameList = new ArrayList();
         List<Double> concentrationList = new ArrayList();
@@ -309,6 +307,7 @@ public class GenericDRInputController extends DRInputController {
 
     private List<Integer> getNumberOfReplicates(LinkedHashMap<Double, List<Double>> allConditions) {
         List<Integer> result = new ArrayList<>();
+        //we can iterate over the map like this because the order is saved (-->"LINKED")
         for (List<Double> value :allConditions.values()) {
             result.add(value.size());
         }

@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DoseResponseController;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.ImportedDRDataHolder;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
@@ -52,6 +53,7 @@ public class GenericDoseResponseController extends DoseResponseController {
 
     //model: in super class
     private GenericDoseResponseAnalysisGroup dRAnalysisGroup;
+    private ImportedDRDataHolder importedDRDataHolder;
     //view: in super class
     private GenericDRParentPanel genericDRParentPanel;
     //parent controller
@@ -99,13 +101,12 @@ public class GenericDoseResponseController extends DoseResponseController {
     public GenericDRParentPanel getGenericDRParentPanel() {
         return genericDRParentPanel;
     }
-    
-    //NOTE THIS IS NOT ENOUGH, THE METADATA WILL ALSO NEED TO BE TRANSMITTED FOR REPORTING
-    //TODO CREATE NEW CLASS WHICH SAVES ALL THIS INFORMATION AND LIST THIS AS A FIELD HERE!!!!!
-    public LinkedHashMap<Double, List<Double>> getImportedData() {
-        return loadGenericDRDataController.getImportedData();
-    }
 
+    public ImportedDRDataHolder getImportedDRDataHolder() {
+        return importedDRDataHolder;
+    }
+    
+    
     /**
      * Do a fitting according to initial, standard parameters and calculate
      * statistics. This method is called when the user switches to the initial
@@ -190,7 +191,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     @Override
     public void resetOnCancel() {
         super.resetOnCancel();
-        loadGenericDRDataController.reset();
+        importedDRDataHolder = null;
         getCardLayout().first(genericDRParentPanel.getContentPanel());
         genericDRParentPanel.getCancelButton().setEnabled(false);
         dRAnalysisGroup = null;
@@ -266,11 +267,14 @@ public class GenericDoseResponseController extends DoseResponseController {
         /**
          * Action listeners for uppermost panel.
          */
+        //this button is ONLY used when going from the loading to the analysis
         genericDRParentPanel.getNextButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 genericDRParentPanel.getNextButton().setEnabled(false);
                 genericDRParentPanel.getCancelButton().setEnabled(true);
+                //save any metadata that was provided manually
+                loadGenericDRDataController.setManualMetaData(importedDRDataHolder);
                 //switch between child panels
                 getCardLayout().next(genericDRParentPanel.getContentPanel());
                 onCardSwitch();

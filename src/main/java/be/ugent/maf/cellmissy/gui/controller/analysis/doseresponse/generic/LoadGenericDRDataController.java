@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
+import be.ugent.maf.cellmissy.entity.result.doseresponse.ImportedDRDataHolder;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRDataLoadingPanel;
@@ -13,8 +14,6 @@ import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
@@ -36,7 +35,6 @@ public class LoadGenericDRDataController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(LoadGenericDRDataController.class);
 
     //model
-    private LinkedHashMap<Double, List<Double>> importedData;
     //need to somehow save the information the user fills in manually
     //view
     private DRDataLoadingPanel dataLoadingPanel;
@@ -57,23 +55,31 @@ public class LoadGenericDRDataController {
         return dataLoadingPanel;
     }
 
-    public LinkedHashMap<Double, List<Double>> getImportedData() {
-        return importedData;
-    }
-
     public void init() {
         initDataLoadingPanel();
         // make a new waiting dialog here
         waitingDialog = new WaitingDialog(doseResponseController.getCellMissyFrame(), true);
     }
-    
+
     /**
-     * On reset of analysis, also reset importedData field.
+     * Read the view's text areas and fills in corresponding fields in the
+     * imported data holder. This method is executed when the user presses the
+     * next button.
      */
-    public void reset() {
-        importedData = null;
+    public void setManualMetaData(ImportedDRDataHolder dRDataHolder) {
+        // !!! METHODS WILL GIVE NULLPOINTER EX WHEN THERE IS NO TEXT! --> FIND WORKAROUND
+        dRDataHolder.setAssayType(dataLoadingPanel.getAssayTextField().getText());
+        dRDataHolder.setCellLine(dataLoadingPanel.getCellLineTextField().getText());
+        dRDataHolder.setPlateFormat(dataLoadingPanel.getPlateFormatTextField().getText());
+        dRDataHolder.setTreatmentName(dataLoadingPanel.getTreatmentTextField().getText());
+        dRDataHolder.setPurpose(dataLoadingPanel.getPurposeTextArea().getText());
+        
+        // more might follow after reviewing the terms
     }
-    
+
+    /**
+     * Private methods
+     */
     //init view
     private void initDataLoadingPanel() {
 
@@ -116,11 +122,11 @@ public class LoadGenericDRDataController {
             }
         });
     }
-    
+
     private void parseDRFile(File dRFile) {
-        
+
         try {
-            this.importedData = genericInputFileParser.parseDoseResponseFile(dRFile);
+            doseResponseController.getImportedDRDataHolder().setDoseResponseData(genericInputFileParser.parseDoseResponseFile(dRFile));
         } catch (FileParserException ex) {
             LOG.error(ex.getMessage());
             doseResponseController.showMessage(ex.getMessage(), "Generic input file error", JOptionPane.ERROR_MESSAGE);
@@ -167,7 +173,7 @@ public class LoadGenericDRDataController {
                 get();
                 waitingDialog.setVisible(false);
                 // if parsing the file was successfull and the loaded data is not null, we can enable the next experiment button
-                if (importedData != null) {
+                if (doseResponseController.getImportedDRDataHolder().getDoseResponseData() != null) {
                     doseResponseController.getGenericDRParentPanel().getNextButton().setEnabled(true);
                 }
             } catch (InterruptedException | ExecutionException | CancellationException ex) {

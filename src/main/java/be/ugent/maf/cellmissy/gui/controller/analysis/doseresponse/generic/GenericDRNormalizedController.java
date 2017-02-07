@@ -171,7 +171,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+                dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData());
                 setTableModel(createTableModel(dataToFit));
                 doseResponseController.updateModelInTable(tableModel);
                 doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(true), bottomConstrainValue, topConstrainValue);
@@ -193,9 +193,8 @@ public class GenericDRNormalizedController extends DRNormalizedController {
      */
     
     //WHAT IF THE CONCENTRATIONS ARE ALREADY LOG-VALUES UPON LOADING??????
-    private LinkedHashMap<Double, List<Double>> prepareFittingData(GenericDoseResponseAnalysisGroup analysisGroup) {
-        
-        return null;
+    private LinkedHashMap<Double, List<Double>> prepareFittingData(LinkedHashMap<Double, List<Double>> doseResponseData) {
+
     }
 
 }

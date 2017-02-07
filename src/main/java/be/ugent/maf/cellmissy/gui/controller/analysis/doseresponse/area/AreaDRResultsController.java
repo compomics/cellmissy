@@ -356,7 +356,7 @@ public class AreaDRResultsController extends DRResultsController {
     protected PdfPTable createAnalysisGroupInfoTable() {
         //maps log transformed conc (double) to list of velocities (double)
         LinkedHashMap<Double, List<Double>> fittedData = doseResponseController.getDataToFit(false);
-        //CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES: find control concentration
+        //CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES: find control concentration (lowest)
         Double controlConcentration = Collections.min(fittedData.keySet());
 
         // new table with 6 columns

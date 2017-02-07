@@ -28,7 +28,7 @@ public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGro
      * Constructor
      * Sets the doseResponseData when creating analysis group (after data loading)
      */
-    public GenericDoseResponseAnalysisGroup(ImportedDoseResponseData importedData) {
+    public GenericDoseResponseAnalysisGroup(ImportedDRDataHolder importedData) {
         this.doseResponseData = importedData.getDoseResponseData();
         setTreatmentToAnalyse(importedData.getTreatmentName());
     }
