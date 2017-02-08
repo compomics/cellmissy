@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInitialController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
 import java.awt.event.ActionEvent;
@@ -28,7 +29,7 @@ public class GenericDRInitialController extends DRInitialController {
 
     //model
     //the data to fit, essentially the data that was loaded at start
-    private LinkedHashMap<Double, List<Double>> dataToFit;
+    private List<DoseResponsePair> dataToFit;
     //view
     //parent controller
     @Autowired

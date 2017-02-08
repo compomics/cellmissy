@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ImportedDRDataHolder {
 
-    private LinkedHashMap<Double, List<Double>> doseResponseData;
+    private List<DoseResponsePair> doseResponseData;
     
     private String treatmentName;
     
@@ -36,11 +36,11 @@ public class ImportedDRDataHolder {
         return treatmentName;
     }
 
-    public LinkedHashMap<Double, List<Double>> getDoseResponseData() {
+    public List<DoseResponsePair> getDoseResponseData() {
         return doseResponseData;
     }
 
-    public void setDoseResponseData(LinkedHashMap<Double, List<Double>> doseResponseData) {
+    public void setDoseResponseData(List<DoseResponsePair> doseResponseData) {
         this.doseResponseData = doseResponseData;
     }
 

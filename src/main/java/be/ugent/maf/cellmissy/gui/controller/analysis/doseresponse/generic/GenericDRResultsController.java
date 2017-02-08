@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRResultsController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRResultsPanel;
@@ -25,9 +26,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.JOptionPane;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -300,10 +299,14 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     protected PdfPTable createAnalysisGroupInfoTable() {
-//maps log transformed conc (double) to list of velocities (double)
-        LinkedHashMap<Double, List<Double>> fittedData = doseResponseController.getDataToFit(false);
+        //maps log transformed conc (double) to list of velocities (double)
+        List<DoseResponsePair> fittedData = doseResponseController.getDataToFit(false);
         //CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES: find control concentration
-        Double controlConcentration = Collections.min(fittedData.keySet());
+        List<Double> allConcentrations = new ArrayList<>();
+        for (DoseResponsePair row : fittedData) {
+            allConcentrations.add(row.getDose());
+        }
+        Double controlConcentration = Collections.min(allConcentrations);
 
         // new table with 6 columns
         PdfPTable dataTable = new PdfPTable(6);
@@ -317,11 +320,11 @@ public class GenericDRResultsController extends DRResultsController {
         PdfUtils.addCustomizedCell(dataTable, "MEDIAN VELOCITY", boldFont);
 
         // for each condition get results and add a cell
-        for (Map.Entry<Double, List<Double>> condition : fittedData.entrySet()) {
-            Integer replicates = condition.getValue().size();
+        for (DoseResponsePair condition : fittedData) {
+            Integer replicates = condition.getResponses().size();
             String excluded;
             int excludedCount = 0;
-            List<Double> velocities = condition.getValue();
+            List<Double> velocities = condition.getResponses();
 
             //count how many replicates were excluded
             for (int i = 0; i < velocities.size(); i++) {
@@ -338,7 +341,7 @@ public class GenericDRResultsController extends DRResultsController {
 
             //put log-value of the concentration back to an understandable format
             String concentration;
-            Double logConc = condition.getKey();
+            Double logConc = condition.getDose();
             Double transformed = Math.pow(10, logConc);
             //check which concentration unit is to be used
             //if lower than 0.1 µM: use nM unit
@@ -405,10 +408,10 @@ public class GenericDRResultsController extends DRResultsController {
         standardErrors.add(Double.NaN);
         //confidence interval boundaries
         List<Double> cIBoundaries = new ArrayList<>();
-        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcIBottom());
-        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcITop());
-        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcILogEC50());
-        cIBoundaries = addArrayToList(cIBoundaries, statistics.getcIHillslope());
+        cIBoundaries = AnalysisUtils.addArrayToList(cIBoundaries, statistics.getcIBottom());
+        cIBoundaries = AnalysisUtils.addArrayToList(cIBoundaries, statistics.getcITop());
+        cIBoundaries = AnalysisUtils.addArrayToList(cIBoundaries, statistics.getcILogEC50());
+        cIBoundaries = AnalysisUtils.addArrayToList(cIBoundaries, statistics.getcIHillslope());
 
         //for all parameters except EC50 (is handled separately for scientific notation purposes)
         for (int row = 0; row < parameters.size(); row++) {

@@ -5,8 +5,8 @@
  */
 package be.ugent.maf.cellmissy.analysis.doseresponse;
 
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -25,13 +25,13 @@ public interface SigmoidFitter {
      * @param resultsHolder Holds the results from the fitting.
      * @param standardHillslope For initial parameter extimation or constraining
      */
-    void fitNoConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, int standardHillslope);
+    void fitNoConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, int standardHillslope);
 
-    void fitBotConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, int standardHillslope);
+    void fitBotConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, int standardHillslope);
 
-    void fitTopConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double topConstrain, int standardHillslope);
+    void fitTopConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double topConstrain, int standardHillslope);
 
-    void fitBotTopConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, Double topConstrain, int standardHillslope);
+    void fitBotTopConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, Double topConstrain, int standardHillslope);
 
     /**
      * Fitter methods that include a constrained hillslope. Commented because of

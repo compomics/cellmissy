@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInitialController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -33,7 +34,7 @@ public class AreaDRInitialController extends DRInitialController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRInitialController.class);
     //model
-    private LinkedHashMap<Double, List<Double>> dataToFit;
+    private List<DoseResponsePair> dataToFit;
     //view: in super class
     // parent controller
     @Autowired
@@ -44,7 +45,7 @@ public class AreaDRInitialController extends DRInitialController {
      *
      * @return
      */
-    public LinkedHashMap<Double, List<Double>> getDataToFit() {
+    public List<DoseResponsePair> getDataToFit() {
         return dataToFit;
     }
 
@@ -138,8 +139,8 @@ public class AreaDRInitialController extends DRInitialController {
      * @return LinkedHashMap That maps the concentration (log-transformed!) to
      * the replicate velocities
      */
-    private LinkedHashMap<Double, List<Double>> prepareFittingData(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
-        LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
+    private List<DoseResponsePair> prepareFittingData(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
+        List<DoseResponsePair> result = new ArrayList<>();
 
         List<List<Double>> allVelocities = new ArrayList<>();
         List<Double> allLogConcentrations = new ArrayList<>();
@@ -172,7 +173,7 @@ public class AreaDRInitialController extends DRInitialController {
         }
 
         for (int i = 0; i < allVelocities.size(); i++) {
-            result.put(allLogConcentrations.get(i), allVelocities.get(i));
+            result.add(new DoseResponsePair(allLogConcentrations.get(i), allVelocities.get(i)));
         }
         return result;
     }

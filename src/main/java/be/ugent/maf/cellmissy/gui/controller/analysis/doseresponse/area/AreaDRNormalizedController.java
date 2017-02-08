@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.area;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRNormalizedController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -34,7 +35,7 @@ public class AreaDRNormalizedController extends DRNormalizedController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(AreaDRNormalizedController.class);
 
     //model
-    private LinkedHashMap<Double, List<Double>> dataToFit;
+    private List<DoseResponsePair> dataToFit;
     //view: in super class
     // parent controller
     @Autowired
@@ -47,7 +48,7 @@ public class AreaDRNormalizedController extends DRNormalizedController {
      *
      * @return
      */
-    public LinkedHashMap<Double, List<Double>> getDataToFit() {
+    public List<DoseResponsePair> getDataToFit() {
         return dataToFit;
     }
 
@@ -202,8 +203,8 @@ public class AreaDRNormalizedController extends DRNormalizedController {
      * @return LinkedHashMap That maps the concentration (log-transformed!) to
      * the normalized replicate velocites
      */
-    private LinkedHashMap<Double, List<Double>> prepareFittingData(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
-        LinkedHashMap<Double, List<Double>> result = new LinkedHashMap<>();
+    private List<DoseResponsePair> prepareFittingData(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
+        List<DoseResponsePair> result = new ArrayList<>();
 
         //!! control concentrations (10 * lower than lowest treatment conc) also need to be added
         List<List<Double>> allVelocities = new ArrayList<>();
@@ -240,7 +241,7 @@ public class AreaDRNormalizedController extends DRNormalizedController {
             x++;
         }
         for (int i = 0; i < allLogConcentrations.size(); i++) {
-            result.put(allLogConcentrations.get(i), allVelocities.get(i));
+            result.add(new DoseResponsePair(allLogConcentrations.get(i), allVelocities.get(i)));
         }
 
         return result;

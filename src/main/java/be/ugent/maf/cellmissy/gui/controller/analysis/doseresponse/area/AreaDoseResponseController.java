@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.area.AreaAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.AreaDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.controller.analysis.area.AreaMainController;
@@ -28,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
@@ -130,7 +130,7 @@ public class AreaDoseResponseController extends DoseResponseController {
         return areaMainController.getSelectedALgorithm();
     }
 
-    public LinkedHashMap<Double, List<Double>> getDataToFit(boolean normalized) {
+    public List<DoseResponsePair> getDataToFit(boolean normalized) {
         if (normalized) {
             return dRNormalizedController.getDataToFit();
         } else {
@@ -192,7 +192,7 @@ public class AreaDoseResponseController extends DoseResponseController {
      * @param topConstrained Double if user constrains, otherwise null
      *
      */
-    protected void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
+    protected void performFitting(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
         performFitting(sigmoidFitter, dataToFit, resultsHolder, bottomConstrained, topConstrained);
     }
 
@@ -236,7 +236,7 @@ public class AreaDoseResponseController extends DoseResponseController {
      * @return
      */
     @Override
-    protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, boolean normalized) {
+    protected JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, boolean normalized) {
         return createDoseResponseChart(dataToPlot, dRAnalysisGroup, normalized);
     }
 

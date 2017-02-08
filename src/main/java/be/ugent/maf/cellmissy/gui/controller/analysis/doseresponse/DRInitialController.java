@@ -5,14 +5,13 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.jfree.chart.ChartPanel;
 
 /**
@@ -78,10 +77,10 @@ public abstract class DRInitialController {
      * @param dataToFit
      * @return the model
      */
-    protected NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> dataToFit) {
+    protected NonEditableTableModel createTableModel(List<DoseResponsePair> dataToFit) {
         int maxReplicates = 0;
-        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
-            int replicates = entry.getValue().size();
+        for (DoseResponsePair entry : dataToFit) {
+            int replicates = entry.getResponses().size();
             if (replicates > maxReplicates) {
                 maxReplicates = replicates;
             }
@@ -89,15 +88,15 @@ public abstract class DRInitialController {
         Object[][] data = new Object[dataToFit.size()][maxReplicates + 1];
 
         int rowIndex = 0;
-        for (Map.Entry<Double, List<Double>> entry : dataToFit.entrySet()) {
+        for (DoseResponsePair entry : dataToFit) {
             //log concentration is put on 1st column
-            data[rowIndex][0] = AnalysisUtils.roundThreeDecimals(entry.getKey());
+            data[rowIndex][0] = AnalysisUtils.roundThreeDecimals(entry.getDose());
 
-            for (int columnIndex = 1; columnIndex < entry.getValue().size() + 1; columnIndex++) {
-                Double slope = entry.getValue().get(columnIndex - 1);
+            for (int columnIndex = 1; columnIndex < entry.getResponses().size() + 1; columnIndex++) {
+                Double slope = entry.getResponses().get(columnIndex - 1);
                 if (slope != null && !slope.isNaN()) {
                     // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(entry.getValue().get(columnIndex - 1));
+                    slope = AnalysisUtils.roundThreeDecimals(entry.getResponses().get(columnIndex - 1));
                     // show in table slope + (coefficient)
                     data[rowIndex][columnIndex] = slope;
                 } else if (slope == null) {

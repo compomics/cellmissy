@@ -9,15 +9,14 @@ import be.ugent.maf.cellmissy.entity.Well;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
@@ -362,6 +361,27 @@ public class AnalysisUtils {
         }
         return max;
     }
+    
+    /**
+     * Add the contents of the array to the list
+     *
+     * @param list
+     * @param array
+     * @return A copy of the original list, with the array values added to it.
+     */
+    public static List<Double> addArrayToList(List<Double> list, double[] array) {
+        List<Double> copiedList = new ArrayList<>(list);
+        //if parameter is constrained there is a null instead of an array
+        if (array == null) {
+            copiedList.add(null);
+            copiedList.add(null);
+        } else {
+            for (int i = 0; i < array.length; i++) {
+                copiedList.add(array[i]);
+            }
+        }
+        return copiedList;
+    }
 
     /**
      * Compute maximum number of Replicates overall the experiment
@@ -461,39 +481,37 @@ public class AnalysisUtils {
     }
 
     /**
-     * Generate an array of x values from a HashMap.
+     * Generate an array of x values from a list of DoseResponsePairs.
      *
      * @param data The HashMap that maps one x value to replicate y values.
      * @return An array of x values duplicated to the according amount of
      * replicates in the original map.
      */
-    public static double[] generateXValues(LinkedHashMap<Double, List<Double>> data) {
+    public static double[] generateXValues(List<DoseResponsePair> data) {
         List<Double> xValues = new ArrayList<>();
-        for (Map.Entry<Double, List<Double>> entry : data.entrySet()) {
-            for (Double value : entry.getValue()) {
-                if (value != null) {
-                    xValues.add(entry.getKey());
+        for (DoseResponsePair entry : data) {
+            for (Double response : entry.getResponses()) {
+                if (response != null) {
+                    xValues.add(entry.getDose());
                 }
-
             }
         }
         return ArrayUtils.toPrimitive(xValues.toArray(new Double[xValues.size()]));
     }
 
     /**
-     * Generate an array of y values from a Hashmap.
+     * Generate an array of y values from a list of DoseResponsePairs.
      *
      * @param data The HashMap that maps one x value to replicate y values.
      * @return An array of all y values in the original map
      */
-    public static double[] generateYValues(LinkedHashMap<Double, List<Double>> data) {
+    public static double[] generateYValues(List<DoseResponsePair> data) {
         List<Double> yValues = new ArrayList<>();
-        for (Map.Entry<Double, List<Double>> entry : data.entrySet()) {
-            for (Double yValue : entry.getValue()) {
-                if (yValue != null) {
-                    yValues.add(yValue);
+        for (DoseResponsePair entry : data) {
+            for (Double response : entry.getResponses()) {
+                if (response != null) {
+                    yValues.add(response);
                 }
-
             }
         }
         return ArrayUtils.toPrimitive(yValues.toArray(new Double[yValues.size()]));
@@ -528,7 +546,7 @@ public class AnalysisUtils {
      * initial or normalized fitting
      * @return
      */
-    public static double computeRSquared(LinkedHashMap<Double, List<Double>> data, SigmoidFittingResultsHolder resultsholder) {
+    public static double computeRSquared(List<DoseResponsePair> data, SigmoidFittingResultsHolder resultsholder) {
         double ssRes = 0.0;
         double ssTot = 0.0;
         double[] experimentalYS = generateYValues(data);
@@ -601,7 +619,7 @@ public class AnalysisUtils {
      * initial or normalized fitting
      * @return
      */
-    public static double[] calculateStandardErrors(LinkedHashMap<Double, List<Double>> data, SigmoidFittingResultsHolder resultsholder) {
+    public static double[] calculateStandardErrors(List<DoseResponsePair> data, SigmoidFittingResultsHolder resultsholder) {
         //lenght of the result array is always 4, for the max amount of parameters possible to be estimated in a dose-response fit.
         double[] result = new double[4];
         List<String> constrainedParameters = resultsholder.getConstrainedParameters();

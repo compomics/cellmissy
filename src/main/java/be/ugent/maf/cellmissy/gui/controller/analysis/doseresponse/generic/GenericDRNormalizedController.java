@@ -5,7 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
-import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRNormalizedController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRNormalizedPlotPanel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
@@ -30,7 +30,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericDRNormalizedController.class);
 
     //model: in super class
-    LinkedHashMap<Double, List<Double>> dataToFit;
+    List<DoseResponsePair> dataToFit;
     //view: in super class
     //parent controller: to be created
     @Autowired
@@ -41,7 +41,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
      * @return 
      */
     
-    public LinkedHashMap<Double, List<Double>> getDataToFit() {
+    public List<DoseResponsePair> getDataToFit() {
         return dataToFit;
     }
 
@@ -113,7 +113,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
                 switch (choice) {
                     case "Largest Mean Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup().getDoseResponseData().values()))).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup().getDoseResponseData()))).toString());
                         break;
                     case "Largest Median Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
@@ -193,7 +193,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
      */
     
     //WHAT IF THE CONCENTRATIONS ARE ALREADY LOG-VALUES UPON LOADING??????
-    private LinkedHashMap<Double, List<Double>> prepareFittingData(LinkedHashMap<Double, List<Double>> doseResponseData) {
+    private List<DoseResponsePair> prepareFittingData(List<DoseResponsePair> doseResponseData) {
 
     }
 

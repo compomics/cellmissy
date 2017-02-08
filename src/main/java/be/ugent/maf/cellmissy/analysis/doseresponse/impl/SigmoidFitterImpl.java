@@ -7,11 +7,11 @@ package be.ugent.maf.cellmissy.analysis.doseresponse.impl;
 
 import be.ugent.maf.cellmissy.analysis.doseresponse.DoseResponseAbstractCurveFitter;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.math3.fitting.AbstractCurveFitter;
@@ -35,7 +35,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
 
     //implementation of interface method
     @Override
-    public void fitNoConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, int standardHillslope) {
+    public void fitNoConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, int standardHillslope) {
         //initial parameter values for fitting: lowest y, highest y, middle x and standard hillslope
         double[] yValues = AnalysisUtils.generateYValues(dataToFit);
         double[] xValues = AnalysisUtils.generateXValues(dataToFit);
@@ -156,7 +156,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
     }
 
     @Override
-    public void fitBotConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, int standardHillslope) {
+    public void fitBotConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, int standardHillslope) {
 
         final Double bottom = bottomConstrain;
 
@@ -272,7 +272,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
     }
 
     @Override
-    public void fitTopConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double topConstrain, int standardHillslope) {
+    public void fitTopConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double topConstrain, int standardHillslope) {
         final Double top = topConstrain;
 
         //initial parameter values for fitting: lowest y, middle x and standard hillslope
@@ -387,7 +387,7 @@ public class SigmoidFitterImpl implements SigmoidFitter {
     }
 
     @Override
-    public void fitBotTopConstrain(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, Double topConstrain, int standardHillslope) {
+    public void fitBotTopConstrain(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrain, Double topConstrain, int standardHillslope) {
 
         final Double bottom = bottomConstrain;
         final Double top = topConstrain;

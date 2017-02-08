@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRResultsPanel;
@@ -22,8 +23,6 @@ import java.awt.GridBagConstraints;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -239,7 +238,7 @@ public abstract class DRResultsController {
         return nonEditableTableModel;
     }
 
-    protected void calculateStatistics(DoseResponseStatisticsHolder statisticsHolder, SigmoidFittingResultsHolder resultsHolder, LinkedHashMap<Double, List<Double>> dataToFit) {
+    protected void calculateStatistics(DoseResponseStatisticsHolder statisticsHolder, SigmoidFittingResultsHolder resultsHolder, List<DoseResponsePair> dataToFit) {
         //calculate and set R² and EC50
         statisticsHolder.setGoodnessOfFit(AnalysisUtils.computeRSquared(dataToFit, resultsHolder));
         statisticsHolder.setEc50(Math.pow(10, resultsHolder.getLogEC50()));
@@ -271,27 +270,6 @@ public abstract class DRResultsController {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Add the contents of the array to the list
-     *
-     * @param list
-     * @param array
-     * @return A copy of the original list, with the array values added to it.
-     */
-    protected List<Double> addArrayToList(List<Double> list, double[] array) {
-        List<Double> copiedList = new ArrayList<>(list);
-        //if parameter is constrained there is a null instead of an array
-        if (array == null) {
-            copiedList.add(null);
-            copiedList.add(null);
-        } else {
-            for (int i = 0; i < array.length; i++) {
-                copiedList.add(array[i]);
-            }
-        }
-        return copiedList;
     }
 
     protected void addContent() {

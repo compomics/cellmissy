@@ -6,9 +6,9 @@ package be.ugent.maf.cellmissy.parser;
 
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import java.io.File;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -42,5 +42,5 @@ public interface GenericInputFileParser {
      * @return 
      * @throws FileParserException
      */
-    LinkedHashMap<Double, List<Double>> parseDoseResponseFile(File doseResponseFile) throws FileParserException;
+    List<DoseResponsePair> parseDoseResponseFile(File doseResponseFile) throws FileParserException;
 }

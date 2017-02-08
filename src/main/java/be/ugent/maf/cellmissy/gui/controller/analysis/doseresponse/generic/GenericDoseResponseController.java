@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DoseResponseController;
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.ImportedDRDataHolder;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
@@ -26,7 +27,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -128,7 +128,7 @@ public class GenericDoseResponseController extends DoseResponseController {
      * @param topConstrained Double if user constrains, otherwise null
      *
      */
-    protected void performFitting(LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
+    protected void performFitting(List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
         performFitting(sigmoidFitter, dataToFit, resultsHolder, bottomConstrained, topConstrained);
     }
 
@@ -143,7 +143,7 @@ public class GenericDoseResponseController extends DoseResponseController {
      * @return
      */
     @Override
-    protected JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, boolean normalized) {
+    protected JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, boolean normalized) {
         return createDoseResponseChart(dataToPlot, dRAnalysisGroup, normalized);
     }
 
@@ -157,7 +157,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     }
 
     @Override
-    public LinkedHashMap<Double, List<Double>> getDataToFit(boolean normalized) {
+    public List<DoseResponsePair> getDataToFit(boolean normalized) {
         if (normalized) {
             return dRNormalizedController.getDataToFit();
         } else {

@@ -8,7 +8,6 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
-import java.util.List;
 import javax.swing.JTable;
 import org.jdesktop.beansbinding.BindingGroup;
 

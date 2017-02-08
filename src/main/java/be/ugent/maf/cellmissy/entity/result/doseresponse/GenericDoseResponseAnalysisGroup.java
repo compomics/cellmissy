@@ -16,7 +16,7 @@ public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGro
     
 //    The dose and response data, most likely as LinkedHashMap<Double, List<Double>>, removing the need for prepareFittingData method 
 //    in the "initial" controller depending on whether the replicates are in the rows or columns
-    private LinkedHashMap<Double, List<Double>> doseResponseData;
+    private List<DoseResponsePair> doseResponseData;
     
     //The name of the treatment to be analyzed, only for display purposes
     private String treatmentToAnalyse;
@@ -52,7 +52,7 @@ public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGro
         this.treatmentToAnalyse = treatmentToAnalyse;
     }
 
-    public LinkedHashMap<Double, List<Double>> getDoseResponseData() {
+    public List<DoseResponsePair> getDoseResponseData() {
         return doseResponseData;
     }
     

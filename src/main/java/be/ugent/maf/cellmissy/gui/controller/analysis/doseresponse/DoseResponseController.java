@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
@@ -103,7 +104,7 @@ public abstract class DoseResponseController {
      * @param topConstrained Double if user constrains, otherwise null
      *
      */
-    public void performFitting(SigmoidFitter sigmoidFitter, LinkedHashMap<Double, List<Double>> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
+    public void performFitting(SigmoidFitter sigmoidFitter, List<DoseResponsePair> dataToFit, SigmoidFittingResultsHolder resultsHolder, Double bottomConstrained, Double topConstrained) {
         if (topConstrained != null) {
             if (bottomConstrained != null) {
                 sigmoidFitter.fitBotTopConstrain(dataToFit, resultsHolder, bottomConstrained, topConstrained, standardHillslope);
@@ -121,7 +122,7 @@ public abstract class DoseResponseController {
         return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50());
     }
 
-    public JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+    public JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         //setup scatter data of experimental concentrations/slopes, renderer and axis
         XYSeriesCollection experimentalData = new XYSeriesCollection();
         XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(AnalysisUtils.generateXValues(dataToPlot), AnalysisUtils.generateYValues(dataToPlot));
@@ -156,7 +157,7 @@ public abstract class DoseResponseController {
     /**
      * Plots the fitted data.
      */
-    public void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, LinkedHashMap<Double, List<Double>> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
+    public void plotDoseResponse(ChartPanel chartPanel, JPanel subviewPanel, List<DoseResponsePair> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
         JFreeChart doseResponseChart = createDoseResponseChart(dataToPlot, normalized);
         chartPanel.setChart(doseResponseChart);
         //add chartpanel to graphics parent panel and repaint
@@ -176,7 +177,7 @@ public abstract class DoseResponseController {
 
     protected abstract List<Double> getConstrainValues(boolean normalized);
 
-    protected abstract JFreeChart createDoseResponseChart(LinkedHashMap<Double, List<Double>> dataToPlot, boolean normalized);
+    protected abstract JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, boolean normalized);
 
-    public abstract LinkedHashMap<Double, List<Double>> getDataToFit(boolean normalized);
+    public abstract List<DoseResponsePair> getDataToFit(boolean normalized);
 }
