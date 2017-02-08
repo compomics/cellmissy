@@ -40,4 +40,26 @@ public class DoseResponsePair {
         this.responses = responses;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof DoseResponsePair) {
+            DoseResponsePair object = (DoseResponsePair) obj; 
+            return (object.getDose().equals(dose) && object.getResponses().equals(responses));
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        Double hash = dose;
+        for (Double response : responses) {
+            hash += response;
+        }
+        return hash.intValue();
+    }
+    
+    
+    
+
 }

@@ -5,20 +5,27 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.GenericDoseResponseAnalysisGroup;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInputController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
-import be.ugent.maf.cellmissy.gui.view.renderer.list.RectIconListRenderer;
+import be.ugent.maf.cellmissy.gui.view.icon.RectIcon;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import org.jdesktop.beansbinding.AutoBinding;
@@ -39,7 +46,7 @@ public class GenericDRInputController extends DRInputController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(GenericDRInputController.class);
 
     //model
-    private List<Double> conditionsList;      //contains the conditions (concentrations) that are currently in the analysis group
+    private List<DoseResponsePair> conditionsList;      //contains the conditions that are currently in the analysis group
     //view: in super class
     //parent controller
     @Autowired
@@ -47,16 +54,17 @@ public class GenericDRInputController extends DRInputController {
 
     @Override
     public void initDRInputData() {
+        List<DoseResponsePair> doseResponseData = doseResponseController.getImportedDRDataHolder().getDoseResponseData();
         // create and set the table model for the top panel table using the loaded data
-        setTableModel(createTableModel(doseResponseController.getImportedDRDataHolder().getDoseResponseData()));
+        setTableModel(createTableModel(doseResponseData));
         //number of replicates per condition will be added to a list as information
-        List<Integer> numberOfReplicates = getNumberOfReplicates(doseResponseController.getImportedDRDataHolder().getDoseResponseData());
+        List<Integer> numberOfReplicates = getNumberOfReplicates(doseResponseData);
         // put conditions in selectable list
-        ObservableList<PlateCondition> plateConditionBindingList = ObservableCollections.observableList(processedConditions);
-        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, plateConditionBindingList, dRInputPanel.getConditionsList());
+        ObservableList<DoseResponsePair> doseResponsePairBindingList = ObservableCollections.observableList(doseResponseData);
+        JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, doseResponsePairBindingList, dRInputPanel.getConditionsList());
         bindingGroup.addBinding(jListBinding);
         bindingGroup.bind();
-        dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(processedConditions, numberOfReplicates));
+        dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(doseResponseData, numberOfReplicates));
         dRInputPanel.getConditionsList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel);
         doseResponseController.getDRPanel().revalidate();
@@ -81,8 +89,6 @@ public class GenericDRInputController extends DRInputController {
         experimentTypeRadioButtonGroup.add(dRInputPanel.getInhibitionRadioButton());
         //select as default first button (Stimulation)
         dRInputPanel.getStimulationRadioButton().setSelected(true);
-
-
 
         /*
          * Action listeners for buttons
@@ -125,177 +131,94 @@ public class GenericDRInputController extends DRInputController {
             }
         });
 
-        
     }
 
     @Override
     protected void addToDRAnalysis() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<DoseResponsePair> selectedConditions = getSelectedConditions();
+        if (selectedConditions != null && !selectedConditions.equals(conditionsList)) {
+            for (DoseResponsePair selectedCondition : selectedConditions) {
+                //only add to list if list does not contain this condition already
+                if (!conditionsList.contains(selectedCondition)) {
+                    conditionsList.add(selectedCondition);
+                }
+            }
+            // make a new analysis group
+            // override variable if one existed already
+            doseResponseController.setdRAnalysisGroup(new GenericDoseResponseAnalysisGroup(conditionsList));
+
+            // populate bottom table with the analysis group
+            slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+            slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        }
     }
 
     @Override
     protected void removeFromDRAnalysis() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<DoseResponsePair> selectedConditions = getSelectedConditions();
+        for (DoseResponsePair selectedCondition : selectedConditions) {
+            //only possible to remove if group contains selected condition
+            if (conditionsList.contains(selectedCondition)) {
+                conditionsList.remove(selectedCondition);
+            }
+        }
+        //only make new analysis group if you have not removed all
+        if (!conditionsList.isEmpty()) {
+            doseResponseController.setdRAnalysisGroup(new GenericDoseResponseAnalysisGroup(conditionsList));
+            // populate bottom table with the analysis group
+            slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+            slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
+        } else {
+            //otherwise show new empty table
+            slopesTable.setModel(new NonEditableTableModel());
+        }
     }
-    
+
     /**
-     * Get List of selected conditions from RectIcon List
+     * Get List of selected conditions from RectIcon List.
      *
-     * @return List of ??? to be added to the DR analysis group
+     * @return List of conditions to be added to the analysis group, null if the
+     * array is empty and no conditions are selected.
      */
-//    private List<Object> getSelectedConditions() {
-//        // get selected indices from rect icon list
-//        int[] selectedIndices = dRInputPanel.getConditionsList().getSelectedIndices();
-//        List<> selectedConditions = new ArrayList<>();
-//        for (int selectedIndex : selectedIndices) {
-//             selectedCondition = doseResponseController.getSOMETHING().get(selectedIndex);
-//            selectedConditions.add(selectedCondition);
-//        }
-//        return selectedConditions;
-//    }
-    
-    /**
-     * Create model for overview table (top one)
-     * @return 
-     */
-    private NonEditableTableModel createTableModel(LinkedHashMap<Double, List<Double>> importedData) {
-        List<Integer> conditionNumberList = new ArrayList();
-        List<String> treatmentNameList = new ArrayList();
-        List<Double> concentrationList = new ArrayList();
-        List<String> concentrationUnitList = new ArrayList();
-        List<Double[]> slopesList = new ArrayList();
-        //start counting from 1, easier for user
-        Integer i = 1;
-        for (PlateCondition condition : processedConditions) {
-            //1 platecondition might have multiple treatments
-            List<Treatment> treatmentList = condition.getTreatmentList();
-
-            for (Treatment treatment : treatmentList) {
-
-                conditionNumberList.add(i);
-                treatmentNameList.add(treatment.getTreatmentType().getName());
-                concentrationList.add(treatment.getConcentration());
-                concentrationUnitList.add(treatment.getConcentrationUnit());
-                slopesList.add(doseResponseController.getLinearResultsAnalysisMap().get(condition).getSlopes());
-
+    private List<DoseResponsePair> getSelectedConditions() {
+        // get selected indices from rect icon list
+        int[] selectedIndices = dRInputPanel.getConditionsList().getSelectedIndices();
+        //check if array is not empty
+        if (selectedIndices.length > 1) {
+            List<DoseResponsePair> selectedConditions = new ArrayList<>();
+            for (int selectedIndex : selectedIndices) {
+                DoseResponsePair selectedCondition = doseResponseController.getImportedDRDataHolder().getDoseResponseData().get(selectedIndex);
+                selectedConditions.add(selectedCondition);
             }
-            i++;
+            return selectedConditions;
+        } else {
+            return null;
         }
-        int maximumNumberOfReplicates = AnalysisUtils.getMaximumNumberOfReplicates(processedConditions);
-        Object[][] data = new Object[conditionNumberList.size()][maximumNumberOfReplicates + 4];
-        for (int rowIndex = 0; rowIndex < conditionNumberList.size(); rowIndex++) {
-            for (int columnIndex = 4; columnIndex < slopesList.get(rowIndex).length + 4; columnIndex++) {
-                Double slope = slopesList.get(rowIndex)[columnIndex - 4];
-                if (slope != null && !slope.isNaN()) {
-                    // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(slopesList.get(rowIndex)[columnIndex - 4]);
-                    // show in table slope + (coefficient)
-                    data[rowIndex][columnIndex] = slope;
-                } else if (slope == null) {
-                    data[rowIndex][columnIndex] = "excluded";
-                } else if (slope.isNaN()) {
-                    data[rowIndex][columnIndex] = "NaN";
-                }
-            }
-            // first column contains condition numbers
-            data[rowIndex][0] = conditionNumberList.get(rowIndex);
-            // second to fourth will contain treatment information
-            data[rowIndex][1] = treatmentNameList.get(rowIndex);
-            data[rowIndex][2] = concentrationList.get(rowIndex);
-            data[rowIndex][3] = concentrationUnitList.get(rowIndex);
-        }
-        // array of column names for table model
-        String[] columnNames = new String[data[0].length];
-        columnNames[0] = "Condition number";
-        columnNames[1] = "Treatment";
-        columnNames[2] = "Concentration";
-        columnNames[3] = "Unit";
-        for (int x = 4; x < columnNames.length; x++) {
-            columnNames[x] = "Repl " + (x - 3);
-        }
-
-        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
-        nonEditableTableModel.setDataVector(data, columnNames);
-        return nonEditableTableModel;
     }
-    
-    /**
-     * Create model for analysis group table (bottom one)
-     * @return 
-     */
-    private NonEditableTableModel createTableModel(GenericDoseResponseAnalysisGroup analysisGroup) {
-        LinkedHashMap<Double, List<Double>> dataToShow = analysisGroup.getDoseResponseData();
-        //when removing all conditions
-        if (dataToShow.isEmpty()) {
-            return new NonEditableTableModel();
-        }
-        //the number of columns is dependent on the maximum number of replicates of the dataset
-        int maxReplicates = 0;
-        for (List<Double> value : dataToShow.values()) {
-            int replicates = value.size();
-            if (replicates > maxReplicates) {
-                maxReplicates = replicates;
-            }
-        }
-        
-        //THE 2 EXTRA COLUMNS ARE FOR CONCENTRATION AND UNIT, IS UNIT NECESSARY OR EVEN DEFINED???
-        //HOW WILL THE CONTROL BE DEFINED IN THE LOADED DATA?
-        Object[][] data = new Object[dataToShow.size()][maxReplicates + 2];
-        int i = 0;
-        int controlIndex = 100;
-        int rowIndex = 0;
 
-//        for (Map.Entry<PlateCondition, List<Double>> entry : velocitiesMap.entrySet()) {
-//            //check if this platecondition is the control, save index for table
-//            for (Treatment treatment : entry.getKey().getTreatmentList()) {
-//                if (treatment.getTreatmentType().getName().contains("ontrol")) {
-//                    controlIndex = i;
-//                }
-//            }
-//            i++;
-//
-//            int columnIndex = 2;
-//            for (Double velocity : entry.getValue()) {
-//
-//                if (velocity != null && !velocity.isNaN()) {
-//                    // round to three decimals slopes and coefficients
-//                    Double slope = AnalysisUtils.roundThreeDecimals(velocity);
-//                    // show in table slope + (coefficient)
-//                    data[rowIndex][columnIndex] = slope;
-//                } else if (velocity == null) {
-//                    data[rowIndex][columnIndex] = "excluded";
-//                } else if (velocity.isNaN()) {
-//                    data[rowIndex][columnIndex] = "NaN";
-//                }
-//
-//                columnIndex++;
-//            }
-//            rowIndex++;
-//        }
-//
-//        if (controlIndex != 100) {
-//            data[controlIndex][0] = 0.0;
-//            data[controlIndex][1] = "--";
-//        }
-//        rowIndex = 0;
-//        //if user only selects control, the concentrationsmap is null
-//        if (concentrationsMap != null) {
-//            for (Map.Entry<Double, String> entry : concentrationsMap.entrySet()) {
-//                if (rowIndex >= controlIndex) {
-//                    data[rowIndex + 1][0] = entry.getKey();
-//                    data[rowIndex + 1][1] = entry.getValue();
-//                } else {
-//                    data[rowIndex][0] = entry.getKey();
-//                    data[rowIndex][1] = entry.getValue();
-//                }
-//
-//                rowIndex++;
-//            }
-//        }
+    /**
+     * Create model for overview table (top one). Contains all imported data.
+     *
+     * @return
+     */
+    private NonEditableTableModel createTableModel(List<DoseResponsePair> importedData) {
+        int maxReplicates = Collections.max(getNumberOfReplicates(importedData));
+        Object[][] data = new Object[importedData.size()][maxReplicates + 2];
+
+        for (int rowIndex = 0; rowIndex < importedData.size(); rowIndex++) {
+            data[rowIndex][0] = rowIndex + 1;
+            data[rowIndex][1] = importedData.get(rowIndex).getDose();
+            for (int columnIndex = 2; columnIndex < maxReplicates + 2; columnIndex++) {
+                data[rowIndex][columnIndex] = importedData.get(rowIndex).getResponses().get(columnIndex - 2);
+                columnIndex++;
+            }
+            rowIndex++;
+        }
+
         // array of column names for table model
-        String[] columnNames = new String[data[0].length];
-        columnNames[0] = "Conc of " + analysisGroup.getTreatmentToAnalyse();
-        columnNames[1] = "Unit";
+        String[] columnNames = new String[maxReplicates + 2];
+        columnNames[0] = "Condition number";
+        columnNames[1] = "Dose";
         for (int x = 2; x < columnNames.length; x++) {
             columnNames[x] = "Repl " + (x - 1);
         }
@@ -305,13 +228,84 @@ public class GenericDRInputController extends DRInputController {
         return nonEditableTableModel;
     }
 
-    private List<Integer> getNumberOfReplicates(LinkedHashMap<Double, List<Double>> allConditions) {
+    /**
+     * Create model for analysis group table (bottom one). Contains only the
+     * data the user has chosen to analyze.
+     *
+     * @return
+     */
+    private NonEditableTableModel createTableModel(GenericDoseResponseAnalysisGroup analysisGroup) {
+        List<DoseResponsePair> dataToShow = analysisGroup.getDoseResponseData();
+        //when removing all conditions
+        if (dataToShow.isEmpty()) {
+            return new NonEditableTableModel();
+        }
+        //the number of columns is dependent on the maximum number of replicates of the dataset
+        int maxReplicates = Collections.max(getNumberOfReplicates(dataToShow));
+        Object[][] data = new Object[dataToShow.size()][maxReplicates + 1];
+
+        for (int rowIndex = 0; rowIndex < dataToShow.size(); rowIndex++) {
+            data[rowIndex][0] = dataToShow.get(rowIndex).getDose();
+            for (int columnIndex = 1; columnIndex < maxReplicates + 1; columnIndex++) {
+                data[rowIndex][columnIndex] = dataToShow.get(rowIndex).getResponses().get(columnIndex - 1);
+                columnIndex++;
+            }
+            rowIndex++;
+        }
+
+        // array of column names for table model
+        String[] columnNames = new String[maxReplicates + 1];
+        columnNames[0] = "Dose";
+        for (int x = 2; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + (x - 1);
+        }
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
+    }
+
+    private List<Integer> getNumberOfReplicates(List<DoseResponsePair> allConditions) {
         List<Integer> result = new ArrayList<>();
-        //we can iterate over the map like this because the order is saved (-->"LINKED")
-        for (List<Double> value :allConditions.values()) {
-            result.add(value.size());
+        //we can iterate over the map like this because the order is saved in the list
+        for (DoseResponsePair row : allConditions) {
+            result.add(row.getResponses().size());
         }
         return result;
+    }
+
+    /**
+     * Private class for list items renderer
+     */
+    public class RectIconListRenderer extends DefaultListCellRenderer {
+
+        private final List<DoseResponsePair> doseResponsePairList;
+        private final List<Integer> numberOfReplicates;
+
+        /**
+         * Constructor, needs a list of plate conditions, together with number
+         * of replicates for each condition.
+         *
+         * @param plateConditionList
+         * @param numberOfReplicates
+         */
+        public RectIconListRenderer(List<DoseResponsePair> doseResponsePairList, List<Integer> numberOfReplicates) {
+            this.doseResponsePairList = doseResponsePairList;
+            this.numberOfReplicates = numberOfReplicates;
+            setOpaque(true);
+            setIconTextGap(10);
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            int lenght = GuiUtils.getAvailableColors().length;
+            int conditionIndex = doseResponsePairList.indexOf(value);
+            int indexOfColor = conditionIndex % lenght;
+            setIcon(new RectIcon(GuiUtils.getAvailableColors()[indexOfColor]));
+            setText("N = " + numberOfReplicates.get(conditionIndex));
+            return this;
+        }
     }
 
 }

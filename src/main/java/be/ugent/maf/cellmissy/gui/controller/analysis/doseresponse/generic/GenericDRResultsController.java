@@ -187,6 +187,7 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     protected void addOverview() {
+<<<<<<< HEAD
 //        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
 //        PdfUtils.addTitle(document, title, titleFont);
 //        PdfUtils.addEmptyLines(document, 1);
@@ -208,6 +209,29 @@ public class GenericDRResultsController extends DRResultsController {
 //        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
 //        PdfUtils.addEmptyLines(document, 1);
 //        PdfUtils.addEmptyLines(document, 1);
+=======
+        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
+        PdfUtils.addTitle(document, title, titleFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add information on dataset (algorithm) and imaging type analyzed
+        List<String> lines = new ArrayList<>();
+        String line = "DATASET: " + doseResponseController.getSelectedAlgorithm();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        // add conditions number
+        lines.clear();
+        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getDoseResponseData().size();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        lines.clear();
+        line = "DRUG ANALYSED: " + doseResponseController.getImportedDRDataHolder().getTreatmentName();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        PdfUtils.addEmptyLines(document, 1);
+>>>>>>> Continued work: fixed residual errors of previous commit and finished input subview controller.
     }
 
     @Override

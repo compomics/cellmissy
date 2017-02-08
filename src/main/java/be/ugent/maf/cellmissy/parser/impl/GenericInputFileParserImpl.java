@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.parser.impl;
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
 import be.ugent.maf.cellmissy.entity.TrackPoint;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
 import java.io.BufferedReader;
@@ -140,9 +141,9 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
     }
 
     @Override
-    public LinkedHashMap<Double, List<Double>> parseDoseResponseFile(File doseResponseFile) throws FileParserException {
+    public List<DoseResponsePair> parseDoseResponseFile(File doseResponseFile) throws FileParserException {
 
-        LinkedHashMap<Double, List<Double>> doseResponseData = new LinkedHashMap<>();
+        List<DoseResponsePair> doseResponseData = new ArrayList<>();
         String fileName = doseResponseFile.getName();
         Double dose = 0.0;
         List<Double> responses = new ArrayList<>();
@@ -175,7 +176,7 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                     // NOTE: in case of no control (dose = 0.0) condition, 0.0 will get mapped to an empty list, which will (hopefully) have no consequences for the program
                     Double firstColumn = Double.parseDouble((String) iter.next());
                     if (!Objects.equals(dose, firstColumn)) {
-                        doseResponseData.put(dose, responses);
+                        doseResponseData.add(new DoseResponsePair(dose, responses));
                         responses = new ArrayList<>();
                         //save first column to doses, other(s) to responses
                         dose = firstColumn;
@@ -188,7 +189,7 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
 
                 }
                 //put info of last row in map
-                doseResponseData.put(dose, responses);
+                doseResponseData.add(new DoseResponsePair(dose, responses));
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (NumberFormatException ex) {
@@ -221,7 +222,7 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
 
                         // if this is a new dose: create new responses list and save old one
                         if (dose != row.getCell(0).getNumericCellValue()) {
-                            doseResponseData.put(dose, responses);
+                            doseResponseData.add(new DoseResponsePair(dose, responses));;
                             responses = new ArrayList<>();
                             //save first column to doses, other(s) to responses
                             dose = row.getCell(0).getNumericCellValue();
@@ -237,7 +238,7 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
 
                     }
                     //put info of last row in map
-                    doseResponseData.put(dose, responses);
+                    doseResponseData.add(new DoseResponsePair(dose, responses));
                 } else {
                     throw new FileParserException("It seems an Excel file does not have any sheets!\nPlease check your files!");
                 }

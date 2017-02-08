@@ -5,7 +5,6 @@
  */
 package be.ugent.maf.cellmissy.entity.result.doseresponse;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -13,48 +12,35 @@ import java.util.List;
  * @author Gwendolien Sergeant
  */
 public class GenericDoseResponseAnalysisGroup implements DoseResponseAnalysisGroup {
-    
+
 //    The dose and response data, most likely as LinkedHashMap<Double, List<Double>>, removing the need for prepareFittingData method 
 //    in the "initial" controller depending on whether the replicates are in the rows or columns
     private List<DoseResponsePair> doseResponseData;
-    
-    //The name of the treatment to be analyzed, only for display purposes
-    private String treatmentToAnalyse;
 
     //The results of the analysis
     private DoseResponseAnalysisResults doseResponseAnalysisResults;
 
     /**
-     * Constructor
-     * Sets the doseResponseData when creating analysis group (after data loading)
+     * Constructor. 
+     * Sets the doseResponseData when creating analysis group 
+     * @param dataToAnalyze
      */
-    public GenericDoseResponseAnalysisGroup(ImportedDRDataHolder importedData) {
-        this.doseResponseData = importedData.getDoseResponseData();
-        setTreatmentToAnalyse(importedData.getTreatmentName());
+    public GenericDoseResponseAnalysisGroup(List<DoseResponsePair> dataToAnalyze) {
+        this.doseResponseData = dataToAnalyze;
+        this.doseResponseAnalysisResults = new DoseResponseAnalysisResults();
     }
-    
+
+    /**
+     * Getters
+     * @return 
+     */
     @Override
     public DoseResponseAnalysisResults getDoseResponseAnalysisResults() {
         return doseResponseAnalysisResults;
     }
 
-    @Override
-    public String getTreatmentToAnalyse() {
-        return treatmentToAnalyse;
-    }
-
-    /**
-     * Exclusively used in constructor but implementation was necessary because of interface.
-     * @param treatmentToAnalyse 
-     */
-    @Override
-    public void setTreatmentToAnalyse(String treatmentToAnalyse) {
-        this.treatmentToAnalyse = treatmentToAnalyse;
-    }
-
     public List<DoseResponsePair> getDoseResponseData() {
         return doseResponseData;
     }
-    
-    
+
 }

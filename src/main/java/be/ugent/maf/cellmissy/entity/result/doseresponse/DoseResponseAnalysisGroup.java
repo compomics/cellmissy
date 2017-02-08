@@ -14,8 +14,5 @@ public interface DoseResponseAnalysisGroup {
     
     //analysis group is always linked with the results from the analyis
     public DoseResponseAnalysisResults getDoseResponseAnalysisResults();
-    //String of treatment for getting data or purely for display in GUI
-    public String getTreatmentToAnalyse();
-    //user defines name of treatment
-    public void setTreatmentToAnalyse(String treatmentToAnalyse);
+   
 }
