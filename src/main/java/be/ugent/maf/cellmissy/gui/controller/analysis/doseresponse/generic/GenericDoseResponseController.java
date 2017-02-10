@@ -54,6 +54,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     //model: in super class
     private GenericDoseResponseAnalysisGroup dRAnalysisGroup;
     private ImportedDRDataHolder importedDRDataHolder;
+    private boolean logTransform;
     //view: in super class
     private GenericDRParentPanel genericDRParentPanel;
     //parent controller
@@ -105,8 +106,15 @@ public class GenericDoseResponseController extends DoseResponseController {
     public ImportedDRDataHolder getImportedDRDataHolder() {
         return importedDRDataHolder;
     }
-    
-    
+
+    public boolean getLogTransform() {
+        return logTransform;
+    }
+
+    public void setLogTransform(boolean logTransform) {
+        this.logTransform = logTransform;
+    }
+
     /**
      * Do a fitting according to initial, standard parameters and calculate
      * statistics. This method is called when the user switches to the initial
@@ -224,9 +232,9 @@ public class GenericDoseResponseController extends DoseResponseController {
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //init view
+        loadGenericDRDataController.init();
         initMainView();
         //init child controllers
-        loadGenericDRDataController.init();
         dRInputController.init();
         dRInitialController.init();
         dRNormalizedController.init();

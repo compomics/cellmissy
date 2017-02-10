@@ -13,6 +13,8 @@ import be.ugent.maf.cellmissy.parser.GenericInputFileParser;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -73,7 +75,7 @@ public class LoadGenericDRDataController {
         dRDataHolder.setPlateFormat(dataLoadingPanel.getPlateFormatTextField().getText());
         dRDataHolder.setTreatmentName(dataLoadingPanel.getTreatmentTextField().getText());
         dRDataHolder.setPurpose(dataLoadingPanel.getPurposeTextArea().getText());
-        
+
         // more might follow after reviewing the terms
     }
 
@@ -82,8 +84,11 @@ public class LoadGenericDRDataController {
      */
     //init view
     private void initDataLoadingPanel() {
-
-        //Action Listeners
+        dataLoadingPanel = new DRDataLoadingPanel();
+        /**
+         * Action Listeners.
+         */
+        //Popup file selector and import and parse the file
         dataLoadingPanel.getChooseFileButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -118,6 +123,17 @@ public class LoadGenericDRDataController {
                     importExperimentSwingWorker.execute();
                 } else {
                     JOptionPane.showMessageDialog(dataLoadingPanel, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+
+        dataLoadingPanel.getLogTransformCheckBox().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    doseResponseController.setLogTransform(true);
+                } else {
+                    doseResponseController.setLogTransform(false);
                 }
             }
         });

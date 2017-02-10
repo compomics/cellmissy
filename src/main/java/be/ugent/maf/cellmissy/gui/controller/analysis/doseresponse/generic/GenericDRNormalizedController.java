@@ -13,8 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +38,9 @@ public class GenericDRNormalizedController extends DRNormalizedController {
 
     /**
      * Getters and setters
-     * @return 
+     *
+     * @return
      */
-    
     public List<DoseResponsePair> getDataToFit() {
         return dataToFit;
     }
@@ -51,10 +51,10 @@ public class GenericDRNormalizedController extends DRNormalizedController {
         dRNormalizedPlotPanel.getBottomComboBox().setSelectedIndex(0);
         dRNormalizedPlotPanel.getTopComboBox().setSelectedIndex(0);
         //set initial parameters
-        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup().getDoseResponseData().values()))).toString());
-        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup().getDoseResponseData().values()))).toString());
+        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMeans(getAllResponses(doseResponseController.getdRAnalysisGroup().getDoseResponseData())))).toString());
+        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(getAllResponses(doseResponseController.getdRAnalysisGroup().getDoseResponseData())))).toString());
         //LogTransform concentrations and perform initial normalization (mean values)
-        dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup());
+        dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData(), doseResponseController.getLogTransform());
         //create and set the table model for the top panel table (dependent on normalization)
         setTableModel(createTableModel(dataToFit));
         //Perform initial curve fitting (standard hillslope, no constraints)
@@ -86,12 +86,11 @@ public class GenericDRNormalizedController extends DRNormalizedController {
                 switch (value) {
                     case "Smallest Mean Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMeans(doseResponseController.getdRAnalysisGroup().getDoseResponseData().values()))).toString());
+                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMeans(getAllResponses(doseResponseController.getdRAnalysisGroup().getDoseResponseData())))).toString());
                         break;
                     case "Smallest Median Value":
                         dRNormalizedPlotPanel.getBottomTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMedians(doseResponseController.getdRAnalysisGroup().getDoseResponseData().values()))).toString()
-                        );
+                        dRNormalizedPlotPanel.getBottomTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.min(computeMedians(getAllResponses(doseResponseController.getdRAnalysisGroup().getDoseResponseData())))).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getBottomTextField().setText("");
@@ -113,11 +112,11 @@ public class GenericDRNormalizedController extends DRNormalizedController {
                 switch (choice) {
                     case "Largest Mean Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup().getDoseResponseData()))).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(getAllResponses(doseResponseController.getdRAnalysisGroup().getDoseResponseData())))).toString());
                         break;
                     case "Largest Median Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup().getDoseResponseData().values()))).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMedians(getAllResponses(doseResponseController.getdRAnalysisGroup().getDoseResponseData())))).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getTopTextField().setText("");
@@ -171,7 +170,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData());
+                dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData(), doseResponseController.getLogTransform());
                 setTableModel(createTableModel(dataToFit));
                 doseResponseController.updateModelInTable(tableModel);
                 doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(true), bottomConstrainValue, topConstrainValue);
@@ -183,18 +182,57 @@ public class GenericDRNormalizedController extends DRNormalizedController {
     }
 
     /**
-     * Prepare data for fitting starting from the analysis group. The only
-     * change with the loaded starting data is that the doses have been
-     * log-transformed.
+     * Prepare data for fitting starting from the analysis group. The responses
+     * will be normalized and doses potentially log-transformed.
      *
      * @param dRAnalysisGroup
      * @return LinkedHashMap That maps the concentration (log-transformed!) to
      * the normalized replicate velocites
      */
-    
-    //WHAT IF THE CONCENTRATIONS ARE ALREADY LOG-VALUES UPON LOADING??????
-    private List<DoseResponsePair> prepareFittingData(List<DoseResponsePair> doseResponseData) {
-
+    private List<DoseResponsePair> prepareFittingData(List<DoseResponsePair> doseResponseData, boolean logTransform) {
+        //since input file is only allowed to contain numbers, we can assume the user will assign the value 0.0 to the control dose
+        //to find a log value for control, go through all doses, find the lowest one
+        //control dose will be log-transformed value of this dose minus 1.0
+        List<DoseResponsePair> result = new ArrayList<>();
+        Double lowestDose = 10000000.00;
+        for (DoseResponsePair row : doseResponseData) {
+            if (row.getDose() < lowestDose && ! row.getDose().equals(0.0)) {
+                lowestDose = row.getDose();
+            }
+        }
+        //iterate through DRPairs 
+        for (DoseResponsePair row : doseResponseData) {
+            Double dose;
+            //transform the concentration if needed 
+            if (logTransform && ! row.getDose().equals(0.0)) {
+                dose = AnalysisUtils.logTransform(row.getDose(), "M");
+            } else if (logTransform) {
+                dose = (AnalysisUtils.logTransform(lowestDose, "M")) - 1.0;
+            } else {
+                dose = row.getDose();
+            }
+            //normalize the responses
+            List<Double> normalizedResponses = new ArrayList<>();
+            for (Double value : row.getResponses()) {
+                normalizedResponses.add(normalize(value));
+            }
+            //add new DRPair to list
+            result.add(new DoseResponsePair(dose, normalizedResponses));
+        }
+        return result;
     }
 
+    /**
+     * Return a list that contains all responses, grouped per replicate.
+     *
+     * @param data
+     * @return
+     */
+    private List<List<Double>> getAllResponses(List<DoseResponsePair> data) {
+        List<List<Double>> result = new ArrayList<>();
+        for (DoseResponsePair row : data) {
+            result.add(row.getResponses());
+        }
+        return result;
+    }
 }

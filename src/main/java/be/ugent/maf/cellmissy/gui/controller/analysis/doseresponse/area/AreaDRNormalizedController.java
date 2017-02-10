@@ -128,7 +128,7 @@ public class AreaDRNormalizedController extends DRNormalizedController {
                         break;
                     case "Largest Median Value":
                         dRNormalizedPlotPanel.getTopTextField().setEditable(false);
-                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMeans(doseResponseController.getdRAnalysisGroup().getVelocitiesMap().values()))).toString());
+                        dRNormalizedPlotPanel.getTopTextField().setText(AnalysisUtils.roundTwoDecimals(Collections.max(computeMedians(doseResponseController.getdRAnalysisGroup().getVelocitiesMap().values()))).toString());
                         break;
                     case "Other Value":
                         dRNormalizedPlotPanel.getTopTextField().setText("");

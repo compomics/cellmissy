@@ -145,7 +145,7 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
 
         List<DoseResponsePair> doseResponseData = new ArrayList<>();
         String fileName = doseResponseFile.getName();
-        Double dose = 0.0;
+        Double dose;
         List<Double> responses = new ArrayList<>();
 
         //case CSV and TSV
@@ -167,29 +167,22 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                 // get the csv records
                 List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
-                // read the CSV file records starting from the second record to skip the header
-                for (int i = 1; i < csvRecords.size(); i++) {
-                    CSVRecord cSVRecord = csvRecords.get(i);
+                // read the CSV file records
+                for (CSVRecord cSVRecord: csvRecords) {
                     //create an iterator for the record values
                     Iterator iter = cSVRecord.iterator();
-                    // the dose is in the first column, if this is a new dose: create new responses list and save old one
-                    // NOTE: in case of no control (dose = 0.0) condition, 0.0 will get mapped to an empty list, which will (hopefully) have no consequences for the program
-                    Double firstColumn = Double.parseDouble((String) iter.next());
-                    if (!Objects.equals(dose, firstColumn)) {
-                        doseResponseData.add(new DoseResponsePair(dose, responses));
-                        responses = new ArrayList<>();
-                        //save first column to doses, other(s) to responses
-                        dose = firstColumn;
-                    }
 
+                    // the dose is in the first column
+                    dose = Double.parseDouble((String) iter.next());
                     //read the rest of the rows as long as they contain numbers
                     while (iter.hasNext()) {
                         responses.add(Double.parseDouble((String) iter.next()));
                     }
-
+                    //when the record end has been reached, save the doses and responses
+                    doseResponseData.add(new DoseResponsePair(dose, responses));
+                    responses = new ArrayList<>();
                 }
-                //put info of last row in map
-                doseResponseData.add(new DoseResponsePair(dose, responses));
+
             } catch (IOException ex) {
                 LOG.error(ex.getMessage(), ex);
             } catch (NumberFormatException ex) {
@@ -220,13 +213,8 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                         // get the row
                         Row row = sheet.getRow(i);
 
-                        // if this is a new dose: create new responses list and save old one
-                        if (dose != row.getCell(0).getNumericCellValue()) {
-                            doseResponseData.add(new DoseResponsePair(dose, responses));;
-                            responses = new ArrayList<>();
-                            //save first column to doses, other(s) to responses
-                            dose = row.getCell(0).getNumericCellValue();
-                        }
+                        // the dose is in the first column
+                        dose = row.getCell(0).getNumericCellValue();
 
                         //read the rest of the rows as long as they contain numbers
                         int column = 1;
@@ -235,10 +223,10 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                             responses.add(row.getCell(column).getNumericCellValue());
                             column++;
                         }
-
+                        doseResponseData.add(new DoseResponsePair(dose, responses));
+                        responses = new ArrayList<>();
                     }
-                    //put info of last row in map
-                    doseResponseData.add(new DoseResponsePair(dose, responses));
+
                 } else {
                     throw new FileParserException("It seems an Excel file does not have any sheets!\nPlease check your files!");
                 }
@@ -255,5 +243,5 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
         }
         return doseResponseData;
     }
-    
+
 }

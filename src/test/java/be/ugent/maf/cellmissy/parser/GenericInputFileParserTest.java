@@ -7,6 +7,7 @@ package be.ugent.maf.cellmissy.parser;
 
 import be.ugent.maf.cellmissy.entity.TimeStep;
 import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import java.io.File;
 import java.util.ArrayList;
@@ -65,10 +66,9 @@ public class GenericInputFileParserTest {
     public void testParseDoseResponseFile() {
         File genericDoseResponseFile = new File(GenericInputFileParserTest.class.getClassLoader().getResource("generic_doseresponse.csv").getPath());
         try {
-            LinkedHashMap<Double, List<Double>> doseResponseData = genericInputFileParser.parseDoseResponseFile(genericDoseResponseFile);
-
+            List<DoseResponsePair> doseResponseData = genericInputFileParser.parseDoseResponseFile(genericDoseResponseFile);
             assertEquals(4, doseResponseData.size());
-            List<Double> controlResponses = doseResponseData.get(0.0);
+            List<Double> controlResponses = doseResponseData.get(0).getResponses();
             List<Double> expected = new ArrayList<>();
             expected.add(1.2);
             expected.add(1.3);

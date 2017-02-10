@@ -6,9 +6,9 @@
 package be.ugent.maf.cellmissy.analysis;
 
 import be.ugent.maf.cellmissy.analysis.doseresponse.SigmoidFitter;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import org.junit.BeforeClass;
@@ -28,7 +28,7 @@ public class SigmoidFitterTest {
 
     @Autowired
     private SigmoidFitter sigmoidFitter;
-    private final static LinkedHashMap<Double, List<Double>> dataToFit = new LinkedHashMap<>();
+    private final static List<DoseResponsePair> dataToFit = new ArrayList<>();
     private final SigmoidFittingResultsHolder resultsHolder = new SigmoidFittingResultsHolder();
 
     /**
@@ -38,25 +38,25 @@ public class SigmoidFitterTest {
     public static void setupData() {
         List<Double> list = new ArrayList<>();
         list.add(10.0);
-        dataToFit.put(-8.0, list);
+        dataToFit.add(new DoseResponsePair(-8.0, list));
         list = new ArrayList<>();
         list.add(10.0);
-        dataToFit.put(-7.0, list);
+        dataToFit.add(new DoseResponsePair(-7.0, list));
         list = new ArrayList<>();
         list.add(20.0);
-        dataToFit.put(-6.0, list);
+        dataToFit.add(new DoseResponsePair(-6.0, list));
         list = new ArrayList<>();
         list.add(30.0);
-        dataToFit.put(-5.0, list);
+        dataToFit.add(new DoseResponsePair(-5.0, list));
         list = new ArrayList<>();
         list.add(40.0);
-        dataToFit.put(-4.0, list);
+        dataToFit.add(new DoseResponsePair(-4.0, list));
         list = new ArrayList<>();
         list.add(50.0);
-        dataToFit.put(-3.0, list);
+        dataToFit.add(new DoseResponsePair(-3.0, list));
         list = new ArrayList<>();
         list.add(50.0);
-        dataToFit.put(-2.0, list);
+        dataToFit.add(new DoseResponsePair(-2.0, list));
     }
 
     @Test

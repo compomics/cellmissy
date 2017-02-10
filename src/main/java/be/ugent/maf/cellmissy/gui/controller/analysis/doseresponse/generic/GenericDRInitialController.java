@@ -8,11 +8,12 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInitialController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import org.jfree.chart.ChartPanel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,8 @@ public class GenericDRInitialController extends DRInitialController {
 
     @Override
     public void initDRInitialData() {
-        //Log transform concentrations, keeping slopes the same
-        dataToFit = doseResponseController.getdRAnalysisGroup().getDoseResponseData();
+        //Log transform concentrations if needed, keeping responses the same
+        dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData());
         //create and set the table model for the top panel table
         setTableModel(createTableModel(dataToFit));
         //Fit data according to initial parameters (standard hillslope, no constraints)
@@ -108,5 +109,36 @@ public class GenericDRInitialController extends DRInitialController {
                 doseResponseController.calculateStatistics();
             }
         });
+    }
+
+    private List<DoseResponsePair> prepareFittingData(List<DoseResponsePair> doseResponseData) {
+        if (doseResponseController.getLogTransform()) {
+            //since input file is only allowed to contain numbers, we can assume the user will assign the value 0.0 to the control dose
+            //to find a log value for control, go through all doses, find the lowest one
+            //control dose will be log-transformed value of this dose minus 1.0
+            List<DoseResponsePair> result = new ArrayList<>();
+            Double lowestDose = 10000000.00;
+            for (DoseResponsePair row : doseResponseData) {
+                if (row.getDose() < lowestDose && !row.getDose().equals(0.0)) {
+                    lowestDose = row.getDose();
+                }
+            }
+            //iterate through DRPairs 
+            for (DoseResponsePair row : doseResponseData) {
+                Double dose;
+                //transform the concentration if needed 
+                if (row.getDose().equals(0.0)) {
+                    dose = (AnalysisUtils.logTransform(lowestDose, "M")) - 1.0;
+                } else {
+                    dose = AnalysisUtils.logTransform(row.getDose(), "M");
+                }
+                //add new DRPair to list
+                result.add(new DoseResponsePair(dose, row.getResponses()));
+            }
+            return result;
+        
+        } else {
+            return doseResponseData;
+        }
     }
 }

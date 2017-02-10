@@ -139,7 +139,7 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         );
         dataLoadingPanelLayout.setVerticalGroup(
             dataLoadingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 560, Short.MAX_VALUE)
+            .addGap(0, 556, Short.MAX_VALUE)
         );
 
         contentPanel.add(dataLoadingPanel, "card2");
@@ -152,7 +152,7 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         );
         doseResponseParentPanelLayout.setVerticalGroup(
             doseResponseParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 560, Short.MAX_VALUE)
+            .addGap(0, 556, Short.MAX_VALUE)
         );
 
         contentPanel.add(doseResponseParentPanel, "card3");
@@ -168,8 +168,10 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
 
         bottomPanel.setAlignmentY(0.1F);
 
+        cancelButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         cancelButton.setText("Cancel");
 
+        nextButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         nextButton.setText("To Analysis>>");
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
@@ -177,10 +179,10 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(nextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(675, Short.MAX_VALUE)
+                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(nextButton)
                 .addContainerGap())
         );
         bottomPanelLayout.setVerticalGroup(
