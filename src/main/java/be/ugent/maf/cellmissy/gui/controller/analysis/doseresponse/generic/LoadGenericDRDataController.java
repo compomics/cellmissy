@@ -67,6 +67,7 @@ public class LoadGenericDRDataController {
      * Read the view's text areas and fills in corresponding fields in the
      * imported data holder. This method is executed when the user presses the
      * next button.
+     * @param dRDataHolder
      */
     public void setManualMetaData(ImportedDRDataHolder dRDataHolder) {
         // !!! METHODS WILL GIVE NULLPOINTER EX WHEN THERE IS NO TEXT! --> FIND WORKAROUND

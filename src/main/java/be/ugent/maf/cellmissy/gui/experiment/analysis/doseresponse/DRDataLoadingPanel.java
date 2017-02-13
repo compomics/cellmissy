@@ -312,7 +312,6 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         purposeTextArea.setRows(5);
         purposeTextArea.setWrapStyleWord(true);
         purposeTextArea.setBorder(null);
-        purposeTextArea.setFocusable(false);
         purposeTextArea.setPreferredSize(new java.awt.Dimension(170, 94));
         jScrollPane5.setViewportView(purposeTextArea);
 

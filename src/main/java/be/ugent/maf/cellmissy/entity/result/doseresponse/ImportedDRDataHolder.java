@@ -5,7 +5,6 @@
  */
 package be.ugent.maf.cellmissy.entity.result.doseresponse;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -17,20 +16,25 @@ import java.util.List;
 public class ImportedDRDataHolder {
 
     private List<DoseResponsePair> doseResponseData;
+
+    private String experimentNumber;
     
+    private String dataset;
+
     private String treatmentName;
-    
+
     private String cellLine;
-    
+
     private String assayType;
-    
+
     private String plateFormat;
-    
+
     private String purpose;
-    
+
     /**
      * Getters and setters.
-     * @return 
+     *
+     * @return
      */
     public String getTreatmentName() {
         return treatmentName;
@@ -42,6 +46,22 @@ public class ImportedDRDataHolder {
 
     public void setDoseResponseData(List<DoseResponsePair> doseResponseData) {
         this.doseResponseData = doseResponseData;
+    }
+
+    public String getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(String dataset) {
+        this.dataset = dataset;
+    }
+
+    public String getExperimentNumber() {
+        return experimentNumber;
+    }
+
+    public void setExperimentNumber(String experimentNumber) {
+        this.experimentNumber = experimentNumber;
     }
 
     public void setTreatmentName(String treatmentName) {

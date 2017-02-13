@@ -201,6 +201,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         super.resetOnCancel();
         importedDRDataHolder = null;
         getCardLayout().first(genericDRParentPanel.getContentPanel());
+        onCardSwitch();
         genericDRParentPanel.getCancelButton().setEnabled(false);
         dRAnalysisGroup = null;
         //remove tables, graphs and subpanels
@@ -251,6 +252,8 @@ public class GenericDoseResponseController extends DoseResponseController {
         //buttons disabled at start
         genericDRParentPanel.getCancelButton().setEnabled(false);
         genericDRParentPanel.getNextButton().setEnabled(false);
+        getCardLayout().first(genericDRParentPanel.getContentPanel());
+        onCardSwitch();
         //create a ButtonGroup for the radioButtons used for analysis
         ButtonGroup mainDRRadioButtonGroup = new ButtonGroup();
         //adding buttons to a ButtonGroup automatically deselect one when another one gets selected

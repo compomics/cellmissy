@@ -112,7 +112,6 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     public File createAnalysisReport(File directory, String reportName) {
-//        this.experiment = doseResponseController.getExperiment();
         File pdfFile = new File(directory, reportName);
         if (reportName.endsWith(".pdf")) {
             tryToCreateFile(pdfFile);
@@ -187,24 +186,24 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     protected void addOverview() {
-        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + experiment + " - " + "PROJECT " + experiment.getProject();
+        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + doseResponseController.getImportedDRDataHolder().getExperimentNumber() + " - " + "extraInfo " + doseResponseController.getImportedDRDataHolder().get...;
         PdfUtils.addTitle(document, title, titleFont);
         PdfUtils.addEmptyLines(document, 1);
         // add information on dataset (algorithm) and imaging type analyzed
         List<String> lines = new ArrayList<>();
-//        String line = "DATASET: " + doseResponseController.getSelectedAlgorithm();
-//        lines.add(line);
+        String line = "DATASET: " + doseResponseController.getImportedDRDataHolder().getDataset();
+        lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         // add conditions number
         lines.clear();
-//        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getDoseResponseData().size();
-//        lines.add(line);
+        line = "NUMBER OF BIOLOGICAL CONDITIONS: " + doseResponseController.getdRAnalysisGroup().getDoseResponseData().size();
+        lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-//        line = "DRUG ANALYSED: " + doseResponseController.getImportedDRDataHolder().getTreatmentName();
-//        lines.add(line);
+        line = "DRUG ANALYSED: " + doseResponseController.getImportedDRDataHolder().getTreatmentName();
+        lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         PdfUtils.addEmptyLines(document, 1);

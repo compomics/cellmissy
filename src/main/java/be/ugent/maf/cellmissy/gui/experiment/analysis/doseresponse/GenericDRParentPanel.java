@@ -131,31 +131,15 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         contentPanel.setPreferredSize(new java.awt.Dimension(20, 60));
         contentPanel.setLayout(new java.awt.CardLayout());
 
-        javax.swing.GroupLayout dataLoadingPanelLayout = new javax.swing.GroupLayout(dataLoadingPanel);
-        dataLoadingPanel.setLayout(dataLoadingPanelLayout);
-        dataLoadingPanelLayout.setHorizontalGroup(
-            dataLoadingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 924, Short.MAX_VALUE)
-        );
-        dataLoadingPanelLayout.setVerticalGroup(
-            dataLoadingPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 556, Short.MAX_VALUE)
-        );
+        dataLoadingPanel.setName("dataLoadingPanel"); // NOI18N
+        dataLoadingPanel.setOpaque(false);
+        dataLoadingPanel.setLayout(new java.awt.GridBagLayout());
+        contentPanel.add(dataLoadingPanel, "dataLoadingPanel");
 
-        contentPanel.add(dataLoadingPanel, "card2");
-
-        javax.swing.GroupLayout doseResponseParentPanelLayout = new javax.swing.GroupLayout(doseResponseParentPanel);
-        doseResponseParentPanel.setLayout(doseResponseParentPanelLayout);
-        doseResponseParentPanelLayout.setHorizontalGroup(
-            doseResponseParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 924, Short.MAX_VALUE)
-        );
-        doseResponseParentPanelLayout.setVerticalGroup(
-            doseResponseParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 556, Short.MAX_VALUE)
-        );
-
-        contentPanel.add(doseResponseParentPanel, "card3");
+        doseResponseParentPanel.setName("doseResponseParentPanel"); // NOI18N
+        doseResponseParentPanel.setOpaque(false);
+        doseResponseParentPanel.setLayout(new java.awt.GridBagLayout());
+        contentPanel.add(doseResponseParentPanel, "doseResponseParentPanel");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
