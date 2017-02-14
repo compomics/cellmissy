@@ -53,8 +53,12 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         return expNumberTextField;
     }
 
-    public JComboBox getInstrumentComboBox() {
-        return instrumentComboBox;
+    public JTextField getExpTitleTextField() {
+        return expTitleTextField;
+    }
+
+    public JTextField getDatasetTextField() {
+        return datasetTextField;
     }
 
     public JTextField getInstrumentTextField() {
@@ -69,10 +73,6 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         return jScrollPane5;
     }
 
-    public JComboBox getMagnificationComboBox() {
-        return magnificationComboBox;
-    }
-
     public JTextField getMatrixTextField() {
         return matrixTextField;
     }
@@ -81,11 +81,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         return plateFormatTextField;
     }
 
-    public JComboBox getProjectComboBox() {
-        return projectComboBox;
-    }
-
-    public JTextArea getPurposeTextArea() {
+   public JTextArea getPurposeTextArea() {
         return purposeTextArea;
     }
 
@@ -107,30 +103,25 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jTextField1 = new javax.swing.JTextField();
         chooseFilePanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         fileLabel = new javax.swing.JLabel();
         chooseFileButton = new javax.swing.JButton();
         infoLabel = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        choosePanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        instrumentComboBox = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
-        magnificationComboBox = new javax.swing.JComboBox();
+        generalInfoPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        projectComboBox = new javax.swing.JComboBox();
         infoLabel1 = new javax.swing.JLabel();
         logTransformCheckBox = new javax.swing.JCheckBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        experimentDetailsPanel = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        expNumberTextField = new javax.swing.JTextField();
         jScrollPane5 = new javax.swing.JScrollPane();
         purposeTextArea = new javax.swing.JTextArea();
-        jLabel20 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        expTitleTextField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        datasetTextField = new javax.swing.JTextField();
+        experimentDetailsPanel = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -146,23 +137,19 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         plateFormatTextField = new javax.swing.JTextField();
         durationTextField = new javax.swing.JTextField();
         intervalTextField = new javax.swing.JTextField();
-        algorithmsTextField = new javax.swing.JTextField();
         ecmCompositionTextField = new javax.swing.JTextField();
         ecmDensityTextField = new javax.swing.JTextField();
         treatmentTextField = new javax.swing.JTextField();
-        expNumberTextField = new javax.swing.JTextField();
         cellLineTextField = new javax.swing.JTextField();
         assayTextField = new javax.swing.JTextField();
         matrixTextField = new javax.swing.JTextField();
 
-        jTextField1.setText("jTextField1");
-
         setLayout(new java.awt.GridBagLayout());
 
-        chooseFilePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Choose a File"));
+        chooseFilePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Choose a File", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         chooseFilePanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
-        jLabel1.setText("File to import experiment from");
+        jLabel1.setText("File to import dose-response data from");
 
         fileLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
 
@@ -171,7 +158,7 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         infoLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         infoLabel.setText("Choose a file that CellMissy can use for the import of dose-response data (CSV, TSV, XLS, XLSX)");
 
-        jLabel5.setText("No data will be saved to the database. Please make sure to create an analysis report when you finish.");
+        jLabel5.setText("No data will be saved to the database. Please make sure to create an analysis report before closing CellMissy.");
 
         javax.swing.GroupLayout chooseFilePanelLayout = new javax.swing.GroupLayout(chooseFilePanel);
         chooseFilePanel.setLayout(chooseFilePanelLayout);
@@ -205,6 +192,8 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        jLabel5.getAccessibleContext().setAccessibleName("");
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -214,78 +203,89 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.15;
         add(chooseFilePanel, gridBagConstraints);
 
-        choosePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Choose a Project and an Instrument"));
-        choosePanel.setMinimumSize(new java.awt.Dimension(20, 20));
+        generalInfoPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "General Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        generalInfoPanel.setMinimumSize(new java.awt.Dimension(20, 20));
 
-        jLabel2.setText("Select an instrument");
-
-        jLabel3.setText("Select a magnification");
-
-        jLabel4.setText("Select a project");
+        jLabel4.setText("Experiment Title");
 
         infoLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        infoLabel1.setText("Choose an instrument and a magnification for the experiment.");
+        infoLabel1.setText("Provide a general overview for the experiment.");
 
-        logTransformCheckBox.setText("Log-transform doses for better spreading");
+        logTransformCheckBox.setSelected(true);
+        logTransformCheckBox.setText("Log-transform doses on fitting for better visual spreading");
+        logTransformCheckBox.setToolTipText("");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jTextArea1.setText("remove comboboxes and ask general info about file, like title; dataset name, ect...");
-        jTextArea1.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(jTextArea1);
+        jLabel2.setText("Project/Experiment number");
 
-        javax.swing.GroupLayout choosePanelLayout = new javax.swing.GroupLayout(choosePanel);
-        choosePanel.setLayout(choosePanelLayout);
-        choosePanelLayout.setHorizontalGroup(
-            choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(choosePanelLayout.createSequentialGroup()
+        jScrollPane5.setOpaque(false);
+
+        purposeTextArea.setColumns(20);
+        purposeTextArea.setLineWrap(true);
+        purposeTextArea.setRows(5);
+        purposeTextArea.setToolTipText("Write a summary of the experiment's purpose.");
+        purposeTextArea.setWrapStyleWord(true);
+        purposeTextArea.setBorder(null);
+        purposeTextArea.setPreferredSize(new java.awt.Dimension(170, 94));
+        jScrollPane5.setViewportView(purposeTextArea);
+
+        jLabel12.setText("Purpose");
+
+        jLabel3.setText("Dataset");
+
+        javax.swing.GroupLayout generalInfoPanelLayout = new javax.swing.GroupLayout(generalInfoPanel);
+        generalInfoPanel.setLayout(generalInfoPanelLayout);
+        generalInfoPanelLayout.setHorizontalGroup(
+            generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(generalInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(choosePanelLayout.createSequentialGroup()
-                        .addGroup(choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(infoLabel1)
+                    .addGroup(generalInfoPanelLayout.createSequentialGroup()
+                        .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2))
+                            .addComponent(logTransformCheckBox)
+                            .addGroup(generalInfoPanelLayout.createSequentialGroup()
+                                .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3))
+                                .addGap(18, 18, 18)
+                                .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(expTitleTextField)
+                                    .addComponent(expNumberTextField)
+                                    .addComponent(datasetTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))))
+                        .addGap(155, 155, 155)
+                        .addComponent(jLabel12)
                         .addGap(18, 18, 18)
-                        .addGroup(choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(choosePanelLayout.createSequentialGroup()
-                                .addComponent(instrumentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
-                                .addComponent(logTransformCheckBox))
-                            .addGroup(choosePanelLayout.createSequentialGroup()
-                                .addComponent(magnificationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(choosePanelLayout.createSequentialGroup()
-                                .addComponent(projectComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(32, 32, 32))))
-                    .addComponent(infoLabel1))
-                .addGap(67, 67, 67))
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(120, 120, 120))
         );
-        choosePanelLayout.setVerticalGroup(
-            choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, choosePanelLayout.createSequentialGroup()
+        generalInfoPanelLayout.setVerticalGroup(
+            generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, generalInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(instrumentComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logTransformCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(choosePanelLayout.createSequentialGroup()
-                        .addGroup(choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(magnificationComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(choosePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(projectComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(infoLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(generalInfoPanelLayout.createSequentialGroup()
+                        .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(expNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(infoLabel1))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15))
+                        .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(expTitleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(datasetTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(logTransformCheckBox))
+                    .addGroup(generalInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(generalInfoPanelLayout.createSequentialGroup()
+                            .addComponent(jLabel12)
+                            .addGap(72, 72, 72))
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -296,26 +296,10 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
         gridBagConstraints.weightx = 0.95;
         gridBagConstraints.weighty = 0.3;
         gridBagConstraints.insets = new java.awt.Insets(11, 0, 0, 0);
-        add(choosePanel, gridBagConstraints);
+        add(generalInfoPanel, gridBagConstraints);
 
-        experimentDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Details"));
+        experimentDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Experiment Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
         experimentDetailsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-
-        jLabel13.setText("exp number");
-
-        jLabel12.setText("purpose");
-
-        jScrollPane5.setOpaque(false);
-
-        purposeTextArea.setColumns(20);
-        purposeTextArea.setLineWrap(true);
-        purposeTextArea.setRows(5);
-        purposeTextArea.setWrapStyleWord(true);
-        purposeTextArea.setBorder(null);
-        purposeTextArea.setPreferredSize(new java.awt.Dimension(170, 94));
-        jScrollPane5.setViewportView(purposeTextArea);
-
-        jLabel20.setText("# algorithms");
 
         jLabel14.setText("interval");
 
@@ -351,49 +335,50 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                         .addComponent(infoLabel2)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel17)
-                            .addComponent(jLabel16))
+                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel11)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
+                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addGap(12, 12, 12)
+                                        .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
+                                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel15)
+                                            .addComponent(jLabel16))
+                                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
+                                                .addGap(18, 18, 18)
+                                                .addComponent(assayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentDetailsPanelLayout.createSequentialGroup()
+                                                .addGap(18, 18, 18)
+                                                .addComponent(cellLineTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel22)
+                                    .addComponent(jLabel14))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cellLineTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                            .addComponent(assayTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                            .addComponent(matrixTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                            .addComponent(expNumberTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
-                            .addComponent(jScrollPane5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(durationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                            .addComponent(intervalTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                            .addComponent(treatmentTextField))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel6)
                             .addComponent(jLabel19)
-                            .addComponent(jLabel22)
-                            .addComponent(jLabel18))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
-                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(ecmCompositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(ecmDensityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(treatmentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
-                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel20)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jLabel14))
-                                .addGap(27, 27, 27)
-                                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(durationTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                                    .addComponent(intervalTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                                    .addComponent(algorithmsTextField))
-                                .addContainerGap(43, Short.MAX_VALUE))))))
+                            .addComponent(jLabel18)
+                            .addComponent(jLabel17))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ecmCompositionTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                            .addComponent(ecmDensityTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                            .addComponent(matrixTextField))
+                        .addContainerGap(44, Short.MAX_VALUE))))
         );
         experimentDetailsPanelLayout.setVerticalGroup(
             experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,59 +386,42 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(infoLabel2)
                 .addGap(18, 18, 18)
-                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel11)
-                            .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(59, 59, 59)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel15)
                             .addComponent(jLabel22)
-                            .addComponent(treatmentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(88, 88, 88)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel18)
-                            .addComponent(ecmCompositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(algorithmsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14)))
-                    .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(expNumberTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel12))
-                        .addGap(18, 18, 18)
-                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cellLineTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel15))
+                            .addComponent(treatmentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cellLineTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(assayTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel16))))
-                .addGap(18, 18, 18)
-                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(ecmDensityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel19))
-                    .addComponent(jLabel17)
-                    .addComponent(matrixTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(67, Short.MAX_VALUE))
+                            .addComponent(jLabel16)
+                            .addComponent(jLabel10)
+                            .addComponent(durationTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(plateFormatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel14)
+                            .addComponent(intervalTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(experimentDetailsPanelLayout.createSequentialGroup()
+                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel17)
+                            .addComponent(matrixTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel18)
+                            .addComponent(ecmCompositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(ecmDensityTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel19))))
+                .addGap(40, 40, 40)
+                .addGroup(experimentDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(instrumentTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -469,29 +437,28 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField algorithmsTextField;
     private javax.swing.JTextField assayTextField;
     private javax.swing.JTextField cellLineTextField;
     private javax.swing.JButton chooseFileButton;
     private javax.swing.JPanel chooseFilePanel;
-    private javax.swing.JPanel choosePanel;
+    private javax.swing.JTextField datasetTextField;
     private javax.swing.JTextField durationTextField;
     private javax.swing.JTextField ecmCompositionTextField;
     private javax.swing.JTextField ecmDensityTextField;
     private javax.swing.JTextField expNumberTextField;
+    private javax.swing.JTextField expTitleTextField;
     private javax.swing.JPanel experimentDetailsPanel;
     private javax.swing.JLabel fileLabel;
+    private javax.swing.JPanel generalInfoPanel;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel infoLabel1;
     private javax.swing.JLabel infoLabel2;
-    private javax.swing.JComboBox instrumentComboBox;
     private javax.swing.JTextField instrumentTextField;
     private javax.swing.JTextField intervalTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
@@ -499,21 +466,15 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JCheckBox logTransformCheckBox;
-    private javax.swing.JComboBox magnificationComboBox;
     private javax.swing.JTextField matrixTextField;
     private javax.swing.JTextField plateFormatTextField;
-    private javax.swing.JComboBox projectComboBox;
     private javax.swing.JTextArea purposeTextArea;
     private javax.swing.JTextField treatmentTextField;
     // End of variables declaration//GEN-END:variables

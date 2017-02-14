@@ -186,7 +186,7 @@ public class GenericDRResultsController extends DRResultsController {
 
     @Override
     protected void addOverview() {
-        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + doseResponseController.getImportedDRDataHolder().getExperimentNumber() + " - " + "extraInfo " + doseResponseController.getImportedDRDataHolder().get...;
+        String title = "CellMissy - DOSE RESPONSE ANALYSIS REPORT - EXPERIMENT " + doseResponseController.getImportedDRDataHolder().getExperimentNumber() + " - " + doseResponseController.getImportedDRDataHolder().getExperimentTitle();
         PdfUtils.addTitle(document, title, titleFont);
         PdfUtils.addEmptyLines(document, 1);
         // add information on dataset (algorithm) and imaging type analyzed

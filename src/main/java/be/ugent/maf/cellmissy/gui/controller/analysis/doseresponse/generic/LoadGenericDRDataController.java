@@ -70,7 +70,10 @@ public class LoadGenericDRDataController {
      * @param dRDataHolder
      */
     public void setManualMetaData(ImportedDRDataHolder dRDataHolder) {
-        // !!! METHODS WILL GIVE NULLPOINTER EX WHEN THERE IS NO TEXT! --> FIND WORKAROUND
+        // !!! METHODS MIGHT GIVE NULLPOINTER EX WHEN THERE IS NO TEXT! --> FIND WORKAROUND
+        dRDataHolder.setExperimentNumber(dataLoadingPanel.getExpNumberTextField().getText());
+        dRDataHolder.setExperimentTitle(dataLoadingPanel.getExpTitleTextField().getText());
+        dRDataHolder.setDataset(dataLoadingPanel.getDatasetTextField().getText());
         dRDataHolder.setAssayType(dataLoadingPanel.getAssayTextField().getText());
         dRDataHolder.setCellLine(dataLoadingPanel.getCellLineTextField().getText());
         dRDataHolder.setPlateFormat(dataLoadingPanel.getPlateFormatTextField().getText());

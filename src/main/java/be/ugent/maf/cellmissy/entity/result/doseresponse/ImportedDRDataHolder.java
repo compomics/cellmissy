@@ -19,8 +19,10 @@ public class ImportedDRDataHolder {
 
     private String experimentNumber;
     
+    private String experimentTitle;
+    
     private String dataset;
-
+    
     private String treatmentName;
 
     private String cellLine;
@@ -48,20 +50,28 @@ public class ImportedDRDataHolder {
         this.doseResponseData = doseResponseData;
     }
 
-    public String getDataset() {
-        return dataset;
-    }
-
-    public void setDataset(String dataset) {
-        this.dataset = dataset;
-    }
-
     public String getExperimentNumber() {
         return experimentNumber;
     }
 
     public void setExperimentNumber(String experimentNumber) {
         this.experimentNumber = experimentNumber;
+    }
+
+    public String getExperimentTitle() {
+        return experimentTitle;
+    }
+
+    public void setExperimentTitle(String experimentTitle) {
+        this.experimentTitle = experimentTitle;
+    }
+
+    public String getDataset() {
+        return dataset;
+    }
+
+    public void setDataset(String dataset) {
+        this.dataset = dataset;
     }
 
     public void setTreatmentName(String treatmentName) {
