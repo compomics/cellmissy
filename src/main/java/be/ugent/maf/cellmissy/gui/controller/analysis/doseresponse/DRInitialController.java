@@ -58,7 +58,7 @@ public abstract class DRInitialController {
     public DRInitialPlotPanel getDRInitialPlotPanel() {
         return dRInitialPlotPanel;
     }
-    
+
     /**
      * Initialize controller
      */
@@ -67,6 +67,7 @@ public abstract class DRInitialController {
         initDRInitialPanel();
 
     }
+
     /**
      * Shared methods (protected)
      */
@@ -93,17 +94,22 @@ public abstract class DRInitialController {
             data[rowIndex][0] = AnalysisUtils.roundThreeDecimals(entry.getDose());
 
             for (int columnIndex = 1; columnIndex < entry.getResponses().size() + 1; columnIndex++) {
-                Double slope = entry.getResponses().get(columnIndex - 1);
-                if (slope != null && !slope.isNaN()) {
-                    // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(entry.getResponses().get(columnIndex - 1));
-                    // show in table slope + (coefficient)
-                    data[rowIndex][columnIndex] = slope;
-                } else if (slope == null) {
-                    data[rowIndex][columnIndex] = "excluded";
-                } else if (slope.isNaN()) {
-                    data[rowIndex][columnIndex] = "NaN";
+                try {
+                    Double slope = entry.getResponses().get(columnIndex - 1);
+                    if (slope != null && !slope.isNaN()) {
+                        // round to three decimals slopes and coefficients
+                        slope = AnalysisUtils.roundThreeDecimals(entry.getResponses().get(columnIndex - 1));
+                        // show in table slope + (coefficient)
+                        data[rowIndex][columnIndex] = slope;
+                    } else if (slope == null) {
+                        data[rowIndex][columnIndex] = "excluded";
+                    } else if (slope.isNaN()) {
+                        data[rowIndex][columnIndex] = "NaN";
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    data[rowIndex][columnIndex] = "";
                 }
+
             }
             rowIndex++;
         }
@@ -118,11 +124,11 @@ public abstract class DRInitialController {
         nonEditableTableModel.setDataVector(data, columnNames);
         return nonEditableTableModel;
     }
-    
+
     /**
      * Abstract methods
      */
     public abstract void initDRInitialData();
-    
+
     protected abstract void initDRInitialPanel();
 }

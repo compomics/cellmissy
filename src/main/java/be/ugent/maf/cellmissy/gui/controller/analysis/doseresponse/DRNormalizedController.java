@@ -76,6 +76,7 @@ public abstract class DRNormalizedController {
         //init view
         initDRNormalizedPanel();
     }
+
     /**
      * Give information on how normalization was performed for the PDF report.
      *
@@ -116,16 +117,20 @@ public abstract class DRNormalizedController {
             data[rowIndex][0] = AnalysisUtils.roundThreeDecimals(entry.getDose());
 
             for (int columnIndex = 1; columnIndex < entry.getResponses().size() + 1; columnIndex++) {
-                Double slope = entry.getResponses().get(columnIndex - 1);
-                if (slope != null && !slope.isNaN()) {
-                    // round to three decimals slopes and coefficients
-                    slope = AnalysisUtils.roundThreeDecimals(entry.getResponses().get(columnIndex - 1));
-                    // show in table slope + (coefficient)
-                    data[rowIndex][columnIndex] = slope;
-                } else if (slope == null) {
-                    data[rowIndex][columnIndex] = "excluded";
-                } else if (slope.isNaN()) {
-                    data[rowIndex][columnIndex] = "NaN";
+                try {
+                    Double slope = entry.getResponses().get(columnIndex - 1);
+                    if (slope != null && !slope.isNaN()) {
+                        // round to three decimals slopes and coefficients
+                        slope = AnalysisUtils.roundThreeDecimals(entry.getResponses().get(columnIndex - 1));
+                        // show in table slope + (coefficient)
+                        data[rowIndex][columnIndex] = slope;
+                    } else if (slope == null) {
+                        data[rowIndex][columnIndex] = "excluded";
+                    } else if (slope.isNaN()) {
+                        data[rowIndex][columnIndex] = "NaN";
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    data[rowIndex][columnIndex] = "";
                 }
             }
             rowIndex++;
@@ -200,11 +205,11 @@ public abstract class DRNormalizedController {
         }
         return allMedians;
     }
-    
+
     /**
      * Abstract methods
      */
     public abstract void initDRNormalizedData();
-    
+
     protected abstract void initDRNormalizedPanel();
 }

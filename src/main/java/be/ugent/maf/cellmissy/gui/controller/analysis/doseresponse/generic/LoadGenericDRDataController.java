@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.ImportedDRDataHolder;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
@@ -16,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
@@ -63,10 +65,23 @@ public class LoadGenericDRDataController {
         waitingDialog = new WaitingDialog(doseResponseController.getCellMissyFrame(), true);
     }
 
+    public void reset() {
+        dataLoadingPanel.getFileLabel().setText("");
+        dataLoadingPanel.getAssayTextField().setText("");
+        dataLoadingPanel.getCellLineTextField().setText("");
+        dataLoadingPanel.getDatasetTextField().setText("");
+        dataLoadingPanel.getExpNumberTextField().setText("");
+        dataLoadingPanel.getExpTitleTextField().setText("");
+        dataLoadingPanel.getPlateFormatTextField().setText("");
+        dataLoadingPanel.getPurposeTextArea().setText("");
+        dataLoadingPanel.getTreatmentTextField().setText("");
+    }
+
     /**
      * Read the view's text areas and fills in corresponding fields in the
      * imported data holder. This method is executed when the user presses the
      * next button.
+     *
      * @param dRDataHolder
      */
     public void setManualMetaData(ImportedDRDataHolder dRDataHolder) {
@@ -122,9 +137,14 @@ public class LoadGenericDRDataController {
                 int returnVal = fileChooser.showOpenDialog(dataLoadingPanel);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File chosenFile = fileChooser.getSelectedFile();
-                    // create and execute a new swing worker with the selected file for the import
-                    ImportExperimentSwingWorker importExperimentSwingWorker = new ImportExperimentSwingWorker(chosenFile);
-                    importExperimentSwingWorker.execute();
+//                    // create and execute a new swing worker with the selected file for the import
+//                    ImportExperimentSwingWorker importExperimentSwingWorker = new ImportExperimentSwingWorker(chosenFile);
+//                    importExperimentSwingWorker.execute();
+                    parseDRFile(chosenFile);
+                    if (doseResponseController.getImportedDRDataHolder().getDoseResponseData() != null) {
+                        dataLoadingPanel.getFileLabel().setText(chosenFile.getAbsolutePath());
+                        doseResponseController.getGenericDRParentPanel().getNextButton().setEnabled(true);
+                    }
                 } else {
                     JOptionPane.showMessageDialog(dataLoadingPanel, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -146,60 +166,64 @@ public class LoadGenericDRDataController {
     private void parseDRFile(File dRFile) {
 
         try {
-            doseResponseController.getImportedDRDataHolder().setDoseResponseData(genericInputFileParser.parseDoseResponseFile(dRFile));
+            //parsing and setting separated into two lines for debugging
+            List<DoseResponsePair> data = genericInputFileParser.parseDoseResponseFile(dRFile);
+            doseResponseController.getImportedDRDataHolder().setDoseResponseData(data);
         } catch (FileParserException ex) {
             LOG.error(ex.getMessage());
-            doseResponseController.showMessage(ex.getMessage(), "Generic input file error", JOptionPane.ERROR_MESSAGE);
+            doseResponseController.showMessage(ex.getMessage(), "Error in input file", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    /**
-     * Show the waiting dialog: set the title and center the dialog on the main
-     * frame. Set the dialog to visible.
-     *
-     * @param title
-     */
-    private void showWaitingDialog(String title) {
-        waitingDialog.setTitle(title);
-        GuiUtils.centerDialogOnFrame(doseResponseController.getCellMissyFrame(), waitingDialog);
-        waitingDialog.setVisible(true);
-    }
-
-    /**
-     * Swing worker to import dose-response data from a file.
-     */
-    private class ImportExperimentSwingWorker extends SwingWorker<Void, Void> {
-
-        // the XML file that has to be parsed to import the experiment
-        private final File dRFile;
-
-        public ImportExperimentSwingWorker(File dRFile) {
-            this.dRFile = dRFile;
-        }
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            // show waiting dialog
-            String title = "File is being parsed. Please wait...";
-            showWaitingDialog(title);
-            // parse xmlfile
-            parseDRFile(dRFile);
-            return null;
-        }
-
-        @Override
-        protected void done() {
-            try {
-                get();
-                waitingDialog.setVisible(false);
-                // if parsing the file was successfull and the loaded data is not null, we can enable the next experiment button
-                if (doseResponseController.getImportedDRDataHolder().getDoseResponseData() != null) {
-                    doseResponseController.getGenericDRParentPanel().getNextButton().setEnabled(true);
-                }
-            } catch (InterruptedException | ExecutionException | CancellationException ex) {
-                JOptionPane.showMessageDialog(dataLoadingPanel, "Unexpected error: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
-                LOG.error(ex.getMessage(), ex);
-            }
-        }
-    }
+//  //COMMENTED THIS WHOLE SECTION BECAUSE showWaitingDialog WOULD FREEZE ALL OTHER CODE EXECUTION AND THUS NOT PARSING THE DATA IN THE BACKGROUND
+//    //MIGHT BE NECESSARY TO REIMPLEMENT IN THE FUTURE IF USERS USE LARGE FILES
+//    /**
+//     * Show the waiting dialog: set the title and center the dialog on the main
+//     * frame. Set the dialog to visible.
+//     *
+//     * @param title
+//     */
+//    private void showWaitingDialog(String title) {
+//        waitingDialog.setTitle(title);
+//        GuiUtils.centerDialogOnFrame(doseResponseController.getCellMissyFrame(), waitingDialog);
+//        waitingDialog.setVisible(true);
+//    }
+//
+//    /**
+//     * Swing worker to import dose-response data from a file.
+//     */
+//    private class ImportExperimentSwingWorker extends SwingWorker<Void, Void> {
+//
+//        // the XML file that has to be parsed to import the experiment
+//        private final File dRFile;
+//
+//        public ImportExperimentSwingWorker(File dRFile) {
+//            this.dRFile = dRFile;
+//        }
+//
+//        @Override
+//        protected Void doInBackground() throws Exception {
+//            // show waiting dialog
+//            String title = "File is being parsed. Please wait...";
+//            showWaitingDialog(title);
+//            // parse xmlfile
+//            parseDRFile(dRFile);
+//            return null;
+//        }
+//
+//        @Override
+//        protected void done() {
+//            try {
+//                get();
+//                waitingDialog.setVisible(false);
+//                // if parsing the file was successfull and the loaded data is not null, we can enable the next experiment button
+//                if (doseResponseController.getImportedDRDataHolder().getDoseResponseData() != null) {
+//                    dataLoadingPanel.getFileLabel().setText(dRFile.getAbsolutePath());
+//                    doseResponseController.getGenericDRParentPanel().getNextButton().setEnabled(true);
+//                }
+//            } catch (InterruptedException | ExecutionException | CancellationException ex) {
+//                JOptionPane.showMessageDialog(dataLoadingPanel, "Unexpected error: " + ex.getMessage(), "unexpected error", JOptionPane.ERROR_MESSAGE);
+//                LOG.error(ex.getMessage(), ex);
+//            }
+//        }
+//    }
 }

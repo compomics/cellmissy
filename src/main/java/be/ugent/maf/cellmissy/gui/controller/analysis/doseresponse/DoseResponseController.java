@@ -14,7 +14,6 @@ import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
-import java.util.LinkedHashMap;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -87,6 +86,7 @@ public abstract class DoseResponseController {
     /**
      * When switching to a different subview, change the model for the main
      * table.
+     * @param tableModel
      */
     public void updateModelInTable(NonEditableTableModel tableModel) {
         dataTable.setModel(tableModel);

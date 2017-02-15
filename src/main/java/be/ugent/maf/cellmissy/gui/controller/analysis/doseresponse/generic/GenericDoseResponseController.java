@@ -199,6 +199,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     @Override
     public void resetOnCancel() {
         super.resetOnCancel();
+        dRInputController.reset();
         importedDRDataHolder = null;
         getCardLayout().first(genericDRParentPanel.getContentPanel());
         onCardSwitch();
@@ -454,10 +455,13 @@ public class GenericDoseResponseController extends DoseResponseController {
     private void onCardSwitch() {
         String currentCardName = GuiUtils.getCurrentCardName(genericDRParentPanel.getContentPanel());
         switch (currentCardName) {
+            // First case is only called when starting up new import. Switching back from second card is not implemented.
             case "dataLoadingPanel":
                 GuiUtils.highlightLabel(genericDRParentPanel.getDataLoadingLabel());
                 GuiUtils.resetLabel(genericDRParentPanel.getDoseResponseLabel());
                 updateInfoMessage("Load the dose-response data you want to analyze");
+                //initialize new imported data holder.
+                importedDRDataHolder = new ImportedDRDataHolder();
                 break;
 
             case "doseResponseParentPanel":

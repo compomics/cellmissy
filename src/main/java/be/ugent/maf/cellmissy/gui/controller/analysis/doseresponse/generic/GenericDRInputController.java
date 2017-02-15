@@ -71,9 +71,14 @@ public class GenericDRInputController extends DRInputController {
         doseResponseController.getDRPanel().repaint();
     }
 
+    public void reset() {
+        conditionsList = new ArrayList<>();
+    }
+
     @Override
     protected void initDRInputPanel() {
         dRInputPanel = new DRInputPanel();
+        conditionsList = new ArrayList<>();
         // control opaque property of bottom table
         dRInputPanel.getSlopesTableScrollPane().getViewport().setBackground(Color.white);
         slopesTable = dRInputPanel.getSlopesTable();
@@ -146,6 +151,7 @@ public class GenericDRInputController extends DRInputController {
             // make a new analysis group
             // override variable if one existed already
             doseResponseController.setdRAnalysisGroup(new GenericDoseResponseAnalysisGroup(conditionsList));
+            doseResponseController.setFirstFitting(true);
 
             // populate bottom table with the analysis group
             slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
@@ -165,6 +171,7 @@ public class GenericDRInputController extends DRInputController {
         //only make new analysis group if you have not removed all
         if (!conditionsList.isEmpty()) {
             doseResponseController.setdRAnalysisGroup(new GenericDoseResponseAnalysisGroup(conditionsList));
+            doseResponseController.setFirstFitting(true);
             // populate bottom table with the analysis group
             slopesTable.setModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
             slopesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
@@ -208,11 +215,14 @@ public class GenericDRInputController extends DRInputController {
         for (int rowIndex = 0; rowIndex < importedData.size(); rowIndex++) {
             data[rowIndex][0] = rowIndex + 1;
             data[rowIndex][1] = importedData.get(rowIndex).getDose();
+            //not all row have the maximum number of columns
             for (int columnIndex = 2; columnIndex < maxReplicates + 2; columnIndex++) {
-                data[rowIndex][columnIndex] = importedData.get(rowIndex).getResponses().get(columnIndex - 2);
-                columnIndex++;
+                try {
+                    data[rowIndex][columnIndex] = importedData.get(rowIndex).getResponses().get(columnIndex - 2);
+                } catch (IndexOutOfBoundsException e) {
+                    data[rowIndex][columnIndex] = "";
+                }
             }
-            rowIndex++;
         }
 
         // array of column names for table model
@@ -247,10 +257,12 @@ public class GenericDRInputController extends DRInputController {
         for (int rowIndex = 0; rowIndex < dataToShow.size(); rowIndex++) {
             data[rowIndex][0] = dataToShow.get(rowIndex).getDose();
             for (int columnIndex = 1; columnIndex < maxReplicates + 1; columnIndex++) {
-                data[rowIndex][columnIndex] = dataToShow.get(rowIndex).getResponses().get(columnIndex - 1);
-                columnIndex++;
+                try {
+                    data[rowIndex][columnIndex] = dataToShow.get(rowIndex).getResponses().get(columnIndex - 1);
+                } catch (IndexOutOfBoundsException e) {
+                    data[rowIndex][columnIndex] = "";
+                }
             }
-            rowIndex++;
         }
 
         // array of column names for table model

@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -91,6 +92,10 @@ public class DRDataLoadingPanel extends javax.swing.JPanel {
 
     public JCheckBox getLogTransformCheckBox() {
         return logTransformCheckBox;
+    }
+
+    public JLabel getFileLabel() {
+        return fileLabel;
     }
 
     /**

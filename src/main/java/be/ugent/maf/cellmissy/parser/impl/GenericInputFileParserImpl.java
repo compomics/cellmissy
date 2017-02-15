@@ -170,14 +170,18 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                 // read the CSV file records
                 for (CSVRecord cSVRecord: csvRecords) {
                     //create an iterator for the record values
-                    Iterator iter = cSVRecord.iterator();
+                    Iterator<String> iter = cSVRecord.iterator();
 
                     // the dose is in the first column
-                    dose = Double.parseDouble((String) iter.next());
+                    dose = Double.parseDouble(iter.next());
                     //read the rest of the rows as long as they contain numbers
                     while (iter.hasNext()) {
-                        responses.add(Double.parseDouble((String) iter.next()));
-                    }
+                        //check if next is not empty, otherwise it will throw an exception
+                        String next = iter.next();
+                        if (!next.equals("")){
+                            responses.add(Double.parseDouble(next));
+                        }
+                                            }
                     //when the record end has been reached, save the doses and responses
                     doseResponseData.add(new DoseResponsePair(dose, responses));
                     responses = new ArrayList<>();
@@ -187,7 +191,7 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                 LOG.error(ex.getMessage(), ex);
             } catch (NumberFormatException ex) {
                 LOG.error(ex.getMessage(), ex);
-                throw new FileParserException("It seems like a line does not contain a number!\nPlease check your files!");
+                throw new FileParserException("It seems like a line contains something other than a number!\nPlease check your files!");
             }
 
             return doseResponseData;
@@ -207,7 +211,7 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                 // check that at least one sheet is present
                 if (workbook.getNumberOfSheets() > 0) {
                     Sheet sheet = workbook.getSheetAt(0);
-                    // iterate through all the rows, starting from the second one to skip the header
+                    // iterate through all the rows
                     // we need to remember the dose value in case of a pure 2 column file (rows contain repeated doses)
                     for (int i = 1; i < sheet.getLastRowNum() + 1; i++) {
                         // get the row
