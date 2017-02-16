@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRInitialController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInitialPlotPanel;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,7 +42,7 @@ public class GenericDRInitialController extends DRInitialController {
         //Log transform concentrations if needed, keeping responses the same
         dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData());
         //create and set the table model for the top panel table
-        setTableModel(createTableModel(dataToFit));
+        setTableModel(doseResponseController.updateTableModel(createTableModel(dataToFit)));
         //Fit data according to initial parameters (standard hillslope, no constraints)
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(false), null, null);
     }
@@ -136,7 +137,7 @@ public class GenericDRInitialController extends DRInitialController {
                 result.add(new DoseResponsePair(dose, row.getResponses()));
             }
             return result;
-        
+
         } else {
             return doseResponseData;
         }

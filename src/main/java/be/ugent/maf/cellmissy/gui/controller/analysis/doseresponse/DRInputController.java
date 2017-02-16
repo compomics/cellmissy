@@ -8,6 +8,7 @@ package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.ChooseTreatmentDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
+import java.awt.GridBagConstraints;
 import javax.swing.JTable;
 import org.jdesktop.beansbinding.BindingGroup;
 
@@ -24,6 +25,8 @@ public abstract class DRInputController {
     //view
     protected DRInputPanel dRInputPanel;
     protected ChooseTreatmentDialog chooseTreatmentDialog;
+    //services
+    protected GridBagConstraints gridBagConstraints;
     
     
     /**
@@ -50,6 +53,7 @@ public abstract class DRInputController {
     public void init() {
         bindingGroup = new BindingGroup();
         sharedTableModel = new NonEditableTableModel();
+        gridBagConstraints = new GridBagConstraints();
         //init view
         initDRInputPanel();
     }

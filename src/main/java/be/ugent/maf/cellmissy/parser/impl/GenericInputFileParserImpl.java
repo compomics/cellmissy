@@ -212,18 +212,14 @@ public class GenericInputFileParserImpl implements GenericInputFileParser {
                 if (workbook.getNumberOfSheets() > 0) {
                     Sheet sheet = workbook.getSheetAt(0);
                     // iterate through all the rows
-                    // we need to remember the dose value in case of a pure 2 column file (rows contain repeated doses)
-                    for (int i = 1; i < sheet.getLastRowNum() + 1; i++) {
-                        // get the row
-                        Row row = sheet.getRow(i);
-
+                    for (Row row : sheet) {
                         // the dose is in the first column
                         dose = row.getCell(0).getNumericCellValue();
 
                         //read the rest of the rows as long as they contain numbers
                         int column = 1;
-                        //blank cells return 0
-                        while (row.getCell(column).getNumericCellValue() != 0) {
+                        //blank cells give nullpointers for getCell and 0 for getNumericCellValue
+                        while (row.getCell(column) != null && row.getCell(column).getNumericCellValue() != 0) {
                             responses.add(row.getCell(column).getNumericCellValue());
                             column++;
                         }

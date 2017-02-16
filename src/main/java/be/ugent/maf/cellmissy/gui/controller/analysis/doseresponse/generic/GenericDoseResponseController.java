@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.GenericDRParentPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -194,11 +195,33 @@ public class GenericDoseResponseController extends DoseResponseController {
     }
 
     /**
+     * Edit a table's headers so that "Log-concentration" is replaced by "Dose"
+     *
+     * @param tableModel
+     * @return
+     */
+    protected NonEditableTableModel updateTableModel(NonEditableTableModel tableModel) {
+        String[] newIdentifiers = new String[tableModel.getColumnCount()];
+        if (getLogTransform()) {
+            newIdentifiers[0] = "Log-dose";
+        } else {
+            newIdentifiers[0] = "Dose";
+        }
+        for (int i = 1; i < newIdentifiers.length; i++) {
+            newIdentifiers[i] = tableModel.getColumnName(i);
+        }
+        tableModel.setColumnIdentifiers(newIdentifiers);
+        return tableModel;
+
+    }
+
+    /**
      * Reset views on cancel
      */
     @Override
     public void resetOnCancel() {
         super.resetOnCancel();
+        loadGenericDRDataController.reset();
         dRInputController.reset();
         importedDRDataHolder = null;
         getCardLayout().first(genericDRParentPanel.getContentPanel());
@@ -225,7 +248,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         //switch shared table view
         updateModelInTable(dRInputController.getTableModel());
         dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
-        updateTableInfoMessage("This table contains all conditions and their respective slopes");
+        updateTableInfoMessage("This table contains all conditions and their respective responses");
     }
 
     /**
@@ -316,7 +339,7 @@ public class GenericDoseResponseController extends DoseResponseController {
             public void actionPerformed(ActionEvent e) {
                 //switch shared table view
                 updateModelInTable(dRInputController.getTableModel());
-                updateTableInfoMessage("This table contains all conditions and their respective slopes");
+                updateTableInfoMessage("This table contains all conditions and their respective responses");
                 /**
                  * for (int columnIndex = 0; columnIndex <
                  * dataTable.getColumnCount(); columnIndex++) {
@@ -347,7 +370,7 @@ public class GenericDoseResponseController extends DoseResponseController {
                     }
                     //switch shared table view
                     updateModelInTable(dRInitialController.getTableModel());
-                    updateTableInfoMessage("Concentrations of conditions selected previously have been log-transformed, slopes have not been changed");
+                    updateTableInfoMessage("If you checked the box at the import screen, the doses have been log-transformed. Responses have not been changed");
                     /**
                      * for (int columnIndex = 0; columnIndex <
                      * dataTable.getColumnCount(); columnIndex++) {
@@ -380,7 +403,7 @@ public class GenericDoseResponseController extends DoseResponseController {
                     }
                     //switch shared table view
                     updateModelInTable(dRNormalizedController.getTableModel());
-                    updateTableInfoMessage("Log-transformed concentrations with their normalized responses per replicate");
+                    updateTableInfoMessage("Potentially log-transformed doses with their normalized responses per replicate");
                     /**
                      * for (int columnIndex = 0; columnIndex <
                      * dataTable.getColumnCount(); columnIndex++) {

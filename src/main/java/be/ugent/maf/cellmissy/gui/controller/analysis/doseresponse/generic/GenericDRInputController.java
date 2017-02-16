@@ -12,17 +12,14 @@ import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRInputPanel;
 import be.ugent.maf.cellmissy.gui.view.icon.RectIcon;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
-import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
@@ -66,9 +63,9 @@ public class GenericDRInputController extends DRInputController {
         bindingGroup.bind();
         dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(doseResponseData, numberOfReplicates));
         dRInputPanel.getConditionsList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel);
         doseResponseController.getDRPanel().revalidate();
         doseResponseController.getDRPanel().repaint();
+        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel, gridBagConstraints);
     }
 
     public void reset() {
@@ -268,8 +265,8 @@ public class GenericDRInputController extends DRInputController {
         // array of column names for table model
         String[] columnNames = new String[maxReplicates + 1];
         columnNames[0] = "Dose";
-        for (int x = 2; x < columnNames.length; x++) {
-            columnNames[x] = "Repl " + (x - 1);
+        for (int x = 1; x < columnNames.length; x++) {
+            columnNames[x] = "Repl " + x;
         }
 
         NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
@@ -298,7 +295,7 @@ public class GenericDRInputController extends DRInputController {
          * Constructor, needs a list of plate conditions, together with number
          * of replicates for each condition.
          *
-         * @param plateConditionList
+         * @param doseResponsePairList
          * @param numberOfReplicates
          */
         public RectIconListRenderer(List<DoseResponsePair> doseResponsePairList, List<Integer> numberOfReplicates) {

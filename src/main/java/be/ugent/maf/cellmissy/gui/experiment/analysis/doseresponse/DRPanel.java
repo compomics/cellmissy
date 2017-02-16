@@ -88,7 +88,7 @@ public class DRPanel extends javax.swing.JPanel {
         initialPlotDRButton.setText("Initial Plot");
         initialPlotDRButton.setOpaque(false);
 
-        tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        tableInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 14)); // NOI18N
         tableInfoLabel.setMinimumSize(new java.awt.Dimension(20, 20));
         tableInfoLabel.setPreferredSize(new java.awt.Dimension(20, 20));
 

@@ -56,7 +56,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
         //LogTransform concentrations and perform initial normalization (mean values)
         dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData(), doseResponseController.getLogTransform());
         //create and set the table model for the top panel table (dependent on normalization)
-        setTableModel(createTableModel(dataToFit));
+        setTableModel(doseResponseController.updateTableModel(createTableModel(dataToFit)));
         //Perform initial curve fitting (standard hillslope, no constraints)
         doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(true), null, null);
     }
@@ -171,7 +171,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 dataToFit = prepareFittingData(doseResponseController.getdRAnalysisGroup().getDoseResponseData(), doseResponseController.getLogTransform());
-                setTableModel(createTableModel(dataToFit));
+                setTableModel(doseResponseController.updateTableModel(createTableModel(dataToFit)));
                 doseResponseController.updateModelInTable(tableModel);
                 doseResponseController.performFitting(dataToFit, doseResponseController.getdRAnalysisGroup().getDoseResponseAnalysisResults().getFittingResults(true), bottomConstrainValue, topConstrainValue);
                 doseResponseController.plotDoseResponse(normalizedChartPanel, dRNormalizedPlotPanel.getDoseResponseChartParentPanel(), dataToFit, doseResponseController.getdRAnalysisGroup(), true);
