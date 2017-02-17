@@ -214,6 +214,24 @@ public class GenericDoseResponseController extends DoseResponseController {
         return tableModel;
 
     }
+    
+    @Override
+    protected List<String> getPlotAxesNames(boolean normalized) {
+        List<String> result = new ArrayList<>();
+        //check if dose is logtransformed
+        if (logTransform) {
+            result.add("Log of Dose");
+        } else {
+            result.add("Dose");
+        }
+        //check whether the responses are normalized
+        if (normalized) {
+            result.add("Response (%)");
+        } else {
+            result.add("Response");
+        }
+        return result;
+    }
 
     /**
      * Reset views on cancel

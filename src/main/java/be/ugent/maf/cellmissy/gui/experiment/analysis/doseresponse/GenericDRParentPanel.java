@@ -87,7 +87,7 @@ public class GenericDRParentPanel extends javax.swing.JPanel {
         doseResponseLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         doseResponseLabel.setText("2. Dose-Response");
 
-        cardInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 12)); // NOI18N
+        cardInfoLabel.setFont(new java.awt.Font("Tahoma", 2, 14)); // NOI18N
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);

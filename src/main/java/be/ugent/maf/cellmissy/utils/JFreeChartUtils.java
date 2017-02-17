@@ -505,7 +505,7 @@ public class JFreeChartUtils {
         xYPlot.getRangeAxis().setRange(maxRange);
     }
 
-    public static XYPlot setupDoseResponseDatasets(XYSeriesCollection dataset1, XYSeriesCollection dataset2, boolean normalized) {
+    public static XYPlot setupDoseResponseDatasets(XYSeriesCollection dataset1, XYSeriesCollection dataset2, List<String> axesNames) {
         //a single plot contains both scatter data and fitted line
         XYPlot plot = new XYPlot();
 
@@ -517,14 +517,10 @@ public class JFreeChartUtils {
         tempRenderer.setSeriesLinesVisible(0, true);
         tempRenderer.setSeriesShapesVisible(0, false);
 
-        ValueAxis domain1 = new NumberAxis("Log of concentration");
-        if (!normalized) {
-            ValueAxis range1 = new NumberAxis("Velocity (µM²/min)");
-            plot.setRangeAxis(0, range1);
-        } else {
-            ValueAxis range1 = new NumberAxis("Response (%)");
-            plot.setRangeAxis(0, range1);
-        }
+        ValueAxis domain1 = new NumberAxis(axesNames.get(0));
+        ValueAxis range1 = new NumberAxis(axesNames.get(1));
+
+        plot.setRangeAxis(0, range1);
         domain1.setUpperBound(-3.0);
         domain1.setLowerBound(-8.0);
         //range1.setLowerBound(-50.0);
@@ -535,7 +531,7 @@ public class JFreeChartUtils {
         // Map the scatter to the first Domain and first Range
         plot.mapDatasetToDomainAxis(0, 0);
         plot.mapDatasetToRangeAxis(0, 0);
-        
+
         // Set the line data, renderer, and axis into plot
         plot.setDataset(1, dataset2);
         plot.setRenderer(1, renderer2);

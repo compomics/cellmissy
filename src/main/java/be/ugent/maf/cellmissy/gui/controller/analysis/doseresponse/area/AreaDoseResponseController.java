@@ -421,6 +421,18 @@ public class AreaDoseResponseController extends DoseResponseController {
         return dRNormalizedController.getNormalizationInfo();
     }
 
+    @Override
+    protected List<String> getPlotAxesNames(boolean normalized) {
+        List<String> result = new ArrayList<>();
+        result.add("Log of concentration");
+        if (normalized) {
+            result.add("Response (%)");
+        } else {
+            result.add("Velocity (µM²/min)");
+        }
+        return result;
+    }
+
     /**
      * Swing Worker to generate PDF report
      */

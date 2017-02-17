@@ -137,7 +137,7 @@ public abstract class DoseResponseController {
         fittingData.setKey("Fitting");
         fitting.addSeries(fittingData);
 
-        XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, normalized);
+        XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, getPlotAxesNames(normalized));
 
         // show the r squared value
         plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsHolder)), -4, 10.0));
@@ -180,4 +180,6 @@ public abstract class DoseResponseController {
     protected abstract JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, boolean normalized);
 
     public abstract List<DoseResponsePair> getDataToFit(boolean normalized);
+    
+    protected abstract List<String> getPlotAxesNames(boolean normalized);
 }

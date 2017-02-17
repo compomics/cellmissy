@@ -91,7 +91,7 @@
         <Component class="javax.swing.JLabel" name="cardInfoLabel">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="12" style="2"/>
+              <Font name="Tahoma" size="14" style="2"/>
             </Property>
           </Properties>
         </Component>
