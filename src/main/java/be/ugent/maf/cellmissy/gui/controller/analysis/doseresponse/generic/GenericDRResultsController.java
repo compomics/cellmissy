@@ -202,7 +202,32 @@ public class GenericDRResultsController extends DRResultsController {
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
         lines.clear();
-        line = "DRUG ANALYSED: " + doseResponseController.getImportedDRDataHolder().getTreatmentName();
+        // add purpose
+        line = "PURPOSE: " + doseResponseController.getImportedDRDataHolder().getPurpose();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        lines.clear();
+        // add cell line
+        line = "CELL LINE: " + doseResponseController.getImportedDRDataHolder().getCellLine();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        lines.clear();
+        // add treatment
+        line = "TREATMENT: " + doseResponseController.getImportedDRDataHolder().getTreatmentName();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        lines.clear();
+        // add assay type
+        line = "ASSAY TYPE: " + doseResponseController.getImportedDRDataHolder().getAssayType();
+        lines.add(line);
+        PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
+        PdfUtils.addEmptyLines(document, 1);
+        lines.clear();
+        // add plate format
+        line = "PLATE FORMAT: " + doseResponseController.getImportedDRDataHolder().getPlateFormat();
         lines.add(line);
         PdfUtils.addText(document, lines, false, Element.ALIGN_JUSTIFIED, bodyFont);
         PdfUtils.addEmptyLines(document, 1);
@@ -299,82 +324,35 @@ public class GenericDRResultsController extends DRResultsController {
     @Override
     protected PdfPTable createAnalysisGroupInfoTable() {
         //maps log transformed conc (double) to list of velocities (double)
-        List<DoseResponsePair> fittedData = doseResponseController.getDataToFit(false);
-        //CONTROL HAS BEEN GIVEN A CONCENTRATION FOR FITTING PURPOSES: find control concentration
-        List<Double> allConcentrations = new ArrayList<>();
-        for (DoseResponsePair row : fittedData) {
-            allConcentrations.add(row.getDose());
-        }
-        Double controlConcentration = Collections.min(allConcentrations);
+        List<DoseResponsePair> data = doseResponseController.getImportedDRDataHolder().getDoseResponseData();
 
-        // new table with 6 columns
-        PdfPTable dataTable = new PdfPTable(6);
+        // new table with 5 columns
+        PdfPTable dataTable = new PdfPTable(5);
         PdfUtils.setUpPdfPTable(dataTable);
         // add 1st row: column names
-        PdfUtils.addCustomizedCell(dataTable, "DRUG CONCENTRATION", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "DOSE", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "# TECHNICAL REPLICATES", boldFont);
-        PdfUtils.addCustomizedCell(dataTable, "TECHNICAL REPLICATES EXCLUDED?", boldFont);
-        PdfUtils.addCustomizedCell(dataTable, "LOWEST VELOCITY", boldFont);
-        PdfUtils.addCustomizedCell(dataTable, "HIGHEST VELOCITY", boldFont);
-        PdfUtils.addCustomizedCell(dataTable, "MEDIAN VELOCITY", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "LOWEST RESPONSE", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "HIGHEST RESPONSE", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "MEDIAN RESPONSE", boldFont);
 
         // for each condition get results and add a cell
-        for (DoseResponsePair condition : fittedData) {
+        for (DoseResponsePair condition : data) {
             Integer replicates = condition.getResponses().size();
-            String excluded;
-            int excludedCount = 0;
             List<Double> velocities = condition.getResponses();
 
-            //count how many replicates were excluded
-            for (int i = 0; i < velocities.size(); i++) {
-                Double replicate = velocities.get(i);
-                if (replicate == null) {
-                    excludedCount++;
-                }
-            }
-            if (excludedCount == 0) {
-                excluded = "NO";
-            } else {
-                excluded = "YES, " + excludedCount;
-            }
-
-            //put log-value of the concentration back to an understandable format
-            String concentration;
-            Double logConc = condition.getDose();
-            Double transformed = Math.pow(10, logConc);
-            //check which concentration unit is to be used
-            //if lower than 0.1 µM: use nM unit
-            if (transformed < Math.pow(10, -7)) {
-                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10, 9)) + " nM";
-            } //if lower than 0.1 mM: use µM unit
-            else if (transformed < Math.pow(10, -3)) {
-                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10, 6)) + " µM";
-            } //else for everything >= 1 mM use mM unit
-            else {
-                concentration = AnalysisUtils.roundTwoDecimals(transformed * Math.pow(10, 3)) + " mM";
-            }
-            //if this is the control, replace concentration string
-            if (logConc == controlConcentration) {
-                concentration = "Control";
-            }
-            //remove null's (excluded replicates) from velocities collection
-            velocities.removeAll(Collections.singleton(null));
-
-            PdfUtils.addCustomizedCell(dataTable, concentration, bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, condition.getDose().toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, replicates.toString(), bodyFont);
-            PdfUtils.addCustomizedCell(dataTable, excluded, bodyFont);
             PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(Collections.min(velocities)).toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(Collections.max(velocities)).toString(), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeMedian(velocities)).toString(), bodyFont);
-
         }
-
         return dataTable;
     }
 
     @Override
     protected PdfPTable createFittingInfoTable(boolean normalized) {
-// 4 columns
+        // 4 columns
         PdfPTable dataTable = new PdfPTable(4);
         PdfUtils.setUpPdfPTable(dataTable);
         DecimalFormat df = new DecimalFormat("0.00E00");

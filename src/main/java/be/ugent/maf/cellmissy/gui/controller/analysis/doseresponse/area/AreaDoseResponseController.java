@@ -74,7 +74,6 @@ public class AreaDoseResponseController extends DoseResponseController {
     // services
     @Autowired
     private SigmoidFitter sigmoidFitter;
-    
 
     /**
      * Initialize controller
@@ -93,11 +92,12 @@ public class AreaDoseResponseController extends DoseResponseController {
     /**
      * Getters and setters
      *
+     * @return
      */
     public AreaDoseResponseAnalysisGroup getdRAnalysisGroup() {
         return dRAnalysisGroup;
     }
-    
+
     public void setdRAnalysisGroup(AreaDoseResponseAnalysisGroup dRAnalysisGroup) {
         this.dRAnalysisGroup = dRAnalysisGroup;
     }
@@ -130,6 +130,7 @@ public class AreaDoseResponseController extends DoseResponseController {
         return areaMainController.getSelectedALgorithm();
     }
 
+    @Override
     public List<DoseResponsePair> getDataToFit(boolean normalized) {
         if (normalized) {
             return dRNormalizedController.getDataToFit();
@@ -161,7 +162,6 @@ public class AreaDoseResponseController extends DoseResponseController {
         dRResultsController.initDRResultsData();
     }
 
-    
     /**
      * Get the constrain values for the bottom and top parameter. (Double number
      * or null if not constrained)
@@ -182,7 +182,6 @@ public class AreaDoseResponseController extends DoseResponseController {
         return result;
     }
 
-    
     /**
      * Perform fitting according to user specifications. Called by subclasses.
      *
@@ -239,7 +238,6 @@ public class AreaDoseResponseController extends DoseResponseController {
     protected JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, boolean normalized) {
         return createDoseResponseChart(dataToPlot, dRAnalysisGroup, normalized);
     }
-
 
     /**
      * Ask user to choose for a directory and invoke swing worker for creating

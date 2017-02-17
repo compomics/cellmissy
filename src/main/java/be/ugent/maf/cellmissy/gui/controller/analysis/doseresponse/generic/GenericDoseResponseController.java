@@ -214,7 +214,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         return tableModel;
 
     }
-    
+
     @Override
     protected List<String> getPlotAxesNames(boolean normalized) {
         List<String> result = new ArrayList<>();
@@ -530,7 +530,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         chooseDirectory.setDialogTitle("Choose a directory to save the report");
         chooseDirectory.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 //        needs more information
-        chooseDirectory.setSelectedFile(new File("Dose Response Report " + ".pdf"));
+        chooseDirectory.setSelectedFile(new File("Dose Response Report " + importedDRDataHolder.getExperimentNumber() + ".pdf"));
         // in response to the button click, show open dialog
 //        TEST WHETHER THIS PARENT PANEL/FRAME IS OKAY
         int returnVal = chooseDirectory.showSaveDialog(cellMissyController.getCellMissyFrame());
