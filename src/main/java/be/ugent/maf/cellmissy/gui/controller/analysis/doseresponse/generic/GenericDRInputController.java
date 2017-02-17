@@ -63,9 +63,6 @@ public class GenericDRInputController extends DRInputController {
         bindingGroup.bind();
         dRInputPanel.getConditionsList().setCellRenderer(new RectIconListRenderer(doseResponseData, numberOfReplicates));
         dRInputPanel.getConditionsList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        doseResponseController.getDRPanel().revalidate();
-        doseResponseController.getDRPanel().repaint();
-        doseResponseController.getDRPanel().getGraphicsDRParentPanel().add(dRInputPanel, gridBagConstraints);
     }
 
     public void reset() {

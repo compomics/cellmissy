@@ -263,6 +263,7 @@ public class GenericDoseResponseController extends DoseResponseController {
      */
     public void onDoseResponse() {
         dRInputController.initDRInputData();
+        dRPanel.getInputDRButton().doClick();
         //switch shared table view
         updateModelInTable(dRInputController.getTableModel());
         dataTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.LEFT));
