@@ -6,10 +6,13 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.generic;
 
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisGroup;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseAnalysisResults;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponseStatisticsHolder;
+import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import be.ugent.maf.cellmissy.gui.controller.analysis.doseresponse.DRResultsController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.doseresponse.DRResultsPanel;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.PdfUtils;
 import com.lowagie.text.Document;
@@ -79,6 +82,12 @@ public class GenericDRResultsController extends DRResultsController {
         });
     }
 
+    /**
+     * Calculate and set the statistics fields in the analysis group's results
+     * holder.
+     *
+     * @param analysisGroup
+     */
     @Override
     public void setStatistics(DoseResponseAnalysisGroup analysisGroup) {
         //calculate and set statistics for initial fitting
@@ -89,9 +98,12 @@ public class GenericDRResultsController extends DRResultsController {
     }
 
     @Override
-    public void initDRResultsData() {
-        setStatistics(doseResponseController.getdRAnalysisGroup());
-        setTableModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
+    public NonEditableTableModel reCreateTableModel(DoseResponseAnalysisGroup analysisGroup) {
+        if (doseResponseController.getLogTransform()) {
+            return super.reCreateTableModel(analysisGroup);
+        } else {
+            return nonLogTransformedTableModel(analysisGroup);
+        }
     }
 
     @Override
@@ -108,6 +120,111 @@ public class GenericDRResultsController extends DRResultsController {
         dRResultsPanel.getDoseResponseChartParentPanel().add(dupeNormalizedChartPanel, gridBagConstraints);
         doseResponseController.getDRPanel().revalidate();
         doseResponseController.getDRPanel().repaint();
+    }
+
+    /**
+     * If the user chose not to log-transform the doses, the table should not
+     * contain a 'logec50' parameter. This fourth value estimated by the fitter
+     * should instead be contained under the 'ec50' name. Currently, this method
+     * is only needed by the generic module. Upon expansion with another module,
+     * this method could be moved to the overarching abstract class.
+     */
+    private NonEditableTableModel nonLogTransformedTableModel(DoseResponseAnalysisGroup analysisGroup) {
+        DoseResponseAnalysisResults analysisResults = analysisGroup.getDoseResponseAnalysisResults();
+        Object[][] data = new Object[16][3];
+
+        //set fields in first column
+        data[0][0] = "Best-fit value";
+        data[1][0] = "    Bottom";
+        data[2][0] = "    Top";
+        data[3][0] = "    Hillslope";
+        data[4][0] = "    EC50";
+        data[5][0] = "R² (goodness of fit)";
+        data[6][0] = "Standard error";
+        data[7][0] = "    Bottom";
+        data[8][0] = "    Top";
+        data[9][0] = "    Hillslope";
+        data[10][0] = "    EC50";
+        data[11][0] = "95% Confidence interval";
+        data[12][0] = "    Bottom";
+        data[13][0] = "    Top";
+        data[14][0] = "    Hillslope";
+        data[15][0] = "    EC50";
+
+        //set second column (initial fitting results)
+        SigmoidFittingResultsHolder fittingResults = analysisResults.getFittingResults(false);
+        DoseResponseStatisticsHolder statistics = analysisResults.getStatistics(false);
+        data[1][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getBottom());
+        data[2][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getTop());
+        data[3][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getHillslope());
+        data[4][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getLogEC50());
+        data[5][1] = AnalysisUtils.roundThreeDecimals(statistics.getGoodnessOfFit());
+        if (statistics.getStdErrBottom() != 0) {
+            data[7][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrBottom());
+        } else {
+            data[7][1] = "--";
+        }
+        if (statistics.getStdErrTop() != 0) {
+            data[8][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrTop());
+        } else {
+            data[8][1] = "--";
+        }
+        data[9][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrHillslope());
+        data[10][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
+        if (statistics.getcIBottom() != null) {
+            data[12][1] = AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[1]);
+        } else {
+            data[12][1] = "--";
+        }
+        if (statistics.getcITop() != null) {
+            data[13][1] = AnalysisUtils.roundThreeDecimals(statistics.getcITop()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcITop()[1]);
+        } else {
+            data[13][1] = "--";
+        }
+        data[14][1] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
+        data[15][1] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
+
+        //set third column (normalized fitting results)
+        fittingResults = analysisResults.getFittingResults(true);
+        statistics = analysisResults.getStatistics(true);
+        data[1][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getBottom());
+        data[2][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getTop());
+        data[3][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getHillslope());
+        data[4][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getLogEC50());
+        data[5][2] = AnalysisUtils.roundThreeDecimals(statistics.getGoodnessOfFit());
+        if (statistics.getStdErrBottom() != 0) {
+            data[7][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrBottom());
+        } else {
+            data[7][2] = "--";
+        }
+        if (statistics.getStdErrTop() != 0) {
+            data[8][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrTop());
+        } else {
+            data[8][2] = "--";
+        }
+        data[9][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrHillslope());
+        data[10][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
+        if (statistics.getcIBottom() != null) {
+            data[12][2] = AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[1]);
+        } else {
+            data[12][2] = "--";
+        }
+        if (statistics.getcITop() != null) {
+            data[13][2] = AnalysisUtils.roundThreeDecimals(statistics.getcITop()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcITop()[1]);
+        } else {
+            data[13][2] = "--";
+        }
+        data[14][2] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
+        data[15][2] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
+
+        String[] columnNames = new String[data[0].length];
+        columnNames[0] = "";
+        columnNames[1] = "Initial fitting";
+        columnNames[2] = "Normalized fitting";
+
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        return nonEditableTableModel;
     }
 
     @Override
@@ -367,7 +484,11 @@ public class GenericDRResultsController extends DRResultsController {
         List<String> parameters = new ArrayList<>();
         parameters.add("Bottom");
         parameters.add("Top");
-        parameters.add("LogEC50");
+        if (doseResponseController.getLogTransform()) {
+            parameters.add("LogEC50");
+        } else {
+            parameters.add("EC50");
+        }
         parameters.add("Hillslope");
         //best-fit values
         List<Double> bestFitValues = new ArrayList<>();
@@ -405,10 +526,12 @@ public class GenericDRResultsController extends DRResultsController {
 
         }
         //add EC50 information
-        PdfUtils.addCustomizedCell(dataTable, "EC50", bodyFont);
-        PdfUtils.addCustomizedCell(dataTable, df.format(statistics.getEc50()), bodyFont);
-        PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
-        PdfUtils.addCustomizedCell(dataTable, df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]), bodyFont);
+        if (doseResponseController.getLogTransform()) {
+            PdfUtils.addCustomizedCell(dataTable, "EC50", bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, df.format(statistics.getEc50()), bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
+            PdfUtils.addCustomizedCell(dataTable, df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]), bodyFont);
+        }
         return dataTable;
     }
 

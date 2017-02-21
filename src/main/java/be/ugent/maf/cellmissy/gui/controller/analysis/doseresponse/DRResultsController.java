@@ -96,8 +96,6 @@ public abstract class DRResultsController {
      */
     protected abstract void initDRResultsPanel();
 
-    protected abstract void initDRResultsData();
-
     protected abstract void setStatistics(DoseResponseAnalysisGroup analysisGroup);
 
     protected abstract void plotCharts();
@@ -126,8 +124,9 @@ public abstract class DRResultsController {
      * Shared methods
      */
     /**
-     * Create the table model for the top panel table. Table contains icon,
-     * log-transformed concentration and normalized slopes per condition
+     * Create the table model for the top panel table. Table contains for both
+     * the initial and normalized fitting: the best-fit values, R², standard
+     * errors and 95% CI.
      *
      * @param analysisGroup
      * @return the model
@@ -238,6 +237,13 @@ public abstract class DRResultsController {
         return nonEditableTableModel;
     }
 
+    /**
+     * Calculate R², EC50, standard errors and confidence intervals.
+     *
+     * @param statisticsHolder
+     * @param resultsHolder
+     * @param dataToFit
+     */
     protected void calculateStatistics(DoseResponseStatisticsHolder statisticsHolder, SigmoidFittingResultsHolder resultsHolder, List<DoseResponsePair> dataToFit) {
         //calculate and set R² and EC50
         statisticsHolder.setGoodnessOfFit(AnalysisUtils.computeRSquared(dataToFit, resultsHolder));
@@ -264,6 +270,14 @@ public abstract class DRResultsController {
         statisticsHolder.setcIEC50(cIEc50);
     }
 
+    /**
+     * Check if there is a standard error (is 0.0 is parameter was constrained).
+     * If so, calculate the confidence interval boundaries.
+     *
+     * @param parameter
+     * @param standardError
+     * @return
+     */
     protected double[] checkAndGetCI(double parameter, double standardError) {
         if (standardError != 0.0) {
             return AnalysisUtils.calculateConfidenceIntervalBoundaries(parameter, standardError);
@@ -272,6 +286,9 @@ public abstract class DRResultsController {
         }
     }
 
+    /**
+     * Logic of adding the report segments.
+     */
     protected void addContent() {
         // overview: title, dataset,  brief summary of the analysis group
         addOverview();
@@ -287,6 +304,9 @@ public abstract class DRResultsController {
         addNormalizedFittingInfo();
     }
 
+    /**
+     * Add information on the analysis group.
+     */
     protected void addAnalysisGroupInfoTable() {
         //add title before the table
         PdfUtils.addTitle(document, "ANALYSIS GROUP SUMMARY", boldFont);

@@ -41,7 +41,7 @@ public class GenericDRNormalizedController extends DRNormalizedController {
      *
      * @return
      */
-    public List<DoseResponsePair> getDataToFit() {
+    protected List<DoseResponsePair> getDataToFit() {
         return dataToFit;
     }
 

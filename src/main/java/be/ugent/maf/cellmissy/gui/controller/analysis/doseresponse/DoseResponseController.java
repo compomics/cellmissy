@@ -14,6 +14,7 @@ import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.JFreeChartUtils;
 import java.awt.GridBagConstraints;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -86,6 +87,7 @@ public abstract class DoseResponseController {
     /**
      * When switching to a different subview, change the model for the main
      * table.
+     *
      * @param tableModel
      */
     public void updateModelInTable(NonEditableTableModel tableModel) {
@@ -118,29 +120,54 @@ public abstract class DoseResponseController {
         }
     }
 
-    protected XYSeries simulateData(SigmoidFittingResultsHolder resultsholder) {
-        return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50());
+    /**
+     * Create a simulated dataset ranging between the extremes using the values
+     * in the resultsHolder class.
+     *
+     * @param resultsholder
+     * @param extremes
+     * @return
+     */
+    protected XYSeries simulateData(SigmoidFittingResultsHolder resultsholder, List<Double> extremes) {
+        return JFreeChartUtils.createFittedDataset(resultsholder.getTop(), resultsholder.getBottom(), resultsholder.getHillslope(), resultsholder.getLogEC50(), extremes);
     }
 
+    /**
+     * Create a dose-response chart containing experimental data, simulated data
+     * and an annotated R² value.
+     *
+     * @param dataToPlot The experimental data on which the fit was performed
+     * @param analysisGroup The analysis group
+     * @param normalized Whether the responses are normalized
+     * @return
+     */
     public JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, DoseResponseAnalysisGroup analysisGroup, boolean normalized) {
-        //setup scatter data of experimental concentrations/slopes, renderer and axis
+        // setup scatter data of experimental concentrations/slopes, renderer and axis
         XYSeriesCollection experimentalData = new XYSeriesCollection();
         XYSeries scatterXYSeries = JFreeChartUtils.generateXYSeries(AnalysisUtils.generateXValues(dataToPlot), AnalysisUtils.generateYValues(dataToPlot));
         scatterXYSeries.setKey("Experimental data");
         experimentalData.addSeries(scatterXYSeries);
 
-        // Create the line data, renderer, and axis
+        // compute how far the simulated data and axes should range: from the lowest and highest dose continue half of the range between these two
+        List<Double> extremes = new ArrayList<>();
+        Double range = Math.abs(scatterXYSeries.getMaxX() - scatterXYSeries.getMinX());
+        extremes.add(scatterXYSeries.getMinX() - (range / 2));
+        extremes.add(scatterXYSeries.getMaxX() + (range / 2));
+
+        // Create the simulated line data, renderer, and axis
         XYSeriesCollection fitting = new XYSeriesCollection();
         // create xy series of simulated data from the parameters from the fitting
         SigmoidFittingResultsHolder resultsHolder = analysisGroup.getDoseResponseAnalysisResults().getFittingResults(normalized);
-        XYSeries fittingData = simulateData(resultsHolder);
+        XYSeries fittingData = simulateData(resultsHolder, extremes);
         fittingData.setKey("Fitting");
         fitting.addSeries(fittingData);
 
-        XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, getPlotAxesNames(normalized));
+        XYPlot plot = JFreeChartUtils.setupDoseResponseDatasets(experimentalData, fitting, getPlotAxesNames(normalized), extremes);
 
-        // show the r squared value
-        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsHolder)), -4, 10.0));
+        // show the r squared value, put the value at a certain place between the min and max dose
+        double xPlace = extremes.get(1) - range;
+        double yPlace = scatterXYSeries.getMinY() + ((scatterXYSeries.getMaxY() - scatterXYSeries.getMinY()) / 4);
+        plot.addAnnotation(new XYTextAnnotation("R2=" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeRSquared(dataToPlot, resultsHolder)), xPlace, yPlace));
 
         // Create the chart with the plot and no legend
         JFreeChart chart = new JFreeChart("Title", JFreeChart.DEFAULT_TITLE_FONT, plot, false);
@@ -180,6 +207,6 @@ public abstract class DoseResponseController {
     protected abstract JFreeChart createDoseResponseChart(List<DoseResponsePair> dataToPlot, boolean normalized);
 
     public abstract List<DoseResponsePair> getDataToFit(boolean normalized);
-    
+
     protected abstract List<String> getPlotAxesNames(boolean normalized);
 }

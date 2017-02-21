@@ -159,7 +159,7 @@ public class AreaDoseResponseController extends DoseResponseController {
     protected void initFirstFitting() {
         dRInitialController.initDRInitialData();
         dRNormalizedController.initDRNormalizedData();
-        dRResultsController.initDRResultsData();
+        calculateStatistics();
     }
 
     /**

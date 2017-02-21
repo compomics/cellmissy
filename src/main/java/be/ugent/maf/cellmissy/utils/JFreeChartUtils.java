@@ -505,7 +505,17 @@ public class JFreeChartUtils {
         xYPlot.getRangeAxis().setRange(maxRange);
     }
 
-    public static XYPlot setupDoseResponseDatasets(XYSeriesCollection dataset1, XYSeriesCollection dataset2, List<String> axesNames) {
+    /**
+     * Create a XYPlot for dose-response graphs containing 2 overlapping
+     * datasets.
+     *
+     * @param dataset1 The imported data
+     * @param dataset2  Simulated data representing the best fit
+     * @param axesNames Names of the X and Y axis
+     * @param extremes How far the axes should scale
+     * @return
+     */
+    public static XYPlot setupDoseResponseDatasets(XYSeriesCollection dataset1, XYSeriesCollection dataset2, List<String> axesNames, List<Double> extremes) {
         //a single plot contains both scatter data and fitted line
         XYPlot plot = new XYPlot();
 
@@ -521,8 +531,10 @@ public class JFreeChartUtils {
         ValueAxis range1 = new NumberAxis(axesNames.get(1));
 
         plot.setRangeAxis(0, range1);
-        domain1.setUpperBound(-3.0);
-        domain1.setLowerBound(-8.0);
+
+        //upper and lowerbounds may vary for migration versus generic data!!!
+        domain1.setUpperBound(extremes.get(1));
+        domain1.setLowerBound(extremes.get(0));
         //range1.setLowerBound(-50.0);
         // Set the scatter data, renderer, and axis into plot
         plot.setDataset(0, dataset1);
@@ -768,10 +780,12 @@ public class JFreeChartUtils {
      * @param bottom Best-fit parameter
      * @param hillslope Best-fit parameter
      * @param logEC50 Best-fit parameter
+     * @param extremes Contains the min and max value of the fitted dataset
+     * range
      * @return 1000 X-Y couples that follow the fitted function (ranging between
-     * x= -8 and x=-3)
+     * the min and max)
      */
-    public static XYSeries createFittedDataset(final double top, final double bottom, final double hillslope, final double logEC50) {
+    public static XYSeries createFittedDataset(final double top, final double bottom, final double hillslope, final double logEC50, List<Double> extremes) {
         Function2D fittedFunction = new Function2D() {
 
             @Override
@@ -779,7 +793,8 @@ public class JFreeChartUtils {
                 return (bottom + (top - bottom) / (1 + Math.pow(10, (logEC50 - conc) * hillslope)));
             }
         };
-        return DatasetUtilities.sampleFunction2DToSeries(fittedFunction, -8, -3, 1000, "fittedfunction");
+        //min-max range will vary between migration and generic data!!!
+        return DatasetUtilities.sampleFunction2DToSeries(fittedFunction, extremes.get(0), extremes.get(1), 1000, "fittedfunction");
     }
 
     /**

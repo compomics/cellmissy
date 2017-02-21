@@ -37,6 +37,15 @@ public class GenericDRInitialController extends DRInitialController {
     @Autowired
     private GenericDoseResponseController doseResponseController;
 
+    /**
+     * Getters and setters
+     *
+     * @return
+     */
+    protected List<DoseResponsePair> getDataToFit() {
+        return dataToFit;
+    }
+
     @Override
     public void initDRInitialData() {
         //Log transform concentrations if needed, keeping responses the same

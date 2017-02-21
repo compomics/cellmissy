@@ -125,7 +125,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     protected void initFirstFitting() {
         dRInitialController.initDRInitialData();
         dRNormalizedController.initDRNormalizedData();
-        dRResultsController.initDRResultsData();
+        calculateStatistics();
     }
 
     /**
@@ -170,7 +170,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         if (normalized) {
             return dRNormalizedController.getDataToFit();
         } else {
-            return dRAnalysisGroup.getDoseResponseData();
+            return dRInitialController.getDataToFit();
         }
     }
 
@@ -242,6 +242,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         loadGenericDRDataController.reset();
         dRInputController.reset();
         importedDRDataHolder = null;
+        setFirstFitting(true);
         getCardLayout().first(genericDRParentPanel.getContentPanel());
         onCardSwitch();
         genericDRParentPanel.getCancelButton().setEnabled(false);

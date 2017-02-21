@@ -55,16 +55,6 @@ public class AreaDRResultsController extends DRResultsController {
     private AreaDoseResponseController doseResponseController;
 
     /**
-     * When changing view to results panel, calculate statistics, set table
-     * model and re-plot fittings.
-     */
-    @Override
-    public void initDRResultsData() {
-        setStatistics(doseResponseController.getdRAnalysisGroup());
-        setTableModel(createTableModel(doseResponseController.getdRAnalysisGroup()));
-    }
-
-    /**
      * Calculate statistics and set corresponding fields in analysisResults
      * class. Called by sibling controllers after fitting.
      *
