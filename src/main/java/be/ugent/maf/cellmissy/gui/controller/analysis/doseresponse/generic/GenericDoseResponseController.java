@@ -318,6 +318,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         //dataTable.setColumnSelectionAllowed(false);
         //dataTable.setRowSelectionAllowed(false);
         dRPanel.getDatatableDRPanel().add(scrollPane, BorderLayout.CENTER);
+        setLogTransform(true);
 
         /**
          * Action listeners for uppermost panel.
