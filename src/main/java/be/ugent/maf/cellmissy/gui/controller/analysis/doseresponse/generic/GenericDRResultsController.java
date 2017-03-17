@@ -516,7 +516,7 @@ public class GenericDRResultsController extends DRResultsController {
             //parameter name in 1st column
             PdfUtils.addCustomizedCell(dataTable, parameters.get(row), bodyFont);
             PdfUtils.addCustomizedCell(dataTable, AnalysisUtils.roundThreeDecimals(bestFitValues.get(row)).toString(), bodyFont);
-            if (standardErrors.get(row) == 0.0) {
+            if (standardErrors.get(row) == 0.0 || Double.isNaN(standardErrors.get(row))) {
                 PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
                 PdfUtils.addCustomizedCell(dataTable, "--", bodyFont);
             } else {

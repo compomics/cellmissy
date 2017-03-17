@@ -166,31 +166,41 @@ public abstract class DRResultsController {
         data[4][1] = AnalysisUtils.roundThreeDecimals(fittingResults.getLogEC50());
         data[5][1] = df.format(analysisResults.getStatistics(false).getEc50());
         data[6][1] = AnalysisUtils.roundThreeDecimals(statistics.getGoodnessOfFit());
-        if (statistics.getStdErrBottom() != 0) {
+        //in case of bad fitting standard errors can be NaN, giving a NumberFormatException
+        if (statistics.getStdErrBottom() != 0 && !(Double.isNaN(statistics.getStdErrBottom()))) {
             data[8][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrBottom());
         } else {
             data[8][1] = "--";
         }
-        if (statistics.getStdErrTop() != 0) {
+        if (statistics.getStdErrTop() != 0 && !(Double.isNaN(statistics.getStdErrTop()))) {
             data[9][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrTop());
         } else {
             data[9][1] = "--";
         }
         data[10][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrHillslope());
-        data[11][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
-        if (statistics.getcIBottom() != null) {
+        try {
+            data[11][1] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
+        } catch (NumberFormatException e) {
+            data[11][1] = "??";
+        }
+        if (data[8][1] != "--") {
             data[13][1] = AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[1]);
         } else {
             data[13][1] = "--";
         }
-        if (statistics.getcITop() != null) {
+        if (data[9][1] != "--") {
             data[14][1] = AnalysisUtils.roundThreeDecimals(statistics.getcITop()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcITop()[1]);
         } else {
             data[14][1] = "--";
         }
         data[15][1] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
-        data[16][1] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
-        data[17][1] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
+        if (data[11][1] != "??") {
+            data[16][1] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
+            data[17][1] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
+        } else {
+            data[16][1] = "--";
+            data[17][1] = "--";
+        }
 
         //set third column (normalized fitting results)
         fittingResults = analysisResults.getFittingResults(true);
@@ -201,31 +211,40 @@ public abstract class DRResultsController {
         data[4][2] = AnalysisUtils.roundThreeDecimals(fittingResults.getLogEC50());
         data[5][2] = df.format(statistics.getEc50());
         data[6][2] = AnalysisUtils.roundThreeDecimals(statistics.getGoodnessOfFit());
-        if (statistics.getStdErrBottom() != 0) {
+        if (statistics.getStdErrBottom() != 0 && !(Double.isNaN(statistics.getStdErrBottom()))) {
             data[8][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrBottom());
         } else {
             data[8][2] = "--";
         }
-        if (statistics.getStdErrTop() != 0) {
+        if (statistics.getStdErrTop() != 0 && !(Double.isNaN(statistics.getStdErrTop()))) {
             data[9][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrTop());
         } else {
             data[9][2] = "--";
         }
         data[10][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrHillslope());
-        data[11][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
-        if (statistics.getcIBottom() != null) {
+        try {
+            data[11][2] = AnalysisUtils.roundThreeDecimals(statistics.getStdErrLogEC50());
+        } catch (NumberFormatException e) {
+            data[11][2] = "??";
+        }
+        if (data[8][2] != "--") {
             data[13][2] = AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIBottom()[1]);
         } else {
             data[13][2] = "--";
         }
-        if (statistics.getcITop() != null) {
+        if (data[9][2] != "--") {
             data[14][2] = AnalysisUtils.roundThreeDecimals(statistics.getcITop()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcITop()[1]);
         } else {
             data[14][2] = "--";
         }
         data[15][2] = AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcIHillslope()[1]);
-        data[16][2] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
-        data[17][2] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
+        if (data[11][1] != "??") {
+            data[16][2] = AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[0]) + " to " + AnalysisUtils.roundThreeDecimals(statistics.getcILogEC50()[1]);
+            data[17][2] = df.format(statistics.getcIEC50()[0]) + " to " + df.format(statistics.getcIEC50()[1]);
+        } else {
+            data[16][2] = "--";
+            data[17][2] = "--";
+        }
 
         String[] columnNames = new String[data[0].length];
         columnNames[0] = "";
