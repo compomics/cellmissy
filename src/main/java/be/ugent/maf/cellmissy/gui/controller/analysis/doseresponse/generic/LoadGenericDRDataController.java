@@ -94,8 +94,6 @@ public class LoadGenericDRDataController {
         dRDataHolder.setPlateFormat(dataLoadingPanel.getPlateFormatTextField().getText());
         dRDataHolder.setTreatmentName(dataLoadingPanel.getTreatmentTextField().getText());
         dRDataHolder.setPurpose(dataLoadingPanel.getPurposeTextArea().getText());
-
-        // more might follow after reviewing the terms
     }
 
     /**
