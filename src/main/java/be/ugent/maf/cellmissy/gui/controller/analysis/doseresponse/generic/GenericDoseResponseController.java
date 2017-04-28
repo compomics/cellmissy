@@ -203,7 +203,7 @@ public class GenericDoseResponseController extends DoseResponseController {
     protected NonEditableTableModel updateTableModel(NonEditableTableModel tableModel) {
         String[] newIdentifiers = new String[tableModel.getColumnCount()];
         if (getLogTransform()) {
-            newIdentifiers[0] = "Log-dose";
+            newIdentifiers[0] = "Log10-dose";
         } else {
             newIdentifiers[0] = "Dose";
         }
@@ -220,7 +220,7 @@ public class GenericDoseResponseController extends DoseResponseController {
         List<String> result = new ArrayList<>();
         //check if dose is logtransformed
         if (logTransform) {
-            result.add("Log of Dose");
+            result.add("Log10 of Dose");
         } else {
             result.add("Dose");
         }

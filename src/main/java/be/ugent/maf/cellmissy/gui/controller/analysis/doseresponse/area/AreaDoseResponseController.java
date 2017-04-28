@@ -422,7 +422,7 @@ public class AreaDoseResponseController extends DoseResponseController {
     @Override
     protected List<String> getPlotAxesNames(boolean normalized) {
         List<String> result = new ArrayList<>();
-        result.add("Log of concentration");
+        result.add("Log10 of concentration");
         if (normalized) {
             result.add("Response (%)");
         } else {
