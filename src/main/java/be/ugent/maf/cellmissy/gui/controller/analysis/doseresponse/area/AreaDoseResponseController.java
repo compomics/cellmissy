@@ -143,6 +143,7 @@ public class AreaDoseResponseController extends DoseResponseController {
      * Called by parent controller, initialise tables
      */
     public void onDoseResponse() {
+        dRPanel.getInputDRButton().setSelected(true);
         dRInputController.initDRInputData();
         //switch shared table view
         updateModelInTable(dRInputController.getTableModel());
