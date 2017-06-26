@@ -11,7 +11,6 @@ import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.exception.FileParserException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,13 +66,13 @@ public class GenericInputFileParserTest {
         File genericDoseResponseFile = new File(GenericInputFileParserTest.class.getClassLoader().getResource("generic_doseresponse.csv").getPath());
         try {
             List<DoseResponsePair> doseResponseData = genericInputFileParser.parseDoseResponseFile(genericDoseResponseFile);
-            assertEquals(4, doseResponseData.size());
+            Assert.assertEquals(4, doseResponseData.size(), 0);
             List<Double> controlResponses = doseResponseData.get(0).getResponses();
             List<Double> expected = new ArrayList<>();
             expected.add(1.2);
             expected.add(1.3);
             expected.add(1.0);
-            assertEquals(expected, controlResponses);
+            Assert.assertEquals(expected, controlResponses);
         } catch (FileParserException ex) {
             Logger.getLogger(GenericInputFileParserTest.class.getName()).log(Level.SEVERE, null, ex);
         }
