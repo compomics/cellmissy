@@ -6,9 +6,6 @@ package be.ugent.maf.cellmissy.utils;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
-import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
-import be.ugent.maf.cellmissy.entity.result.area.doseresponse.DoseResponseAnalysisGroup;
-import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.DoseResponsePair;
 import be.ugent.maf.cellmissy.entity.result.doseresponse.SigmoidFittingResultsHolder;
 import java.text.DecimalFormat;
@@ -83,18 +80,6 @@ public class AnalysisUtils {
      * @param data
      * @return the same 2D array but transposed
      */
-    public static double[][] transpose2DArray(double[][] data) {
-        double[][] transposed = new double[data[0].length][data.length];
-        for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {
-            for (int columnIndex = 0; columnIndex < data[0].length; columnIndex++) {
-                if (data[rowIndex][columnIndex] != 0.0) {
-                    transposed[columnIndex][rowIndex] = data[rowIndex][columnIndex];
-                }
-            }
-        }
-        return transposed;
-    }
-
     public static double[][] transpose2DArray(double[][] data) {
         double[][] transposed = new double[data[0].length][data.length];
         for (int rowIndex = 0; rowIndex < data.length; rowIndex++) {

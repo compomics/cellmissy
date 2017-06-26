@@ -7,7 +7,6 @@ package be.ugent.maf.cellmissy.analysis;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import org.junit.Assert;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
