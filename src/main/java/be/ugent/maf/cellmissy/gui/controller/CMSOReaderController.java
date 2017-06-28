@@ -84,10 +84,20 @@ public class CMSOReaderController {
     // (to return a new class seems dumb)
     // ++ what in case of multiple  datapackages? show all in text
     //      and force user to choose one for analysis when continuing
-    private void parseCMSODataset(File file) {
+    
+    /**
+     * 
+     * @param file A folder that contains a CMSO dataset
+     */
+    private void parseCMSODataset(File datasetFolder) {
         try {
-            //parsing and setting separated into two lines for debugging
-            data = Parser.parseFile(file);
+//            //in case of using separate parser
+//            data = Parser.parseFile(file);
+            
+            //go into isa folder
+            File isa = new File(datasetFolder.getCanonicalPath() + "\\isa");
+            //search for ome companion file
+            File companionOME = new File(datasetFolder.getCanonicalPath() + "");
         } catch (FileParserException ex) {
             LOG.error(ex.getMessage());
             cellMissyController.showMessage(ex.getMessage(), "Error in input file", JOptionPane.ERROR_MESSAGE);
