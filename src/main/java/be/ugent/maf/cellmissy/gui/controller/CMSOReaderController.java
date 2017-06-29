@@ -40,12 +40,7 @@ public class CMSOReaderController {
      * Initialize view
      */
     private void initCMSOReaderPanel() {
-        //make summary text areas uneditable
-        cmsoReaderPanel.getSummaryTextArea().setEditable(false);
-        cmsoReaderPanel.getIsaTextArea().setEditable(false);
-        cmsoReaderPanel.getOmeTextArea().setEditable(false);
-        cmsoReaderPanel.getDpTextArea().setEditable(false);
-
+        
         /**
          * Action Listeners
          */
