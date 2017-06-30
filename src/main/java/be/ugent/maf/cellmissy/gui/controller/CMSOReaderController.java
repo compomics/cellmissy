@@ -9,9 +9,14 @@ import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileFilter;
+import loci.formats.FormatException;
+import loci.formats.IFormatReader;
+import loci.formats.in.OMEXMLReader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -40,7 +45,7 @@ public class CMSOReaderController {
      * Initialize view
      */
     private void initCMSOReaderPanel() {
-        
+
         /**
          * Action Listeners
          */
@@ -63,8 +68,7 @@ public class CMSOReaderController {
                     if (chosenFile.getName().startsWith("cmsodataset")) {
                         cmsoReaderPanel.getFolderTextField().setText(chosenFile.getAbsolutePath());
                         parseCMSODataset(chosenFile);
-                    } 
-                    // else display error popup
+                    } // else display error popup
                     else {
                         JOptionPane.showMessageDialog(cmsoReaderPanel, "The chosen directory does not seem to be a CMSO dataset", "Folder name incorrect", JOptionPane.INFORMATION_MESSAGE);
                     }
@@ -79,23 +83,63 @@ public class CMSOReaderController {
     // (to return a new class seems dumb)
     // ++ what in case of multiple  datapackages? show all in text
     //      and force user to choose one for analysis when continuing
-    
     /**
-     * 
+     *
      * @param file A folder that contains a CMSO dataset
      */
     private void parseCMSODataset(File datasetFolder) {
         try {
 //            //in case of using separate parser
 //            data = Parser.parseFile(file);
-            
-            //go into isa folder
-            File isa = new File(datasetFolder.getCanonicalPath() + "\\isa");
-            //search for ome companion file
-            File companionOME = new File(datasetFolder.getCanonicalPath() + "");
-        } catch (FileParserException ex) {
+
+            File[] entireDataset = datasetFolder.listFiles();
+            File[] isaFiles;
+            File omeFile;
+            List<File> biotracksFolders = new ArrayList<>(); //separate folder per tracking software used
+
+            for (File file : entireDataset) {
+                String name = file.getName();
+
+                //get all isa files
+                if (name.endsWith("isa")) {
+                    isaFiles = file.listFiles();
+
+                    String isaText = "";
+                    for (File isaFile : isaFiles) {
+                        isaText += isaFile.getName();
+                    }
+
+                    cmsoReaderPanel.getIsaTextArea().setText(isaText);
+
+                } //Search for ome companion file. Array will contain only one file
+                else if (name.endsWith("companion.ome")) {
+                    omeFile = file;
+                    IFormatReader reader = new OMEXMLReader();
+                    reader.setId(omeFile.getAbsolutePath());
+
+                    String omeText = "File name: " + omeFile.getName();
+                    omeText += "Total amount of images = " + reader.getImageCount() + "\n";
+                    omeText += "Dataset structure: " + reader.getDatasetStructureDescription() + "\n";
+
+                    cmsoReaderPanel.getOmeTextArea().setText(omeText);
+
+                } //For biotracks we can't check the name or path since it will be the name of the tracking software
+                else if (file.isDirectory() && !name.endsWith("miacme")) {
+                    biotracksFolders.add(file);
+                    
+                    String biotracksText = "";
+                    
+                    cmsoReaderPanel.getBiotracksTextArea().setText(biotracksText);
+
+                }
+            }
+
+        } catch (FormatException ex) {
             LOG.error(ex.getMessage());
-            cellMissyController.showMessage(ex.getMessage(), "Error in input file", JOptionPane.ERROR_MESSAGE);
+            cellMissyController.showMessage(ex.getMessage(), "Something went wrong while reading a file", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage());
+            cellMissyController.showMessage(ex.getMessage(), "Something seems wrong with the input", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

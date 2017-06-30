@@ -26,8 +26,8 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         return chooseFolderButton;
     }
 
-    public JTextArea getDpTextArea() {
-        return dpTextArea;
+    public JTextArea getBiotracksTextArea() {
+        return biotracksTextArea;
     }
 
     public JTextField getFolderTextField() {
@@ -68,7 +68,7 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         omeTextArea = new javax.swing.JTextArea();
         jScrollPane4 = new javax.swing.JScrollPane();
-        dpTextArea = new javax.swing.JTextArea();
+        biotracksTextArea = new javax.swing.JTextArea();
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -185,12 +185,12 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
 
         jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Biotracks", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
 
-        dpTextArea.setEditable(false);
-        dpTextArea.setColumns(20);
-        dpTextArea.setLineWrap(true);
-        dpTextArea.setRows(5);
-        dpTextArea.setWrapStyleWord(true);
-        jScrollPane4.setViewportView(dpTextArea);
+        biotracksTextArea.setEditable(false);
+        biotracksTextArea.setColumns(20);
+        biotracksTextArea.setLineWrap(true);
+        biotracksTextArea.setRows(5);
+        biotracksTextArea.setWrapStyleWord(true);
+        jScrollPane4.setViewportView(biotracksTextArea);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -203,7 +203,6 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(6, 107, 60, 108);
         jPanel2.add(jScrollPane4, gridBagConstraints);
-        jScrollPane4.getAccessibleContext().setAccessibleName("Biotracks");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -220,8 +219,8 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea biotracksTextArea;
     private javax.swing.JButton chooseFolderButton;
-    private javax.swing.JTextArea dpTextArea;
     private javax.swing.JTextField folderTextField;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JTextArea isaTextArea;
