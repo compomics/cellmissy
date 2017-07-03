@@ -100,13 +100,20 @@ public class CMSOReaderController {
             for (File file : entireDataset) {
                 String name = file.getName();
 
+                //put entire readme contents in summary text block
+                if (name.equalsIgnoreCase("readme.md")) {
+                    String summaryText = "";
+                    
+                    cmsoReaderPanel.getSummaryTextArea().setText(summaryText);
+                }
+
                 //get all isa files
                 if (name.endsWith("isa")) {
                     isaFiles = file.listFiles();
 
                     String isaText = "";
                     for (File isaFile : isaFiles) {
-                        isaText += isaFile.getName();
+                        isaText += isaFile.getName() + "\n";
                     }
 
                     cmsoReaderPanel.getIsaTextArea().setText(isaText);
@@ -126,9 +133,9 @@ public class CMSOReaderController {
                 } //For biotracks we can't check the name or path since it will be the name of the tracking software
                 else if (file.isDirectory() && !name.endsWith("miacme")) {
                     biotracksFolders.add(file);
-                    
+
                     String biotracksText = "";
-                    
+
                     cmsoReaderPanel.getBiotracksTextArea().setText(biotracksText);
 
                 }
