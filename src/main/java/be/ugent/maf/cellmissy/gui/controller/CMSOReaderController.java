@@ -20,11 +20,14 @@ import loci.formats.FormatException;
 import loci.formats.IFormatReader;
 import loci.formats.in.OMEXMLReader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.apache.commons.io.FileUtils;
 
 /**
  *
  * @author CompOmics Gwen
  */
+@Controller("cMSOReaderController")
 public class CMSOReaderController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CMSOReaderController.class);
@@ -124,6 +127,8 @@ public class CMSOReaderController {
                 //put entire readme contents in summary text block
                 if (name.equalsIgnoreCase("readme.md")) {
                     String summaryText = "";
+                    //read file
+                    summaryText += FileUtils.readFileToString(file, "UTF-8");
 
                     cmsoReaderPanel.getSummaryTextArea().setText(summaryText);
                 }

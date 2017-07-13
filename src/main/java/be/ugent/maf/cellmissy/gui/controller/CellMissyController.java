@@ -585,6 +585,8 @@ public class CellMissyController {
                 genericArea = menuItemText.equalsIgnoreCase("... area from generic input");
             } else if (menuItemText.equalsIgnoreCase("... dose-response") && switchCard(menuItemText)) {
                 onDoseResponse();
+            } else if (menuItemText.equalsIgnoreCase("... CMSO dataset") && switchCard(menuItemText)) {
+                onLoadingCSMODataset();
             }
         }
     }
