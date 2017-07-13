@@ -140,6 +140,8 @@ public class CMSOReaderController {
                     String isaText = "";
                     for (File isaFile : isaFiles) {
                         isaText += isaFile.getName() + "\n";
+                        
+                        //check file name and get appropriate summary information
                     }
 
                     cmsoReaderPanel.getIsaTextArea().setText(isaText);
@@ -158,7 +160,11 @@ public class CMSOReaderController {
 
                 } //For biotracks we can't check the name or path since it will be the name of the tracking software
                 else if (file.isDirectory() && !name.endsWith("miacme")) {
+                    //add every inner folder to list (all called "dp")
+                    //might need to retain name of tracking software when implementing downstream analysis
                     biotracksFolders.add(file);
+                    
+                    // dp folders contain objects and links csv and json metadata
 
                     String biotracksText = "";
 
