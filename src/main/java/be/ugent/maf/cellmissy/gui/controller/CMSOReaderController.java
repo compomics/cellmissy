@@ -80,9 +80,22 @@ public class CMSOReaderController {
                 }
             }
         });
-        
+
         //add panel to main view
         cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().add(cmsoReaderPanel, gridBagConstraints);
+    }
+
+    /**
+     * Called in the main controller, resetData views and models if another view
+     * has being shown
+     */
+    public void resetAfterCardSwitch() {
+        //reset text fields
+        cmsoReaderPanel.getFolderTextField().setText("");
+        cmsoReaderPanel.getSummaryTextArea().setText("");
+        cmsoReaderPanel.getIsaTextArea().setText("");
+        cmsoReaderPanel.getOmeTextArea().setText("");
+        cmsoReaderPanel.getBiotracksTextArea().setText("");
     }
 
     // need to read isa, ome and ../dp stuff and display
@@ -111,8 +124,7 @@ public class CMSOReaderController {
                 //put entire readme contents in summary text block
                 if (name.equalsIgnoreCase("readme.md")) {
                     String summaryText = "";
-                    
-                    
+
                     cmsoReaderPanel.getSummaryTextArea().setText(summaryText);
                 }
 
