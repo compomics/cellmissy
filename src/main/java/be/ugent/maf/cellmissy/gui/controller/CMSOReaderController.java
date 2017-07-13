@@ -6,6 +6,8 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -32,11 +34,14 @@ public class CMSOReaderController {
     // parent controller
     @Autowired
     private CellMissyController cellMissyController;
+    //services
+    private GridBagConstraints gridBagConstraints;
 
     /**
      * Initialize controller
      */
     public void init() {
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //init view
         initCMSOReaderPanel();
     }
@@ -75,6 +80,9 @@ public class CMSOReaderController {
                 }
             }
         });
+        
+        //add panel to main view
+        cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().add(cmsoReaderPanel, gridBagConstraints);
     }
 
     // need to read isa, ome and ../dp stuff and display
@@ -103,6 +111,7 @@ public class CMSOReaderController {
                 //put entire readme contents in summary text block
                 if (name.equalsIgnoreCase("readme.md")) {
                     String summaryText = "";
+                    
                     
                     cmsoReaderPanel.getSummaryTextArea().setText(summaryText);
                 }

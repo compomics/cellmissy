@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-/*
+ /*
  * CellMissyFrame.java
  *
  * Created on Mar 27, 2012, 4:45:13 PM
@@ -149,6 +149,14 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return importTemplateMenuItem;
     }
 
+    public JMenuItem getCmsoMenuItem() {
+        return cmsoMenuItem;
+    }
+
+    public JPanel getCmsoDatasetParentPanel() {
+        return cmsoDatasetParentPanel;
+    }
+
     /**
      * This method is called from within the constructor to initialise the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -170,6 +178,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
         areaAnalysisParentPanel = new javax.swing.JPanel();
         singleCellAnalysisParentPanel = new javax.swing.JPanel();
         doseResponseAnalysisParentPanel = new javax.swing.JPanel();
+        cmsoDatasetParentPanel = new javax.swing.JPanel();
         cellMissyMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newExperimentMenuItem = new javax.swing.JMenuItem();
@@ -179,6 +188,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
         singleCellGenericMenuItem = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         cellMiaMenuItem = new javax.swing.JMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        cmsoMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         jMenu1 = new javax.swing.JMenu();
         areaAnalysisMenuItem = new javax.swing.JMenuItem();
@@ -325,6 +336,19 @@ public class CellMissyFrame extends javax.swing.JFrame {
         doseResponseAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
         backgroundPanel.add(doseResponseAnalysisParentPanel, "doseResponseAnalysisParentPanel");
 
+        javax.swing.GroupLayout cmsoDatasetParentPanelLayout = new javax.swing.GroupLayout(cmsoDatasetParentPanel);
+        cmsoDatasetParentPanel.setLayout(cmsoDatasetParentPanelLayout);
+        cmsoDatasetParentPanelLayout.setHorizontalGroup(
+            cmsoDatasetParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 734, Short.MAX_VALUE)
+        );
+        cmsoDatasetParentPanelLayout.setVerticalGroup(
+            cmsoDatasetParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 559, Short.MAX_VALUE)
+        );
+
+        backgroundPanel.add(cmsoDatasetParentPanel, "card9");
+
         cellMissyMenuBar.setBackground(java.awt.Color.white);
         cellMissyMenuBar.setAlignmentY(0.5F);
         cellMissyMenuBar.setMinimumSize(new java.awt.Dimension(5, 2));
@@ -357,6 +381,10 @@ public class CellMissyFrame extends javax.swing.JFrame {
         cellMiaMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         cellMiaMenuItem.setText("... data from CELLMIA");
         loadDataMenu.add(cellMiaMenuItem);
+        loadDataMenu.add(jSeparator7);
+
+        cmsoMenuItem.setText("... CMSO dataset");
+        loadDataMenu.add(cmsoMenuItem);
 
         fileMenu.add(loadDataMenu);
         fileMenu.add(jSeparator4);
@@ -511,6 +539,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
+    private javax.swing.JPanel cmsoDatasetParentPanel;
+    private javax.swing.JMenuItem cmsoMenuItem;
     private javax.swing.JPanel doseResponseAnalysisParentPanel;
     private javax.swing.JMenuItem doseResponseMenuItem;
     private javax.swing.JMenu editMenu;
@@ -539,6 +569,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JMenu loadDataMenu;

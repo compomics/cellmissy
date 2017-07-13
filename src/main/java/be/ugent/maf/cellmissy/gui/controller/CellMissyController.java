@@ -64,6 +64,7 @@ public class CellMissyController {
     private boolean firstDoseResponseAnalysis;
     private boolean firstLoadingFromCellMia;
     private boolean firstLoadingFromGenericInput;
+    private boolean firstCMSOLoading;
     //view
     //main frame
     private CellMissyFrame cellMissyFrame;
@@ -101,6 +102,8 @@ public class CellMissyController {
     private ImportExportController importExportController;
     @Autowired
     private TracksWriterController tracksWriterController;
+    @Autowired
+    private CMSOReaderController cMSOReaderController;
 
     /**
      * Get main frame
@@ -167,6 +170,7 @@ public class CellMissyController {
         firstDoseResponseAnalysis = true;
         firstLoadingFromCellMia = true;
         firstLoadingFromGenericInput = true;
+        firstCMSOLoading = true;
         //init child controllers
         setupExperimentController.init();
         loadExperimentFromCellMiaController.init();
@@ -182,6 +186,7 @@ public class CellMissyController {
         assayManagementController.init();
         importExportController.init();
         tracksWriterController.init();
+        cMSOReaderController.init();
         // initialize main frame
         initMainFrame();
         // initialize start up dialog
@@ -615,6 +620,17 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
         firstLoadingFromCellMia = false;
+    }
+    
+    /**
+     * Action performed on loading CMSO dataset
+     */
+    private void onLoadingCSMODataset() {
+        if (!firstCMSOLoading) {
+            cMSOReaderController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getCmsoDatasetParentPanel().getName());
+        firstCMSOLoading = false;
     }
 
     /**
