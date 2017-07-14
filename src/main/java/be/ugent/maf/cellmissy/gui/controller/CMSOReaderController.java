@@ -140,8 +140,10 @@ public class CMSOReaderController {
                     String isaText = "";
                     for (File isaFile : isaFiles) {
                         isaText += isaFile.getName() + "\n";
-                        
+
                         //check file name and get appropriate summary information
+                        // Study and assay files: rows = replicate, columns = data
+                        // since we want general information, only parse investigation file
                     }
 
                     cmsoReaderPanel.getIsaTextArea().setText(isaText);
@@ -161,16 +163,26 @@ public class CMSOReaderController {
                 } //For biotracks we can't check the name or path since it will be the name of the tracking software
                 else if (file.isDirectory() && !name.endsWith("miacme")) {
                     //add every inner folder to list (all called "dp")
-                    //might need to retain name of tracking software when implementing downstream analysis
+                    //when implementing downstream analysis, might need to make biotracksFolders a class member
                     biotracksFolders.add(file);
-                    
-                    // dp folders contain objects and links csv and json metadata
-
-                    String biotracksText = "";
-
-                    cmsoReaderPanel.getBiotracksTextArea().setText(biotracksText);
 
                 }
+
+                if (!biotracksFolders.isEmpty()) {
+                    // dp folders contain objects and links csv and json metadata
+                    String biotracksText = "";
+
+                    for (File trackingData : biotracksFolders) {
+                        // per folder, show: software name, total #objects, 
+                        // total #links + parameters contained in objects table (x,y,z,t...)
+                        biotracksText += "Software: " + trackingData.getName() + "\n";
+                        //only need the csv's
+                        File[] dp = trackingData.listFiles();
+                    }
+
+                    cmsoReaderPanel.getBiotracksTextArea().setText(biotracksText);
+                }
+
             }
 
         } catch (FormatException ex) {
