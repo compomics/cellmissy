@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 
 /**
  *
- * @author CompOmics Gwen
+ * @author Gwendolien Sergeant
  */
 public class CMSOReaderPanel extends javax.swing.JPanel {
 

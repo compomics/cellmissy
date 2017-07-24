@@ -336,18 +336,10 @@ public class CellMissyFrame extends javax.swing.JFrame {
         doseResponseAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
         backgroundPanel.add(doseResponseAnalysisParentPanel, "doseResponseAnalysisParentPanel");
 
-        javax.swing.GroupLayout cmsoDatasetParentPanelLayout = new javax.swing.GroupLayout(cmsoDatasetParentPanel);
-        cmsoDatasetParentPanel.setLayout(cmsoDatasetParentPanelLayout);
-        cmsoDatasetParentPanelLayout.setHorizontalGroup(
-            cmsoDatasetParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 734, Short.MAX_VALUE)
-        );
-        cmsoDatasetParentPanelLayout.setVerticalGroup(
-            cmsoDatasetParentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 559, Short.MAX_VALUE)
-        );
-
-        backgroundPanel.add(cmsoDatasetParentPanel, "card9");
+        cmsoDatasetParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        cmsoDatasetParentPanel.setName("cmsoDatasetParentPanel"); // NOI18N
+        cmsoDatasetParentPanel.setLayout(new java.awt.GridBagLayout());
+        backgroundPanel.add(cmsoDatasetParentPanel, "cmsoDatasetParentPanel");
 
         cellMissyMenuBar.setBackground(java.awt.Color.white);
         cellMissyMenuBar.setAlignmentY(0.5F);

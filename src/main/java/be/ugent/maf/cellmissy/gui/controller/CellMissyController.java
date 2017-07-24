@@ -379,8 +379,10 @@ public class CellMissyController {
         cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
         // single cell analysis
         cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
-        //generic dose-response analysis
+        // generic dose-response analysis
         cellMissyFrame.getDoseResponseMenuItem().addActionListener(itemActionListener);
+        // CMSO dataset
+        cellMissyFrame.getCmsoMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override

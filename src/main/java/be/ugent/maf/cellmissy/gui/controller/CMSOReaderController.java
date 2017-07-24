@@ -44,6 +44,7 @@ public class CMSOReaderController {
      * Initialize controller
      */
     public void init() {
+        cmsoReaderPanel = new CMSOReaderPanel();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         //init view
         initCMSOReaderPanel();
