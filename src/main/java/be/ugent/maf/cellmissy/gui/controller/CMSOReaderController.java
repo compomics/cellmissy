@@ -255,36 +255,38 @@ public class CMSOReaderController {
                     text += "STUDY FILE: \n";
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
-                    
+
+                    // the information we want to show
                     String sourceName = "Sources: ";
                     String organism = "Organisms: ";
                     String celltypes = "Cell types: ";
                     String agentType = "Perturbation type ";
                     String agentName = "Perturbation name: ";
                     // cannot add concentrations because "unit" is not a unique column name
-                    
+
                     for (int row = 0; row < csvRecords.size(); row++) {
+                        // for each row: check if information is not already recorded in the String
                         CSVRecord cSVRecord = csvRecords.get(row);
-                        if (! sourceName.contains(cSVRecord.get("Source Name"))) {
+                        if (!sourceName.contains(cSVRecord.get("Source Name"))) {
                             sourceName += cSVRecord.get("Source Name") + " // ";
                         }
-                        if (! organism.contains(cSVRecord.get("Characteristics[organism]"))) {
+                        if (!organism.contains(cSVRecord.get("Characteristics[organism]"))) {
                             organism += cSVRecord.get("Characteristics[organism]") + " // ";
                         }
-                        if (! celltypes.contains(cSVRecord.get("Characteristics[cell]"))) {
+                        if (!celltypes.contains(cSVRecord.get("Characteristics[cell]"))) {
                             celltypes += cSVRecord.get("Characteristics[cell]") + " // ";
                         }
-                        if (! agentType.contains(cSVRecord.get("Parameter Value[perturbation agent type]"))) {
+                        if (!agentType.contains(cSVRecord.get("Parameter Value[perturbation agent type]"))) {
                             agentType += cSVRecord.get("Parameter Value[perturbation agent type]") + " // ";
                         }
-                        if (! agentName.contains(cSVRecord.get("Parameter Value[perturbation agent]"))) {
+                        if (!agentName.contains(cSVRecord.get("Parameter Value[perturbation agent]"))) {
                             agentName += cSVRecord.get("Parameter Value[perturbation agent]") + " // ";
                         }
-                        
+
                     }
-                    
-                    text += sourceName + "\n" + organism + "\n" + celltypes + "\n" +
-                            agentType + "\n" + agentName + "\n";
+                    // add modules of information to end string
+                    text += sourceName + "\n" + organism + "\n" + celltypes + "\n"
+                            + agentType + "\n" + agentName + "\n";
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Study file", ex);
                 }
@@ -301,30 +303,32 @@ public class CMSOReaderController {
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
-                    
-                    
-                    
-                    
+                    // the information we want to show
+                    String imagingTechnique = "Imaging Technique: ";
+                    String software = "Software: ";
+                    // can't include acquisition time and interval because of multiple "unit" columns
+
+                    for (int row = 0; row < csvRecords.size(); row++) {
+                        // for each row: check if information is not already recorded in the String
+                        CSVRecord cSVRecord = csvRecords.get(row);
+                        if (!imagingTechnique.contains(cSVRecord.get("Parameter Value[imaging technique]"))) {
+                            imagingTechnique += cSVRecord.get("Parameter Value[imaging technique]") + " // ";
+                        }
+                        //next check is a bit useless since the software will be the same for the whole assay but the info needs to be added anyway
+                        if (!software.contains(cSVRecord.get("Parameter Value[software]"))) {
+                            software += cSVRecord.get("Parameter Value[software]") + " // ";
+                        }
+                    }
+                    text += imagingTechnique + "\n" + software + "\n";
+
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Assay file", ex);
                 }
 
                 isaTextArray[2] = text;
             }
-            isaText += isaFile.getName() + "\n";
-
-            //check file name and get appropriate summary information
-            // Study and assay files: rows = replicate, columns = data
-            // since we want general information, only parse investigation file (...?)
-            List<String> miacmeAssay = 
-        
-        
-        
-        ["SampleName", "AssayName", "Assaytype", "imagingModality", "ImagingSequenceType", 
-                        "ObservationPeriod", "ChannelDefinition", "PixelSize", "RawDataFile"];
-                    
-    }
-        
-        isaText = isaTextArray.toString();
+        }
+        isaText = Arrays.toString(isaTextArray);
         return isaText + "\n -- More details in the ISA files.";
     }
+}
