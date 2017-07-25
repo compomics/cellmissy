@@ -147,8 +147,9 @@ public class CMSOReaderController {
                     reader.setId(file.getAbsolutePath());
 
                     String omeText = "File name: " + file.getName() + "\n";
-                    omeText += "Total amount of images = " + reader.getImageCount() + "\n";
                     omeText += "Dataset structure: " + reader.getDatasetStructureDescription() + "\n";
+                    omeText += "Total amount of images = " + reader.getImageCount() + "\n";
+                    omeText += "Dimension order: " + reader.getDimensionOrder() + "\n";
 
                     cmsoReaderPanel.getOmeTextArea().setText(omeText);
 
@@ -195,8 +196,8 @@ public class CMSOReaderController {
         CSVParser csvFileParser;
         FileReader fileReader;
         CSVFormat csvFileFormat;
-        // fileformat specification depending on delimination
-        csvFileFormat = CSVFormat.TDF;
+        // fileformat specification depending on delimination, header for study and assay files
+        csvFileFormat = CSVFormat.TDF.withHeader();
 
         for (File isaFile : isaFiles) {
             // check name for correct spot in text array
@@ -220,7 +221,7 @@ public class CMSOReaderController {
                                     "Study Assay File Name", "Study Protocol Name", "Study Protocol Type", "Study Protocol Description",
                                     "Study Protocol Parameters Name", "Study Protocol Components Name", "Study Protocol Components Type"));
                     Set<String> invSummaryTerms = new HashSet<String>(investigationTerms);
-
+                    text += "INVESTIGATION FILE: \n";
                     // read the CSV file records
                     for (int row = 0; row < csvRecords.size(); row++) {
                         CSVRecord cSVRecord = csvRecords.get(row);
@@ -244,15 +245,46 @@ public class CMSOReaderController {
 
                 isaTextArray[0] = text;
 
-            } else if (isaFile.getName().startsWith("s")) {
+            } //study and assay files are slightly more complicated due to format
+            else if (isaFile.getName().startsWith("s")) {
                 String text = "";
                 // initialize the file reader and parser
                 try {
                     fileReader = new FileReader(isaFile);
                     csvFileParser = new CSVParser(fileReader, csvFileFormat);
+                    text += "STUDY FILE: \n";
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
-
+                    
+                    String sourceName = "Sources: ";
+                    String organism = "Organisms: ";
+                    String celltypes = "Cell types: ";
+                    String agentType = "Perturbation type ";
+                    String agentName = "Perturbation name: ";
+                    // cannot add concentrations because "unit" is not a unique column name
+                    
+                    for (int row = 0; row < csvRecords.size(); row++) {
+                        CSVRecord cSVRecord = csvRecords.get(row);
+                        if (! sourceName.contains(cSVRecord.get("Source Name"))) {
+                            sourceName += cSVRecord.get("Source Name") + " // ";
+                        }
+                        if (! organism.contains(cSVRecord.get("Characteristics[organism]"))) {
+                            organism += cSVRecord.get("Characteristics[organism]") + " // ";
+                        }
+                        if (! celltypes.contains(cSVRecord.get("Characteristics[cell]"))) {
+                            celltypes += cSVRecord.get("Characteristics[cell]") + " // ";
+                        }
+                        if (! agentType.contains(cSVRecord.get("Parameter Value[perturbation agent type]"))) {
+                            agentType += cSVRecord.get("Parameter Value[perturbation agent type]") + " // ";
+                        }
+                        if (! agentName.contains(cSVRecord.get("Parameter Value[perturbation agent]"))) {
+                            agentName += cSVRecord.get("Parameter Value[perturbation agent]") + " // ";
+                        }
+                        
+                    }
+                    
+                    text += sourceName + "\n" + organism + "\n" + celltypes + "\n" +
+                            agentType + "\n" + agentName + "\n";
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Study file", ex);
                 }
@@ -265,9 +297,14 @@ public class CMSOReaderController {
                 try {
                     fileReader = new FileReader(isaFile);
                     csvFileParser = new CSVParser(fileReader, csvFileFormat);
+                    text += "ASSAY FILE: \n";
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
+                    
+                    
+                    
+                    
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Assay file", ex);
                 }
@@ -289,5 +326,5 @@ public class CMSOReaderController {
     }
         
         isaText = isaTextArray.toString();
-        return isaText;
+        return isaText + "\n -- More details in the ISA files.";
     }
