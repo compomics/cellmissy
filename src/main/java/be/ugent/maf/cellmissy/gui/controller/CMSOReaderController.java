@@ -196,8 +196,9 @@ public class CMSOReaderController {
         CSVParser csvFileParser;
         FileReader fileReader;
         CSVFormat csvFileFormat;
-        // fileformat specification depending on delimination, header for study and assay files
-        csvFileFormat = CSVFormat.TDF.withHeader();
+        // fileformat specification depending on delimination
+        // cannot infer header because of multiple "unit" columns
+        csvFileFormat = CSVFormat.TDF;
 
         for (File isaFile : isaFiles) {
             // check name for correct spot in text array
@@ -232,9 +233,13 @@ public class CMSOReaderController {
                             //add all text parts to variable
                             text += iter.next() + ": ";
                             while (iter.hasNext()) {
-                                text += iter.next() + " // ";
+                                // additional check for empty strings
+                                String content = iter.next();
+                                if (!content.isEmpty()) {
+                                    text += content + " // ";
+                                }
                             }
-                            text += "\n";
+                            text += "\n \n";
 
                         }
 
@@ -262,31 +267,36 @@ public class CMSOReaderController {
                     String celltypes = "Cell types: ";
                     String agentType = "Perturbation type ";
                     String agentName = "Perturbation name: ";
+                    String agentDose = "Perturbation doses: ";
                     // cannot add concentrations because "unit" is not a unique column name
 
-                    for (int row = 0; row < csvRecords.size(); row++) {
+                    for (int row = 1; row < csvRecords.size(); row++) {
                         // for each row: check if information is not already recorded in the String
+                        // using indices for column, inferring header is not possible
                         CSVRecord cSVRecord = csvRecords.get(row);
-                        if (!sourceName.contains(cSVRecord.get("Source Name"))) {
-                            sourceName += cSVRecord.get("Source Name") + " // ";
+                        if (!cSVRecord.get(0).isEmpty() && !sourceName.contains(cSVRecord.get(0))) {
+                            sourceName += cSVRecord.get(0) + " // ";
                         }
-                        if (!organism.contains(cSVRecord.get("Characteristics[organism]"))) {
-                            organism += cSVRecord.get("Characteristics[organism]") + " // ";
+                        if (!cSVRecord.get(1).isEmpty() && !organism.contains(cSVRecord.get(1))) {
+                            organism += cSVRecord.get(1) + " // ";
                         }
-                        if (!celltypes.contains(cSVRecord.get("Characteristics[cell]"))) {
-                            celltypes += cSVRecord.get("Characteristics[cell]") + " // ";
+                        if (!cSVRecord.get(4).isEmpty() && !celltypes.contains(cSVRecord.get(4))) {
+                            celltypes += cSVRecord.get(4) + " // ";
                         }
-                        if (!agentType.contains(cSVRecord.get("Parameter Value[perturbation agent type]"))) {
-                            agentType += cSVRecord.get("Parameter Value[perturbation agent type]") + " // ";
+                        if (!cSVRecord.get(43).isEmpty() && !agentType.contains(cSVRecord.get(43))) {
+                            agentType += cSVRecord.get(43) + " // ";
                         }
-                        if (!agentName.contains(cSVRecord.get("Parameter Value[perturbation agent]"))) {
-                            agentName += cSVRecord.get("Parameter Value[perturbation agent]") + " // ";
+                        if (!cSVRecord.get(44).isEmpty() && !agentName.contains(cSVRecord.get(44))) {
+                            agentName += cSVRecord.get(44) + " // ";
                         }
-
+                        if (!cSVRecord.get(68).isEmpty() && !agentDose.contains(cSVRecord.get(68))) {
+                            agentDose += cSVRecord.get(68) + " // ";
+                        }
                     }
+
                     // add modules of information to end string
                     text += sourceName + "\n" + organism + "\n" + celltypes + "\n"
-                            + agentType + "\n" + agentName + "\n";
+                            + agentType + "\n" + agentName + "\n" + agentDose + "\n \n";
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Study file", ex);
                 }
@@ -305,21 +315,18 @@ public class CMSOReaderController {
 
                     // the information we want to show
                     String imagingTechnique = "Imaging Technique: ";
+                    String acquisitionTime = "Acquisition duration: ";
+                    String interval = "Image interval: ";
                     String software = "Software: ";
-                    // can't include acquisition time and interval because of multiple "unit" columns
 
-                    for (int row = 0; row < csvRecords.size(); row++) {
-                        // for each row: check if information is not already recorded in the String
-                        CSVRecord cSVRecord = csvRecords.get(row);
-                        if (!imagingTechnique.contains(cSVRecord.get("Parameter Value[imaging technique]"))) {
-                            imagingTechnique += cSVRecord.get("Parameter Value[imaging technique]") + " // ";
-                        }
-                        //next check is a bit useless since the software will be the same for the whole assay but the info needs to be added anyway
-                        if (!software.contains(cSVRecord.get("Parameter Value[software]"))) {
-                            software += cSVRecord.get("Parameter Value[software]") + " // ";
-                        }
-                    }
-                    text += imagingTechnique + "\n" + software + "\n";
+                    CSVRecord firstDataRow = csvRecords.get(1);
+                    imagingTechnique += firstDataRow.get(19);
+                    acquisitionTime += firstDataRow.get(21) + " " + firstDataRow.get(22);
+                    interval += firstDataRow.get(25) + " " + firstDataRow.get(26);
+                    software += firstDataRow.get(43);
+
+                    text += imagingTechnique + "\n" + acquisitionTime + "\n"
+                            + interval + "\n" + software + "\n";
 
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Assay file", ex);
@@ -329,6 +336,7 @@ public class CMSOReaderController {
             }
         }
         isaText = Arrays.toString(isaTextArray);
-        return isaText + "\n -- More details in the ISA files.";
+        return isaText
+                + "\n -- More details in the ISA files.";
     }
 }
