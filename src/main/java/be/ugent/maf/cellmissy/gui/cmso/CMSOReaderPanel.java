@@ -69,52 +69,51 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         omeTextArea = new javax.swing.JTextArea();
         jScrollPane4 = new javax.swing.JScrollPane();
         biotracksTextArea = new javax.swing.JTextArea();
+        nextButton = new javax.swing.JButton();
 
         setLayout(new java.awt.GridBagLayout());
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Choose folder to import", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         folderTextField.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 491;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.5;
+        gridBagConstraints.insets = new java.awt.Insets(36, 21, 0, 0);
+        jPanel1.add(folderTextField, gridBagConstraints);
 
         chooseFolderButton.setText("Choose Folder");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(35, 18, 0, 291);
+        jPanel1.add(chooseFolderButton, gridBagConstraints);
 
         infoLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         infoLabel.setText("Choose a file that CellMissy can use for the import of a CMSO dataset");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(folderTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 571, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(chooseFolderButton))
-                    .addComponent(infoLabel))
-                .addContainerGap(324, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(folderTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chooseFolderButton))
-                .addGap(18, 18, 18)
-                .addComponent(infoLabel)
-                .addContainerGap())
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 21, 23, 0);
+        jPanel1.add(infoLabel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 354;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.95;
-        gridBagConstraints.weighty = 0.3;
+        gridBagConstraints.weighty = 0.2;
         add(jPanel1, gridBagConstraints);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Summary of imported dataset", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
@@ -133,12 +132,12 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 267;
-        gridBagConstraints.ipady = 104;
+        gridBagConstraints.ipadx = 363;
+        gridBagConstraints.ipady = 124;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(39, 16, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(58, 22, 0, 0);
         jPanel2.add(jScrollPane1, gridBagConstraints);
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "ISA", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
@@ -154,12 +153,12 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 267;
-        gridBagConstraints.ipady = 106;
+        gridBagConstraints.ipadx = 363;
+        gridBagConstraints.ipady = 126;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(39, 107, 0, 108);
+        gridBagConstraints.insets = new java.awt.Insets(58, 107, 0, 21);
         jPanel2.add(jScrollPane2, gridBagConstraints);
 
         jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "OME", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
@@ -175,12 +174,12 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 267;
-        gridBagConstraints.ipady = 104;
+        gridBagConstraints.ipadx = 363;
+        gridBagConstraints.ipady = 124;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(6, 16, 60, 0);
+        gridBagConstraints.insets = new java.awt.Insets(6, 22, 0, 0);
         jPanel2.add(jScrollPane3, gridBagConstraints);
 
         jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Biotracks", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
@@ -196,23 +195,30 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 267;
-        gridBagConstraints.ipady = 102;
+        gridBagConstraints.ipadx = 363;
+        gridBagConstraints.ipady = 122;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(6, 107, 60, 108);
+        gridBagConstraints.insets = new java.awt.Insets(6, 107, 0, 21);
         jPanel2.add(jScrollPane4, gridBagConstraints);
+
+        nextButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        nextButton.setText("To Analysis>>");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.insets = new java.awt.Insets(58, 401, 23, 21);
+        jPanel2.add(nextButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 193;
-        gridBagConstraints.ipady = 40;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.95;
-        gridBagConstraints.weighty = 0.7;
+        gridBagConstraints.weighty = 0.8;
         gridBagConstraints.insets = new java.awt.Insets(9, 0, 0, 0);
         add(jPanel2, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
@@ -230,6 +236,7 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JButton nextButton;
     private javax.swing.JTextArea omeTextArea;
     private javax.swing.JTextArea summaryTextArea;
     // End of variables declaration//GEN-END:variables

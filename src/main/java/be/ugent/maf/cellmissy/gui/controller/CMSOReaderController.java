@@ -116,8 +116,6 @@ public class CMSOReaderController {
      */
     private void parseCMSODataset(File datasetFolder) {
         try {
-//            //in case of using separate parser
-//            data = Parser.parseFile(file);
 
             File[] entireDataset = datasetFolder.listFiles();
             File[] isaFiles;
@@ -165,16 +163,25 @@ public class CMSOReaderController {
             }
             String biotracksText = "";
             if (!biotracksFolders.isEmpty()) {
-                // dp folders contain objects and links csv and json metadata
 
-                for (File trackingData : biotracksFolders) {
-                    // per folder, show: software name, total #objects, 
-                    // total #links + parameters contained in objects table (x,y,z,t...)
-                    biotracksText += "Software: " + trackingData.getName() + "\n";
-                    //only need the csv's
-                    File[] dp = trackingData.listFiles();
+                for (File trackingSoftware : biotracksFolders) {
+
+                    // show: software name, total #objects, 
+                    // total #links (also #tracks?) + parameters contained in objects table (x,y,z,t...)
+                    // do we account for extra parameters in objects? --> check!
+                    biotracksText += "Software: " + trackingSoftware.getName() + "\n";
+
+                    //software folder can contain multiple files: raw data, biotracks ini file and dp folder
+                    // the dp folder is the one we need to show a summary of the tracks
+                    // from in here we need the csv's with objects and links
+                    for (File file : trackingSoftware.listFiles()) {
+                        if (file.getName().equalsIgnoreCase("dp")) {
+                            String[] softwareSummary = parseBiotracks(file);
+                            biotracksText += softwareSummary[0] + softwareSummary[1];
+                        }
+                    }
+                    biotracksText += "\n \n";
                 }
-
             } else {
                 biotracksText += "No tracks files present in the dataset.";
             }
@@ -189,6 +196,14 @@ public class CMSOReaderController {
         }
     }
 
+    /**
+     * Parse ISA files. The goal is to show the user a short summary of the file
+     * contents.
+     *
+     * @param isaFiles
+     * @return An array containing information on the investigation, study and
+     * assay file, each has it's own array index.
+     */
     private String[] parseISAFiles(File[] isaFiles) {
         // initialize return
         String isaText = "";
@@ -241,11 +256,14 @@ public class CMSOReaderController {
                                     text += content + " // ";
                                 }
                             }
-                            text += "\n \n";
-
+                            //new line per info
+                            text += "\n";
+                            
                         }
 
                     }
+                    //extra line between files
+                    text += "\n";
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
                 }
@@ -339,5 +357,69 @@ public class CMSOReaderController {
         }
 
         return isaTextArray;
+    }
+
+    /**
+     * Parse biotracks information. The goal is to show the user a short summary
+     * of the file contents.
+     *
+     * @param dpFolder A biotracks "dp" folder directory that contains objects
+     * and links csv and the dp.json files
+     * @return Summary information of the biotracks package contents in String
+     * format
+     */
+    private String[] parseBiotracks(File dpFolder) {
+        //initialize return
+        String[] biotracksText = new String[2];
+
+        // parser and reader
+        CSVParser csvFileParser;
+        FileReader fileReader;
+        CSVFormat csvFileFormat;
+        // fileformat specification depending on delimination, infer header
+        csvFileFormat = CSVFormat.EXCEL.withHeader();
+
+        ///TODO: read .json file to find csv names? and column names?
+        //   (need path for file reading!)
+        // check endswith(".json") then get path of all resources
+        for (File file : dpFolder.listFiles()) {
+            if (file.getName().equalsIgnoreCase("objects.csv")) {
+
+                try {
+                    fileReader = new FileReader(file);
+                    csvFileParser = new CSVParser(fileReader, csvFileFormat);
+                    // get the csv records (rows)
+                    List<CSVRecord> csvRecords = csvFileParser.getRecords();
+
+                    String objectsText = "Total amount of objects detected: " + csvRecords.size() + "\n";
+                    objectsText += "The objects table contains: " + csvFileParser.getHeaderMap().keySet() + "\n";
+
+                    biotracksText[0] = objectsText;
+
+                } catch (IOException ex) {
+                    LOG.error(ex.getMessage() + "/n Error while parsing Objects file", ex);
+                }
+            } else if (file.getName().equalsIgnoreCase("links.csv")) {
+
+                try {
+                    fileReader = new FileReader(file);
+                    csvFileParser = new CSVParser(fileReader, csvFileFormat);
+                    // get the csv records (rows)
+                    List<CSVRecord> csvRecords = csvFileParser.getRecords();
+                    Set<Integer> linkID = new HashSet<>();
+                    
+                    for (CSVRecord row : csvRecords) {
+                        linkID.add(Integer.parseInt(row.get("cmso_link_id")));
+                    }
+                    String linksText = "Total amount of links: " + linkID.size();
+                    biotracksText[1] = linksText;
+
+                } catch (IOException ex) {
+                    LOG.error(ex.getMessage() + "/n Error while parsing Links file", ex);
+                }
+
+            }
+        }
+        return biotracksText;
     }
 }
