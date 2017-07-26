@@ -138,7 +138,9 @@ public class CMSOReaderController {
                 if (name.endsWith("isa")) {
                     isaFiles = file.listFiles();
 
-                    String isaSummary = parseISAFiles(isaFiles);
+                    String[] isaText = parseISAFiles(isaFiles);
+                    // do it like this instead of toString() to avoid brackets and commas
+                    String isaSummary = isaText[0] + isaText[1] + isaText[2] + "\n -- More details in the ISA files.";
                     cmsoReaderPanel.getIsaTextArea().setText(isaSummary);
 
                 } //Search for ome companion file. Array will contain only one file
@@ -187,7 +189,7 @@ public class CMSOReaderController {
         }
     }
 
-    private String parseISAFiles(File[] isaFiles) {
+    private String[] parseISAFiles(File[] isaFiles) {
         // initialize return
         String isaText = "";
         String[] isaTextArray = new String[3];
@@ -335,8 +337,7 @@ public class CMSOReaderController {
                 isaTextArray[2] = text;
             }
         }
-        isaText = Arrays.toString(isaTextArray);
-        return isaText
-                + "\n -- More details in the ISA files.";
+
+        return isaTextArray;
     }
 }
