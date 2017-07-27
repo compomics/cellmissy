@@ -23,6 +23,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
+import loci.formats.ImageReader;
+import loci.formats.in.OMETiffReader;
 import loci.formats.in.OMEXMLReader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -92,6 +94,18 @@ public class CMSOReaderController {
                 }
             }
         });
+        
+        cmsoReaderPanel.getNextButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //check if a dataset has been loaded and it contains is tracking data
+                
+                //check if there are multiple tracking packages and let user choose which to analyse
+                //or shift this choice to analysis pipeline, so user can switch if they want?
+                
+                //switch to analysis view
+            }
+        });
 
         //add panel to main view
         cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().add(cmsoReaderPanel, gridBagConstraints);
@@ -120,6 +134,9 @@ public class CMSOReaderController {
             File[] entireDataset = datasetFolder.listFiles();
             File[] isaFiles;
             List<File> biotracksFolders = new ArrayList<>(); //separate folder per tracking software used
+            
+            // TODO: add spec compliance validation??
+            // TODO: plot something from biotracks as summary -- plot what?
 
             for (File file : entireDataset) {
                 String name = file.getName();

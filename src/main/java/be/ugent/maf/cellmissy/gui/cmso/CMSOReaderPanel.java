@@ -46,6 +46,10 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         return summaryTextArea;
     }
 
+    public JButton getNextButton() {
+        return nextButton;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -99,7 +103,7 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         jPanel1.add(chooseFolderButton, gridBagConstraints);
 
         infoLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        infoLabel.setText("Choose a file that CellMissy can use for the import of a CMSO dataset");
+        infoLabel.setText("Choose a folder that CellMissy can use for the import of a CMSO dataset");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
