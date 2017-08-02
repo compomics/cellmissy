@@ -23,8 +23,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import loci.formats.FormatException;
 import loci.formats.IFormatReader;
-import loci.formats.ImageReader;
-import loci.formats.in.OMETiffReader;
 import loci.formats.in.OMEXMLReader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
