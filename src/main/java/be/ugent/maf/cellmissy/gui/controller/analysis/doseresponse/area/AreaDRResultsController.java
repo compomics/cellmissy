@@ -434,7 +434,7 @@ public class AreaDRResultsController extends DRResultsController {
         PdfUtils.addCustomizedCell(dataTable, "Parameter", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "Best-fit value", boldFont);
         PdfUtils.addCustomizedCell(dataTable, "Standard Error", boldFont);
-        PdfUtils.addCustomizedCell(dataTable, "95% Confidende Interval", boldFont);
+        PdfUtils.addCustomizedCell(dataTable, "95% Confidence Interval", boldFont);
 
         //parameter names
         List<String> parameters = new ArrayList<>();
