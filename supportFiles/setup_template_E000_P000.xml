@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:experiment xmlns:ns2="http://maf.ugent.be/beans/cellmissy" experimentNumber="0" purpose="">
+    <plateFormat format="96" numberOfCols="12" numberOfRows="8" wellSize="8991.88"/>
+    <plateConditions>
+        <plateCondition>
+            <wells>
+                <well columnNumber="3" rowNumber="2"/>
+                <well columnNumber="4" rowNumber="2"/>
+                <well columnNumber="5" rowNumber="2"/>
+                <well columnNumber="6" rowNumber="2"/>
+                <well columnNumber="7" rowNumber="2"/>
+                <well columnNumber="8" rowNumber="2"/>
+                <well columnNumber="9" rowNumber="2"/>
+                <well columnNumber="10" rowNumber="2"/>
+            </wells>
+            <treatments>
+                <treatment concentration="0.0" concentrationUnit="µM" timing="0 h" drugSolvent="DMSO" drugSolventConcentration="0.1">
+                    <treatmentType name="Control + Drug Solvent" treatmentCategory="2"/>
+                </treatment>
+            </treatments>
+            <cellLine seedingTime="day -1" seedingDensity="47500" growthMedium="RPMI 1640" serum="FBS hi" serumConcentration="10.0">
+                <cellLineType name="BT-549"/>
+            </cellLine>
+            <assay assayType="ORIS">
+                <matrixDimension dimension="2D"/>
+            </assay>
+            <ecm concentration="0.04" volume="200.0" coatingTime="60" coatingTemperature="RT" concentrationUnit="mg/ml">
+                <ecmComposition compositionType="Collagen I (bovine)">
+                    <matrixDimension dimension="2D"/>
+                </ecmComposition>
+            </ecm>
+            <assayMedium medium="RPMI 1640" serum="FBS hi" serumConcentration="10.0" volume="200.0"/>
+        </plateCondition>
+        <plateCondition>
+            <wells>
+                <well columnNumber="3" rowNumber="3"/>
+                <well columnNumber="4" rowNumber="3"/>
+                <well columnNumber="5" rowNumber="3"/>
+                <well columnNumber="6" rowNumber="3"/>
+                <well columnNumber="7" rowNumber="3"/>
+                <well columnNumber="8" rowNumber="3"/>
+                <well columnNumber="9" rowNumber="3"/>
+                <well columnNumber="10" rowNumber="3"/>
+            </wells>
+            <treatments>
+                <treatment concentration="2.5" concentrationUnit="µM" timing="0 h" drugSolvent="DMSO" drugSolventConcentration="0.1">
+                    <treatmentType name="LY294002" treatmentCategory="1"/>
+                </treatment>
+            </treatments>
+            <cellLine seedingTime="day -1" seedingDensity="47500" growthMedium="RPMI 1640" serum="FBS hi" serumConcentration="10.0">
+                <cellLineType name="BT-549"/>
+            </cellLine>
+            <assay assayType="ORIS">
+                <matrixDimension dimension="2D"/>
+            </assay>
+            <ecm concentration="0.04" volume="200.0" coatingTime="60" coatingTemperature="RT" concentrationUnit="mg/ml">
+                <ecmComposition compositionType="Collagen I (bovine)">
+                    <matrixDimension dimension="2D"/>
+                </ecmComposition>
+            </ecm>
+            <assayMedium medium="RPMI 1640" serum="FBS hi" serumConcentration="10.0" volume="200.0"/>
+        </plateCondition>
+        <plateCondition>
+            <wells>
+                <well columnNumber="3" rowNumber="4"/>
+                <well columnNumber="4" rowNumber="4"/>
+                <well columnNumber="5" rowNumber="4"/>
+                <well columnNumber="6" rowNumber="4"/>
+                <well columnNumber="7" rowNumber="4"/>
+                <well columnNumber="8" rowNumber="4"/>
+                <well columnNumber="9" rowNumber="4"/>
+                <well columnNumber="10" rowNumber="4"/>
+            </wells>
+            <treatments>
+                <treatment concentration="5.0" concentrationUnit="µM" timing="0 h" drugSolvent="DMSO" drugSolventConcentration="0.1">
+                    <treatmentType name="LY294002" treatmentCategory="1"/>
+                </treatment>
+            </treatments>
+            <cellLine seedingTime="day -1" seedingDensity="47500" growthMedium="RPMI 1640" serum="FBS hi" serumConcentration="10.0">
+                <cellLineType name="BT-549"/>
+            </cellLine>
+            <assay assayType="ORIS">
+                <matrixDimension dimension="2D"/>
+            </assay>
+            <ecm concentration="0.04" volume="200.0" coatingTime="60" coatingTemperature="RT" concentrationUnit="mg/ml">
+                <ecmComposition compositionType="Collagen I (bovine)">
+                    <matrixDimension dimension="2D"/>
+                </ecmComposition>
+            </ecm>
+            <assayMedium medium="RPMI 1640" serum="FBS hi" serumConcentration="10.0" volume="200.0"/>
+        </plateCondition>
+        <plateCondition>
+            <wells>
+                <well columnNumber="3" rowNumber="5"/>
+                <well columnNumber="4" rowNumber="5"/>
+                <well columnNumber="5" rowNumber="5"/>
+                <well columnNumber="6" rowNumber="5"/>
+                <well columnNumber="7" rowNumber="5"/>
+                <well columnNumber="8" rowNumber="5"/>
+                <well columnNumber="9" rowNumber="5"/>
+                <well columnNumber="10" rowNumber="5"/>
+            </wells>
+            <treatments>
+                <treatment concentration="7.5" concentrationUnit="µM" timing="0 h" drugSolvent="DMSO" drugSolventConcentration="0.1">
+                    <treatmentType name="LY294002" treatmentCategory="1"/>
+                </treatment>
+            </treatments>
+            <cellLine seedingTime="day -1" seedingDensity="47500" growthMedium="RPMI 1640" serum="FBS hi" serumConcentration="10.0">
+                <cellLineType name="BT-549"/>
+            </cellLine>
+            <assay assayType="ORIS">
+                <matrixDimension dimension="2D"/>
+            </assay>
+            <ecm concentration="0.04" volume="200.0" coatingTime="60" coatingTemperature="RT" concentrationUnit="mg/ml">
+                <ecmComposition compositionType="Collagen I (bovine)">
+                    <matrixDimension dimension="2D"/>
+                </ecmComposition>
+            </ecm>
+            <assayMedium medium="RPMI 1640" serum="FBS hi" serumConcentration="10.0" volume="200.0"/>
+        </plateCondition>
+        <plateCondition>
+            <wells>
+                <well columnNumber="3" rowNumber="6"/>
+                <well columnNumber="4" rowNumber="6"/>
+                <well columnNumber="5" rowNumber="6"/>
+                <well columnNumber="6" rowNumber="6"/>
+                <well columnNumber="7" rowNumber="6"/>
+                <well columnNumber="8" rowNumber="6"/>
+                <well columnNumber="9" rowNumber="6"/>
+                <well columnNumber="10" rowNumber="6"/>
+            </wells>
+            <treatments>
+                <treatment concentration="10.0" concentrationUnit="µM" timing="0 h" drugSolvent="DMSO" drugSolventConcentration="0.1">
+                    <treatmentType name="LY294002" treatmentCategory="1"/>
+                </treatment>
+            </treatments>
+            <cellLine seedingTime="day -1" seedingDensity="47500" growthMedium="RPMI 1640" serum="FBS hi" serumConcentration="10.0">
+                <cellLineType name="BT-549"/>
+            </cellLine>
+            <assay assayType="ORIS">
+                <matrixDimension dimension="2D"/>
+            </assay>
+            <ecm concentration="0.04" volume="200.0" coatingTime="60" coatingTemperature="RT" concentrationUnit="mg/ml">
+                <ecmComposition compositionType="Collagen I (bovine)">
+                    <matrixDimension dimension="2D"/>
+                </ecmComposition>
+            </ecm>
+            <assayMedium medium="RPMI 1640" serum="FBS hi" serumConcentration="10.0" volume="200.0"/>
+        </plateCondition>
+        <plateCondition>
+            <wells>
+                <well columnNumber="3" rowNumber="7"/>
+                <well columnNumber="4" rowNumber="7"/>
+                <well columnNumber="5" rowNumber="7"/>
+                <well columnNumber="6" rowNumber="7"/>
+                <well columnNumber="7" rowNumber="7"/>
+                <well columnNumber="8" rowNumber="7"/>
+                <well columnNumber="9" rowNumber="7"/>
+                <well columnNumber="10" rowNumber="7"/>
+            </wells>
+            <treatments>
+                <treatment concentration="15.0" concentrationUnit="µM" timing="0 h" drugSolvent="DMSO" drugSolventConcentration="0.1">
+                    <treatmentType name="LY294002" treatmentCategory="1"/>
+                </treatment>
+            </treatments>
+            <cellLine seedingTime="day -1" seedingDensity="47500" growthMedium="RPMI 1640" serum="FBS hi" serumConcentration="10.0">
+                <cellLineType name="BT-549"/>
+            </cellLine>
+            <assay assayType="ORIS">
+                <matrixDimension dimension="2D"/>
+            </assay>
+            <ecm concentration="0.04" volume="200.0" coatingTime="60" coatingTemperature="RT" concentrationUnit="mg/ml">
+                <ecmComposition compositionType="Collagen I (bovine)">
+                    <matrixDimension dimension="2D"/>
+                </ecmComposition>
+            </ecm>
+            <assayMedium medium="RPMI 1640" serum="FBS hi" serumConcentration="10.0" volume="200.0"/>
+        </plateCondition>
+    </plateConditions>
+</ns2:experiment>
