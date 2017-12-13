@@ -208,13 +208,14 @@ public class CMSOReaderPanel extends javax.swing.JPanel {
         jPanel2.add(jScrollPane4, gridBagConstraints);
 
         nextButton.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        nextButton.setText("To Analysis>>");
+        nextButton.setLabel("To Analysis >>");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(58, 401, 23, 21);
         jPanel2.add(nextButton, gridBagConstraints);
+        nextButton.getAccessibleContext().setAccessibleName("To Analysis >>");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

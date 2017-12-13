@@ -5,6 +5,12 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.PlateFormat;
+import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Role;
+import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
@@ -40,6 +46,11 @@ public class CMSOReaderController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CMSOReaderController.class);
     //model
+    private File investigationFile;
+    private File studyFile;
+    private File assayFile;
+    private List<File> biotracksFolders; //separate folder per tracking software
+    private boolean tracksPresent;
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -54,6 +65,7 @@ public class CMSOReaderController {
     public void init() {
         cmsoReaderPanel = new CMSOReaderPanel();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
+        tracksPresent = false;
         //init view
         initCMSOReaderPanel();
     }
@@ -62,7 +74,8 @@ public class CMSOReaderController {
      * Initialize view
      */
     private void initCMSOReaderPanel() {
-
+        //disable next button
+        cmsoReaderPanel.getNextButton().setEnabled(false);
         /**
          * Action Listeners
          */
@@ -85,6 +98,8 @@ public class CMSOReaderController {
                     if (chosenFile.getName().startsWith("cmsodataset")) {
                         cmsoReaderPanel.getFolderTextField().setText(chosenFile.getAbsolutePath());
                         parseCMSODataset(chosenFile);
+                        //set continue button available when there is track data
+                        cmsoReaderPanel.getNextButton().setEnabled(tracksPresent);
                     } // else display error popup
                     else {
                         JOptionPane.showMessageDialog(cmsoReaderPanel, "The chosen directory does not seem to be a CMSO dataset", "Folder name incorrect", JOptionPane.INFORMATION_MESSAGE);
@@ -92,16 +107,18 @@ public class CMSOReaderController {
                 }
             }
         });
-        
+
         cmsoReaderPanel.getNextButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //check if a dataset has been loaded and it contains is tracking data
-                
-                //check if there are multiple tracking packages and let user choose which to analyse
-                //or shift this choice to analysis pipeline, so user can switch if they want?
-                
-                //switch to analysis view
+                //check if a dataset has been loaded and it contains tracking data
+                if (tracksPresent) {
+                    //build up cellmissy experiment structure
+                    //will probably have to reread all files in order
+                    Project dataStructure = setupDataStructure(investigationFile, studyFile, assayFile);
+
+                    //switch to analysis view, this contains tracking data choice 
+                }
             }
         });
 
@@ -114,12 +131,15 @@ public class CMSOReaderController {
      * has being shown
      */
     public void resetAfterCardSwitch() {
+        cmsoReaderPanel.getNextButton().setEnabled(false);
         //reset text fields
         cmsoReaderPanel.getFolderTextField().setText("");
         cmsoReaderPanel.getSummaryTextArea().setText("");
         cmsoReaderPanel.getIsaTextArea().setText("");
         cmsoReaderPanel.getOmeTextArea().setText("");
         cmsoReaderPanel.getBiotracksTextArea().setText("");
+        biotracksFolders = new ArrayList<>();
+        tracksPresent = false;
     }
 
     /**
@@ -131,11 +151,10 @@ public class CMSOReaderController {
 
             File[] entireDataset = datasetFolder.listFiles();
             File[] isaFiles;
-            List<File> biotracksFolders = new ArrayList<>(); //separate folder per tracking software used
-            
+            biotracksFolders = new ArrayList<>();
+
             // TODO: add spec compliance validation??
             // TODO: plot something from biotracks as summary -- plot what?
-
             for (File file : entireDataset) {
                 String name = file.getName();
 
@@ -152,7 +171,7 @@ public class CMSOReaderController {
                     isaFiles = file.listFiles();
 
                     String[] isaText = parseISAFiles(isaFiles);
-                    // do it like this instead of toString() to avoid brackets and commas
+                    // use this instead of toString() to avoid brackets and commas
                     String isaSummary = isaText[0] + isaText[1] + isaText[2] + "\n -- More details in the ISA files.";
                     cmsoReaderPanel.getIsaTextArea().setText(isaSummary);
 
@@ -182,8 +201,7 @@ public class CMSOReaderController {
                 for (File trackingSoftware : biotracksFolders) {
 
                     // show: software name, total #objects, 
-                    // total #links (also #tracks?) + parameters contained in objects table (x,y,z,t...)
-                    // do we account for extra parameters in objects? --> check!
+                    // total #tracks + parameters contained in objects table (x,y,z,t...)
                     biotracksText += "Software: " + trackingSoftware.getName() + "\n";
 
                     //software folder can contain multiple files: raw data, biotracks ini file and dp folder
@@ -196,9 +214,11 @@ public class CMSOReaderController {
                         }
                     }
                     biotracksText += "\n \n";
+                    tracksPresent = true;
                 }
             } else {
                 biotracksText += "No tracks files present in the dataset.";
+                tracksPresent = false;
             }
             cmsoReaderPanel.getBiotracksTextArea().setText(biotracksText);
 
@@ -235,6 +255,7 @@ public class CMSOReaderController {
         for (File isaFile : isaFiles) {
             // check name for correct spot in text array
             if (isaFile.getName().startsWith("i")) {
+                investigationFile = isaFile;
                 String text = "";
 
                 // initialize the file reader and parser
@@ -273,7 +294,7 @@ public class CMSOReaderController {
                             }
                             //new line per info
                             text += "\n";
-                            
+
                         }
 
                     }
@@ -287,6 +308,7 @@ public class CMSOReaderController {
 
             } //study and assay files are slightly more complicated due to format
             else if (isaFile.getName().startsWith("s")) {
+                studyFile = isaFile;
                 String text = "";
                 // initialize the file reader and parser
                 try {
@@ -307,7 +329,7 @@ public class CMSOReaderController {
 
                     for (int row = 1; row < csvRecords.size(); row++) {
                         // for each row: check if information is not already recorded in the String
-                        // using indices for column, inferring header is not possible
+                        // using indices for column, inferring header is not possible (duplicate names)
                         CSVRecord cSVRecord = csvRecords.get(row);
                         if (!cSVRecord.get(0).isEmpty() && !sourceName.contains(cSVRecord.get(0))) {
                             sourceName += cSVRecord.get(0) + " // ";
@@ -339,6 +361,7 @@ public class CMSOReaderController {
                 isaTextArray[1] = text;
 
             } else if (isaFile.getName().startsWith("a")) {
+                assayFile = isaFile;
                 String text = "";
                 // initialize the file reader and parser
                 try {
@@ -422,7 +445,7 @@ public class CMSOReaderController {
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
                     Set<Integer> linkID = new HashSet<>();
-                    
+
                     for (CSVRecord row : csvRecords) {
                         linkID.add(Integer.parseInt(row.get("cmso_link_id")));
                     }
@@ -436,5 +459,67 @@ public class CMSOReaderController {
             }
         }
         return biotracksText;
+    }
+
+    private Project setupDataStructure(File investigationFile, File studyFile, File assayFile) {
+        Project project = null;
+        // parser and reader
+        CSVParser csvFileParser;
+        FileReader fileReader;
+        CSVFormat csvFileFormat;
+        // fileformat specification depending on delimination
+        // cannot infer header because of multiple "unit" columns
+        csvFileFormat = CSVFormat.TDF;
+
+        //setup investigation
+        try {
+            fileReader = new FileReader(investigationFile);
+            csvFileParser = new CSVParser(fileReader, csvFileFormat);
+            // get the csv records (rows)
+            List<CSVRecord> csvRecords = csvFileParser.getRecords();
+            //get specific terms and use these to setup cellmissy data structure
+            project = new Project(csvRecords.get(7).get(1));
+            project.setProjectNumber(Integer.parseInt(csvRecords.get(6).get(1)));
+            project.setExperimentList(new ArrayList<>());
+            project.getExperimentList().add(new Experiment());
+            Experiment exp = project.getExperimentList().get(0);
+            exp.setUser(new User(csvRecords.get(23).get(1), csvRecords.get(22).get(1), Role.ADMIN_USER, "password", csvRecords.get(25).get(1)));
+            exp.setExperimentNumber(Integer.parseInt(csvRecords.get(34).get(1)));
+            exp.setPurpose(csvRecords.get(35).get(1));
+            exp.setPlateFormat(new PlateFormat(Long.MAX_VALUE, Integer.parseInt(csvRecords.get(40).get(1))));
+
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
+        }
+
+        //setup study
+        try {
+            fileReader = new FileReader(studyFile);
+            csvFileParser = new CSVParser(fileReader, csvFileFormat);
+            // get the csv records (rows)
+            List<CSVRecord> csvRecords = csvFileParser.getRecords();
+            //go through all rows except header, infer not possible (duplicate names)
+            for (int row = 1; row < csvRecords.size(); row++) {
+                CSVRecord cSVRecord = csvRecords.get(row);
+                //create new PlateCondition object per row
+                //need column 4,17,20,21,22,23,39,40,44,51,52
+                //make sure n/A values in treatment are changed over to control
+            }
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
+        }
+
+        //setup assay
+        try {
+            fileReader = new FileReader(assayFile);
+            csvFileParser = new CSVParser(fileReader, csvFileFormat);
+            // get the csv records (rows)
+            List<CSVRecord> csvRecords = csvFileParser.getRecords();
+
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
+        }
+
+        return project;
     }
 }
