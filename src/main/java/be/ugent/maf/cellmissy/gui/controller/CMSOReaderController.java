@@ -5,12 +5,18 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.CellLine;
+import be.ugent.maf.cellmissy.entity.CellLineType;
+import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.entity.Role;
+import be.ugent.maf.cellmissy.entity.Treatment;
+import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.User;
+import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
@@ -498,13 +504,29 @@ public class CMSOReaderController {
             csvFileParser = new CSVParser(fileReader, csvFileFormat);
             // get the csv records (rows)
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
+            List<PlateCondition> plateConditionList = new ArrayList<>();
             //go through all rows except header, infer not possible (duplicate names)
             for (int row = 1; row < csvRecords.size(); row++) {
                 CSVRecord cSVRecord = csvRecords.get(row);
                 //create new PlateCondition object per row
-                //need column 4,17,20,21,22,23,39,40,44,51,52
+                //need column 39,40,44,51,52
                 //make sure n/A values in treatment are changed over to control
+                PlateCondition conditionRow = new PlateCondition(Integer.toUnsignedLong(row));
+                conditionRow.setCellLine(new CellLine(null, Integer.parseInt(cSVRecord.get(20)), cSVRecord.get(21), Double.parseDouble(cSVRecord.get(23)), new CellLineType(Long.MIN_VALUE, cSVRecord.get(4)), cSVRecord.get(22)));
+                // for now ignore ecm     conditionRow.setEcm(new Ecm());
+                conditionRow.setWellList(new ArrayList<>());
+                conditionRow.getWellList().add(new Well(Integer.parseInt(cSVRecord.get(39)), rownr));
+                // rownr is a letter in the isa files, need to convert this to int
+                conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
+                conditionRow.getWellList().get(0).setWellid(Integer.toUnsignedLong(row));
+                conditionRow.setTreatmentList(new ArrayList<>());
+                conditionRow.getTreatmentList().add(new Treatment(Double.parseDouble(cSVRecord.get(51)), cSVRecord.get(52), null, null, null, new TreatmentType(Long.MIN_VALUE, name)));
+                
+                treatment type name "n/A" to "control"
+                
+                plateConditionList.add(conditionRow);
             }
+            project.getExperimentList().get(0).setPlateConditionList(plateConditionList);
         } catch (IOException ex) {
             LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
         }
