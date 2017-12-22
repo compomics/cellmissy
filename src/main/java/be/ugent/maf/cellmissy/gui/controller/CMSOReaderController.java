@@ -45,7 +45,7 @@ import org.apache.commons.io.FileUtils;
 
 /**
  *
- * @author CompOmics Gwen
+ * @author Gwendolien Sergeant
  */
 @Controller("cMSOReaderController")
 public class CMSOReaderController {
@@ -509,21 +509,21 @@ public class CMSOReaderController {
             for (int row = 1; row < csvRecords.size(); row++) {
                 CSVRecord cSVRecord = csvRecords.get(row);
                 //create new PlateCondition object per row
-                //need column 39,40,44,51,52
                 //make sure n/A values in treatment are changed over to control
                 PlateCondition conditionRow = new PlateCondition(Integer.toUnsignedLong(row));
                 conditionRow.setCellLine(new CellLine(null, Integer.parseInt(cSVRecord.get(20)), cSVRecord.get(21), Double.parseDouble(cSVRecord.get(23)), new CellLineType(Long.MIN_VALUE, cSVRecord.get(4)), cSVRecord.get(22)));
                 // for now ignore ecm     conditionRow.setEcm(new Ecm());
                 conditionRow.setWellList(new ArrayList<>());
-                conditionRow.getWellList().add(new Well(Integer.parseInt(cSVRecord.get(39)), rownr));
                 // rownr is a letter in the isa files, need to convert this to int
+                conditionRow.getWellList().add(new Well(Integer.parseInt(cSVRecord.get(39)), ((int)cSVRecord.get(39).charAt(0)) - 64));
+
                 conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
                 conditionRow.getWellList().get(0).setWellid(Integer.toUnsignedLong(row));
                 conditionRow.setTreatmentList(new ArrayList<>());
-                conditionRow.getTreatmentList().add(new Treatment(Double.parseDouble(cSVRecord.get(51)), cSVRecord.get(52), null, null, null, new TreatmentType(Long.MIN_VALUE, name)));
-                
-                treatment type name "n/A" to "control"
-                
+                conditionRow.getTreatmentList().add(new Treatment(
+                        Double.parseDouble(cSVRecord.get(51)), cSVRecord.get(52), null, null, null, new TreatmentType(
+                                Long.MIN_VALUE, checkTreatmentName(cSVRecord.get(44)))));
+
                 plateConditionList.add(conditionRow);
             }
             project.getExperimentList().get(0).setPlateConditionList(plateConditionList);
@@ -543,5 +543,13 @@ public class CMSOReaderController {
         }
 
         return project;
+    }
+    
+    private String checkTreatmentName(String record) {
+        if (record.equalsIgnoreCase("n/A")) {
+            return "control";
+        } else {
+            return record;
+        }
     }
 }
