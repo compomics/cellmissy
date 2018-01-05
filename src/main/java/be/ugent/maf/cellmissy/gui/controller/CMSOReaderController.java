@@ -5,10 +5,13 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Assay;
+import be.ugent.maf.cellmissy.entity.AssayMedium;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
@@ -538,6 +541,21 @@ public class CMSOReaderController {
             // get the csv records (rows)
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
+            //set experiment data
+            project.getExperimentList().get(0).setDuration(Double.parseDouble(csvRecords.get(1).get(21)));
+            project.getExperimentList().get(0).setExperimentInterval(Double.parseDouble(csvRecords.get(1).get(22)));
+            project.getExperimentList().get(0).setMagnification(new Magnification(Long.MIN_VALUE));
+            project.getExperimentList().get(0).getMagnification().setMagnificationNumber(csvRecords.get(1).get(32));
+            
+            //set condition data
+            for(int row = 1; row < csvRecords.size(); row++) {
+                PlateCondition condition = project.getExperimentList().get(0).getPlateConditionList().get(row - 1);
+                condition.setAssayMedium(new AssayMedium(csvRecords.get(row).get(2), csvRecords.get(row).get(3), Double.parseDouble(csvRecords.get(row).get(4)), Double.parseDouble(csvRecords.get(row).get(8))));
+                condition.setAssay(new Assay());
+                condition.getAssay().setAssayType(csvRecords.get(row).get(1));
+            
+            }
+            
         } catch (IOException ex) {
             LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
         }
