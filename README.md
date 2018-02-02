@@ -25,7 +25,7 @@ The single-cell analysis is presented in “*An end-to-end software solution for
 
 ## News
 **January 2018**:
-[CellMissy 1.2.0](https://github.com/compomics/cellmissy/releases/tag/v1.2.0) adds the DoRes module, which enables dose-response analyses for collective migration experiments as well as generic dose-response dataset!
+[CellMissy 1.2.0](https://github.com/compomics/cellmissy/releases/tag/v1.2.0) adds the DoRes module, which enables dose-response analyses for collective migration experiments as well as generic dose-response datasets!
 
 **June 2016**:
 [CellMissy 1.1.0](releases/CellMissy-1.1.0.zip) is now available! Single-cell migration analysis implemented!
