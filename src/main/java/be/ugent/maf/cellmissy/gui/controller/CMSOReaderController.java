@@ -5,12 +5,13 @@
  */
 package be.ugent.maf.cellmissy.gui.controller;
 
+import be.ugent.maf.cellmissy.entity.Algorithm;
 import be.ugent.maf.cellmissy.entity.Assay;
 import be.ugent.maf.cellmissy.entity.AssayMedium;
 import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
-import be.ugent.maf.cellmissy.entity.Ecm;
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ImagingType;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
@@ -20,7 +21,16 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
+import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
+import be.ugent.maf.cellmissy.service.AssayService;
+import be.ugent.maf.cellmissy.service.CellLineService;
+import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.InstrumentService;
+import be.ugent.maf.cellmissy.service.PlateService;
+import be.ugent.maf.cellmissy.service.ProjectService;
+import be.ugent.maf.cellmissy.service.TreatmentService;
+import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -60,6 +70,7 @@ public class CMSOReaderController {
     private File assayFile;
     private List<File> biotracksFolders; //separate folder per tracking software
     private boolean tracksPresent;
+    private Experiment importedExperiment;
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -67,6 +78,22 @@ public class CMSOReaderController {
     private CellMissyController cellMissyController;
     //services
     private GridBagConstraints gridBagConstraints;
+    @Autowired
+    private ExperimentService experimentService;
+    @Autowired
+    private InstrumentService instrumentService;
+    @Autowired
+    private ProjectService projectService;
+    @Autowired
+    private WellService wellService;
+    @Autowired
+    private PlateService plateService;
+    @Autowired
+    private CellLineService cellLineService;
+    @Autowired
+    private AssayService assayService;
+    @Autowired
+    private TreatmentService treatmentService;
 
     /**
      * Initialize controller
@@ -75,6 +102,7 @@ public class CMSOReaderController {
         cmsoReaderPanel = new CMSOReaderPanel();
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         tracksPresent = false;
+        importedExperiment = null;
         //init view
         initCMSOReaderPanel();
     }
@@ -125,8 +153,28 @@ public class CMSOReaderController {
                     //build up cellmissy experiment structure
                     //will probably have to reread all files in order
                     Project dataStructure = setupDataStructure(investigationFile, studyFile, assayFile);
+                    Experiment selectedExperiment = dataStructure.getExperimentList().get(0);
 
-                    //switch to analysis view, this contains tracking data choice 
+                    /**
+                     * there is no way to know to which condition the tracks
+                     * belong ---- possible solution: put dp folder inside (or
+                     * rename) folder with well coordinates putting the info
+                     * inside the json would be illogical, is not the point of
+                     * the json
+                     *
+                     * switch to analysis view, this contains tracking data
+                     * choice ??project in getoonde lijst steken (binding) dan
+                     * (onselectedproject) om exp en rest te doen, gebruik
+                     * singlecellmaincontroller ea ?toon single cell view maar
+                     * met andere populated lists? of zelfs niet dat selectie
+                     * deel? ??--> proceedtoanalysis(selectedexperiment) returnt
+                     * bool
+                     *
+                     * solution: save project to database and then start from
+                     * normal single cell analysis? Needs: unique identifier,
+                     * set algorithm and tracks data
+                     */
+                    cellMissyController.proceedToAnalysis(selectedExperiment);
                 }
             }
         });
@@ -141,6 +189,7 @@ public class CMSOReaderController {
      */
     public void resetAfterCardSwitch() {
         cmsoReaderPanel.getNextButton().setEnabled(false);
+        importedExperiment = null;
         //reset text fields
         cmsoReaderPanel.getFolderTextField().setText("");
         cmsoReaderPanel.getSummaryTextArea().setText("");
@@ -470,6 +519,15 @@ public class CMSOReaderController {
         return biotracksText;
     }
 
+    /**
+     * Setup a CellMissy project/experiment structure from the ISA files and the
+     * data therein.
+     *
+     * @param investigationFile
+     * @param studyFile
+     * @param assayFile
+     * @return
+     */
     private Project setupDataStructure(File investigationFile, File studyFile, File assayFile) {
         Project project = null;
         // parser and reader
@@ -491,11 +549,11 @@ public class CMSOReaderController {
             project.setProjectNumber(Integer.parseInt(csvRecords.get(6).get(1)));
             project.setExperimentList(new ArrayList<>());
             project.getExperimentList().add(new Experiment());
-            Experiment exp = project.getExperimentList().get(0);
-            exp.setUser(new User(csvRecords.get(23).get(1), csvRecords.get(22).get(1), Role.ADMIN_USER, "password", csvRecords.get(25).get(1)));
-            exp.setExperimentNumber(Integer.parseInt(csvRecords.get(34).get(1)));
-            exp.setPurpose(csvRecords.get(35).get(1));
-            exp.setPlateFormat(new PlateFormat(Long.MAX_VALUE, Integer.parseInt(csvRecords.get(40).get(1))));
+            importedExperiment = project.getExperimentList().get(0);
+            importedExperiment.setUser(new User(csvRecords.get(23).get(1), csvRecords.get(22).get(1), Role.ADMIN_USER, "password", csvRecords.get(25).get(1)));
+            importedExperiment.setExperimentNumber(Integer.parseInt(csvRecords.get(34).get(1)));
+            importedExperiment.setPurpose(csvRecords.get(35).get(1));
+            importedExperiment.setPlateFormat(new PlateFormat(Long.MAX_VALUE, Integer.parseInt(csvRecords.get(40).get(1))));
 
         } catch (IOException ex) {
             LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
@@ -518,18 +576,18 @@ public class CMSOReaderController {
                 // for now ignore ecm     conditionRow.setEcm(new Ecm());
                 conditionRow.setWellList(new ArrayList<>());
                 // rownr is a letter in the isa files, need to convert this to int
-                conditionRow.getWellList().add(new Well(Integer.parseInt(cSVRecord.get(39)), ((int)cSVRecord.get(39).charAt(0)) - 64));
+                conditionRow.getWellList().add(new Well(Integer.parseInt(cSVRecord.get(39)), ((int) cSVRecord.get(39).charAt(0)) - 64));
 
                 conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
                 conditionRow.getWellList().get(0).setWellid(Integer.toUnsignedLong(row));
                 conditionRow.setTreatmentList(new ArrayList<>());
                 conditionRow.getTreatmentList().add(new Treatment(
                         Double.parseDouble(cSVRecord.get(51)), cSVRecord.get(52), null, null, null, new TreatmentType(
-                                Long.MIN_VALUE, checkTreatmentName(cSVRecord.get(44)))));
+                        Long.MIN_VALUE, checkTreatmentName(cSVRecord.get(44)))));
 
                 plateConditionList.add(conditionRow);
             }
-            project.getExperimentList().get(0).setPlateConditionList(plateConditionList);
+            importedExperiment.setPlateConditionList(plateConditionList);
         } catch (IOException ex) {
             LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
         }
@@ -542,32 +600,111 @@ public class CMSOReaderController {
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
             //set experiment data
-            project.getExperimentList().get(0).setDuration(Double.parseDouble(csvRecords.get(1).get(21)));
-            project.getExperimentList().get(0).setExperimentInterval(Double.parseDouble(csvRecords.get(1).get(22)));
-            project.getExperimentList().get(0).setMagnification(new Magnification(Long.MIN_VALUE));
-            project.getExperimentList().get(0).getMagnification().setMagnificationNumber(csvRecords.get(1).get(32));
-            
+            importedExperiment.setDuration(Double.parseDouble(csvRecords.get(1).get(21)));
+            importedExperiment.setExperimentInterval(Double.parseDouble(csvRecords.get(1).get(22)));
+//            importedExperiment.setMagnification(new Magnification(Long.MIN_VALUE));
+            importedExperiment.setMagnification(new Magnification());
+            importedExperiment.getMagnification().setMagnificationNumber(csvRecords.get(1).get(32));
+
             //set condition data
-            for(int row = 1; row < csvRecords.size(); row++) {
-                PlateCondition condition = project.getExperimentList().get(0).getPlateConditionList().get(row - 1);
+            for (int row = 1; row < csvRecords.size(); row++) {
+                PlateCondition condition = importedExperiment.getPlateConditionList().get(row - 1);
                 condition.setAssayMedium(new AssayMedium(csvRecords.get(row).get(2), csvRecords.get(row).get(3), Double.parseDouble(csvRecords.get(row).get(4)), Double.parseDouble(csvRecords.get(row).get(8))));
                 condition.setAssay(new Assay());
                 condition.getAssay().setAssayType(csvRecords.get(row).get(1));
-            
+
+                for (Well well : condition.getWellList()) {
+                    well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
+                    well.getWellHasImagingTypeList().add(new WellHasImagingType());
+                    well.getWellHasImagingTypeList().get(0).setImagingType(new ImagingType());
+                    well.getWellHasImagingTypeList().get(0).getImagingType().setName(csvRecords.get(row).get(19));
+                }
             }
-            
+
         } catch (IOException ex) {
             LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
         }
 
+        
+        for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
+            plateCondition.setExperiment(importedExperiment);
+        }
+        // set collection for imaging types and algorithms
+        List<ImagingType> imagingTypes = experimentService.getImagingTypes(importedExperiment);
+        for (ImagingType imagingType : imagingTypes) {
+            List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
+            importedExperiment.getPlateConditionList().forEach((plateCondition) -> {
+                plateCondition.getWellList().forEach((well) -> {
+                    for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                        if (wellHasImagingType.getImagingType().equals(imagingType)) {
+                            wellHasImagingType.setImagingType(imagingType);
+                            wellHasImagingTypes.add(wellHasImagingType);
+                        }
+                    }
+                });
+            });
+            imagingType.setWellHasImagingTypeList(wellHasImagingTypes);
+        }
+        //add algorithm and tracks data to project/experiment
+        importedExperiment.getPlateConditionList().get(0).getWellList().get(0).; //set some object referrals
+                List<Algorithm> algorithms = experimentService.getAlgorithms(importedExperiment);
+        for (Algorithm algorithm : algorithms) {
+            List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
+            for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
+                for (Well well : plateCondition.getWellList()) {
+                    for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                        if (wellHasImagingType.getAlgorithm().equals(algorithm)) {
+                            wellHasImagingType.setAlgorithm(algorithm);
+                            wellHasImagingTypes.add(wellHasImagingType);
+                        }
+                    }
+                }
+            }
+            algorithm.setWellHasImagingTypeList(wellHasImagingTypes);
+        }
+        // we need to check if other objects need to be stored
+        persistNewObjects();
         return project;
     }
-    
+
     private String checkTreatmentName(String record) {
         if (record.equalsIgnoreCase("n/A")) {
             return "control";
         } else {
             return record;
+        }
+    }
+
+    /**
+     * Persist new objects to the DB, if any.
+     */
+    private void persistNewObjects() {
+        // plate format
+        PlateFormat plateFormat = importedExperiment.getPlateFormat();
+        PlateFormat foundFormat = plateService.findByFormat(plateFormat.getFormat());
+        if (foundFormat == null) {
+            plateService.save(plateFormat);
+        }
+        // cell line types
+        List<CellLineType> foundCellLines = cellLineService.findNewCellLines(importedExperiment);
+        if (!foundCellLines.isEmpty()) {
+            for (CellLineType cellLineType : foundCellLines) {
+                cellLineService.saveCellLineType(cellLineType);
+            }
+        }
+        // assays
+        List<Assay> foundAssays = assayService.findNewAssays(importedExperiment);
+        if (!foundAssays.isEmpty()) {
+            for (Assay assay : foundAssays) {
+                assayService.save(assay);
+            }
+        }
+        // treatment types
+        List<TreatmentType> foundTreatmentTypes = treatmentService.findNewTreatmentTypes(importedExperiment);
+        if (!foundTreatmentTypes.isEmpty()) {
+            for (TreatmentType treatmentType : foundTreatmentTypes) {
+                treatmentService.saveTreatmentType(treatmentType);
+            }
         }
     }
 }
