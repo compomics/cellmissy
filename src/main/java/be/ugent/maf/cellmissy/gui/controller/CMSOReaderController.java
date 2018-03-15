@@ -16,10 +16,8 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
-import be.ugent.maf.cellmissy.entity.Role;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
-import be.ugent.maf.cellmissy.entity.User;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
@@ -461,8 +459,8 @@ public class CMSOReaderController {
      *
      * @param dpFolder A biotracks "dp" folder directory that contains objects
      * and links csv and the dp.json files
-     * @return Summary information of the biotracks package contents in String
-     * format
+     * @return Summary information of the biotracks package contents in String.
+     * Two-parter array with info on objects and links.
      */
     private String[] parseBiotracks(File dpFolder) {
         //initialize return
@@ -550,7 +548,10 @@ public class CMSOReaderController {
             project.setExperimentList(new ArrayList<>());
             project.getExperimentList().add(new Experiment());
             importedExperiment = project.getExperimentList().get(0);
-            importedExperiment.setUser(new User(csvRecords.get(23).get(1), csvRecords.get(22).get(1), Role.ADMIN_USER, "password", csvRecords.get(25).get(1)));
+            //no sure if a user needs to be set for a cmso project
+            //user can be current cellmissy operator of experiment performer as in ISA file
+//            importedExperiment.setUser(new User(csvRecords.get(23).get(1), csvRecords.get(22).get(1), Role.ADMIN_USER, "password", csvRecords.get(25).get(1)));
+//            importedExperiment.setUser(cellMissyController.getCurrentUser());
             importedExperiment.setExperimentNumber(Integer.parseInt(csvRecords.get(34).get(1)));
             importedExperiment.setPurpose(csvRecords.get(35).get(1));
             importedExperiment.setPlateFormat(new PlateFormat(Long.MAX_VALUE, Integer.parseInt(csvRecords.get(40).get(1))));
@@ -573,18 +574,32 @@ public class CMSOReaderController {
                 //make sure n/A values in treatment are changed over to control
                 PlateCondition conditionRow = new PlateCondition(Integer.toUnsignedLong(row));
                 conditionRow.setCellLine(new CellLine(null, Integer.parseInt(cSVRecord.get(20)), cSVRecord.get(21), Double.parseDouble(cSVRecord.get(23)), new CellLineType(Long.MIN_VALUE, cSVRecord.get(4)), cSVRecord.get(22)));
+
+                // we need to check if the cell line type is already present in the DB !
+                CellLineType foundCellLineType = cellLineService.findByName(conditionRow.getCellLine().getCellLineType().getName());
+                if (foundCellLineType != null) {
+                    conditionRow.getCellLine().setCellLineType(foundCellLineType);
+                } else { //reset id so that a new one can be set when savind to db
+                    conditionRow.getCellLine().getCellLineType().setCellLineTypeid(null);
+                }
                 // for now ignore ecm     conditionRow.setEcm(new Ecm());
                 conditionRow.setWellList(new ArrayList<>());
                 // rownr is a letter in the isa files, need to convert this to int
                 conditionRow.getWellList().add(new Well(Integer.parseInt(cSVRecord.get(39)), ((int) cSVRecord.get(39).charAt(0)) - 64));
 
                 conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
-                conditionRow.getWellList().get(0).setWellid(Integer.toUnsignedLong(row));
                 conditionRow.setTreatmentList(new ArrayList<>());
                 conditionRow.getTreatmentList().add(new Treatment(
                         Double.parseDouble(cSVRecord.get(51)), cSVRecord.get(52), null, null, null, new TreatmentType(
                         Long.MIN_VALUE, checkTreatmentName(cSVRecord.get(44)))));
 
+                //check if treatment type is already present in the db
+                TreatmentType foundTreatmentType = treatmentService.findByName(conditionRow.getTreatmentList().get(0).getTreatmentType().getName());
+                if (foundTreatmentType != null) {
+                    conditionRow.getTreatmentList().get(0).setTreatmentType(foundTreatmentType);
+                } else { //reset id so that a new one can be set when savind to db
+                    conditionRow.getTreatmentList().get(0).getTreatmentType().setTreatmentTypeid(null);
+                }
                 plateConditionList.add(conditionRow);
             }
             importedExperiment.setPlateConditionList(plateConditionList);
@@ -602,7 +617,6 @@ public class CMSOReaderController {
             //set experiment data
             importedExperiment.setDuration(Double.parseDouble(csvRecords.get(1).get(21)));
             importedExperiment.setExperimentInterval(Double.parseDouble(csvRecords.get(1).get(22)));
-//            importedExperiment.setMagnification(new Magnification(Long.MIN_VALUE));
             importedExperiment.setMagnification(new Magnification());
             importedExperiment.getMagnification().setMagnificationNumber(csvRecords.get(1).get(32));
 
@@ -613,11 +627,16 @@ public class CMSOReaderController {
                 condition.setAssay(new Assay());
                 condition.getAssay().setAssayType(csvRecords.get(row).get(1));
 
+                //as many imaging types as tracking data
                 for (Well well : condition.getWellList()) {
                     well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
-                    well.getWellHasImagingTypeList().add(new WellHasImagingType());
-                    well.getWellHasImagingTypeList().get(0).setImagingType(new ImagingType());
-                    well.getWellHasImagingTypeList().get(0).getImagingType().setName(csvRecords.get(row).get(19));
+                    int i = 0;
+                    while (i < biotracksFolders.size()) {
+                        well.getWellHasImagingTypeList().add(new WellHasImagingType());
+                        well.getWellHasImagingTypeList().get(0).setImagingType(new ImagingType());
+                        well.getWellHasImagingTypeList().get(0).getImagingType().setName(csvRecords.get(row).get(19));
+                        i++;
+                    }
                 }
             }
 
@@ -625,7 +644,7 @@ public class CMSOReaderController {
             LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
         }
 
-        
+        // set some object referrals
         for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
             plateCondition.setExperiment(importedExperiment);
         }
@@ -646,8 +665,23 @@ public class CMSOReaderController {
             imagingType.setWellHasImagingTypeList(wellHasImagingTypes);
         }
         //add algorithm and tracks data to project/experiment
-        importedExperiment.getPlateConditionList().get(0).getWellList().get(0).; //set some object referrals
-                List<Algorithm> algorithms = experimentService.getAlgorithms(importedExperiment);
+        List<String> softwareList = new ArrayList<>();
+        for (File software : biotracksFolders) {
+            softwareList.add(software.getName());
+        };
+        importedExperiment.getPlateConditionList().forEach((plateCondition) -> {
+            plateCondition.getWellList().forEach((well) -> {
+                for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
+                    int i = 0;
+                    Algorithm algorithm = new Algorithm();
+                    algorithm.setAlgorithmName(softwareList.get(i));
+                    wellHasImagingType.setAlgorithm(algorithm);
+                    i++;
+                }
+            });
+        });
+        //set some object referrals
+        List<Algorithm> algorithms = experimentService.getAlgorithms(importedExperiment);
         for (Algorithm algorithm : algorithms) {
             List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
             for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
