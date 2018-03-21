@@ -54,9 +54,9 @@ public class TrackOperatorImpl implements TrackOperator {
         cellCentricOperator.computeEndPointDirectionalityRatio(cellCentricDataHolder);
         cellCentricOperator.computeMedianDirectionalityRatio(stepCentricDataHolder, cellCentricDataHolder);
         cellCentricOperator.computeMedianTurningAngle(stepCentricDataHolder, cellCentricDataHolder);
-//        cellCentricOperator.computeConvexHull(stepCentricDataHolder, cellCentricDataHolder);
-//        cellCentricOperator.computeDisplacementRatio(cellCentricDataHolder);
-//        cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);
+        cellCentricOperator.computeConvexHull(stepCentricDataHolder, cellCentricDataHolder);
+        cellCentricOperator.computeDisplacementRatio(cellCentricDataHolder);
+        cellCentricOperator.computeOutreachRatio(cellCentricDataHolder);
 //        cellCentricOperator.computeEntropies(stepCentricDataHolder, cellCentricDataHolder);
 //        cellCentricOperator.computeXYFD(stepCentricDataHolder, cellCentricDataHolder);
 //        cellCentricOperator.computeXTFD(stepCentricDataHolder, cellCentricDataHolder);

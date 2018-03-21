@@ -55,7 +55,7 @@ class TrajGenerator1 {
         Project project = projectService.findById(4L);
         List<Experiment> experiments = experimentService.findExperimentsByProjectId(project.getProjectid());
         // root folder
-        File folder = new File("C:\\Users\\Paola\\Desktop\\benchmark\\g\\tm_xml\\cellmissy_output");
+        File folder = new File("C:\\Users\\CompOmics Gwen\\Documents\\cellmissy_output");
 
         for (Experiment experiment : experiments) {
             if (experiment.getExperimentNumber() == 2) {
