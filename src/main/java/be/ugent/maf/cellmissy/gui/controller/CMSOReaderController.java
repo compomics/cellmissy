@@ -150,9 +150,10 @@ public class CMSOReaderController {
                 if (tracksPresent) {
                     //build up cellmissy experiment structure
                     //will probably have to reread all files in order
-                    Project dataStructure = setupDataStructure(investigationFile, studyFile, assayFile);
-                    Experiment selectedExperiment = dataStructure.getExperimentList().get(0);
-
+                    setupDataStructure(investigationFile, studyFile, assayFile);
+                    //add tracks data to project/experiment
+                    setupTracksData();
+                    
                     /**
                      * there is no way to know to which condition the tracks
                      * belong ---- possible solution: put dp folder inside (or
@@ -172,7 +173,7 @@ public class CMSOReaderController {
                      * normal single cell analysis? Needs: unique identifier,
                      * set algorithm and tracks data
                      */
-                    cellMissyController.proceedToAnalysis(selectedExperiment);
+                    cellMissyController.proceedToAnalysis(importedExperiment);
                 }
             }
         });
@@ -526,7 +527,7 @@ public class CMSOReaderController {
      * @param assayFile
      * @return
      */
-    private Project setupDataStructure(File investigationFile, File studyFile, File assayFile) {
+    private void setupDataStructure(File investigationFile, File studyFile, File assayFile) {
         Project project = null;
         // parser and reader
         CSVParser csvFileParser;
@@ -664,7 +665,7 @@ public class CMSOReaderController {
             });
             imagingType.setWellHasImagingTypeList(wellHasImagingTypes);
         }
-        //add algorithm and tracks data to project/experiment
+        //add algorithm to project/experiment
         List<String> softwareList = new ArrayList<>();
         for (File software : biotracksFolders) {
             softwareList.add(software.getName());
@@ -696,9 +697,13 @@ public class CMSOReaderController {
             }
             algorithm.setWellHasImagingTypeList(wellHasImagingTypes);
         }
+         
         // we need to check if other objects need to be stored
         persistNewObjects();
-        return project;
+        // save the experiment, save the migration data and update the experiment
+        experimentService.save(importedExperiment);
+//      do not need to save WellHasImagingType experimentService.saveMigrationDataForExperiment(importedExperiment);
+        importedExperiment = experimentService.update(importedExperiment);
     }
 
     private String checkTreatmentName(String record) {
@@ -738,6 +743,24 @@ public class CMSOReaderController {
         if (!foundTreatmentTypes.isEmpty()) {
             for (TreatmentType treatmentType : foundTreatmentTypes) {
                 treatmentService.saveTreatmentType(treatmentType);
+            }
+        }
+    }
+    
+    private void setupTracksData() {
+        biotracksFolders;
+        for (PlateCondition platecondition : importedExperiment.getPlateConditionList()) {
+            for (Well well : platecondition.getWellList()) {
+                well.getColumnNumber();
+                well.getRowNumber();
+                check well row and column;
+                for (WellHasImagingType imagingType : well.) {
+                    check algorithm name with biotracksFolders name;
+                    if (names equal) {
+                        something;
+                    }
+                    
+                }
             }
         }
     }
