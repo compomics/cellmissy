@@ -35,11 +35,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JFileChooser;
@@ -69,6 +71,8 @@ public class CMSOReaderController {
     private List<File> biotracksFolders; //separate folder per tracking software
     private boolean tracksPresent;
     private Experiment importedExperiment;
+    private LinkedHashMap<Integer, List<Double>> objectsMap;
+    private LinkedHashMap<Integer, List<Integer>> linksMap;
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -153,7 +157,7 @@ public class CMSOReaderController {
                     setupDataStructure(investigationFile, studyFile, assayFile);
                     //add tracks data to project/experiment
                     setupTracksData();
-                    
+
                     /**
                      * there is no way to know to which condition the tracks
                      * belong ---- possible solution: put dp folder inside (or
@@ -164,7 +168,7 @@ public class CMSOReaderController {
                      * switch to analysis view, this contains tracking data
                      * choice ??project in getoonde lijst steken (binding) dan
                      * (onselectedproject) om exp en rest te doen, gebruik
-                     * singlecellmaincontroller ea ?toon single cell view maar
+                     * singlecellmaincontroller ea ? toon single cell view maar
                      * met andere populated lists? of zelfs niet dat selectie
                      * deel? ??--> proceedtoanalysis(selectedexperiment) returnt
                      * bool
@@ -195,8 +199,11 @@ public class CMSOReaderController {
         cmsoReaderPanel.getIsaTextArea().setText("");
         cmsoReaderPanel.getOmeTextArea().setText("");
         cmsoReaderPanel.getBiotracksTextArea().setText("");
-        biotracksFolders = new ArrayList<>();
+        //reset model entities
+        biotracksFolders = null;
         tracksPresent = false;
+        objectsMap = null;
+        linksMap = null;
     }
 
     /**
@@ -466,6 +473,8 @@ public class CMSOReaderController {
     private String[] parseBiotracks(File dpFolder) {
         //initialize return
         String[] biotracksText = new String[2];
+        objectsMap = new LinkedHashMap<>();
+        linksMap = new LinkedHashMap<>();
 
         // parser and reader
         CSVParser csvFileParser;
@@ -490,6 +499,15 @@ public class CMSOReaderController {
                     objectsText += "The objects table contains: " + csvFileParser.getHeaderMap().keySet() + "\n";
 
                     biotracksText[0] = objectsText;
+                    
+                    //setup object data
+                    for (CSVRecord row : csvRecords) {
+                        List <Double> objectInfo = new ArrayList<>();
+                        objectInfo.add(Double.parseDouble(row.get("cmso_frame_id")));
+                        objectInfo.add(Double.parseDouble(row.get("cmso_x_coord")));
+                        objectInfo.add(Double.parseDouble(row.get("cmso_y_coord")));
+                        objectsMap.put((Integer.valueOf(row.get("cmso_object_id"))), objectInfo);
+                    }
 
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Objects file", ex);
@@ -508,6 +526,21 @@ public class CMSOReaderController {
                     }
                     String linksText = "Total amount of links: " + linkID.size();
                     biotracksText[1] = linksText;
+                    
+                    //setup links(=tracks) data
+                    List<Integer> objectidsList = new ArrayList<>();
+                    Integer currentLinkid = -1;
+                    for (CSVRecord row : csvRecords) {
+                        if (currentLinkid != Integer.parseInt(row.get("cmso_link_id")) && currentLinkid != -1) {
+                            linksMap.put(currentLinkid, objectidsList);
+                            currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
+                            objectidsList = new ArrayList<>();
+                            objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
+                        } else {
+                            objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
+                        }
+                        Integer.parseInt(row.get("cmso_object_id"));
+                    }
 
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Links file", ex);
@@ -697,7 +730,7 @@ public class CMSOReaderController {
             }
             algorithm.setWellHasImagingTypeList(wellHasImagingTypes);
         }
-         
+
         // we need to check if other objects need to be stored
         persistNewObjects();
         // save the experiment, save the migration data and update the experiment
@@ -746,22 +779,37 @@ public class CMSOReaderController {
             }
         }
     }
-    
+
     private void setupTracksData() {
-        biotracksFolders;
-        for (PlateCondition platecondition : importedExperiment.getPlateConditionList()) {
-            for (Well well : platecondition.getWellList()) {
-                well.getColumnNumber();
-                well.getRowNumber();
-                check well row and column;
-                for (WellHasImagingType imagingType : well.) {
-                    check algorithm name with biotracksFolders name;
-                    if (names equal) {
-                        something;
+        for (File software : biotracksFolders) {
+            for (PlateCondition platecondition : importedExperiment.getPlateConditionList()) {
+                for (Well well : platecondition.getWellList()) {
+                    Integer x = well.getColumnNumber();
+                    Integer y = well.getRowNumber();
+
+                    // check well row and column to get the right tracks
+                    for (WellHasImagingType imagingType : well.getWellHasImagingTypeList()) {
+
+                        // check algorithm name with biotracksFolders name
+                        if (software.getName().equals(imagingType.getAlgorithm().getAlgorithmName())) {
+                            // depends on how my issue on github gets resolved. most likely check well position with folder name
+                            for (File trackedwell : software.listFiles()) {
+                                if (trackedwell.getName() == x + y) {
+                                    /**
+                                     * first read linksMap and setup SQL track table
+                                     * copy link id (CellMissy cannot currently handle split or merge events)
+                                     * and size of nested list for track length
+                                     * read objectsMap and then what?
+                                     */ 
+
+                                    
+                                }
+                            }
+                        }
                     }
-                    
                 }
             }
         }
+
     }
 }
