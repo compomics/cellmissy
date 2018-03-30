@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -529,17 +528,27 @@ public class CMSOReaderController {
                     
                     //setup links(=tracks) data
                     List<Integer> objectidsList = new ArrayList<>();
-                    Integer currentLinkid = -1;
-                    for (CSVRecord row : csvRecords) {
-                        if (currentLinkid != Integer.parseInt(row.get("cmso_link_id")) && currentLinkid != -1) {
+                    //TODO separate and write unit test for this
+                    //create an iterator for the records (rows)
+                    Iterator<CSVRecord> iter = csvRecords.iterator();
+                    //first line
+                    CSVRecord row = iter.next();
+                    objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
+                    Integer currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
+                    //go through all rows
+                    while (iter.hasNext()) {
+                        row = iter.next();
+                        if (currentLinkid != Integer.parseInt(row.get("cmso_link_id"))) {
                             linksMap.put(currentLinkid, objectidsList);
                             currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
                             objectidsList = new ArrayList<>();
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
+                        } else if (iter.hasNext() == false) { //check if we are at the last row
+                            objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
+                            linksMap.put(currentLinkid, objectidsList);
                         } else {
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                         }
-                        Integer.parseInt(row.get("cmso_object_id"));
                     }
 
                 } catch (IOException ex) {
@@ -602,6 +611,7 @@ public class CMSOReaderController {
             List<CSVRecord> csvRecords = csvFileParser.getRecords();
             List<PlateCondition> plateConditionList = new ArrayList<>();
             //go through all rows except header, infer not possible (duplicate names)
+            // this makes that we cannot get fields by using column names
             for (int row = 1; row < csvRecords.size(); row++) {
                 CSVRecord cSVRecord = csvRecords.get(row);
                 //create new PlateCondition object per row
@@ -653,7 +663,8 @@ public class CMSOReaderController {
             importedExperiment.setExperimentInterval(Double.parseDouble(csvRecords.get(1).get(22)));
             importedExperiment.setMagnification(new Magnification());
             importedExperiment.getMagnification().setMagnificationNumber(csvRecords.get(1).get(32));
-
+            //go through all rows except header, infer not possible (duplicate names)
+            // this makes that we cannot get fields by using column names
             //set condition data
             for (int row = 1; row < csvRecords.size(); row++) {
                 PlateCondition condition = importedExperiment.getPlateConditionList().get(row - 1);
@@ -733,6 +744,7 @@ public class CMSOReaderController {
 
         // we need to check if other objects need to be stored
         persistNewObjects();
+        //TODO: save project? save wells?
         // save the experiment, save the migration data and update the experiment
         experimentService.save(importedExperiment);
 //      do not need to save WellHasImagingType experimentService.saveMigrationDataForExperiment(importedExperiment);
