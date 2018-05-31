@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,8 +71,8 @@ public class CMSOReaderController {
     private List<File> biotracksFolders; //separate folder per tracking software
     private boolean tracksPresent;
     private Experiment importedExperiment;
-    private LinkedHashMap<Integer, List<Double>> objectsMap;
-    private LinkedHashMap<Integer, List<Integer>> linksMap;
+    private LinkedHashMap<Integer, List<Double>> objectsMap; //<object id, <all features of object>>
+    private LinkedHashMap<Integer, List<Integer>> linksMap; //<link id, <all object ids>>
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -252,8 +253,7 @@ public class CMSOReaderController {
 
                 } //For biotracks we can't check the name or path since it will be the name of the tracking software
                 else if (file.isDirectory() && !name.endsWith("miacme")) {
-                    //add every inner folder to list (all called "dp")
-                    //when implementing downstream analysis, might need to make biotracksFolders a class member
+                    //add every folder to list
                     biotracksFolders.add(file);
 
                 }
@@ -267,11 +267,16 @@ public class CMSOReaderController {
                     // total #tracks + parameters contained in objects table (x,y,z,t...)
                     biotracksText += "Software: " + trackingSoftware.getName() + "\n";
 
-                    //software folder can contain multiple files: raw data, biotracks ini file and dp folder
+                    //software folder can contain multiple files: well nr and in there can be raw data, biotracks ini file and dp folder
                     // the dp folder is the one we need to show a summary of the tracks
                     // from in here we need the csv's with objects and links
-                    for (File file : trackingSoftware.listFiles()) {
-                        if (file.getName().equalsIgnoreCase("dp")) {
+                    for (File well : trackingSoftware.listFiles()) {
+                        for (File file : well.listFiles(new FilenameFilter() {
+                            @Override
+                            public boolean accept(File dir, String name) {
+                                return name.equalsIgnoreCase("dp");
+                            }
+                        })) {
                             String[] softwareSummary = parseBiotracks(file);
                             biotracksText += softwareSummary[0] + softwareSummary[1];
                         }
@@ -482,9 +487,6 @@ public class CMSOReaderController {
         // fileformat specification depending on delimination, infer header
         csvFileFormat = CSVFormat.EXCEL.withHeader();
 
-        ///TODO: read .json file to find csv names? and column names?
-        //   (need path for file reading!)
-        // check endswith(".json") then get path of all resources
         for (File file : dpFolder.listFiles()) {
             if (file.getName().equalsIgnoreCase("objects.csv")) {
 
@@ -498,10 +500,10 @@ public class CMSOReaderController {
                     objectsText += "The objects table contains: " + csvFileParser.getHeaderMap().keySet() + "\n";
 
                     biotracksText[0] = objectsText;
-                    
+
                     //setup object data
                     for (CSVRecord row : csvRecords) {
-                        List <Double> objectInfo = new ArrayList<>();
+                        List<Double> objectInfo = new ArrayList<>();
                         objectInfo.add(Double.parseDouble(row.get("cmso_frame_id")));
                         objectInfo.add(Double.parseDouble(row.get("cmso_x_coord")));
                         objectInfo.add(Double.parseDouble(row.get("cmso_y_coord")));
@@ -525,7 +527,7 @@ public class CMSOReaderController {
                     }
                     String linksText = "Total amount of links: " + linkID.size();
                     biotracksText[1] = linksText;
-                    
+
                     //setup links(=tracks) data
                     List<Integer> objectidsList = new ArrayList<>();
                     //TODO separate and write unit test for this
@@ -538,6 +540,7 @@ public class CMSOReaderController {
                     //go through all rows
                     while (iter.hasNext()) {
                         row = iter.next();
+                        //on new link id
                         if (currentLinkid != Integer.parseInt(row.get("cmso_link_id"))) {
                             linksMap.put(currentLinkid, objectidsList);
                             currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
@@ -806,15 +809,18 @@ public class CMSOReaderController {
                         if (software.getName().equals(imagingType.getAlgorithm().getAlgorithmName())) {
                             // depends on how my issue on github gets resolved. most likely check well position with folder name
                             for (File trackedwell : software.listFiles()) {
-                                if (trackedwell.getName() == x + y) {
+                                if (trackedwell.getName().equals("" + x + y)) {
                                     /**
-                                     * first read linksMap and setup SQL track table
-                                     * copy link id (CellMissy cannot currently handle split or merge events)
+                                     * go into dp folder (output of biotracks)
+                                     * first read linksMap and setup SQL track
+                                     * table copy link id (CellMissy cannot
+                                     * currently handle split or merge events)
                                      * and size of nested list for track length
                                      * read objectsMap and then what?
-                                     */ 
+                                     */
 
-                                    
+                                    linksMap.get(y); //<link id, <all object ids>>
+                                    objectsMap.get(y); //<object id, <all features of object>>
                                 }
                             }
                         }
