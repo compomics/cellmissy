@@ -808,26 +808,40 @@ public class CMSOReaderController {
                         // check algorithm name with biotracksFolders name
                         if (software.getName().equals(imagingType.getAlgorithm().getAlgorithmName())) {
                             // depends on how my issue on github gets resolved. most likely check well position with folder name
-                            for (File trackedwell : software.listFiles()) {
-                                if (trackedwell.getName().equals("" + x + y)) {
-                                    /**
-                                     * go into dp folder (output of biotracks)
-                                     * first read linksMap and setup SQL track
-                                     * table copy link id (CellMissy cannot
-                                     * currently handle split or merge events)
-                                     * and size of nested list for track length
-                                     * read objectsMap and then what?
-                                     */
+                            //go into dp folder. This is located in folder with well coordinate
+                            File dpFolder = getFileFromFolder(getFileFromFolder(software, "" + x + y), "dp");
 
-                                    linksMap.get(y); //<link id, <all object ids>>
-                                    objectsMap.get(y); //<object id, <all features of object>>
-                                }
-                            }
+                            /**
+                             * go into dp folder (output of biotracks) first
+                             * read linksMap and setup SQL track table copy link
+                             * id (CellMissy cannot currently handle split or
+                             * merge events) and size of nested list for track
+                             * length read objectsMap and then what?
+                             */
+                            linksMap.get(y); //<link id, <all object ids>>
+                            objectsMap.get(y); //<object id, <all features of object>>
+
                         }
                     }
                 }
             }
         }
 
+    }
+
+    /**
+     * Look for a certain named file(/subfolder) in a folder.
+     *
+     * @param folder The folder to search
+     * @param fileName Name of the asked file(/subfolder)
+     * @return
+     */
+    private File getFileFromFolder(File folder, String fileName) {
+        for (File candidate : folder.listFiles()) {
+            //change equals over to contains??
+            if (candidate.getName().equalsIgnoreCase(fileName)) {
+                return candidate;
+            }
+        }
     }
 }
