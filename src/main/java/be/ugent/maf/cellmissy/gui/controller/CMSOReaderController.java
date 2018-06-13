@@ -35,10 +35,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -66,13 +66,13 @@ public class CMSOReaderController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CMSOReaderController.class);
     //model
     private File investigationFile;
-    private File studyFile;
-    private File assayFile;
+    private HashMap<String, List<String>> studyMap; //map with isa Study data, <header, <data>>
+    private HashMap<String, List<String>> assayMap; //map with isa Assay data, <header, <data>>;
     private List<File> biotracksFolders; //separate folder per tracking software
     private boolean tracksPresent;
     private Experiment importedExperiment;
-    private LinkedHashMap<Integer, List<Double>> objectsMap; //<object id, <all features of object>>
-    private LinkedHashMap<Integer, List<Integer>> linksMap; //<link id, <all object ids>>
+    private LinkedHashMap<String, LinkedHashMap<Integer, List<Double>>> objectsMap; //<object id, <all features of object>>
+    private LinkedHashMap<String, LinkedHashMap<Integer, List<Integer>>> linksMap; //<link id, <all object ids>>
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -113,6 +113,10 @@ public class CMSOReaderController {
      * Initialize view
      */
     private void initCMSOReaderPanel() {
+        //initiate track data maps
+        studyMap = new HashMap<>();
+        objectsMap = new LinkedHashMap<>();
+        linksMap = new LinkedHashMap<>();
         //disable next button
         cmsoReaderPanel.getNextButton().setEnabled(false);
         /**
@@ -202,8 +206,9 @@ public class CMSOReaderController {
         //reset model entities
         biotracksFolders = null;
         tracksPresent = false;
-        objectsMap = null;
-        linksMap = null;
+        studyMap = new HashMap<>();
+        objectsMap = new LinkedHashMap<>();;
+        linksMap = new LinkedHashMap<>();;
     }
 
     /**
@@ -271,15 +276,10 @@ public class CMSOReaderController {
                     // the dp folder is the one we need to show a summary of the tracks
                     // from in here we need the csv's with objects and links
                     for (File well : trackingSoftware.listFiles()) {
-                        for (File file : well.listFiles(new FilenameFilter() {
-                            @Override
-                            public boolean accept(File dir, String name) {
-                                return name.equalsIgnoreCase("dp");
-                            }
-                        })) {
-                            String[] softwareSummary = parseBiotracks(file);
-                            biotracksText += softwareSummary[0] + softwareSummary[1];
-                        }
+                        biotracksText += "Well: " + well.getName() + "\n";
+                        File dp = getFileFromFolder(well, "dp");
+                        String[] softwareSummary = parseBiotracks(dp, well.getName());
+                        biotracksText += softwareSummary[0] + softwareSummary[1];
                     }
                     biotracksText += "\n \n";
                     tracksPresent = true;
@@ -376,7 +376,6 @@ public class CMSOReaderController {
 
             } //study and assay files are slightly more complicated due to format
             else if (isaFile.getName().startsWith("s")) {
-                studyFile = isaFile;
                 String text = "";
                 // initialize the file reader and parser
                 try {
@@ -386,38 +385,42 @@ public class CMSOReaderController {
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
-                    // the information we want to show
-                    String sourceName = "Sources: ";
-                    String organism = "Organisms: ";
-                    String celltypes = "Cell types: ";
-                    String agentType = "Perturbation type ";
-                    String agentName = "Perturbation name: ";
-                    String agentDose = "Perturbation doses: ";
-                    // cannot add concentrations because "unit" is not a unique column name
+                    //iterate and save the column numbers??? otherwise we do not know which cell values to copy where
+                    HashMap<Integer, String> headerNames = new HashMap<>(); //maps column number to header
 
-                    for (int row = 1; row < csvRecords.size(); row++) {
-                        // for each row: check if information is not already recorded in the String
-                        // using indices for column, inferring header is not possible (duplicate names)
-                        CSVRecord cSVRecord = csvRecords.get(row);
-                        if (!cSVRecord.get(0).isEmpty() && !sourceName.contains(cSVRecord.get(0))) {
-                            sourceName += cSVRecord.get(0) + " // ";
+                    //iterate through rows
+                    int i = 0;
+                    for (CSVRecord row : csvRecords) {
+                        //iterate through cells in the row
+                        for (int j = 0; j < row.size(); j++) {
+                            //first row: set column header map and init list in csv map
+                            if (i == 0) {
+                                headerNames.put(j, row.get(j));
+                                studyMap.put(row.get(j), new ArrayList<>());
+                            } else if (!headerNames.get(j).equalsIgnoreCase("Term Source REF") && !headerNames.get(j).equalsIgnoreCase("Term Accession Number")) {
+                                //add cell content to map value list, even if empty ((not my problem if the data if user did not fill in))
+                                studyMap.get(headerNames.get(j)).add(row.get(j));
+                            }
                         }
-                        if (!cSVRecord.get(1).isEmpty() && !organism.contains(cSVRecord.get(1))) {
-                            organism += cSVRecord.get(1) + " // ";
-                        }
-                        if (!cSVRecord.get(4).isEmpty() && !celltypes.contains(cSVRecord.get(4))) {
-                            celltypes += cSVRecord.get(4) + " // ";
-                        }
-                        if (!cSVRecord.get(43).isEmpty() && !agentType.contains(cSVRecord.get(43))) {
-                            agentType += cSVRecord.get(43) + " // ";
-                        }
-                        if (!cSVRecord.get(44).isEmpty() && !agentName.contains(cSVRecord.get(44))) {
-                            agentName += cSVRecord.get(44) + " // ";
-                        }
-                        if (!cSVRecord.get(68).isEmpty() && !agentDose.contains(cSVRecord.get(68))) {
-                            agentDose += cSVRecord.get(68) + " // ";
-                        }
+                        //increment row index
+                        i++;
                     }
+
+                    // The information we want to show
+                    String sourceName = "Sources: ";  //Source Name
+                    String organism = "Organisms: ";  //Characteristics[organism]
+                    String celltypes = "Cell types: ";  //Characteristics[genotype]
+                    String agentType = "Perturbation types ";  //Parameter Value[perturbation agent type]
+                    String agentName = "Perturbation names: ";  //Factor Value[perturbation agent]
+                    String agentDose = "Perturbation doses: ";  //Factor Value[perturbation dose]
+
+                    //get desired info from studyMap
+                    sourceName += new HashSet(studyMap.get("Source Name"));
+                    organism += new HashSet(studyMap.get("Characteristics[organism]"));
+                    celltypes += new HashSet(studyMap.get("Characteristics[genotype]"));
+                    agentType += new HashSet(studyMap.get("Parameter Value[perturbation agent type]"));
+                    agentName += new HashSet(studyMap.get("Factor Value[perturbation agent]"));
+                    agentDose += new HashSet(studyMap.get("Factor Value[perturbation dose]"));
 
                     // add modules of information to end string
                     text += sourceName + "\n" + organism + "\n" + celltypes + "\n"
@@ -429,7 +432,6 @@ public class CMSOReaderController {
                 isaTextArray[1] = text;
 
             } else if (isaFile.getName().startsWith("a")) {
-                assayFile = isaFile;
                 String text = "";
                 // initialize the file reader and parser
                 try {
@@ -439,17 +441,36 @@ public class CMSOReaderController {
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
-                    // the information we want to show
-                    String imagingTechnique = "Imaging Technique: ";
-                    String acquisitionTime = "Acquisition duration: ";
-                    String interval = "Image interval: ";
-                    String software = "Software: ";
+                    HashMap<Integer, String> headerNames = new HashMap<>(); //maps column number to header
 
-                    CSVRecord firstDataRow = csvRecords.get(1);
-                    imagingTechnique += firstDataRow.get(19);
-                    acquisitionTime += firstDataRow.get(21) + " " + firstDataRow.get(22);
-                    interval += firstDataRow.get(25) + " " + firstDataRow.get(26);
-                    software += firstDataRow.get(43);
+                    //iterate through rows
+                    int i = 0;
+                    for (CSVRecord row : csvRecords) {
+                        //iterate through cells in the row
+                        for (int j = 0; j < row.size(); j++) {
+                            //first row: set column header map and init list in csv map
+                            if (i == 0) {
+                                headerNames.put(j, row.get(j));
+                                assayMap.put(row.get(j), new ArrayList<>());
+                            } else if (!headerNames.get(j).equalsIgnoreCase("Term Source REF") && !headerNames.get(j).equalsIgnoreCase("Term Accession Number")) {
+                                //add cell content to map value list, even if empty ((not my problem if the data if user did not fill in))
+                                assayMap.get(headerNames.get(j)).add(row.get(j));
+                            }
+                        }
+                        //increment row index
+                        i++;
+                    }
+                    // the information we want to show
+                    String imagingTechnique = "Imaging Technique: "; //Parameter Value[imaging technique]
+                    String acquisitionTime = "Acquisition duration: "; //Parameter Value[acquisition duration] + unit column after this
+                    String interval = "Image interval: "; //Parameter Value[time interval] + unit column after this
+                    String software = "Software: "; //Parameter Value[software]
+
+                    //get desired info from assayMap
+                    imagingTechnique += new HashSet(assayMap.get("Parameter Value[imaging technique]"));
+                    acquisitionTime += new HashSet(assayMap.get("Parameter Value[acquisition duration]")) + " hr"; //unit standard hour for now
+                    interval += new HashSet(assayMap.get("Parameter Value[time interval]")) + " min"; //unit standard minute for now
+                    software += new HashSet(assayMap.get("Parameter Value[software]"));
 
                     text += imagingTechnique + "\n" + acquisitionTime + "\n"
                             + interval + "\n" + software + "\n";
@@ -474,11 +495,9 @@ public class CMSOReaderController {
      * @return Summary information of the biotracks package contents in String.
      * Two-parter array with info on objects and links.
      */
-    private String[] parseBiotracks(File dpFolder) {
+    private String[] parseBiotracks(File dpFolder, String wellName) {
         //initialize return
         String[] biotracksText = new String[2];
-        objectsMap = new LinkedHashMap<>();
-        linksMap = new LinkedHashMap<>();
 
         // parser and reader
         CSVParser csvFileParser;
@@ -493,6 +512,7 @@ public class CMSOReaderController {
                 try {
                     fileReader = new FileReader(file);
                     csvFileParser = new CSVParser(fileReader, csvFileFormat);
+                    LinkedHashMap<Integer, List<Double>> innermap = new LinkedHashMap<>();
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
@@ -507,8 +527,10 @@ public class CMSOReaderController {
                         objectInfo.add(Double.parseDouble(row.get("cmso_frame_id")));
                         objectInfo.add(Double.parseDouble(row.get("cmso_x_coord")));
                         objectInfo.add(Double.parseDouble(row.get("cmso_y_coord")));
-                        objectsMap.put((Integer.valueOf(row.get("cmso_object_id"))), objectInfo);
+                        innermap.put((Integer.valueOf(row.get("cmso_object_id"))), objectInfo);
                     }
+                    //put objects information with the well name
+                    objectsMap.put(wellName, innermap);
 
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Objects file", ex);
@@ -530,6 +552,7 @@ public class CMSOReaderController {
 
                     //setup links(=tracks) data
                     List<Integer> objectidsList = new ArrayList<>();
+                    LinkedHashMap<Integer, List<Integer>> innermap = new LinkedHashMap<>();
                     //TODO separate and write unit test for this
                     //create an iterator for the records (rows)
                     Iterator<CSVRecord> iter = csvRecords.iterator();
@@ -542,17 +565,18 @@ public class CMSOReaderController {
                         row = iter.next();
                         //on new link id
                         if (currentLinkid != Integer.parseInt(row.get("cmso_link_id"))) {
-                            linksMap.put(currentLinkid, objectidsList);
+                            innermap.put(currentLinkid, objectidsList);
                             currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
                             objectidsList = new ArrayList<>();
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                         } else if (iter.hasNext() == false) { //check if we are at the last row
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
-                            linksMap.put(currentLinkid, objectidsList);
+                            innermap.put(currentLinkid, objectidsList);
                         } else {
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                         }
                     }
+                    linksMap.put(wellName, innermap);
 
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Links file", ex);
@@ -775,30 +799,30 @@ public class CMSOReaderController {
         // cell line types
         List<CellLineType> foundCellLines = cellLineService.findNewCellLines(importedExperiment);
         if (!foundCellLines.isEmpty()) {
-            for (CellLineType cellLineType : foundCellLines) {
+            foundCellLines.forEach((cellLineType) -> {
                 cellLineService.saveCellLineType(cellLineType);
-            }
+            });
         }
         // assays
         List<Assay> foundAssays = assayService.findNewAssays(importedExperiment);
         if (!foundAssays.isEmpty()) {
-            for (Assay assay : foundAssays) {
+            foundAssays.forEach((assay) -> {
                 assayService.save(assay);
-            }
+            });
         }
         // treatment types
         List<TreatmentType> foundTreatmentTypes = treatmentService.findNewTreatmentTypes(importedExperiment);
         if (!foundTreatmentTypes.isEmpty()) {
-            for (TreatmentType treatmentType : foundTreatmentTypes) {
+            foundTreatmentTypes.forEach((treatmentType) -> {
                 treatmentService.saveTreatmentType(treatmentType);
-            }
+            });
         }
     }
 
     private void setupTracksData() {
-        for (File software : biotracksFolders) {
-            for (PlateCondition platecondition : importedExperiment.getPlateConditionList()) {
-                for (Well well : platecondition.getWellList()) {
+        biotracksFolders.forEach((software) -> {
+            importedExperiment.getPlateConditionList().forEach((platecondition) -> {
+                platecondition.getWellList().forEach((well) -> {
                     Integer x = well.getColumnNumber();
                     Integer y = well.getRowNumber();
 
@@ -807,25 +831,27 @@ public class CMSOReaderController {
 
                         // check algorithm name with biotracksFolders name
                         if (software.getName().equals(imagingType.getAlgorithm().getAlgorithmName())) {
+
                             // depends on how my issue on github gets resolved. most likely check well position with folder name
-                            //go into dp folder. This is located in folder with well coordinate
+                            //go into dp folder. This is located in folder with well coordinates
+                            //TODO CREATE METHOD TO CONVERT LETTER TO NUMBER AND BACKWARDS -- FOR WELL COORDINATES
+                            //this getter still necessary when using objectsmap & linksmap?
                             File dpFolder = getFileFromFolder(getFileFromFolder(software, "" + x + y), "dp");
 
                             /**
-                             * go into dp folder (output of biotracks) first
-                             * read linksMap and setup SQL track table copy link
-                             * id (CellMissy cannot currently handle split or
-                             * merge events) and size of nested list for track
-                             * length read objectsMap and then what?
+                             * read linksMap and setup SQL track table, copy
+                             * link id (CellMissy cannot currently handle split
+                             * or merge events) and size of nested list for
+                             * track length read objectsMap and then what?
                              */
                             linksMap.get(y); //<link id, <all object ids>>
                             objectsMap.get(y); //<object id, <all features of object>>
 
                         }
                     }
-                }
-            }
-        }
+                });
+            });
+        });
 
     }
 
