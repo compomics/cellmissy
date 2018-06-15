@@ -158,7 +158,7 @@ public class CMSOReaderController {
                 if (tracksPresent) {
                     //build up cellmissy experiment structure
                     //will probably have to reread all files in order
-                    setupDataStructure(investigationFile, studyFile, assayFile);
+                    setupDataStructure(investigationFile, studyMap, assayMap);
                     //add tracks data to project/experiment
                     setupTracksData();
 
@@ -362,9 +362,7 @@ public class CMSOReaderController {
                             }
                             //new line per info
                             text += "\n";
-
                         }
-
                     }
                     //extra line between files
                     text += "\n";
@@ -596,7 +594,7 @@ public class CMSOReaderController {
      * @param assayFile
      * @return
      */
-    private void setupDataStructure(File investigationFile, File studyFile, File assayFile) {
+    private void setupDataStructure(File investigationFile, HashMap studyMap, HashMap assayMap) {
         Project project = null;
         // parser and reader
         CSVParser csvFileParser;
@@ -618,7 +616,7 @@ public class CMSOReaderController {
             project.setExperimentList(new ArrayList<>());
             project.getExperimentList().add(new Experiment());
             importedExperiment = project.getExperimentList().get(0);
-            //no sure if a user needs to be set for a cmso project
+            //not sure if a user needs to be set for a cmso project
             //user can be current cellmissy operator of experiment performer as in ISA file
 //            importedExperiment.setUser(new User(csvRecords.get(23).get(1), csvRecords.get(22).get(1), Role.ADMIN_USER, "password", csvRecords.get(25).get(1)));
 //            importedExperiment.setUser(cellMissyController.getCurrentUser());
@@ -631,11 +629,7 @@ public class CMSOReaderController {
         }
 
         //setup study
-        try {
-            fileReader = new FileReader(studyFile);
-            csvFileParser = new CSVParser(fileReader, csvFileFormat);
-            // get the csv records (rows)
-            List<CSVRecord> csvRecords = csvFileParser.getRecords();
+        
             List<PlateCondition> plateConditionList = new ArrayList<>();
             //go through all rows except header, infer not possible (duplicate names)
             // this makes that we cannot get fields by using column names
@@ -674,16 +668,10 @@ public class CMSOReaderController {
                 plateConditionList.add(conditionRow);
             }
             importedExperiment.setPlateConditionList(plateConditionList);
-        } catch (IOException ex) {
-            LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
-        }
+        
 
         //setup assay
-        try {
-            fileReader = new FileReader(assayFile);
-            csvFileParser = new CSVParser(fileReader, csvFileFormat);
-            // get the csv records (rows)
-            List<CSVRecord> csvRecords = csvFileParser.getRecords();
+        
 
             //set experiment data
             importedExperiment.setDuration(Double.parseDouble(csvRecords.get(1).get(21)));
@@ -712,9 +700,7 @@ public class CMSOReaderController {
                 }
             }
 
-        } catch (IOException ex) {
-            LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
-        }
+        
 
         // set some object referrals
         for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
@@ -869,5 +855,7 @@ public class CMSOReaderController {
                 return candidate;
             }
         }
+        //seems like it needs a final return here, even if it might never be used
+        return null;
     }
 }
