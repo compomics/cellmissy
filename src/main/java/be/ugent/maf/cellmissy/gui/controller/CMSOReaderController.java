@@ -594,7 +594,7 @@ public class CMSOReaderController {
      * @param assayFile
      * @return
      */
-    private void setupDataStructure(File investigationFile, HashMap studyMap, HashMap assayMap) {
+    private void setupDataStructure(File investigationFile, HashMap<String, List<String>> studyMap, HashMap<String, List<String>> assayMap) {
         Project project = null;
         // parser and reader
         CSVParser csvFileParser;
@@ -629,78 +629,72 @@ public class CMSOReaderController {
         }
 
         //setup study
-        
-            List<PlateCondition> plateConditionList = new ArrayList<>();
-            //go through all rows except header, infer not possible (duplicate names)
-            // this makes that we cannot get fields by using column names
-            for (int row = 1; row < csvRecords.size(); row++) {
-                CSVRecord cSVRecord = csvRecords.get(row);
-                //create new PlateCondition object per row
-                //make sure n/A values in treatment are changed over to control
-                PlateCondition conditionRow = new PlateCondition(Integer.toUnsignedLong(row));
-                conditionRow.setCellLine(new CellLine(null, Integer.parseInt(cSVRecord.get(20)), cSVRecord.get(21), Double.parseDouble(cSVRecord.get(23)), new CellLineType(Long.MIN_VALUE, cSVRecord.get(4)), cSVRecord.get(22)));
+        List<PlateCondition> plateConditionList = new ArrayList<>();
+        int numberConditions = studyMap.get("Parameter Value[plate well number]").size();
+        //we need to create a certain amount of PlateCondition objects, same amount as number of wells
+        for (int condition = 0; condition < numberConditions; condition++) {
 
-                // we need to check if the cell line type is already present in the DB !
-                CellLineType foundCellLineType = cellLineService.findByName(conditionRow.getCellLine().getCellLineType().getName());
-                if (foundCellLineType != null) {
-                    conditionRow.getCellLine().setCellLineType(foundCellLineType);
-                } else { //reset id so that a new one can be set when savind to db
-                    conditionRow.getCellLine().getCellLineType().setCellLineTypeid(null);
-                }
-                // for now ignore ecm     conditionRow.setEcm(new Ecm());
-                conditionRow.setWellList(new ArrayList<>());
-                // rownr is a letter in the isa files, need to convert this to int
-                conditionRow.getWellList().add(new Well(Integer.parseInt(cSVRecord.get(39)), ((int) cSVRecord.get(39).charAt(0)) - 64));
+            //make sure n/A values in treatment are changed over to control
+            PlateCondition conditionRow = new PlateCondition();
+            conditionRow.setCellLine(new CellLine(null, Integer.parseInt(studyMap.get("Parameter Value[seeding density]").get(condition)),
+                    studyMap.get("Parameter Value[cell culture medium]").get(condition), Double.parseDouble(studyMap.get("Parameter Value[cell culture serum concentration]").get(condition)),
+                    new CellLineType(Long.MIN_VALUE, studyMap.get("Characteristics[cell]").get(condition)), studyMap.get("Parameter Value[cell culture serum]").get(condition)));
 
-                conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
-                conditionRow.setTreatmentList(new ArrayList<>());
-                conditionRow.getTreatmentList().add(new Treatment(
-                        Double.parseDouble(cSVRecord.get(51)), cSVRecord.get(52), null, null, null, new TreatmentType(
-                        Long.MIN_VALUE, checkTreatmentName(cSVRecord.get(44)))));
+//                //check if the cell line type is already present in the DB
+//                CellLineType foundCellLineType = cellLineService.findByName(conditionRow.getCellLine().getCellLineType().getName());
+//                if (foundCellLineType != null) {
+//                    conditionRow.getCellLine().setCellLineType(foundCellLineType);
+//                } else { //reset id so that a new one can be set when savind to db
+//                    conditionRow.getCellLine().getCellLineType().setCellLineTypeid(null);
+//                }
+            // for now ignore ecm     conditionRow.setEcm(new Ecm());
+            conditionRow.setWellList(new ArrayList<>());
+            // rownr is a letter in the isa files, need to convert this to int
+            conditionRow.getWellList().add(new Well(Integer.parseInt(studyMap.get("Parameter Value[plate well column coordinate]").get(condition)),
+                    (checkRowCoordinate(studyMap.get("Parameter Value[plate well row coordinate]").get(condition)))));
 
-                //check if treatment type is already present in the db
-                TreatmentType foundTreatmentType = treatmentService.findByName(conditionRow.getTreatmentList().get(0).getTreatmentType().getName());
-                if (foundTreatmentType != null) {
-                    conditionRow.getTreatmentList().get(0).setTreatmentType(foundTreatmentType);
-                } else { //reset id so that a new one can be set when savind to db
-                    conditionRow.getTreatmentList().get(0).getTreatmentType().setTreatmentTypeid(null);
-                }
-                plateConditionList.add(conditionRow);
+            conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
+            conditionRow.setTreatmentList(new ArrayList<>());
+            conditionRow.getTreatmentList().add(new Treatment(
+                        Double.parseDouble(studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[0]), 
+                    studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[1], null, null, null, 
+                    new TreatmentType(Long.MIN_VALUE, checkTreatmentName(studyMap.get("Factor Value[perturbation agent]").get(condition)))));
+
+            //check if treatment type is already present in the db
+            TreatmentType foundTreatmentType = treatmentService.findByName(conditionRow.getTreatmentList().get(0).getTreatmentType().getName());
+            if (foundTreatmentType != null) {
+                conditionRow.getTreatmentList().get(0).setTreatmentType(foundTreatmentType);
+            } else { //reset id so that a new one can be set if necessary
+                conditionRow.getTreatmentList().get(0).getTreatmentType().setTreatmentTypeid(null);
             }
-            importedExperiment.setPlateConditionList(plateConditionList);
+            plateConditionList.add(conditionRow);
+        }
+        importedExperiment.setPlateConditionList(plateConditionList);
+
+        //setup general assay information
+        importedExperiment.setDuration(Double.parseDouble(assayMap.get("Parameter Value[acquisition duration]").get(0)));
+        importedExperiment.setExperimentInterval(Double.parseDouble(assayMap.get("Parameter Value[time interval]").get(0)));
+        importedExperiment.setMagnification(new Magnification());
+        importedExperiment.getMagnification().setMagnificationNumber(assayMap.get("Parameter Value[objective magnification]").get(0));
         
+        //set condition data per well
+        for (int row = 0; row < numberConditions; row++) {
+            PlateCondition condition = importedExperiment.getPlateConditionList().get(row);
+            condition.setAssayMedium(new AssayMedium(assayMap.get("Parameter Value[medium]").get(row), assayMap.get("Parameter Value[serum]").get(row), 
+                    Double.parseDouble(assayMap.get("Parameter Value[serum concentration]").get(row)), Double.parseDouble(assayMap.get("Parameter Value[medium volume]").get(row))));
+            condition.setAssay(new Assay());
+            condition.getAssay().setAssayType(assayMap.get("Protocol REF").get(row));
 
-        //setup assay
-        
-
-            //set experiment data
-            importedExperiment.setDuration(Double.parseDouble(csvRecords.get(1).get(21)));
-            importedExperiment.setExperimentInterval(Double.parseDouble(csvRecords.get(1).get(22)));
-            importedExperiment.setMagnification(new Magnification());
-            importedExperiment.getMagnification().setMagnificationNumber(csvRecords.get(1).get(32));
-            //go through all rows except header, infer not possible (duplicate names)
-            // this makes that we cannot get fields by using column names
-            //set condition data
-            for (int row = 1; row < csvRecords.size(); row++) {
-                PlateCondition condition = importedExperiment.getPlateConditionList().get(row - 1);
-                condition.setAssayMedium(new AssayMedium(csvRecords.get(row).get(2), csvRecords.get(row).get(3), Double.parseDouble(csvRecords.get(row).get(4)), Double.parseDouble(csvRecords.get(row).get(8))));
-                condition.setAssay(new Assay());
-                condition.getAssay().setAssayType(csvRecords.get(row).get(1));
-
-                //as many imaging types as tracking data
-                for (Well well : condition.getWellList()) {
-                    well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
-                    int i = 0;
-                    while (i < biotracksFolders.size()) {
-                        well.getWellHasImagingTypeList().add(new WellHasImagingType());
-                        well.getWellHasImagingTypeList().get(0).setImagingType(new ImagingType());
-                        well.getWellHasImagingTypeList().get(0).getImagingType().setName(csvRecords.get(row).get(19));
-                        i++;
-                    }
+            //as many imaging types as tracking software used
+            for (Well well : condition.getWellList()) {
+                well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
+                for (int i = 0; i < biotracksFolders.size(); i++) {
+                    well.getWellHasImagingTypeList().add(new WellHasImagingType());
+                    well.getWellHasImagingTypeList().get(0).setImagingType(new ImagingType());
+                    well.getWellHasImagingTypeList().get(0).getImagingType().setName(assayMap.get("Parameter Value[imaging technique]").get(i));
                 }
             }
-
-        
+        }
 
         // set some object referrals
         for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
@@ -738,7 +732,7 @@ public class CMSOReaderController {
                 }
             });
         });
-        //set some object referrals
+        //set some object referrals for algorithms and imaging types
         List<Algorithm> algorithms = experimentService.getAlgorithms(importedExperiment);
         for (Algorithm algorithm : algorithms) {
             List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
@@ -858,4 +852,14 @@ public class CMSOReaderController {
         //seems like it needs a final return here, even if it might never be used
         return null;
     }
+
+    private int checkRowCoordinate(String coordinate) {
+        try {
+            Integer.parseInt(coordinate);
+            return (int) (coordinate.charAt(0));
+        } catch (NumberFormatException e) {
+            return (int) (coordinate.charAt(0) - 64);
+        }
+    }
+    
 }
