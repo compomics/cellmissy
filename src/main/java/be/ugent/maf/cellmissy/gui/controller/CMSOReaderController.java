@@ -20,6 +20,7 @@ import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
+import be.ugent.maf.cellmissy.entity.result.BiotracksDataHolder;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.CellLineService;
@@ -71,8 +72,7 @@ public class CMSOReaderController {
     private List<File> biotracksFolders; //separate folder per tracking software
     private boolean tracksPresent;
     private Experiment importedExperiment;
-    private LinkedHashMap<String, LinkedHashMap<Integer, List<Double>>> objectsMap; //<object id, <all features of object>>
-    private LinkedHashMap<String, LinkedHashMap<Integer, List<Integer>>> linksMap; //<link id, <all object ids>>
+    private List<BiotracksDataHolder> biotracksDataHolders;
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -115,8 +115,7 @@ public class CMSOReaderController {
     private void initCMSOReaderPanel() {
         //initiate track data maps
         studyMap = new HashMap<>();
-        objectsMap = new LinkedHashMap<>();
-        linksMap = new LinkedHashMap<>();
+        biotracksDataHolders = new ArrayList<>();
         //disable next button
         cmsoReaderPanel.getNextButton().setEnabled(false);
         /**
@@ -177,9 +176,7 @@ public class CMSOReaderController {
                      * deel? ??--> proceedtoanalysis(selectedexperiment) returnt
                      * bool
                      *
-                     * solution: save project to database and then start from
-                     * normal single cell analysis? Needs: unique identifier,
-                     * set algorithm and tracks data
+                     * remove current gui layer and add single cell master gui from controller
                      */
                     cellMissyController.proceedToAnalysis(importedExperiment);
                 }
@@ -207,8 +204,7 @@ public class CMSOReaderController {
         biotracksFolders = null;
         tracksPresent = false;
         studyMap = new HashMap<>();
-        objectsMap = new LinkedHashMap<>();;
-        linksMap = new LinkedHashMap<>();;
+        biotracksDataHolders = new ArrayList<>();
     }
 
     /**
@@ -278,7 +274,7 @@ public class CMSOReaderController {
                     for (File well : trackingSoftware.listFiles()) {
                         biotracksText += "Well: " + well.getName() + "\n";
                         File dp = getFileFromFolder(well, "dp");
-                        String[] softwareSummary = parseBiotracks(dp, well.getName());
+                        String[] softwareSummary = parseBiotracks(dp, trackingSoftware.getName(), well.getName());
                         biotracksText += softwareSummary[0] + softwareSummary[1];
                     }
                     biotracksText += "\n \n";
@@ -493,30 +489,29 @@ public class CMSOReaderController {
      * @return Summary information of the biotracks package contents in String.
      * Two-parter array with info on objects and links.
      */
-    private String[] parseBiotracks(File dpFolder, String wellName) {
+    private String[] parseBiotracks(File dpFolder, String software, String wellName) {
         //initialize return
         String[] biotracksText = new String[2];
+        LinkedHashMap<Integer, List<Double>> objectsMap = new LinkedHashMap<>();
+        LinkedHashMap<Integer, List<Integer>> linksMap = new LinkedHashMap<>();
 
         // parser and reader
         CSVParser csvFileParser;
         FileReader fileReader;
         CSVFormat csvFileFormat;
-        // fileformat specification depending on delimination, infer header
+        // fileformat specification depending on delimination, INFER HEADER
         csvFileFormat = CSVFormat.EXCEL.withHeader();
 
         for (File file : dpFolder.listFiles()) {
             if (file.getName().equalsIgnoreCase("objects.csv")) {
-
                 try {
                     fileReader = new FileReader(file);
                     csvFileParser = new CSVParser(fileReader, csvFileFormat);
-                    LinkedHashMap<Integer, List<Double>> innermap = new LinkedHashMap<>();
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
 
                     String objectsText = "Total amount of objects detected: " + csvRecords.size() + "\n";
                     objectsText += "The objects table contains: " + csvFileParser.getHeaderMap().keySet() + "\n";
-
                     biotracksText[0] = objectsText;
 
                     //setup object data
@@ -525,11 +520,10 @@ public class CMSOReaderController {
                         objectInfo.add(Double.parseDouble(row.get("cmso_frame_id")));
                         objectInfo.add(Double.parseDouble(row.get("cmso_x_coord")));
                         objectInfo.add(Double.parseDouble(row.get("cmso_y_coord")));
-                        innermap.put((Integer.valueOf(row.get("cmso_object_id"))), objectInfo);
+                        // put in objects map for this software and well
+                        objectsMap.put((Integer.valueOf(row.get("cmso_object_id"))), objectInfo);
                     }
-                    //put objects information with the well name
-                    objectsMap.put(wellName, innermap);
-
+                    
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Objects file", ex);
                 }
@@ -540,41 +534,39 @@ public class CMSOReaderController {
                     csvFileParser = new CSVParser(fileReader, csvFileFormat);
                     // get the csv records (rows)
                     List<CSVRecord> csvRecords = csvFileParser.getRecords();
-                    Set<Integer> linkID = new HashSet<>();
-
-                    for (CSVRecord row : csvRecords) {
-                        linkID.add(Integer.parseInt(row.get("cmso_link_id")));
-                    }
-                    String linksText = "Total amount of links: " + linkID.size();
-                    biotracksText[1] = linksText;
 
                     //setup links(=tracks) data
                     List<Integer> objectidsList = new ArrayList<>();
-                    LinkedHashMap<Integer, List<Integer>> innermap = new LinkedHashMap<>();
+                    Set<Integer> linkID = new HashSet<>();
+                    
                     //TODO separate and write unit test for this
                     //create an iterator for the records (rows)
                     Iterator<CSVRecord> iter = csvRecords.iterator();
-                    //first line
+                    //first line, header is already inferred
                     CSVRecord row = iter.next();
+                    
                     objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                     Integer currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
+                    linkID.add(Integer.parseInt(row.get("cmso_link_id")));
                     //go through all rows
                     while (iter.hasNext()) {
                         row = iter.next();
                         //on new link id
                         if (currentLinkid != Integer.parseInt(row.get("cmso_link_id"))) {
-                            innermap.put(currentLinkid, objectidsList);
+                            linksMap.put(currentLinkid, objectidsList);
                             currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
                             objectidsList = new ArrayList<>();
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
-                        } else if (iter.hasNext() == false) { //check if we are at the last row
+                        } //check if we are at the last row
+                        else if (iter.hasNext() == false) { 
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
-                            innermap.put(currentLinkid, objectidsList);
+                            linksMap.put(currentLinkid, objectidsList);
                         } else {
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                         }
                     }
-                    linksMap.put(wellName, innermap);
+                    String linksText = "Total amount of links: " + linkID.size();
+                    biotracksText[1] = linksText;
 
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Links file", ex);
@@ -582,6 +574,7 @@ public class CMSOReaderController {
 
             }
         }
+        biotracksDataHolders.add(new BiotracksDataHolder(software, checkRowCoordinate(wellName.split("_")[1]), Integer.parseInt(wellName.split("_")[0]), objectsMap, linksMap));
         return biotracksText;
     }
 
@@ -656,8 +649,8 @@ public class CMSOReaderController {
             conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
             conditionRow.setTreatmentList(new ArrayList<>());
             conditionRow.getTreatmentList().add(new Treatment(
-                        Double.parseDouble(studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[0]), 
-                    studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[1], null, null, null, 
+                    Double.parseDouble(studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[0]),
+                    studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[1], null, null, null,
                     new TreatmentType(Long.MIN_VALUE, checkTreatmentName(studyMap.get("Factor Value[perturbation agent]").get(condition)))));
 
             //check if treatment type is already present in the db
@@ -676,11 +669,11 @@ public class CMSOReaderController {
         importedExperiment.setExperimentInterval(Double.parseDouble(assayMap.get("Parameter Value[time interval]").get(0)));
         importedExperiment.setMagnification(new Magnification());
         importedExperiment.getMagnification().setMagnificationNumber(assayMap.get("Parameter Value[objective magnification]").get(0));
-        
+
         //set condition data per well
         for (int row = 0; row < numberConditions; row++) {
             PlateCondition condition = importedExperiment.getPlateConditionList().get(row);
-            condition.setAssayMedium(new AssayMedium(assayMap.get("Parameter Value[medium]").get(row), assayMap.get("Parameter Value[serum]").get(row), 
+            condition.setAssayMedium(new AssayMedium(assayMap.get("Parameter Value[medium]").get(row), assayMap.get("Parameter Value[serum]").get(row),
                     Double.parseDouble(assayMap.get("Parameter Value[serum concentration]").get(row)), Double.parseDouble(assayMap.get("Parameter Value[medium volume]").get(row))));
             condition.setAssay(new Assay());
             condition.getAssay().setAssayType(assayMap.get("Protocol REF").get(row));
@@ -748,14 +741,16 @@ public class CMSOReaderController {
             }
             algorithm.setWellHasImagingTypeList(wellHasImagingTypes);
         }
-
-        // we need to check if other objects need to be stored
-        persistNewObjects();
-        //TODO: save project? save wells?
-        // save the experiment, save the migration data and update the experiment
-        experimentService.save(importedExperiment);
-//      do not need to save WellHasImagingType experimentService.saveMigrationDataForExperiment(importedExperiment);
-        importedExperiment = experimentService.update(importedExperiment);
+        /**
+         * Currently not saving anything to database
+         */
+//        // we need to check if other objects need to be stored
+//        persistNewObjects();
+//        //TODO: save project? save wells?
+//        // save the experiment, save the migration data and update the experiment
+//        experimentService.save(importedExperiment);
+//        do not need to save WellHasImagingType: experimentService.saveMigrationDataForExperiment(importedExperiment);
+//        importedExperiment = experimentService.update(importedExperiment);
     }
 
     private String checkTreatmentName(String record) {
@@ -812,11 +807,10 @@ public class CMSOReaderController {
                         // check algorithm name with biotracksFolders name
                         if (software.getName().equals(imagingType.getAlgorithm().getAlgorithmName())) {
 
-                            // depends on how my issue on github gets resolved. most likely check well position with folder name
-                            //go into dp folder. This is located in folder with well coordinates
-                            //TODO CREATE METHOD TO CONVERT LETTER TO NUMBER AND BACKWARDS -- FOR WELL COORDINATES
-                            //this getter still necessary when using objectsmap & linksmap?
-                            File dpFolder = getFileFromFolder(getFileFromFolder(software, "" + x + y), "dp");
+                            // depends on how my issue on github gets resolved. most likely check well coordinates with folder name
+                            // ????? linksmap en objectsmap, where is software info????
+                            // software --> well --> links and objects
+                            //create CMSOTrackDataHolder(s) when parsing biotracks!!
 
                             /**
                              * read linksMap and setup SQL track table, copy
@@ -861,5 +855,5 @@ public class CMSOReaderController {
             return (int) (coordinate.charAt(0) - 64);
         }
     }
-    
+
 }
