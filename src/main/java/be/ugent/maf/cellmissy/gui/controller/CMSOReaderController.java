@@ -16,6 +16,8 @@ import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.Treatment;
 import be.ugent.maf.cellmissy.entity.TreatmentType;
 import be.ugent.maf.cellmissy.entity.Well;
@@ -800,21 +802,34 @@ public class CMSOReaderController {
             platecondition.getWellList().forEach((well) -> {
                 Integer x = well.getColumnNumber();
                 Integer y = well.getRowNumber();
-
                 // check well row and column to get the right tracks
                 for (WellHasImagingType imagingType : well.getWellHasImagingTypeList()) {
-
                     BiotracksDataHolder dataHolder = biotracksDataHolders.get(imagingType.getAlgorithm().getAlgorithmName() + x + y);
 
-                    /**
-                     * read linksMap and setup SQL track table, copy link id
-                     * (CellMissy cannot currently handle split or merge events)
-                     * and size of nested list for track length read objectsMap
-                     * and then what?
-                     */
-                    linksMap.get(y); //<link id, <all object ids>>
-                    objectsMap.get(y); //<object id, <all features of object>>
-
+                    // read linksMap and setup SQL track table, copy link id (CellMissy cannot currently handle split or merge events)
+                    // size of nested links list for track length 
+                    HashMap<Integer, List<Integer>> linksMap = dataHolder.getLinksMap();
+                    HashMap<Integer, List<Double>> objectsMap = dataHolder.getObjectsMap();
+                    List<Track> trackList = new ArrayList<>();
+                    
+                    for (Integer trackNo : linksMap.keySet()) {
+                        //create track and set stuff
+                        List<Integer> trackedObjects = linksMap.get(trackNo);
+                        Track track = new Track(Integer.toUnsignedLong(trackNo), trackNo, trackedObjects.size());
+                        track.setWellHasImagingType(imagingType);
+                        
+                        //create track points
+                        List<TrackPoint> trackPointList = new ArrayList<>();
+                        //cycle through trackedObjects and get info from objectsMap
+                        for (Integer objectid : trackedObjects) {
+                            List<Double> objectInfo = objectsMap.get(objectid);
+                            TrackPoint point = new TrackPoint(Integer.toUnsignedLong(objectid), Integer.parseInt(Double.toString(objectInfo.get(0))),
+                                    objectInfo.get(2), objectInfo.get(1));
+                            trackPointList.add(point);
+                        }
+                        track.setTrackPointList(trackPointList);
+                    }
+                    imagingType.setTrackList(trackList);
                 }
             });
         });
