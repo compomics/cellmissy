@@ -72,7 +72,7 @@ public class CMSOReaderController {
     private List<File> biotracksFolders; //separate folder per tracking software
     private boolean tracksPresent;
     private Experiment importedExperiment;
-    private List<BiotracksDataHolder> biotracksDataHolders;
+    private HashMap<String, BiotracksDataHolder> biotracksDataHolders;
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -115,7 +115,7 @@ public class CMSOReaderController {
     private void initCMSOReaderPanel() {
         //initiate track data maps
         studyMap = new HashMap<>();
-        biotracksDataHolders = new ArrayList<>();
+        biotracksDataHolders = new HashMap<>();
         //disable next button
         cmsoReaderPanel.getNextButton().setEnabled(false);
         /**
@@ -176,7 +176,8 @@ public class CMSOReaderController {
                      * deel? ??--> proceedtoanalysis(selectedexperiment) returnt
                      * bool
                      *
-                     * remove current gui layer and add single cell master gui from controller
+                     * remove current gui layer and add single cell master gui
+                     * from controller
                      */
                     cellMissyController.proceedToAnalysis(importedExperiment);
                 }
@@ -204,7 +205,7 @@ public class CMSOReaderController {
         biotracksFolders = null;
         tracksPresent = false;
         studyMap = new HashMap<>();
-        biotracksDataHolders = new ArrayList<>();
+        biotracksDataHolders = new HashMap();
     }
 
     /**
@@ -523,7 +524,7 @@ public class CMSOReaderController {
                         // put in objects map for this software and well
                         objectsMap.put((Integer.valueOf(row.get("cmso_object_id"))), objectInfo);
                     }
-                    
+
                 } catch (IOException ex) {
                     LOG.error(ex.getMessage() + "/n Error while parsing Objects file", ex);
                 }
@@ -538,13 +539,13 @@ public class CMSOReaderController {
                     //setup links(=tracks) data
                     List<Integer> objectidsList = new ArrayList<>();
                     Set<Integer> linkID = new HashSet<>();
-                    
+
                     //TODO separate and write unit test for this
                     //create an iterator for the records (rows)
                     Iterator<CSVRecord> iter = csvRecords.iterator();
                     //first line, header is already inferred
                     CSVRecord row = iter.next();
-                    
+
                     objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                     Integer currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
                     linkID.add(Integer.parseInt(row.get("cmso_link_id")));
@@ -558,7 +559,7 @@ public class CMSOReaderController {
                             objectidsList = new ArrayList<>();
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                         } //check if we are at the last row
-                        else if (iter.hasNext() == false) { 
+                        else if (iter.hasNext() == false) {
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                             linksMap.put(currentLinkid, objectidsList);
                         } else {
@@ -574,7 +575,7 @@ public class CMSOReaderController {
 
             }
         }
-        biotracksDataHolders.add(new BiotracksDataHolder(software, checkRowCoordinate(wellName.split("_")[1]), Integer.parseInt(wellName.split("_")[0]), objectsMap, linksMap));
+        biotracksDataHolders.put((software + checkRowCoordinate(wellName.split("_")[1]) + wellName.split("_")[0]), new BiotracksDataHolder(objectsMap, linksMap));
         return biotracksText;
     }
 
@@ -795,38 +796,28 @@ public class CMSOReaderController {
     }
 
     private void setupTracksData() {
-        biotracksFolders.forEach((software) -> {
-            importedExperiment.getPlateConditionList().forEach((platecondition) -> {
-                platecondition.getWellList().forEach((well) -> {
-                    Integer x = well.getColumnNumber();
-                    Integer y = well.getRowNumber();
+        importedExperiment.getPlateConditionList().forEach((platecondition) -> {
+            platecondition.getWellList().forEach((well) -> {
+                Integer x = well.getColumnNumber();
+                Integer y = well.getRowNumber();
 
-                    // check well row and column to get the right tracks
-                    for (WellHasImagingType imagingType : well.getWellHasImagingTypeList()) {
+                // check well row and column to get the right tracks
+                for (WellHasImagingType imagingType : well.getWellHasImagingTypeList()) {
 
-                        // check algorithm name with biotracksFolders name
-                        if (software.getName().equals(imagingType.getAlgorithm().getAlgorithmName())) {
+                    BiotracksDataHolder dataHolder = biotracksDataHolders.get(imagingType.getAlgorithm().getAlgorithmName() + x + y);
 
-                            // depends on how my issue on github gets resolved. most likely check well coordinates with folder name
-                            // ????? linksmap en objectsmap, where is software info????
-                            // software --> well --> links and objects
-                            //create CMSOTrackDataHolder(s) when parsing biotracks!!
+                    /**
+                     * read linksMap and setup SQL track table, copy link id
+                     * (CellMissy cannot currently handle split or merge events)
+                     * and size of nested list for track length read objectsMap
+                     * and then what?
+                     */
+                    linksMap.get(y); //<link id, <all object ids>>
+                    objectsMap.get(y); //<object id, <all features of object>>
 
-                            /**
-                             * read linksMap and setup SQL track table, copy
-                             * link id (CellMissy cannot currently handle split
-                             * or merge events) and size of nested list for
-                             * track length read objectsMap and then what?
-                             */
-                            linksMap.get(y); //<link id, <all object ids>>
-                            objectsMap.get(y); //<object id, <all features of object>>
-
-                        }
-                    }
-                });
+                }
             });
         });
-
     }
 
     /**
