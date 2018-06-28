@@ -24,6 +24,7 @@ import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.entity.WellHasImagingType;
 import be.ugent.maf.cellmissy.entity.result.BiotracksDataHolder;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOReaderPanel;
+import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellMainController;
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import be.ugent.maf.cellmissy.service.ExperimentService;
@@ -68,7 +69,7 @@ public class CMSOReaderController {
 
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(CMSOReaderController.class);
     //model
-    private File investigationFile;
+    private HashMap<String, String> investigationMap; //map with isa Investigation data, does not contain all data!!
     private HashMap<String, List<String>> studyMap; //map with isa Study data, <header, <data>>
     private HashMap<String, List<String>> assayMap; //map with isa Assay data, <header, <data>>;
     private List<File> biotracksFolders; //separate folder per tracking software
@@ -80,6 +81,8 @@ public class CMSOReaderController {
     // parent controller
     @Autowired
     private CellMissyController cellMissyController;
+    @Autowired
+    private SingleCellMainController singleCellMainController;
     //services
     private GridBagConstraints gridBagConstraints;
     @Autowired
@@ -116,7 +119,9 @@ public class CMSOReaderController {
      */
     private void initCMSOReaderPanel() {
         //initiate track data maps
+        investigationMap = new HashMap<>();
         studyMap = new HashMap<>();
+        assayMap = new HashMap<>();
         biotracksDataHolders = new HashMap<>();
         //disable next button
         cmsoReaderPanel.getNextButton().setEnabled(false);
@@ -159,29 +164,18 @@ public class CMSOReaderController {
                 if (tracksPresent) {
                     //build up cellmissy experiment structure
                     //will probably have to reread all files in order
-                    setupDataStructure(investigationFile, studyMap, assayMap);
+                    setupDataStructure();
                     //add tracks data to project/experiment
                     setupTracksData();
 
                     /**
-                     * there is no way to know to which condition the tracks
-                     * belong ---- possible solution: put dp folder inside (or
-                     * rename) folder with well coordinates putting the info
-                     * inside the json would be illogical, is not the point of
-                     * the json
-                     *
-                     * switch to analysis view, this contains tracking data
-                     * choice ??project in getoonde lijst steken (binding) dan
-                     * (onselectedproject) om exp en rest te doen, gebruik
-                     * singlecellmaincontroller ea ? toon single cell view maar
-                     * met andere populated lists? of zelfs niet dat selectie
-                     * deel? ??--> proceedtoanalysis(selectedexperiment) returnt
-                     * bool
-                     *
-                     * remove current gui layer and add single cell master gui
-                     * from controller
+                     * 1)proceedToAnalysis method 2)remove current gui layer and
+                     * add single cell master gui from controller 3)'press'
+                     * start button (choice of algorithm and imaging type?)
                      */
-                    cellMissyController.proceedToAnalysis(importedExperiment);
+                    singleCellMainController.proceedToAnalysis(importedExperiment);
+                    cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().removeAll();
+                    cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().add(singleCellMainController.getAnalysisExperimentPanel(), gridBagConstraints);
                 }
             }
         });
@@ -206,7 +200,9 @@ public class CMSOReaderController {
         //reset model entities
         biotracksFolders = null;
         tracksPresent = false;
+        investigationMap = new HashMap<>();
         studyMap = new HashMap<>();
+        assayMap = new HashMap<>();
         biotracksDataHolders = new HashMap();
     }
 
@@ -322,7 +318,6 @@ public class CMSOReaderController {
         for (File isaFile : isaFiles) {
             // check name for correct spot in text array
             if (isaFile.getName().startsWith("i")) {
-                investigationFile = isaFile;
                 String text = "";
 
                 // initialize the file reader and parser
@@ -346,7 +341,11 @@ public class CMSOReaderController {
                     // read the CSV file records
                     for (int row = 0; row < csvRecords.size(); row++) {
                         CSVRecord cSVRecord = csvRecords.get(row);
-
+                        try {
+                            investigationMap.put(cSVRecord.get(0), cSVRecord.get(1));
+                        } catch (ArrayIndexOutOfBoundsException aiob) {
+                            investigationMap.put(cSVRecord.get(0), "");
+                        }
                         if (invSummaryTerms.contains(cSVRecord.get(0))) {
                             //create an iterator for the record (row) values
                             Iterator<String> iter = cSVRecord.iterator();
@@ -540,7 +539,6 @@ public class CMSOReaderController {
 
                     //setup links(=tracks) data
                     List<Integer> objectidsList = new ArrayList<>();
-                    Set<Integer> linkID = new HashSet<>();
 
                     //TODO separate and write unit test for this
                     //create an iterator for the records (rows)
@@ -550,7 +548,6 @@ public class CMSOReaderController {
 
                     objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                     Integer currentLinkid = Integer.parseInt(row.get("cmso_link_id"));
-                    linkID.add(Integer.parseInt(row.get("cmso_link_id")));
                     //go through all rows
                     while (iter.hasNext()) {
                         row = iter.next();
@@ -568,7 +565,7 @@ public class CMSOReaderController {
                             objectidsList.add(Integer.parseInt(row.get("cmso_object_id")));
                         }
                     }
-                    String linksText = "Total amount of links: " + linkID.size();
+                    String linksText = "Total amount of links: " + linksMap.size();
                     biotracksText[1] = linksText;
 
                 } catch (IOException ex) {
@@ -590,7 +587,7 @@ public class CMSOReaderController {
      * @param assayFile
      * @return
      */
-    private void setupDataStructure(File investigationFile, HashMap<String, List<String>> studyMap, HashMap<String, List<String>> assayMap) {
+    private void setupDataStructure() {
         Project project = null;
         // parser and reader
         CSVParser csvFileParser;
@@ -601,28 +598,20 @@ public class CMSOReaderController {
         csvFileFormat = CSVFormat.TDF;
 
         //setup investigation
-        try {
-            fileReader = new FileReader(investigationFile);
-            csvFileParser = new CSVParser(fileReader, csvFileFormat);
-            // get the csv records (rows)
-            List<CSVRecord> csvRecords = csvFileParser.getRecords();
-            //get specific terms and use these to setup cellmissy data structure
-            project = new Project(csvRecords.get(7).get(1));
-            project.setProjectNumber(Integer.parseInt(csvRecords.get(6).get(1)));
-            project.setExperimentList(new ArrayList<>());
-            project.getExperimentList().add(new Experiment());
-            importedExperiment = project.getExperimentList().get(0);
-            //not sure if a user needs to be set for a cmso project
-            //user can be current cellmissy operator of experiment performer as in ISA file
-//            importedExperiment.setUser(new User(csvRecords.get(23).get(1), csvRecords.get(22).get(1), Role.ADMIN_USER, "password", csvRecords.get(25).get(1)));
+        //get specific terms and use these to setup cellmissy data structure
+        project = new Project(investigationMap.get("Investigation Title"));
+//            project.setProjectNumber(investigationMap.get("Investigation Identifier"));   gives error if there is a letter, which is the case in my examples. Not important for further methods so set to whatever number
+        project.setProjectNumber(31071992);
+        project.setExperimentList(new ArrayList<>());
+        project.getExperimentList().add(new Experiment());
+        importedExperiment = project.getExperimentList().get(0);
+        //not sure if a user needs to be set for a cmso project
+        //user can be current cellmissy operator of experiment performer as in ISA file
+//            importedExperiment.setUser(new User(investigationMap.get("Study Person Last Namee"), investigationMap.get("Study Person First Name"), Role.ADMIN_USER, "password", investigationMap.get("Study Person Email")));
 //            importedExperiment.setUser(cellMissyController.getCurrentUser());
-            importedExperiment.setExperimentNumber(Integer.parseInt(csvRecords.get(34).get(1)));
-            importedExperiment.setPurpose(csvRecords.get(35).get(1));
-            importedExperiment.setPlateFormat(new PlateFormat(Long.MAX_VALUE, Integer.parseInt(csvRecords.get(40).get(1))));
-
-        } catch (IOException ex) {
-            LOG.error(ex.getMessage() + "/n Error while parsing Investigation file", ex);
-        }
+        importedExperiment.setExperimentNumber(Integer.parseInt(investigationMap.get("Study Identifier")));
+        importedExperiment.setPurpose(investigationMap.get("Study Description"));
+        importedExperiment.setPlateFormat(new PlateFormat(Long.MAX_VALUE, Integer.parseInt(investigationMap.get("Comment[Plate Format]").split("-")[0])));
 
         //setup study
         List<PlateCondition> plateConditionList = new ArrayList<>();
@@ -632,7 +621,7 @@ public class CMSOReaderController {
 
             //make sure n/A values in treatment are changed over to control
             PlateCondition conditionRow = new PlateCondition();
-            conditionRow.setCellLine(new CellLine(null, Integer.parseInt(studyMap.get("Parameter Value[seeding density]").get(condition)),
+            conditionRow.setCellLine(new CellLine(null, Integer.parseInt(studyMap.get("Parameter Value[seeding density]").get(condition).split(" ")[0]),
                     studyMap.get("Parameter Value[cell culture medium]").get(condition), Double.parseDouble(studyMap.get("Parameter Value[cell culture serum concentration]").get(condition)),
                     new CellLineType(Long.MIN_VALUE, studyMap.get("Characteristics[cell]").get(condition)), studyMap.get("Parameter Value[cell culture serum]").get(condition)));
 
@@ -651,10 +640,16 @@ public class CMSOReaderController {
 
             conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
             conditionRow.setTreatmentList(new ArrayList<>());
-            conditionRow.getTreatmentList().add(new Treatment(
-                    Double.parseDouble(studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[0]),
-                    studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[1], null, null, null,
-                    new TreatmentType(Long.MIN_VALUE, checkTreatmentName(studyMap.get("Factor Value[perturbation agent]").get(condition)))));
+            try {
+                conditionRow.getTreatmentList().add(new Treatment(
+                        Double.parseDouble(studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[0]),
+                        studyMap.get("Factor Value[perturbation dose]").get(condition).split(" ")[1], null, null, null,
+                        new TreatmentType(Long.MIN_VALUE, checkTreatmentName(studyMap.get("Factor Value[perturbation agent]").get(condition)))));
+            } catch (NumberFormatException nf) { //in case of control. Bad form to use an exception, temporary solution. Should check first term for control (n/A)
+                conditionRow.getTreatmentList().add(new Treatment(
+                        Double.parseDouble("0"), "µM", null, null, null,
+                        new TreatmentType(Long.MIN_VALUE, checkTreatmentName(studyMap.get("Factor Value[perturbation agent]").get(condition)))));
+            }
 
             //check if treatment type is already present in the db
             TreatmentType foundTreatmentType = treatmentService.findByName(conditionRow.getTreatmentList().get(0).getTreatmentType().getName());
@@ -696,7 +691,8 @@ public class CMSOReaderController {
         for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
             plateCondition.setExperiment(importedExperiment);
         }
-        // set collection for imaging types and algorithms
+        // set collection for imaging types and wells
+        // !! IMPORTANT !! wells with no biotracks data available need an empty WellHasImagingTypesList
         List<ImagingType> imagingTypes = experimentService.getImagingTypes(importedExperiment);
         for (ImagingType imagingType : imagingTypes) {
             List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
@@ -799,11 +795,13 @@ public class CMSOReaderController {
 
     private void setupTracksData() {
         importedExperiment.getPlateConditionList().forEach((platecondition) -> {
-            platecondition.getWellList().forEach((well) -> {
+            platecondition.getImagedWells().forEach((well) -> {
                 Integer x = well.getColumnNumber();
                 Integer y = well.getRowNumber();
                 // check well row and column to get the right tracks
                 for (WellHasImagingType imagingType : well.getWellHasImagingTypeList()) {
+                    // wells that have no track data will give nullpointer!!!
+                    // set these wells to not imaged = empty WellHasImagingTypeList (method used in normal single cell analysis)
                     BiotracksDataHolder dataHolder = biotracksDataHolders.get(imagingType.getAlgorithm().getAlgorithmName() + x + y);
 
                     // read linksMap and setup SQL track table, copy link id (CellMissy cannot currently handle split or merge events)
@@ -811,13 +809,13 @@ public class CMSOReaderController {
                     HashMap<Integer, List<Integer>> linksMap = dataHolder.getLinksMap();
                     HashMap<Integer, List<Double>> objectsMap = dataHolder.getObjectsMap();
                     List<Track> trackList = new ArrayList<>();
-                    
+
                     for (Integer trackNo : linksMap.keySet()) {
                         //create track and set stuff
                         List<Integer> trackedObjects = linksMap.get(trackNo);
                         Track track = new Track(Integer.toUnsignedLong(trackNo), trackNo, trackedObjects.size());
                         track.setWellHasImagingType(imagingType);
-                        
+
                         //create track points
                         List<TrackPoint> trackPointList = new ArrayList<>();
                         //cycle through trackedObjects and get info from objectsMap

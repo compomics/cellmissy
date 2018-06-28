@@ -191,6 +191,10 @@ public class SingleCellMainController {
         return experiment;
     }
 
+    public AnalysisExperimentPanel getAnalysisExperimentPanel() {
+        return analysisExperimentPanel;
+    }
+   
     public CellMissyFrame getCellMissyFrame() {
         return cellMissyController.getCellMissyFrame();
     }
@@ -985,7 +989,7 @@ public class SingleCellMainController {
      *
      * @param selectedExperiment
      */
-    private void proceedToAnalysis(Experiment selectedExperiment) {
+    public void proceedToAnalysis(Experiment selectedExperiment) {
         // clear current lists
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
