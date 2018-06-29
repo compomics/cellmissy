@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.entity.CellLine;
 import be.ugent.maf.cellmissy.entity.CellLineType;
 import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ImagingType;
+import be.ugent.maf.cellmissy.entity.Instrument;
 import be.ugent.maf.cellmissy.entity.Magnification;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.PlateFormat;
@@ -76,6 +77,9 @@ public class CMSOReaderController {
     private boolean tracksPresent;
     private Experiment importedExperiment;
     private HashMap<String, BiotracksDataHolder> biotracksDataHolders;
+    private List<String> imagedWells;
+    private List<Algorithm> algorithmsList;
+    private List<ImagingType> imgTypesList;
     //view
     private CMSOReaderPanel cmsoReaderPanel;
     // parent controller
@@ -173,7 +177,8 @@ public class CMSOReaderController {
                      * add single cell master gui from controller 3)'press'
                      * start button (choice of algorithm and imaging type?)
                      */
-                    singleCellMainController.proceedToAnalysis(importedExperiment);
+                    singleCellMainController.setCmsoData(tracksPresent);
+                    singleCellMainController.proceedToAnalysis(importedExperiment, algorithmsList, imgTypesList);
                     cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().removeAll();
                     cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().add(singleCellMainController.getAnalysisExperimentPanel(), gridBagConstraints);
                 }
@@ -204,6 +209,9 @@ public class CMSOReaderController {
         studyMap = new HashMap<>();
         assayMap = new HashMap<>();
         biotracksDataHolders = new HashMap();
+        imagedWells = new ArrayList<>();
+        algorithmsList = new ArrayList<>();
+        imgTypesList = new ArrayList<>();
     }
 
     /**
@@ -260,7 +268,7 @@ public class CMSOReaderController {
             }
             String biotracksText = "";
             if (!biotracksFolders.isEmpty()) {
-
+                imagedWells = new ArrayList<>();
                 for (File trackingSoftware : biotracksFolders) {
 
                     // show: software name, total #objects, 
@@ -271,6 +279,7 @@ public class CMSOReaderController {
                     // the dp folder is the one we need to show a summary of the tracks
                     // from in here we need the csv's with objects and links
                     for (File well : trackingSoftware.listFiles()) {
+                        imagedWells.add(well.getName().split("_")[0] + checkRowCoordinate(well.getName().split("_")[1]));
                         biotracksText += "Well: " + well.getName() + "\n";
                         File dp = getFileFromFolder(well, "dp");
                         String[] softwareSummary = parseBiotracks(dp, trackingSoftware.getName(), well.getName());
@@ -589,14 +598,6 @@ public class CMSOReaderController {
      */
     private void setupDataStructure() {
         Project project = null;
-        // parser and reader
-        CSVParser csvFileParser;
-        FileReader fileReader;
-        CSVFormat csvFileFormat;
-        // fileformat specification depending on delimination
-        // cannot infer header because of multiple "unit" columns
-        csvFileFormat = CSVFormat.TDF;
-
         //setup investigation
         //get specific terms and use these to setup cellmissy data structure
         project = new Project(investigationMap.get("Investigation Title"));
@@ -612,6 +613,16 @@ public class CMSOReaderController {
         importedExperiment.setExperimentNumber(Integer.parseInt(investigationMap.get("Study Identifier")));
         importedExperiment.setPurpose(investigationMap.get("Study Description"));
         importedExperiment.setPlateFormat(new PlateFormat(Long.MAX_VALUE, Integer.parseInt(investigationMap.get("Comment[Plate Format]").split("-")[0])));
+        //plateformat needs amount of columns and rows set, most plate sizes are already in standard database
+        //check database for corresponding format and set if we find one
+        PlateFormat plateFormat = importedExperiment.getPlateFormat();
+        PlateFormat foundFormat = plateService.findByFormat(plateFormat.getFormat());
+        if (foundFormat != null) {
+            importedExperiment.setPlateFormat(foundFormat);
+        }
+        // set default conversion factor to 1
+        importedExperiment.setInstrument(new Instrument());
+        importedExperiment.getInstrument().setConversionFactor(1);
 
         //setup study
         List<PlateCondition> plateConditionList = new ArrayList<>();
@@ -679,20 +690,24 @@ public class CMSOReaderController {
             //as many imaging types as tracking software used
             for (Well well : condition.getWellList()) {
                 well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
+                // !! IMPORTANT !! wells with no biotracks data available need an empty WellHasImagingTypesList
                 for (int i = 0; i < biotracksFolders.size(); i++) {
-                    well.getWellHasImagingTypeList().add(new WellHasImagingType());
-                    well.getWellHasImagingTypeList().get(0).setImagingType(new ImagingType());
-                    well.getWellHasImagingTypeList().get(0).getImagingType().setName(assayMap.get("Parameter Value[imaging technique]").get(i));
+                    if (imagedWells.contains("" + well.getColumnNumber() + well.getRowNumber())) {
+                        well.getWellHasImagingTypeList().add(new WellHasImagingType());
+                        well.getWellHasImagingTypeList().get(0).setImagingType(new ImagingType());
+                        well.getWellHasImagingTypeList().get(0).getImagingType().setName(assayMap.get("Parameter Value[imaging technique]").get(i));
+                    }
                 }
             }
         }
 
         // set some object referrals
+        algorithmsList = new ArrayList<>();
+        imgTypesList = new ArrayList<>();
         for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
             plateCondition.setExperiment(importedExperiment);
         }
         // set collection for imaging types and wells
-        // !! IMPORTANT !! wells with no biotracks data available need an empty WellHasImagingTypesList
         List<ImagingType> imagingTypes = experimentService.getImagingTypes(importedExperiment);
         for (ImagingType imagingType : imagingTypes) {
             List<WellHasImagingType> wellHasImagingTypes = new ArrayList<>();
@@ -703,9 +718,13 @@ public class CMSOReaderController {
                             wellHasImagingType.setImagingType(imagingType);
                             wellHasImagingTypes.add(wellHasImagingType);
                         }
+
                     }
                 });
             });
+            if (!imgTypesList.contains(imagingType)) {
+                imgTypesList.add(imagingType);
+            }
             imagingType.setWellHasImagingTypeList(wellHasImagingTypes);
         }
         //add algorithm to project/experiment
@@ -713,12 +732,14 @@ public class CMSOReaderController {
         for (File software : biotracksFolders) {
             softwareList.add(software.getName());
         };
+
         importedExperiment.getPlateConditionList().forEach((plateCondition) -> {
             plateCondition.getWellList().forEach((well) -> {
                 for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                     int i = 0;
                     Algorithm algorithm = new Algorithm();
                     algorithm.setAlgorithmName(softwareList.get(i));
+                    algorithmsList.add(algorithm);
                     wellHasImagingType.setAlgorithm(algorithm);
                     i++;
                 }
@@ -821,11 +842,13 @@ public class CMSOReaderController {
                         //cycle through trackedObjects and get info from objectsMap
                         for (Integer objectid : trackedObjects) {
                             List<Double> objectInfo = objectsMap.get(objectid);
-                            TrackPoint point = new TrackPoint(Integer.toUnsignedLong(objectid), Integer.parseInt(Double.toString(objectInfo.get(0))),
+                            TrackPoint point = new TrackPoint(Integer.toUnsignedLong(objectid), objectInfo.get(0).intValue(),
                                     objectInfo.get(2), objectInfo.get(1));
+                            point.setTrack(track);
                             trackPointList.add(point);
                         }
                         track.setTrackPointList(trackPointList);
+                        trackList.add(track);
                     }
                     imagingType.setTrackList(trackList);
                 }

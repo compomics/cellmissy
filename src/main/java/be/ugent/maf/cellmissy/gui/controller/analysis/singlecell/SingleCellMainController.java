@@ -74,6 +74,7 @@ public class SingleCellMainController {
     private BindingGroup bindingGroup;
     private Format format;
     private GridBagConstraints gridBagConstraints;
+    private boolean cmsoData;
     // view
     private AnalysisExperimentPanel analysisExperimentPanel;
     private MetadataSingleCellPanel metadataSingleCellPanel;
@@ -121,6 +122,7 @@ public class SingleCellMainController {
         dataAnalysisPanel = new DataAnalysisPanel();
         analysisPlatePanel = new AnalysisPlatePanel();
         bindingGroup = new BindingGroup();
+        cmsoData = false;
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         format = new DecimalFormat(PropertiesConfigurationHolder.getInstance().getString("dataFormat"));
         // init child controllers
@@ -194,7 +196,11 @@ public class SingleCellMainController {
     public AnalysisExperimentPanel getAnalysisExperimentPanel() {
         return analysisExperimentPanel;
     }
-   
+
+    public void setCmsoData(boolean cmsoData) {
+        this.cmsoData = cmsoData;
+    }
+
     public CellMissyFrame getCellMissyFrame() {
         return cellMissyController.getCellMissyFrame();
     }
@@ -316,7 +322,7 @@ public class SingleCellMainController {
             String info = "** fetching cell track points for sample: " + imagedWell + " **";
             LOG.info(info);
             wellService.fetchTrackPoints(imagedWell, selectedAlgorithm.getAlgorithmid(), selectedImagingType
-                    .getImagingTypeid());
+                    .getImagingTypeid(), cmsoData);
         });
     }
 
@@ -330,7 +336,7 @@ public class SingleCellMainController {
         // fetch tracks for each well of condition
         plateCondition.getWellList().stream().forEach((well) -> {
             LOG.info("** fetching cell tracks for sample: " + well + " **");
-            wellService.fetchTracks(well, getSelectedAlgorithm().getAlgorithmid(), getSelectedImagingType().getImagingTypeid());
+            wellService.fetchTracks(well, getSelectedAlgorithm().getAlgorithmid(), getSelectedImagingType().getImagingTypeid(), cmsoData);
         });
     }
 
@@ -682,6 +688,7 @@ public class SingleCellMainController {
                     options[1]);
             if (showOptionDialog == 0) {
                 // reset everything
+                cmsoData = false;
                 //onCancel();
             }
         });
@@ -923,7 +930,7 @@ public class SingleCellMainController {
      * @param selectedExperiment
      */
     private void onSelectedExperiment(Experiment selectedExperiment) {
-        proceedToAnalysis(selectedExperiment);
+        proceedToAnalysis(selectedExperiment, null, null);
     }
 
     /**
@@ -989,7 +996,7 @@ public class SingleCellMainController {
      *
      * @param selectedExperiment
      */
-    public void proceedToAnalysis(Experiment selectedExperiment) {
+    public void proceedToAnalysis(Experiment selectedExperiment, List<Algorithm> cmsoAlgos, List<ImagingType> cmsoImgT) {
         // clear current lists
         if (!imagingTypeBindingList.isEmpty()) {
             imagingTypeBindingList.clear();
@@ -1019,6 +1026,10 @@ public class SingleCellMainController {
                     algorithms.stream().filter((algorithm) -> (!algorithmBindingList.contains(algorithm))).forEach((algorithm) -> {
                         algorithmBindingList.add(algorithm);
                     });
+                } else if (cmsoAlgos != null) {
+                    for (Algorithm algo : cmsoAlgos) {
+                        algorithmBindingList.add(algo);
+                    }
                 }
                 List<ImagingType> imagingTypes = wellService.findImagingTypesByWellId(well.getWellid());
                 return imagingTypes;
@@ -1028,6 +1039,11 @@ public class SingleCellMainController {
                 });
             });
         });
+        if (cmsoImgT != null) {
+            for (ImagingType imgT : cmsoImgT) {
+                imagingTypeBindingList.add(imgT);
+            }
+        }
         //init map with conditions and results holders
         singleCellPreProcessingController.initMapWithConditions();
         //set selected algorithm to the first of the list
