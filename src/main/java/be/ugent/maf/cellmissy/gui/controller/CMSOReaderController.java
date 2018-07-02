@@ -717,6 +717,7 @@ public class CMSOReaderController {
                         if (wellHasImagingType.getImagingType().equals(imagingType)) {
                             wellHasImagingType.setImagingType(imagingType);
                             wellHasImagingTypes.add(wellHasImagingType);
+                            wellHasImagingType.setWell(well);
                         }
 
                     }
@@ -835,7 +836,6 @@ public class CMSOReaderController {
                         //create track and set stuff
                         List<Integer> trackedObjects = linksMap.get(trackNo);
                         Track track = new Track(Integer.toUnsignedLong(trackNo), trackNo, trackedObjects.size());
-                        track.setWellHasImagingType(imagingType);
 
                         //create track points
                         List<TrackPoint> trackPointList = new ArrayList<>();
@@ -848,6 +848,7 @@ public class CMSOReaderController {
                             trackPointList.add(point);
                         }
                         track.setTrackPointList(trackPointList);
+                        track.setWellHasImagingType(imagingType);
                         trackList.add(track);
                     }
                     imagingType.setTrackList(trackList);
