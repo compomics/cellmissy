@@ -104,6 +104,8 @@ public class CellMissyController {
     private TracksWriterController tracksWriterController;
     @Autowired
     private CMSOReaderController cMSOReaderController;
+    @Autowired
+    private CMSOExportController cMSOExportController;
 
     /**
      * Get main frame
@@ -187,6 +189,7 @@ public class CellMissyController {
         importExportController.init();
         tracksWriterController.init();
         cMSOReaderController.init();
+        cMSOExportController.init();
         // initialize main frame
         initMainFrame();
         // initialize start up dialog
@@ -381,8 +384,10 @@ public class CellMissyController {
         cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
         // generic dose-response analysis
         cellMissyFrame.getDoseResponseMenuItem().addActionListener(itemActionListener);
-        // CMSO dataset
+        // CMSO dataset import
         cellMissyFrame.getCmsoMenuItem().addActionListener(itemActionListener);
+        // export experiment to CMSO dataset
+        cellMissyFrame.getCMSOExportMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
