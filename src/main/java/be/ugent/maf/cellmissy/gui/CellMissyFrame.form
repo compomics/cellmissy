@@ -142,6 +142,11 @@
                 <Property name="text" type="java.lang.String" value="Export Experiment..."/>
               </Properties>
             </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="cmsoExportMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export to CMSO dataset..."/>
+              </Properties>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exportTemplateMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export Setup Template..."/>
