@@ -6,23 +6,35 @@
 package be.ugent.maf.cellmissy.gui.controller;
 
 import be.ugent.maf.cellmissy.entity.Experiment;
+import be.ugent.maf.cellmissy.entity.ExperimentStatus;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOExportPanel;
 import be.ugent.maf.cellmissy.gui.view.renderer.list.ExperimentsOverviewListRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
+import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
+import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import java.awt.event.ActionEvent;
 
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -56,6 +68,8 @@ public class CMSOExportController {
     //services
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private ExperimentService experimentService;
     
     /**
      * Initialize controller
@@ -132,21 +146,13 @@ public class CMSOExportController {
             }
         });
 
-        // close the dialog: just empty the text fields
-        cmsoExportPanel.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent we) {
-                // reset view when we close the dialog
-                resetViewOnExportExperimentDialog();
-            }
-        });
-
+        
         // add action listeners
         // copy the settings for current experiment: execute the swing worker
         cmsoExportPanel.getExportButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Experiment experimentToExport = (Experiment) exportExperimentDialog.getExperimentsList().getSelectedValue();
+                Experiment experimentToExport = (Experiment) cmsoExportPanel.getExperimentsList().getSelectedValue();
                 // be sure that one experiment is selected in the list
                 if (experimentToExport != null) {
                     // show a jfile chooser to decide where to save the file
@@ -154,35 +160,179 @@ public class CMSOExportController {
                     chooseDirectory.setDialogTitle("Choose a directory to save the file");
                     chooseDirectory.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                     // in response to the button click, show open dialog
-                    int returnVal = chooseDirectory.showSaveDialog(exportExperimentDialog);
+                    int returnVal = chooseDirectory.showSaveDialog(cmsoExportPanel);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File currentDirectory = chooseDirectory.getSelectedFile();
+                        
+                        
                         String fileName = "experiment_" + experimentToExport + "_" + experimentToExport.getProject() + ".xml";
-                        File xmlFile = createXmlFile(fileName, currentDirectory, exportExperimentDialog);
+                        File xmlFile = createXmlFile(fileName, currentDirectory, cmsoExportPanel);
+                        
+
                         // if the XML file was successfully created, we execute a swing worker and export the experiment to the file.
                         if (xmlFile != null) {
                             ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
                             exportExperimentSwingWorker.execute();
                         }
                     } else {
-                        JOptionPane.showMessageDialog(exportExperimentDialog, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(cmsoExportPanel, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                     }
                 } else {
                     // tell the user that he needs to select an experiment!
-                    JOptionPane.showMessageDialog(exportExperimentDialog, "Please select an experiment to export!", "no exp selected error", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(cmsoExportPanel, "Please select an experiment to export!", "no exp selected error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
 
-        // cancel button
-        cmsoExportPanel.getCancelButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // cancel: hide the dialog
-                exportExperimentDialog.setVisible(false);
-                // reset views
-                resetViewOnExportExperimentDialog();
-            }
-        });
+       
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
+     * Action on selected project, find all relative performed experiments, if
+     * any
+     *
+     * @param selectedProject
+     */
+    private void onSelectedProject(Project selectedProject) {
+        // show project description
+        String projectDescription = selectedProject.getProjectDescription();
+        cmsoExportPanel.getProjectDescriptionTextArea().setText(projectDescription);
+        // show relative experiments
+        Long projectid = selectedProject.getProjectid();
+        List<Experiment> experimentList = experimentService.findExperimentsByProjectIdAndStatus(projectid, ExperimentStatus.PERFORMED);
+        if (experimentList != null) {
+            // sort the experiments
+            Collections.sort(experimentList);
+            experimentBindingList = ObservableCollections.observableList(experimentList);
+            JListBinding jListBinding = SwingBindings.createJListBinding(AutoBinding.UpdateStrategy.READ_WRITE, experimentBindingList, cmsoExportPanel.getExperimentsList());
+            bindingGroup.addBinding(jListBinding);
+            bindingGroup.bind();
+        } else {
+            String message = "There are no experiments performed yet for this project!";
+            JOptionPane.showMessageDialog(cmsoExportPanel, message, "No experiments found", JOptionPane.INFORMATION_MESSAGE);
+            resetView();
+            if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+                experimentBindingList.clear();
+            }
+        }
+    }
+    
+    /**
+     * Reset views.
+     */
+    private void resetView() {
+        // reset the information fields
+        cmsoExportPanel.getUserLabel().setText("");
+        cmsoExportPanel.getPurposeTextArea().setText("");
+        cmsoExportPanel.getTimeFramesLabel().setText("");
+        cmsoExportPanel.getInstrumentLabel().setText("");
+        cmsoExportPanel.getPlateFormatLabel().setText("");
+        cmsoExportPanel.getNumberConditionsLabel().setText("");
+        cmsoExportPanel.getProjectDescriptionTextArea().setText("");
+        // reset table model to a default one
+        cmsoExportPanel.getConditionsDetailsTable().setModel(new DefaultTableModel());
+        // clear selection on both projects and experiments lists
+        cmsoExportPanel.getExperimentsList().clearSelection();
+        cmsoExportPanel.getProjectsList().clearSelection();
+        // clear the experiments binding list
+        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+            experimentBindingList.clear();
+        }
+    }
+    
+    /**
+     * For a certain table, this method creates a model from the given
+     * experiment with the conditions details and assign the model to the table.
+     *
+     * @param table
+     * @param exp
+     */
+    private void updateConditionsTableModel(JTable table, Experiment exp) {
+        List<PlateCondition> plateConditionList = exp.getPlateConditionList();
+        String[] columnNames = new String[7];
+        columnNames[0] = "Condition";
+        columnNames[1] = "Cell Line";
+        columnNames[2] = "MD";
+        columnNames[3] = "Assay";
+        columnNames[4] = "ECM";
+        columnNames[5] = "Treatments";
+        columnNames[6] = "Assay(Medium, %Serum)";
+
+        Object[][] data = new Object[plateConditionList.size()][columnNames.length];
+        for (int i = 0; i < data.length; i++) {
+            data[i][0] = "Cond " + (i + 1);
+            data[i][1] = plateConditionList.get(i).getCellLine().toString();
+            data[i][2] = plateConditionList.get(i).getAssay().getMatrixDimension().getDimension();
+            data[i][3] = plateConditionList.get(i).getAssay().getAssayType();
+            data[i][4] = plateConditionList.get(i).getEcm().toString();
+            data[i][5] = plateConditionList.get(i).getTreatmentList().toString();
+            data[i][6] = plateConditionList.get(i).getAssayMedium().toString();
+        }
+        // create a new table model
+        NonEditableTableModel nonEditableTableModel = new NonEditableTableModel();
+        nonEditableTableModel.setDataVector(data, columnNames);
+        table.setModel(nonEditableTableModel);
+        for (int i = 0; i < nonEditableTableModel.getColumnCount(); i++) {
+            GuiUtils.packColumn(table, i);
+        }
+    }
+    
+    /**
+     * Given a certain directory chosen by the user, this method attempts to
+     * create an XML file. The XML file has as title information that comes from
+     * the experiment itself.
+     *
+     * @param directory
+     */
+    private File createXmlFile(String fileName, File directory, JDialog dialog) {
+        // we create the unique XML file using the experiment info
+        File xmlFile = new File(directory, fileName);
+        try {
+            boolean success = xmlFile.createNewFile();
+            if (!success) {
+                Object[] options = {"Yes", "No", "Cancel"};
+                int showOptionDialog = JOptionPane.showOptionDialog(dialog, "File already exists in this directory. Do you want to replace it?", "file already exists", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+                // if YES, user wants to delete existing file and replace it
+                if (showOptionDialog == 0) {
+                    boolean delete = xmlFile.delete();
+                    if (!delete) {
+                        return null;
+                    }
+                    // if NO or CANCEL, returns already existing file
+                } else if (showOptionDialog == 1 || showOptionDialog == 2) {
+                    return null;
+                }
+            }
+        } catch (IOException ex) {
+            LOG.error(ex.getMessage(), ex);
+            JOptionPane.showMessageDialog(dialog, "Unexpected error: " + ex.getMessage() + ".", "Unexpected error", JOptionPane.ERROR_MESSAGE);
+        }
+        return xmlFile;
+    }
+}
+
+
+Path path = Paths.get("C:\\Images\\Background\\..\\Foreground\\Necklace\\..\\Earrings\\..\\Etc");
+
+try {
+    Files.createDirectories(path);
+} catch (IOException e) {
+    System.err.println("Cannot create directories - " + e);
 }
