@@ -26,10 +26,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JButton getCancelButton() {
-        return cancelButton;
-    }
-
     public JLabel getCellLinesLabel() {
         return cellLinesLabel;
     }
@@ -85,6 +81,10 @@ public class CMSOExportPanel extends javax.swing.JPanel {
     public JTable getConditionsDetailsTable() {
         return conditionsDetailsTable;
     }
+
+    public JButton getExportButton() {
+        return exportButton;
+    }
     
 
     /**
@@ -126,7 +126,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
         conditionsDetailsTable = new javax.swing.JTable();
         bottomPanel = new javax.swing.JPanel();
         exportButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         miacmePanel = new javax.swing.JPanel();
         organismTextField = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -371,26 +370,20 @@ public class CMSOExportPanel extends javax.swing.JPanel {
 
         exportButton.setText("Export to CMSO Standard...");
 
-        cancelButton.setText("Cancel");
-
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(727, Short.MAX_VALUE)
                 .addComponent(exportButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cancelButton)
                 .addContainerGap())
         );
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportButton)
-                    .addComponent(cancelButton))
+                .addComponent(exportButton)
                 .addContainerGap())
         );
 
@@ -458,7 +451,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JButton cancelButton;
     private javax.swing.JLabel cellLinesLabel;
     private javax.swing.JTable conditionsDetailsTable;
     private javax.swing.JPanel detailsPanel;
