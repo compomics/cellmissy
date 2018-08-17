@@ -173,13 +173,10 @@ public class CMSOExportController {
                         // create cmso folder strucure to export the files
                         String topFolderName = "CellMissyExport_" + experimentToExport + "_" + experimentToExport.getProject() + ".xml";
                         File topFolder = createFolderStructure(topFolderName, currentDirectory);
-
                         
-                        File xmlFile = createXmlFile(fileName, currentDirectory);
-
-                        // if the XML file was successfully created, we execute a swing worker and export the experiment to the file.
-                        if (xmlFile != null) {
-                            ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
+                        // if the folders were successfully created, we execute a swing worker and export the experiment to the file.
+                        if (topFolder != null) {
+                            ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(topFolder);
                             exportExperimentSwingWorker.execute();
                         }
                     } else {
@@ -197,10 +194,12 @@ public class CMSOExportController {
     private File createFolderStructure(String mainFolderName, File directory) {
         //folders that need to be created are: main folder, isa and tracking software(s?)
         //tracking software has all wells inside and in there biotracks dp
-        Path path = Paths.get(directory.getPath() + "");
-
+        Path isapath = Paths.get(directory.getPath() + "//" + mainFolderName + "//isa");
+        // how to get trackingsoftware information? is inside the wellHasImgType
+        Path trackingpath = Paths.get(directory.getPath() + "//" + mainFolderName + "//" + trackingsoftware);
         try {
-            Files.createDirectories(path);
+            Files.createDirectories(isapath);
+            Files.createDirectories(trackingpath);
         } catch (IOException e) {
             System.err.println("Cannot create directories - " + e);
         }
@@ -345,8 +344,7 @@ public class CMSOExportController {
         @Override
         protected Void doInBackground() throws Exception {
             //disable buttons and show a waiting cursor
-            exportExperimentDialog.getExportButton().setEnabled(false);
-            exportExperimentDialog.getCancelButton().setEnabled(false);
+            cmsoExportPanel.getExportButton().setEnabled(false);
             // show waiting dialog
             String title = "Experiment is being exported to file. Please wait...";
             showWaitingDialog(title);
@@ -361,6 +359,7 @@ public class CMSOExportController {
             }
             // export the experiment to file !
             exportExperimentToXMLFile(xmlFile);
+            exportExperimentTemplateToXMLFile(xmlFile);
             return null;
         }
 
@@ -370,12 +369,10 @@ public class CMSOExportController {
                 get();
                 // hide waiting dialog
                 waitingDialog.setVisible(false);
-                JOptionPane.showMessageDialog(exportExperimentDialog, "Experiment was successfully exported!", "experiment exported", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(cmsoExportPanel, "Experiment was successfully exported!", "experiment exported", JOptionPane.INFORMATION_MESSAGE);
                 LOG.info("experiment " + experimentToExport + "_" + experimentToExport.getProject() + " exported to file");
                 // enable the buttons again
-                exportExperimentDialog.getCancelButton().setEnabled(true);
-                exportExperimentDialog.getExportButton().setEnabled(true);
-                exportExperimentDialog.setVisible(false);
+                cmsoExportPanel.getExportButton().setEnabled(true);
                 resetViewOnExportExperimentDialog();
                 cellMissyController.onStartup();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
@@ -385,42 +382,21 @@ public class CMSOExportController {
         }
     }
 
+    /// take away useful parts from here to swingworker above
     /**
      * Swing worker to export the experiment template
      */
     private class ExportTemplateSwingWorker extends SwingWorker<Void, Void> {
 
-        private final File xmlFile;
 
-        public ExportTemplateSwingWorker(File xmlFile) {
-            this.xmlFile = xmlFile;
-        }
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            //disable buttons and show a waiting cursor
-            exportTemplateDialog.getExportButton().setEnabled(false);
-            // show waiting dialog
-            String title = "Template is being exported to file. Please wait...";
-            showWaitingDialog(title);
-            // export the experiment to file
-            exportExperimentTemplateToXMLFile(xmlFile);
-            return null;
-        }
+        
 
         @Override
         protected void done() {
             try {
-                get();
-                waitingDialog.setVisible(false);
-                JOptionPane.showMessageDialog(exportTemplateDialog, "Experiment template was successfully exported!", "experiment template exported", JOptionPane.INFORMATION_MESSAGE);
-                LOG.info("experiment template " + experimentTemplateToExport + "_" + experimentTemplateToExport.getProject() + " exported to file");
                 resetViewOnExportTemplateDialog();
-                exportTemplateDialog.setVisible(false);
                 cellMissyController.onStartup();
-            } catch (InterruptedException | ExecutionException | CancellationException ex) {
-                LOG.error(ex.getMessage(), ex);
-            }
+            
             // enable the button again
             exportTemplateDialog.getExportButton().setEnabled(true);
         }
