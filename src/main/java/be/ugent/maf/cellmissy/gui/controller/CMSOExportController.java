@@ -17,9 +17,10 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
+import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
-import java.awt.event.ActionEvent;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +78,8 @@ public class CMSOExportController {
     private ProjectService projectService;
     @Autowired
     private ExperimentService experimentService;
+    @Autowired
+    private WellService wellService;
 
     /**
      * Initialize controller
@@ -173,8 +176,9 @@ public class CMSOExportController {
                         // create cmso folder strucure to export the files
                         String topFolderName = "CellMissyExport_" + experimentToExport + "_" + experimentToExport.getProject() + ".xml";
                         File topFolder = createFolderStructure(topFolderName, currentDirectory);
-                        
+
                         // if the folders were successfully created, we execute a swing worker and export the experiment to the file.
+                        //this swingworker will create the isa-tab  and biotracks files
                         if (topFolder != null) {
                             ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(topFolder);
                             exportExperimentSwingWorker.execute();
@@ -194,16 +198,21 @@ public class CMSOExportController {
     private File createFolderStructure(String mainFolderName, File directory) {
         //folders that need to be created are: main folder, isa and tracking software(s?)
         //tracking software has all wells inside and in there biotracks dp
-        Path isapath = Paths.get(directory.getPath() + "//" + mainFolderName + "//isa");
+        Path isapath = Paths.get(directory.getPath() + "/" + mainFolderName + "/isa");
         // how to get trackingsoftware information? is inside the wellHasImgType
-        Path trackingpath = Paths.get(directory.getPath() + "//" + mainFolderName + "//" + trackingsoftware);
+        //The name for mia analysed data is often algox or MIAalgox. This needs to be changed to cellMIA
+        String trackingsoftware = experimentToExport.getPlateConditionList().get(0).getSingleCellAnalyzedWells().get(0).getWellHasImagingTypeList().get(0).getAlgorithm().getAlgorithmName();
+        if (trackingsoftware.contains("algo")) {
+            trackingsoftware = "cellMIA";
+        }
+        Path trackingpath = Paths.get(directory.getPath() + "/" + mainFolderName + "/" + trackingsoftware);
         try {
             Files.createDirectories(isapath);
             Files.createDirectories(trackingpath);
         } catch (IOException e) {
             System.err.println("Cannot create directories - " + e);
         }
-
+        return;
     }
 
     /**
@@ -330,15 +339,16 @@ public class CMSOExportController {
     }
 
     /**
-     * Swing worker to export the experiment to an XML file
+     * Swing worker to export the experiment to a CMSO dataset. The ISA-tab and
+     * biotracks files will be created
      */
     private class ExportExperimentSwingWorker extends SwingWorker<Void, Void> {
 
-        // the file to write the experiment to
-        private final File xmlFile;
+        // the path(????) to the top folder that contains the entire dataset or else the File
+        private final Path topFolder;
 
-        public ExportExperimentSwingWorker(File xmlFile) {
-            this.xmlFile = xmlFile;
+        public ExportExperimentSwingWorker(Path topFolder) {
+            this.topFolder = topFolder;
         }
 
         @Override
@@ -346,9 +356,11 @@ public class CMSOExportController {
             //disable buttons and show a waiting cursor
             cmsoExportPanel.getExportButton().setEnabled(false);
             // show waiting dialog
-            String title = "Experiment is being exported to file. Please wait...";
+            String title = "Experiment is being exported. Please wait...";
             showWaitingDialog(title);
-            // fetch the migration data
+
+            // fetch the migration data, this uses hibernate for lazy loading (sort of getter)
+            //move this to biotracks method?
             for (PlateCondition plateCondition : experimentToExport.getPlateConditionList()) {
                 List<Well> wells = new ArrayList<>();
                 for (Well well : plateCondition.getWellList()) {
@@ -358,6 +370,12 @@ public class CMSOExportController {
                 plateCondition.setWellList(wells);
             }
             // export the experiment to file !
+            //Create and populate ISA
+            //create biotracks objects and links csv and json
+            createFolderStructure(title, directory); //????
+            createISA(isaFolder);
+            createBiotracks(biotracksFolder);
+
             exportExperimentToXMLFile(xmlFile);
             exportExperimentTemplateToXMLFile(xmlFile);
             return null;
@@ -373,8 +391,9 @@ public class CMSOExportController {
                 LOG.info("experiment " + experimentToExport + "_" + experimentToExport.getProject() + " exported to file");
                 // enable the buttons again
                 cmsoExportPanel.getExportButton().setEnabled(true);
-                resetViewOnExportExperimentDialog();
-                cellMissyController.onStartup();
+                resetView();
+                // to show starting dialog on screen, not needed here
+//                cellMissyController.onStartup();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
@@ -382,23 +401,78 @@ public class CMSOExportController {
         }
     }
 
-    /// take away useful parts from here to swingworker above
     /**
-     * Swing worker to export the experiment template
+     * Creates the ISA-tab files. These are tab-separated .txt files.
+     *
+     * TODO: write down info needed for miacme per file write down cellmissy
+     * available information per file compare
      */
-    private class ExportTemplateSwingWorker extends SwingWorker<Void, Void> {
-
-
+    private void createISA(isaFolder) {
         
-
-        @Override
-        protected void done() {
-            try {
-                resetViewOnExportTemplateDialog();
-                cellMissyController.onStartup();
-            
-            // enable the button again
-            exportTemplateDialog.getExportButton().setEnabled(true);
+        File file = new File(path);
+        List<String> headersList = Arrays.asList("", "", "", "", "");
+        List<List<String>> rowsList = Arrays.asList(
+                Arrays.asList("Eddy", "Male", "No", "23", "1200.27"),
+                Arrays.asList("Libby", "Male", "No", "17", "800.50"),
+                Arrays.asList("Rea", "Female", "No", "30", "10000.00"),
+                Arrays.asList("Deandre", "Female", "No", "19", "18000.50"),
+                Arrays.asList("Alice", "Male", "Yes", "29", "580.40"),
+                Arrays.asList("Alyse", "Female", "No", "26", "7000.89"),
+                Arrays.asList("Venessa", "Female", "No", "22", "100700.50")
+        );
+        
+        try (Writer writer = Files.newBufferedWriter(file.toPath())) {
+            writer.write(String.format("%-20s %-20s%n", "column 1", "column 2"));
+            writer.write(String.format("%-20s %-20s%n", "data 1", "data 2"));
         }
+
+        List<String> lines = Arrays.asList("The first line", "The second line");
+        Path file = Paths.get("the-file-name.txt");
+        Files.write(file, lines, Charset.forName("UTF-8"));
+        //Files.write(file, lines, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
+        //creates text file in WORKING DIRECTORY!
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("filename.txt"), "utf-8"))) {
+            writer.write("something");
+        }
+        try {
+            //Whatever the file path is.
+            File statText = new File("E:/Java/Reference/bin/images/statsTest.txt");
+            FileOutputStream os = new FileOutputStream(statText);
+            OutputStreamWriter osw = new OutputStreamWriter(os);
+            Writer w = new BufferedWriter(osw);
+            w.write("POTATO!!!");
+            w.close();
+        } catch (IOException e) {
+            System.err.println("Problem writing to the file statsTest.txt");
+        }
+        
+        
+        try{
+            // Create new file
+            String content = "This is the content to write into create file";
+            String path="D:\\a\\hi.txt";
+            File file = new File(path);
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            // Write in file
+            bw.write(content);
+            // Close connection
+            bw.close();
+        }
+        
+    }
+
+    /**
+     * Show the waiting dialog: set the title and center the dialog on the main
+     * frame. Set the dialog to visible.
+     *
+     * @param title
+     */
+    private void showWaitingDialog(String title) {
+        waitingDialog.setTitle(title);
+        GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), waitingDialog);
+        waitingDialog.setVisible(true);
     }
 }
