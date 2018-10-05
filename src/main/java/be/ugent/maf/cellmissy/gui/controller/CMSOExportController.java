@@ -19,10 +19,12 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
+import be.ugent.maf.cellmissy.utils.CsvUtils;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -373,7 +375,7 @@ public class CMSOExportController {
             //Create and populate ISA
             //create biotracks objects and links csv and json
             createFolderStructure(title, directory); //????
-            createISA(isaFolder);
+            createISA(topFolder.toString() + "\\isa");
             createBiotracks(biotracksFolder);
 
             exportExperimentToXMLFile(xmlFile);
@@ -407,61 +409,55 @@ public class CMSOExportController {
      * TODO: write down info needed for miacme per file write down cellmissy
      * available information per file compare
      */
-    private void createISA(isaFolder) {
+    private void createISA(String isaFolder) throws IOException {
+        // INVESTIGATION FILE
+        String csvFile = isaFolder + "\\i_Investigation.txt";
+        FileWriter writer = new FileWriter(csvFile);
+        // investigation file does not have a header per se
+        CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
         
-        File file = new File(path);
-        List<String> headersList = Arrays.asList("", "", "", "", "");
-        List<List<String>> rowsList = Arrays.asList(
-                Arrays.asList("Eddy", "Male", "No", "23", "1200.27"),
-                Arrays.asList("Libby", "Male", "No", "17", "800.50"),
-                Arrays.asList("Rea", "Female", "No", "30", "10000.00"),
-                Arrays.asList("Deandre", "Female", "No", "19", "18000.50"),
-                Arrays.asList("Alice", "Male", "Yes", "29", "580.40"),
-                Arrays.asList("Alyse", "Female", "No", "26", "7000.89"),
-                Arrays.asList("Venessa", "Female", "No", "22", "100700.50")
+
+        List<List<String>> entriesrows = Arrays.asList(
+                new Developer("mkyong", new BigDecimal(120500), 32),
+                new Developer("zilap", new BigDecimal(150099), 5),
+                new Developer("ultraman", new BigDecimal(99999), 99)
         );
+
         
-        try (Writer writer = Files.newBufferedWriter(file.toPath())) {
-            writer.write(String.format("%-20s %-20s%n", "column 1", "column 2"));
-            writer.write(String.format("%-20s %-20s%n", "data 1", "data 2"));
+		
+        for (Developer d : developers) {
+
+            List<String> list = new ArrayList<>();
+            list.add(d.getName());
+            list.add(d.getSalary().toString());
+            list.add(String.valueOf(d.getAge()));
+
+            CsvUtils.writeLine(writer, list, '\t');
         }
 
-        List<String> lines = Arrays.asList("The first line", "The second line");
-        Path file = Paths.get("the-file-name.txt");
-        Files.write(file, lines, Charset.forName("UTF-8"));
-        //Files.write(file, lines, Charset.forName("UTF-8"), StandardOpenOption.APPEND);
-        //creates text file in WORKING DIRECTORY!
+        writer.flush();
+        writer.close();
+        
+        // STUDY FILE
+         csvFile = isaFolder + "\\s_1.txt";
+         writer = new FileWriter(csvFile);
+        //write header
+        CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
+        
+        
+        writer.flush();
+        writer.close();
+        
+        // ASSAY FILE
+         csvFile = isaFolder + "\\a_1_cell_migration_assay_microscopy_imaging.txt";
+         writer = new FileWriter(csvFile);
+        //write header
+        CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
 
-        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("filename.txt"), "utf-8"))) {
-            writer.write("something");
-        }
-        try {
-            //Whatever the file path is.
-            File statText = new File("E:/Java/Reference/bin/images/statsTest.txt");
-            FileOutputStream os = new FileOutputStream(statText);
-            OutputStreamWriter osw = new OutputStreamWriter(os);
-            Writer w = new BufferedWriter(osw);
-            w.write("POTATO!!!");
-            w.close();
-        } catch (IOException e) {
-            System.err.println("Problem writing to the file statsTest.txt");
-        }
         
         
-        try{
-            // Create new file
-            String content = "This is the content to write into create file";
-            String path="D:\\a\\hi.txt";
-            File file = new File(path);
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            // Write in file
-            bw.write(content);
-            // Close connection
-            bw.close();
-        }
-        
+        writer.flush();
+        writer.close();
     }
 
     /**
@@ -474,5 +470,9 @@ public class CMSOExportController {
         waitingDialog.setTitle(title);
         GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), waitingDialog);
         waitingDialog.setVisible(true);
+    }
+    
+    private List<List<String>> entriesInvestigation() {
+        
     }
 }
