@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.list.ExperimentsOverviewListRend
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.NonEditableTableModel;
 import be.ugent.maf.cellmissy.service.ExperimentService;
+import be.ugent.maf.cellmissy.service.IsaTabService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
@@ -82,6 +83,8 @@ public class CMSOExportController {
     private ExperimentService experimentService;
     @Autowired
     private WellService wellService;
+    @Autowired
+    private IsaTabService isaTabService;
 
     /**
      * Initialize controller
@@ -413,49 +416,36 @@ public class CMSOExportController {
         // INVESTIGATION FILE
         String csvFile = isaFolder + "\\i_Investigation.txt";
         FileWriter writer = new FileWriter(csvFile);
-        // investigation file does not have a header per se
-        CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
-        
-
-        List<List<String>> entriesrows = Arrays.asList(
-                new Developer("mkyong", new BigDecimal(120500), 32),
-                new Developer("zilap", new BigDecimal(150099), 5),
-                new Developer("ultraman", new BigDecimal(99999), 99)
-        );
-
-        
-		
-        for (Developer d : developers) {
-
-            List<String> list = new ArrayList<>();
-            list.add(d.getName());
-            list.add(d.getSalary().toString());
-            list.add(String.valueOf(d.getAge()));
-
-            CsvUtils.writeLine(writer, list, '\t');
+        List<List<String>> investigationEntries = isaTabService.createInvestigation(experimentToExport);
+        for(List<String> line: investigationEntries) {
+            CsvUtils.writeLine(writer, line, '\t');
         }
-
         writer.flush();
         writer.close();
         
-        // STUDY FILE
+        // STUDY FILE -------------------------------------------------
          csvFile = isaFolder + "\\s_1.txt";
          writer = new FileWriter(csvFile);
-        //write header
+        //write header but is acutally way to long to include here, better put it in service method
         CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
         
-        
+        List<List<String>> studyEntries = isaTabService.createStudy(experimentToExport);
+        for(List<String> line: studyEntries) {
+            CsvUtils.writeLine(writer, line, '\t');
+        }
         writer.flush();
         writer.close();
         
-        // ASSAY FILE
+        // ASSAY FILE -------------------------------------------------------
          csvFile = isaFolder + "\\a_1_cell_migration_assay_microscopy_imaging.txt";
          writer = new FileWriter(csvFile);
         //write header
         CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
 
-        
-        
+        List<List<String>> assayEntries = isaTabService.createAssay(experimentToExport);
+        for(List<String> line: assayEntries) {
+            CsvUtils.writeLine(writer, line, '\t');
+        }
         writer.flush();
         writer.close();
     }
@@ -472,7 +462,4 @@ public class CMSOExportController {
         waitingDialog.setVisible(true);
     }
     
-    private List<List<String>> entriesInvestigation() {
-        
-    }
 }
