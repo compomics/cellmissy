@@ -188,79 +188,87 @@ public class IsaTabServiceImpl implements IsaTabService {
     @Override
     public List<List<String>> createStudy(Experiment experimentToExport) {
         List<List<String>> entries = new ArrayList<>();
-        String extra1 = "Term Source REF";
-        String extra2 = "Term Accession Number";
         //properties are in the first row
         List<String> header = Arrays.asList(
                 "Source Name",
-                "Characteristics[organism]", extra1, extra2,
-                "Characteristics[cell]", extra1, extra2,
-                "Characteristics[cell provider]", extra1, extra2,
-                "Characteristics[cellular component]", extra1, extra2,
-                "Characteristics[life cycle stage]", extra1, extra2,
-                "Characteristics[genotype]", extra1, extra2,
-                "Term Source REF",
-                "Term Accession Number",
-                "Characteristics[passage number]", extra1, extra2,
+                "Characteristics[organism]",
+                "Characteristics[cell]",
+                "Characteristics[genotype]",
                 "Protocol REF",
-                "Parameter Value[cell culture vessel]", extra1, extra2,
-                "Parameter Value[cell culture configuration]", extra1, extra2,
-                "Parameter Value[cell culture matrix]", extra1, extra2,
-                "Parameter Value[seeding density]", extra1, extra2,
-                "Parameter Value[cell culture medium]", extra1, extra2,
-                "Parameter Value[cell culture serum]", extra1, extra2,
-                "Parameter Value[cell culture serum concentration]",
-                "Unit", extra1, extra2,
-                "Parameter Value[cell culture antibiotics]", extra1, extra2,
-                "Parameter Value[cell culture temperature]",
-                "Unit", extra1, extra2,
-                "Parameter Value[cell culture CO2 partial pressure]", extra1, extra2,
-                "Parameter Value[cell confluence level]",
-                "Unit", extra1, extra2,
-                "Parameter Value[plate identifier]", extra1, extra2,
-                "Parameter Value[plate well number]", extra1, extra2,
-                "Parameter Value[plate well column coordinate]", extra1, extra2,
-                "Parameter Value[plate well row coordinate]", extra1, extra2,
+                "Parameter Value[cell culture vessel]",
+                "Parameter Value[cell culture matrix]",
+                "Parameter Value[seeding density]",
+                "Parameter Value[cell culture medium]",
+                "Parameter Value[cell culture serum]",
+                "Parameter Value[cell culture serum concentration]", "Unit",
+                "Parameter Value[plate identifier]",
+                "Parameter Value[plate well number]",
+                "Parameter Value[plate well column coordinate]",
+                "Parameter Value[plate well row coordinate]",
                 "Protocol REF",
-                "Parameter Value[perturbation order]", extra1, extra2,
-                "Parameter Value[perturbation agent type]", extra1, extra2,
-                "Parameter Value[perturbation agent]", extra1, extra2,
-                "Parameter Value[perturbation agent delivery]", extra1, extra2,
-                "Parameter Value[perturbation agent solvent]", extra1, extra2,
-                "Parameter Value[perturbation agent solvent concentration]",
-                "Unit", extra1, extra2,
-                "Parameter Value[perturbation dose]", extra1, extra2,
-                "Parameter Value[perturbation duration]",
-                "Unit", extra1, extra2,
-                "Parameter Value[targeted gene identifier]", extra1, extra2,
-                "Parameter Value[gene construct tag]", extra1, extra2,
-                "Parameter Value[mode of expression]", extra1, extra2,
+                "Parameter Value[perturbation order]",
+                "Parameter Value[perturbation agent type]",
+                "Parameter Value[perturbation agent]",
+                "Parameter Value[perturbation agent delivery]",
+                "Parameter Value[perturbation agent solvent]",
+                "Parameter Value[perturbation agent solvent concentration]", "Unit",
+                "Parameter Value[perturbation dose]",
+                "Parameter Value[perturbation duration]", "Unit",
+                "Parameter Value[targeted gene identifier]",
+                "Parameter Value[gene construct tag]",
+                "Parameter Value[mode of expression]",
                 "Sample Name",
-                "Characteristics[genotype]", extra1, extra2,
-                "Factor Value[perturbation agent]", extra1, extra2,
-                "Factor Value[perturbation dose]", extra1, extra2,
-                "Factor Value[perturbation time post exposure]",
-                "Unit", extra1, extra2);
+                "Characteristics[genotype]",
+                "Factor Value[perturbation agent]",
+                "Factor Value[perturbation dose]",
+                "Factor Value[perturbation time post exposure]", "Unit");
 
         //header can go integral into entries list
         entries.add(header);
         //for each well add row
-        //for the "extra" CV columns, check if equal? and then add empty string
         for (int i = 0; i < experimentToExport.getPlateConditionList().size(); i++) {
             PlateCondition condition = experimentToExport.getPlateConditionList().get(i);
             for (int j = 0; j < condition.getWellList().size(); j++) {
                 Well well = condition.getWellList().get(j);
-
+                List<String> row_ = new ArrayList<>();
+                //row needs to contain the same amount of entries as the header
+                
+                List<String> row = Arrays.asList(
+                well.getPlateCondition().getCellLine().getCellLineType().getName(),
+                "Characteristics[organism]",
+                well.getPlateCondition().getCellLine().getCellLineType().getName(),
+                well.getPlateCondition().getCellLine().getCellLineType().getName(),
+                "cell growth",
+                "microplate",
+                well.getPlateCondition().getEcm().getEcmComposition().getCompositionType(),
+                well.getPlateCondition().getCellLine().getSeedingDensity() + " cells/well",
+                well.getPlateCondition().getCellLine().getGrowthMedium(),
+                well.getPlateCondition().getCellLine().getSerum(),
+                well.getPlateCondition().getCellLine().getSerumConcentration(), "%",
+                "Parameter Value[plate identifier]",
+                "Parameter Value[plate well number]",
+                well.getColumnNumber(),
+                well.getRowNumber(), //needs to be mapped to a letter???
+                "perturbation",
+                "1", //???
+                "chemical compound", //???
+                well.getPlateCondition().getTreatmentList().get(0).getTreatmentType().getName(),
+                "addition to medium",
+                well.getPlateCondition().getTreatmentList().get(0).getDrugSolvent(),
+                well.getPlateCondition().getTreatmentList().get(0).getDrugSolventConcentration(), "micromolar",
+                "Parameter Value[perturbation dose]",
+                "Parameter Value[perturbation duration]", "Unit",
+                "Parameter Value[targeted gene identifier]",
+                "Parameter Value[gene construct tag]",
+                "Parameter Value[mode of expression]",
+                "Sample Name",
+                "Characteristics[genotype]",
+                "Factor Value[perturbation agent]",
+                "Factor Value[perturbation dose]",
+                "Factor Value[perturbation time post exposure]", "Unit");
+                
+                entries.add(row);
             }
-        }
-
-        for (int i = 0; i < header.size(); i++) {
-            List<String> row = new ArrayList<>();
-            columnInfo.add(header.get(i));
-            columnInfo.add(rowToCellMissyValue.get(i));
-            //remove any null values from getting int that is not in the map
-            columnInfo.removeAll(Collections.singleton(null));
-            entries.add(columnInfo);
         }
         return entries;
     }
@@ -268,43 +276,38 @@ public class IsaTabServiceImpl implements IsaTabService {
     @Override
     public List<List<String>> createAssay(Experiment experimentToExport) {
         List<List<String>> entries = new ArrayList<>();
-        String extra1 = "Term Source REF";
-        String extra2 = "Term Accession Number";
         //properties are in the first row
         List<String> header = Arrays.asList(
                 "Sample Name",
                 "Protocol REF",
-                "Parameter Value[medium]", extra1, extra2,
-                "Parameter Value[serum]", extra1, extra2,
-                "Parameter Value[serum concentration]",
-                "Unit", extra1, extra2,
-                "Parameter Value[medium volume]",
-                "Unit", extra1, extra2,
-                "Parameter Value[migration modulator]", extra1, extra2,
-                "Parameter Value[modulator concentration]",
-                "Unit", extra1, extra2,
-                "Parameter Value[modulator distribution]", extra1, extra2,
+                "Parameter Value[medium]",
+                "Parameter Value[serum]",
+                "Parameter Value[serum concentration]", "Unit",
+                "Parameter Value[medium volume]", "Unit",
+                "Parameter Value[migration modulator]",
+                "Parameter Value[modulator concentration]", "Unit",
+                "Parameter Value[modulator distribution]",
                 "Protocol REF",
-                "Parameter Value[imaging technique]", extra1, extra2,
-                "Parameter Value[imaging technique temporal feature]", extra1, extra2,
-                "Parameter Value[acquisition duration]",
-                "Unit", extra1, extra2,
-                "Parameter Value[time interval]",
-                "Unit", extra1, extra2,
-                "Parameter Value[objective type]", extra1, extra2,
-                "Parameter Value[objective magnification]" extra1, extra2,
-                "Parameter Value[objective numerical aperture]", extra1, extra2,
-                "Parameter Value[acquisition channel count]", extra1, extra2,
-                "Parameter Value[reporter]", extra1, extra2,
-                "Parameter Value[voxel size]",
-                "Unit", extra1, extra2,
+                "Parameter Value[imaging modality]",
+                "Parameter Value[imagine sequence type]",
+                "Parameter Value[observation period]", "Unit",
+                "Parameter Value[time series interval]", "Unit",
+                "Parameter Value[objective type]",
+                "Parameter Value[objective magnification]",
+                "Parameter Value[objective numerical aperture]",
+                "Parameter Value[channel definition]",
+                "Parameter Value[pixel identifier]",
+                "Parameter Value[pixel dimension order]",
+                "Parameter Value[pixel type]",
+                "Parameter Value[pixel sizeX]",
+                "Parameter Value[pixel sizeY]",
+                "Parameter Value[pixel sizeZ]",
+                "Parameter Value[pixel sizeC]",
+                "Parameter Value[pixel sizeT]",
                 "Assay Name",
                 "Raw Data File",
                 "Protocol REF",
-                "Parameter Value[software]", extra1, extra2
-    
-
-,
+                "Parameter Value[software]",
                 "Data Transformation Name",
                 "Derived Data File");
     }
