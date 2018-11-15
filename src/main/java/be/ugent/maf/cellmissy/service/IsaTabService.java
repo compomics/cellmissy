@@ -16,9 +16,9 @@ import java.util.List;
  */
 public interface IsaTabService {
 
-    List<List<String>> createInvestigation(Experiment experimentToExport);
+    List<List<String>> createInvestigation(Experiment experimentToExport,String orcid);
 
-    List<List<String>> createStudy(Experiment experimentToExport);
+    List<List<String>> createStudy(Experiment experimentToExport, String organism);
 
     List<List<String>> createAssay(Experiment experimentToExport);
 

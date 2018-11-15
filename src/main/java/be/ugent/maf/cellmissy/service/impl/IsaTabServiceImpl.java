@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.service.IsaTabService;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +23,7 @@ import java.util.List;
 public class IsaTabServiceImpl implements IsaTabService {
 
     @Override
-    public List<List<String>> createInvestigation(Experiment experimentToExport) {
+    public List<List<String>> createInvestigation(Experiment experimentToExport, String orcid) {
         List<List<String>> entries = new ArrayList<>();
         //first column: all properties
         List<String> firstColumnProperties = Arrays.asList(
@@ -172,7 +173,7 @@ public class IsaTabServiceImpl implements IsaTabService {
         rowToCellMissyValue.put(83, "microscopy imaging");
 
         //add info filled in GUI by user
-        rowToCellMissyValue.put(114, experimentToExport.getUser().getOrcid());
+        rowToCellMissyValue.put(114, orcid);
 
         for (int i = 0; i < firstColumnProperties.size(); i++) {
             List<String> columnInfo = new ArrayList<>();
@@ -186,7 +187,7 @@ public class IsaTabServiceImpl implements IsaTabService {
     }
 
     @Override
-    public List<List<String>> createStudy(Experiment experimentToExport) {
+    public List<List<String>> createStudy(Experiment experimentToExport, String organism) {
         List<List<String>> entries = new ArrayList<>();
         //properties are in the first row
         List<String> header = Arrays.asList(
@@ -202,7 +203,7 @@ public class IsaTabServiceImpl implements IsaTabService {
                 "Parameter Value[cell culture serum]",
                 "Parameter Value[cell culture serum concentration]", "Unit",
                 "Parameter Value[plate identifier]",
-                "Parameter Value[plate well number]",
+                //                "Parameter Value[plate well number]",
                 "Parameter Value[plate well column coordinate]",
                 "Parameter Value[plate well row coordinate]",
                 "Protocol REF",
@@ -213,15 +214,10 @@ public class IsaTabServiceImpl implements IsaTabService {
                 "Parameter Value[perturbation agent solvent]",
                 "Parameter Value[perturbation agent solvent concentration]", "Unit",
                 "Parameter Value[perturbation dose]",
-                "Parameter Value[perturbation duration]", "Unit",
-                "Parameter Value[targeted gene identifier]",
-                "Parameter Value[gene construct tag]",
-                "Parameter Value[mode of expression]",
                 "Sample Name",
                 "Characteristics[genotype]",
                 "Factor Value[perturbation agent]",
-                "Factor Value[perturbation dose]",
-                "Factor Value[perturbation time post exposure]", "Unit");
+                "Factor Value[perturbation dose]");
 
         //header can go integral into entries list
         entries.add(header);
@@ -230,43 +226,37 @@ public class IsaTabServiceImpl implements IsaTabService {
             PlateCondition condition = experimentToExport.getPlateConditionList().get(i);
             for (int j = 0; j < condition.getWellList().size(); j++) {
                 Well well = condition.getWellList().get(j);
-                List<String> row_ = new ArrayList<>();
                 //row needs to contain the same amount of entries as the header
-                
                 List<String> row = Arrays.asList(
-                well.getPlateCondition().getCellLine().getCellLineType().getName(),
-                "Characteristics[organism]",
-                well.getPlateCondition().getCellLine().getCellLineType().getName(),
-                well.getPlateCondition().getCellLine().getCellLineType().getName(),
-                "cell growth",
-                "microplate",
-                well.getPlateCondition().getEcm().getEcmComposition().getCompositionType(),
-                well.getPlateCondition().getCellLine().getSeedingDensity() + " cells/well",
-                well.getPlateCondition().getCellLine().getGrowthMedium(),
-                well.getPlateCondition().getCellLine().getSerum(),
-                well.getPlateCondition().getCellLine().getSerumConcentration(), "%",
-                "Parameter Value[plate identifier]",
-                "Parameter Value[plate well number]",
-                well.getColumnNumber(),
-                well.getRowNumber(), //needs to be mapped to a letter???
-                "perturbation",
-                "1", //???
-                "chemical compound", //???
-                well.getPlateCondition().getTreatmentList().get(0).getTreatmentType().getName(),
-                "addition to medium",
-                well.getPlateCondition().getTreatmentList().get(0).getDrugSolvent(),
-                well.getPlateCondition().getTreatmentList().get(0).getDrugSolventConcentration(), "micromolar",
-                "Parameter Value[perturbation dose]",
-                "Parameter Value[perturbation duration]", "Unit",
-                "Parameter Value[targeted gene identifier]",
-                "Parameter Value[gene construct tag]",
-                "Parameter Value[mode of expression]",
-                "Sample Name",
-                "Characteristics[genotype]",
-                "Factor Value[perturbation agent]",
-                "Factor Value[perturbation dose]",
-                "Factor Value[perturbation time post exposure]", "Unit");
-                
+                        well.getPlateCondition().getCellLine().getCellLineType().getName(),
+                        organism,
+                        well.getPlateCondition().getCellLine().getCellLineType().getName(),
+                        well.getPlateCondition().getCellLine().getCellLineType().getName(),
+                        "cell growth",
+                        "microplate",
+                        well.getPlateCondition().getEcm().getEcmComposition().getCompositionType(),
+                        well.getPlateCondition().getCellLine().getSeedingDensity() + " cells/well",
+                        well.getPlateCondition().getCellLine().getGrowthMedium(),
+                        well.getPlateCondition().getCellLine().getSerum(),
+                        Double.toString(well.getPlateCondition().getCellLine().getSerumConcentration()), "%",
+                        experimentToExport.getPlateFormat().getPlateFormatid().toString(),
+                        //according to examples, this is the number in the order of imaged wells. CellMissy does not have this information
+                        //                        "Parameter Value[plate well number]", 
+                        Integer.toString(well.getColumnNumber()),
+                        AnalysisUtils.RowCoordinateToString(well.getRowNumber()),
+                        "perturbation",
+                        "1", //???
+                        "chemical compound", //???
+                        well.getPlateCondition().getTreatmentList().get(0).getTreatmentType().getName(),
+                        "addition to medium",
+                        well.getPlateCondition().getTreatmentList().get(0).getDrugSolvent(),
+                        Double.toString(well.getPlateCondition().getTreatmentList().get(0).getDrugSolventConcentration()), "micromolar",
+                        "medium dose",
+                        "culture" + (j + 1),
+                        well.getPlateCondition().getCellLine().getCellLineType().getName(),
+                        well.getPlateCondition().getTreatmentList().get(0).getTreatmentType().getName(),
+                        well.getPlateCondition().getTreatmentList().get(0).getConcentration() + " " + well.getPlateCondition().getTreatmentList().get(0).getConcentrationUnit());
+
                 entries.add(row);
             }
         }
@@ -284,17 +274,12 @@ public class IsaTabServiceImpl implements IsaTabService {
                 "Parameter Value[serum]",
                 "Parameter Value[serum concentration]", "Unit",
                 "Parameter Value[medium volume]", "Unit",
-                "Parameter Value[migration modulator]",
-                "Parameter Value[modulator concentration]", "Unit",
-                "Parameter Value[modulator distribution]",
                 "Protocol REF",
                 "Parameter Value[imaging modality]",
                 "Parameter Value[imagine sequence type]",
                 "Parameter Value[observation period]", "Unit",
                 "Parameter Value[time series interval]", "Unit",
-                "Parameter Value[objective type]",
                 "Parameter Value[objective magnification]",
-                "Parameter Value[objective numerical aperture]",
                 "Parameter Value[channel definition]",
                 "Parameter Value[pixel identifier]",
                 "Parameter Value[pixel dimension order]",
@@ -305,11 +290,60 @@ public class IsaTabServiceImpl implements IsaTabService {
                 "Parameter Value[pixel sizeC]",
                 "Parameter Value[pixel sizeT]",
                 "Assay Name",
-                "Raw Data File",
                 "Protocol REF",
                 "Parameter Value[software]",
                 "Data Transformation Name",
                 "Derived Data File");
+
+        //header can go integral into entries list
+        entries.add(header);
+        //for each well add row
+        for (int i = 0; i < experimentToExport.getPlateConditionList().size(); i++) {
+            PlateCondition condition = experimentToExport.getPlateConditionList().get(i);
+            for (int j = 0; j < condition.getWellList().size(); j++) {
+                Well well = condition.getWellList().get(j);
+                String software = algorithmToSoftware(well.getWellHasImagingTypeList().get(0).getAlgorithm().getAlgorithmName());
+                //row needs to contain the same amount of entries as the header
+                List<String> row = Arrays.asList(
+                        "culture" + (j + 1),
+                        "migration assay",
+                        well.getPlateCondition().getAssayMedium().getMedium(),
+                        well.getPlateCondition().getAssayMedium().getSerum(),
+                        Double.toString(well.getPlateCondition().getAssayMedium().getSerumConcentration()), "%",
+                        Double.toString(well.getPlateCondition().getAssayMedium().getVolume()), "microliter",
+                        "imaging",
+                        "phase-contrast microscopy",
+                        "time-series",
+                        Double.toString(experimentToExport.getDuration()), "hour",
+                        Double.toString(experimentToExport.getExperimentInterval()), "minute",
+                        experimentToExport.getMagnification().getMagnficationNumber(),
+                        "Parameter Value[channel definition]",
+                        "Parameter Value[pixel identifier]",
+                        "Parameter Value[pixel dimension order]",
+                        "Parameter Value[pixel type]",
+                        "Parameter Value[pixel sizeX]",
+                        "Parameter Value[pixel sizeY]",
+                        "Parameter Value[pixel sizeZ]",
+                        "Parameter Value[pixel sizeC]",
+                        "Parameter Value[pixel sizeT]",
+                        "culture" + (j + 1),
+                        "data transformation",
+                        software,
+                        well.getWellHasImagingTypeList().get(0).getAlgorithm().getAlgorithmName(),
+                        software + "//" + well.getColumnNumber() + "_" + AnalysisUtils.RowCoordinateToString(well.getRowNumber()) );
+
+                entries.add(row);
+            }
+        }
+        return entries;
+    }
+    
+    private String algorithmToSoftware(String algoName){
+        if (algoName.contains("algo")){
+        return "CellMIA";
+    } else {
+            return algoName;
+            }
     }
 
 }
