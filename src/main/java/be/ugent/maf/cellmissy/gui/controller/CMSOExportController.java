@@ -9,6 +9,8 @@ import be.ugent.maf.cellmissy.entity.Experiment;
 import be.ugent.maf.cellmissy.entity.ExperimentStatus;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.Project;
+import be.ugent.maf.cellmissy.entity.Track;
+import be.ugent.maf.cellmissy.entity.TrackPoint;
 import be.ugent.maf.cellmissy.entity.Well;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.cmso.CMSOExportPanel;
@@ -19,6 +21,7 @@ import be.ugent.maf.cellmissy.service.ExperimentService;
 import be.ugent.maf.cellmissy.service.IsaTabService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.WellService;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.CsvUtils;
 
@@ -31,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -71,6 +75,7 @@ public class CMSOExportController {
     private ObservableList<Project> projectBindingList;
     private ObservableList<Experiment> experimentBindingList;
     private WaitingDialog waitingDialog;
+    private Path biotracksFolderPath;
     //view
     private CMSOExportPanel cmsoExportPanel;
     //parent controller
@@ -185,7 +190,7 @@ public class CMSOExportController {
                         // if the folders were successfully created, we execute a swing worker and export the experiment to the file.
                         //this swingworker will create the isa-tab  and biotracks files
                         if (topFolder != null) {
-                            ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(topFolder);
+                            ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(topFolder.toPath(), currentDirectory);
                             exportExperimentSwingWorker.execute();
                         }
                     } else {
@@ -205,10 +210,10 @@ public class CMSOExportController {
         //tracking software has all wells inside and in there biotracks dp
         Path isapath = Paths.get(directory.getPath() + "/" + mainFolderName + "/isa");
         // how to get trackingsoftware information? is inside the wellHasImgType
-        //The name for mia analysed data is often algox or MIAalgox. This needs to be changed to cellMIA
+        //The name for mia analysed data is often algox or MIAalgox. This needs to be changed to CellMIA
         String trackingsoftware = experimentToExport.getPlateConditionList().get(0).getSingleCellAnalyzedWells().get(0).getWellHasImagingTypeList().get(0).getAlgorithm().getAlgorithmName();
         if (trackingsoftware.contains("algo")) {
-            trackingsoftware = "cellMIA";
+            trackingsoftware = "CellMIA";
         }
         Path trackingpath = Paths.get(directory.getPath() + "/" + mainFolderName + "/" + trackingsoftware);
         try {
@@ -217,7 +222,8 @@ public class CMSOExportController {
         } catch (IOException e) {
             System.err.println("Cannot create directories - " + e);
         }
-        return;
+        biotracksFolderPath = trackingpath;
+        return Paths.get(directory.getPath() + "/" + mainFolderName).toFile();
     }
 
     /**
@@ -271,6 +277,7 @@ public class CMSOExportController {
         if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
             experimentBindingList.clear();
         }
+        biotracksFolderPath = null;
     }
 
     /**
@@ -351,9 +358,11 @@ public class CMSOExportController {
 
         // the path(????) to the top folder that contains the entire dataset or else the File
         private final Path topFolder;
+        private final File chosenDirectory;
 
-        public ExportExperimentSwingWorker(Path topFolder) {
+        public ExportExperimentSwingWorker(Path topFolder, File chosenDirectory) {
             this.topFolder = topFolder;
+            this.chosenDirectory = chosenDirectory;
         }
 
         @Override
@@ -377,12 +386,9 @@ public class CMSOExportController {
             // export the experiment to file !
             //Create and populate ISA
             //create biotracks objects and links csv and json
-            createFolderStructure(title, directory); //????
-            createISA(topFolder.toString() + "\\isa");
-            createBiotracks(biotracksFolder);
-
-            exportExperimentToXMLFile(xmlFile);
-            exportExperimentTemplateToXMLFile(xmlFile);
+            createFolderStructure(title, chosenDirectory); //????
+            createISA(topFolder.toString() + "/" + "isa");
+            createBiotracks(biotracksFolderPath);
             return null;
         }
 
@@ -414,40 +420,93 @@ public class CMSOExportController {
      */
     private void createISA(String isaFolder) throws IOException {
         // INVESTIGATION FILE
-        String csvFile = isaFolder + "\\i_Investigation.txt";
+        String csvFile = isaFolder + "/" + "i_Investigation.txt";
         FileWriter writer = new FileWriter(csvFile);
-        List<List<String>> investigationEntries = isaTabService.createInvestigation(experimentToExport);
-        for(List<String> line: investigationEntries) {
+        List<List<String>> investigationEntries = isaTabService.createInvestigation(experimentToExport, cmsoExportPanel.getOrcidTextField().getText());
+        for (List<String> line : investigationEntries) {
             CsvUtils.writeLine(writer, line, '\t');
         }
         writer.flush();
         writer.close();
-        
-        // STUDY FILE -------------------------------------------------
-         csvFile = isaFolder + "\\s_1.txt";
-         writer = new FileWriter(csvFile);
-        //write header but is acutally way to long to include here, better put it in service method
-        CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
-        
-        List<List<String>> studyEntries = isaTabService.createStudy(experimentToExport);
-        for(List<String> line: studyEntries) {
-            CsvUtils.writeLine(writer, line, '\t');
-        }
-        writer.flush();
-        writer.close();
-        
-        // ASSAY FILE -------------------------------------------------------
-         csvFile = isaFolder + "\\a_1_cell_migration_assay_microscopy_imaging.txt";
-         writer = new FileWriter(csvFile);
-        //write header
-        CsvUtils.writeLine(writer, Arrays.asList("Name", "Salary", "Age"), '\t');
 
-        List<List<String>> assayEntries = isaTabService.createAssay(experimentToExport);
-        for(List<String> line: assayEntries) {
+        // STUDY FILE -------------------------------------------------
+        csvFile = isaFolder + "/" + "s_1.txt";
+        writer = new FileWriter(csvFile);
+        List<List<String>> studyEntries = isaTabService.createStudy(experimentToExport, cmsoExportPanel.getOrganismTextField().getText());
+        for (List<String> line : studyEntries) {
             CsvUtils.writeLine(writer, line, '\t');
         }
         writer.flush();
         writer.close();
+
+        // ASSAY FILE -------------------------------------------------------
+        csvFile = isaFolder + "/" + "a_1_cell_migration_assay_microscopy_imaging.txt";
+        writer = new FileWriter(csvFile);
+        List<List<String>> assayEntries = isaTabService.createAssay(experimentToExport);
+        for (List<String> line : assayEntries) {
+            CsvUtils.writeLine(writer, line, '\t');
+        }
+        writer.flush();
+        writer.close();
+    }
+
+    private void createBiotracks(Path biotracksPath) throws IOException {
+        //for each well
+        for (int i = 0; i < experimentToExport.getPlateConditionList().size(); i++) {
+            PlateCondition condition = experimentToExport.getPlateConditionList().get(i);
+            for (int j = 0; j < condition.getWellList().size(); j++) {
+                Well well = condition.getWellList().get(j);
+                String wellFolderName = well.getColumnNumber() + "_" + AnalysisUtils.RowCoordinateToString(well.getRowNumber());
+                //create folders with well name and dp
+                Path dpPath = Paths.get(biotracksPath + "/" + wellFolderName + "/" + "dp");
+                Files.createDirectories(dpPath);
+                //get data
+                List<Track> tracklist = well.getWellHasImagingTypeList().get(0).getTrackList();
+                //split data into objects and links entries
+                //CellMIA and CellMissy do not work with links as of yet
+                // this means a track = a link
+                List<List<String>> objectsEntries = new ArrayList<>();
+                List<List<String>> linksEntries = new ArrayList<>();
+                for (int trackNo = 0; trackNo < tracklist.size(); trackNo++) {
+                    for (TrackPoint object : tracklist.get(trackNo).getTrackPointList()) {
+                        // objects file contains CellMissy entities: trackpoint id, time index, cell col, cell row
+                        objectsEntries.add(Arrays.asList(object.getTrackPointid().toString(), Integer.toString(object.getTimeIndex()),
+                                Double.toString(object.getCellCol()), Double.toString(object.getCellRow())));
+                        // links file contains CellMissy entities: track id, trackpoint id
+                        linksEntries.add(Arrays.asList(Integer.toString(trackNo), object.getTrackPointid().toString()));
+                    }
+                }
+
+                //write objects and links csv's
+                // OBJECTS -----------------------------------------
+                String csvFile = dpPath.toString() + "/" + "objects.csv";
+                FileWriter writer = new FileWriter(csvFile);
+                List<String> header = Arrays.asList("cmso_object_id", "cmso_frame_id", "cmso_x_coord", "cmso_y_coord");
+                CsvUtils.writeLine(writer, header, ',');
+                for (List<String> line : objectsEntries) {
+                    CsvUtils.writeLine(writer, line, ',');
+                }
+                writer.flush();
+                writer.close();
+
+                // LINKS -------------------------------------------
+                csvFile = dpPath.toString() + "/" + "links.csv";
+                writer = new FileWriter(csvFile);
+                header = Arrays.asList("cmso_link_id", "cmso_object_id");
+                CsvUtils.writeLine(writer, header, ',');
+                for (List<String> line : linksEntries) {
+                    CsvUtils.writeLine(writer, line, ',');
+                }
+                writer.flush();
+                writer.close();
+
+                //write standard json file
+                ClassLoader classLoader = getClass().getClassLoader();
+                File source = new File(classLoader.getResource("schema/standardBiotracksjson.json").getFile());
+                Files.copy(source.toPath(), Paths.get(dpPath.toString() + "/" + "dp.json"));
+            }
+        }
+
     }
 
     /**
@@ -461,5 +520,5 @@ public class CMSOExportController {
         GuiUtils.centerDialogOnFrame(cellMissyController.getCellMissyFrame(), waitingDialog);
         waitingDialog.setVisible(true);
     }
-    
+
 }
