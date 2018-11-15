@@ -229,18 +229,20 @@ public class WellServiceImpl implements WellService {
      * @param ImagingTpeId
      */
     @Override
-    public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId) {
-        List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
-        if (wellHasImagingTypes != null) {
-            List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
-            for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
-                //fetch time step list of that wellHasImagingType
-                Hibernate.initialize(wellHasImagingType.getTrackList());
-                wellHasImagingTypeList.add(wellHasImagingType);
+    public void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId, boolean cmso) {
+        if (!cmso) {
+            List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
+            if (wellHasImagingTypes != null) {
+                List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
+                for (WellHasImagingType wellHasImagingType : wellHasImagingTypes) {
+                    //fetch time step list of that wellHasImagingType
+                    Hibernate.initialize(wellHasImagingType.getTrackList());
+                    wellHasImagingTypeList.add(wellHasImagingType);
+                }
+                well.setWellHasImagingTypeList(wellHasImagingTypeList);
+            } else {
+                well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
             }
-            well.setWellHasImagingTypeList(wellHasImagingTypeList);
-        } else {
-            well.setWellHasImagingTypeList(new ArrayList<WellHasImagingType>());
         }
     }
 
@@ -252,7 +254,7 @@ public class WellServiceImpl implements WellService {
      * @param ImagingTpeId
      */
     @Override
-    public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId) {
+    public void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId, boolean cmso) {
         List<WellHasImagingType> wellHasImagingTypes = findByWellIdAlgoIdAndImagingTypeId(well.getWellid(), AlgorithmId, ImagingTpeId);
         if (wellHasImagingTypes != null) {
             List<WellHasImagingType> wellHasImagingTypeList = new ArrayList<>();
@@ -264,7 +266,9 @@ public class WellServiceImpl implements WellService {
                 }
                 wellHasImagingTypeList.add(wellHasImagingType);
             }
-            well.setWellHasImagingTypeList(wellHasImagingTypeList);
+            if (!cmso) {
+                well.setWellHasImagingTypeList(wellHasImagingTypeList);
+            }
         }
     }
 

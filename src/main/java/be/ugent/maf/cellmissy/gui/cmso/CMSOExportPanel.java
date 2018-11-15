@@ -1,40 +1,37 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.exporting;
+package be.ugent.maf.cellmissy.gui.cmso;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import java.awt.*;
+import javax.swing.JTextField;
 
 /**
  *
- * @author Paola Masuzzo <paola.masuzzo@ugent.be>
+ * @author Gwendolien Sergeant
  */
-public class ExportTemplateDialog extends javax.swing.JDialog {
+public class CMSOExportPanel extends javax.swing.JPanel {
 
-    public JButton getCancelButton() {
-        return cancelButton;
+    /**
+     * Creates new form CMSOExportPanel
+     */
+    public CMSOExportPanel() {
+        initComponents();
     }
 
-    public JTable getConditionsDetailsTable() {
-        return conditionsDetailsTable;
+    public JLabel getCellLinesLabel() {
+        return cellLinesLabel;
     }
 
     public JList getExperimentsList() {
         return experimentsList;
-    }
-
-    public JButton getExportButton() {
-        return exportButton;
-    }
-
-    public JLabel getInfoLabel() {
-        return infoLabel;
     }
 
     public JLabel getInstrumentLabel() {
@@ -45,12 +42,16 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
         return numberConditionsLabel;
     }
 
-    public JLabel getPlateFormatLabel() {
-        return plateFormatLabel;
+    public JComboBox<String> getOrganismComboBox() {
+        return organismComboBox;
     }
 
-    public JTextArea getProjectDescriptionTextArea() {
-        return projectDescriptionTextArea;
+    public JTextField getOrganismTextField() {
+        return organismTextField;
+    }
+
+    public JLabel getPlateFormatLabel() {
+        return plateFormatLabel;
     }
 
     public JList getProjectsList() {
@@ -61,18 +62,34 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
         return purposeTextArea;
     }
 
+    public JLabel getTimeFramesLabel() {
+        return timeFramesLabel;
+    }
+
     public JLabel getUserLabel() {
         return userLabel;
     }
 
-    /**
-     * Creates new form ExportTemplateDialog
-     */
-    public ExportTemplateDialog(Frame parent) {
-        super(parent, true);
-        initComponents();
+    public JTextArea getProjectDescriptionTextArea() {
+        return projectDescriptionTextArea;
     }
 
+    public JLabel getInfoLabel() {
+        return infoLabel;
+    }
+
+    public JTable getConditionsDetailsTable() {
+        return conditionsDetailsTable;
+    }
+
+    public JButton getExportButton() {
+        return exportButton;
+    }
+
+    public JTextField getOrcidTextField() {
+        return orcidTextField;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -81,7 +98,6 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         overviewPanel = new javax.swing.JPanel();
         infoLabel = new javax.swing.JLabel();
@@ -104,21 +120,24 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         purposeTextArea = new javax.swing.JTextArea();
+        jLabel8 = new javax.swing.JLabel();
+        cellLinesLabel = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        timeFramesLabel = new javax.swing.JLabel();
         tablePanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         conditionsDetailsTable = new javax.swing.JTable();
         bottomPanel = new javax.swing.JPanel();
         exportButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Export Template");
-        setMinimumSize(new java.awt.Dimension(950, 750));
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+        miacmePanel = new javax.swing.JPanel();
+        organismTextField = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        organismComboBox = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
+        orcidTextField = new javax.swing.JTextField();
 
         overviewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Overview"));
         overviewPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        overviewPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         infoLabel.setText("Click on a project to see the relative experiments.");
 
@@ -175,7 +194,7 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
 
@@ -208,18 +227,8 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                 .addGap(17, 17, 17))
         );
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.6;
-        getContentPane().add(overviewPanel, gridBagConstraints);
-
         detailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Details"));
         detailsPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        detailsPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jLabel10.setText("user");
 
@@ -248,12 +257,28 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
         purposeTextArea.setPreferredSize(new java.awt.Dimension(170, 94));
         jScrollPane5.setViewportView(purposeTextArea);
 
+        jLabel8.setText("cell lines");
+
+        cellLinesLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+
+        jLabel9.setText("number of time frames");
+
+        timeFramesLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
+
         javax.swing.GroupLayout detailsPanelLayout = new javax.swing.GroupLayout(detailsPanel);
         detailsPanel.setLayout(detailsPanelLayout);
         detailsPanelLayout.setHorizontalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(detailsPanelLayout.createSequentialGroup()
                 .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(detailsPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane5)
+                            .addGroup(detailsPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(38, 38, 38)
+                                .addComponent(cellLinesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(detailsPanelLayout.createSequentialGroup()
                         .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(detailsPanelLayout.createSequentialGroup()
@@ -267,21 +292,18 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                             .addComponent(userLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(instrumentLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(plateFormatLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(numberConditionsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(59, 59, 59))
-                    .addGroup(detailsPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
+                            .addComponent(numberConditionsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(detailsPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10)
-                            .addComponent(jLabel11))))
-                .addGap(71, 71, 71))
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel10))))
+                .addGap(93, 93, 93)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(timeFramesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
-
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel6, jLabel7});
-
         detailsPanelLayout.setVerticalGroup(
             detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(detailsPanelLayout.createSequentialGroup()
@@ -290,7 +312,9 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                     .addGroup(detailsPanelLayout.createSequentialGroup()
                         .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10)
-                            .addComponent(userLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(userLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(timeFramesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel11))
                     .addComponent(instrumentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -303,27 +327,17 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(numberConditionsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                .addGroup(detailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cellLinesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {instrumentLabel, numberConditionsLabel, plateFormatLabel, userLabel});
-
-        detailsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabel10, jLabel11, jLabel6, jLabel7});
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.6;
-        getContentPane().add(detailsPanel, gridBagConstraints);
 
         tablePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Conditions Details"));
         tablePanel.setToolTipText("");
         tablePanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        tablePanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
         jScrollPane3.setBorder(null);
 
@@ -357,110 +371,119 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.35;
-        getContentPane().add(tablePanel, gridBagConstraints);
-
         bottomPanel.setMinimumSize(new java.awt.Dimension(20, 20));
-        bottomPanel.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        exportButton.setText("Export to File...");
-
-        cancelButton.setText("Cancel");
+        exportButton.setText("Export to CMSO Standard...");
 
         javax.swing.GroupLayout bottomPanelLayout = new javax.swing.GroupLayout(bottomPanel);
         bottomPanel.setLayout(bottomPanelLayout);
         bottomPanelLayout.setHorizontalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
-                .addContainerGap(614, Short.MAX_VALUE)
+                .addContainerGap(727, Short.MAX_VALUE)
                 .addComponent(exportButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cancelButton)
                 .addContainerGap())
         );
-
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, exportButton});
-
         bottomPanelLayout.setVerticalGroup(
             bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, bottomPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(bottomPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportButton)
-                    .addComponent(cancelButton))
+                .addComponent(exportButton)
                 .addContainerGap())
         );
 
-        bottomPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cancelButton, exportButton});
+        miacmePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Extra MIACME-required information"));
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.05;
-        getContentPane().add(bottomPanel, gridBagConstraints);
+        organismTextField.setText("Homo sapiens");
 
-        pack();
+        jLabel1.setText("investigator ORCID id");
+
+        organismComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "all conditions", "some conditions" }));
+
+        jLabel2.setText("organism of origin");
+
+        javax.swing.GroupLayout miacmePanelLayout = new javax.swing.GroupLayout(miacmePanel);
+        miacmePanel.setLayout(miacmePanelLayout);
+        miacmePanelLayout.setHorizontalGroup(
+            miacmePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(miacmePanelLayout.createSequentialGroup()
+                .addGroup(miacmePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(miacmePanelLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(organismTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(organismComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(miacmePanelLayout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(orcidTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        miacmePanelLayout.setVerticalGroup(
+            miacmePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(miacmePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(miacmePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(organismTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(organismComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(miacmePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(orcidTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(65, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(bottomPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(overviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(detailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 108, Short.MAX_VALUE))
+            .addComponent(miacmePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(overviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(detailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tablePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(miacmePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(bottomPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ExportTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                ExportTemplateDialog dialog = new ExportTemplateDialog(new javax.swing.JFrame());
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JLabel cellLinesLabel;
     private javax.swing.JTable conditionsDetailsTable;
     private javax.swing.JPanel detailsPanel;
     private javax.swing.JList experimentsList;
     private javax.swing.JButton exportButton;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel instrumentLabel;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -468,13 +491,18 @@ public class ExportTemplateDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JPanel miacmePanel;
     private javax.swing.JLabel numberConditionsLabel;
+    private javax.swing.JTextField orcidTextField;
+    private javax.swing.JComboBox<String> organismComboBox;
+    private javax.swing.JTextField organismTextField;
     private javax.swing.JPanel overviewPanel;
     private javax.swing.JLabel plateFormatLabel;
     private javax.swing.JTextArea projectDescriptionTextArea;
     private javax.swing.JList projectsList;
     private javax.swing.JTextArea purposeTextArea;
     private javax.swing.JPanel tablePanel;
+    private javax.swing.JLabel timeFramesLabel;
     private javax.swing.JLabel userLabel;
     // End of variables declaration//GEN-END:variables
 }

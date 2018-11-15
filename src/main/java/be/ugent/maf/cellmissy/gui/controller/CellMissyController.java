@@ -64,6 +64,7 @@ public class CellMissyController {
     private boolean firstDoseResponseAnalysis;
     private boolean firstLoadingFromCellMia;
     private boolean firstLoadingFromGenericInput;
+    private boolean firstCMSOLoading;
     //view
     //main frame
     private CellMissyFrame cellMissyFrame;
@@ -101,6 +102,10 @@ public class CellMissyController {
     private ImportExportController importExportController;
     @Autowired
     private TracksWriterController tracksWriterController;
+    @Autowired
+    private CMSOReaderController cMSOReaderController;
+    @Autowired
+    private CMSOExportController cMSOExportController;
 
     /**
      * Get main frame
@@ -167,6 +172,7 @@ public class CellMissyController {
         firstDoseResponseAnalysis = true;
         firstLoadingFromCellMia = true;
         firstLoadingFromGenericInput = true;
+        firstCMSOLoading = true;
         //init child controllers
         setupExperimentController.init();
         loadExperimentFromCellMiaController.init();
@@ -182,6 +188,8 @@ public class CellMissyController {
         assayManagementController.init();
         importExportController.init();
         tracksWriterController.init();
+        cMSOReaderController.init();
+        cMSOExportController.init();
         // initialize main frame
         initMainFrame();
         // initialize start up dialog
@@ -374,8 +382,12 @@ public class CellMissyController {
         cellMissyFrame.getAreaAnalysisMenuItem().addActionListener(itemActionListener);
         // single cell analysis
         cellMissyFrame.getSingleCellAnalysisMenuItem().addActionListener(itemActionListener);
-        //generic dose-response analysis
+        // generic dose-response analysis
         cellMissyFrame.getDoseResponseMenuItem().addActionListener(itemActionListener);
+        // CMSO dataset import
+        cellMissyFrame.getCmsoMenuItem().addActionListener(itemActionListener);
+        // export experiment to CMSO dataset
+        cellMissyFrame.getCMSOExportMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -580,6 +592,8 @@ public class CellMissyController {
                 genericArea = menuItemText.equalsIgnoreCase("... area from generic input");
             } else if (menuItemText.equalsIgnoreCase("... dose-response") && switchCard(menuItemText)) {
                 onDoseResponse();
+            } else if (menuItemText.equalsIgnoreCase("... CMSO dataset") && switchCard(menuItemText)) {
+                onLoadingCSMODataset();
             }
         }
     }
@@ -615,6 +629,17 @@ public class CellMissyController {
         }
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
         firstLoadingFromCellMia = false;
+    }
+    
+    /**
+     * Action performed on loading CMSO dataset
+     */
+    private void onLoadingCSMODataset() {
+        if (!firstCMSOLoading) {
+            cMSOReaderController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getCmsoDatasetParentPanel().getName());
+        firstCMSOLoading = false;
     }
 
     /**

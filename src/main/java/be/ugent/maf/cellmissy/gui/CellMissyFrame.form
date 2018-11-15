@@ -66,6 +66,13 @@
                     <Property name="text" type="java.lang.String" value="... data from CELLMIA"/>
                   </Properties>
                 </MenuItem>
+                <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="cmsoMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="... CMSO dataset"/>
+                  </Properties>
+                </MenuItem>
               </SubComponents>
             </Menu>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
@@ -133,6 +140,11 @@
             <MenuItem class="javax.swing.JMenuItem" name="exportExperimentMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export Experiment..."/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="cmsoExportMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export to CMSO dataset..."/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exportTemplateMenuItem">
@@ -524,6 +536,21 @@
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
               <CardConstraints cardName="doseResponseAnalysisParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+        </Container>
+        <Container class="javax.swing.JPanel" name="cmsoDatasetParentPanel">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="cmsoDatasetParentPanel" noResource="true"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="cmsoDatasetParentPanel"/>
             </Constraint>
           </Constraints>
 

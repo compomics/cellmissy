@@ -263,6 +263,16 @@
             <url>http://genesis.UGent.be/maven2</url>
             <layout>default</layout>
         </repository>
+        <repository>
+            <id>ome</id>
+            <name>OME Artifactory</name>
+            <url>http://artifacts.openmicroscopy.org/artifactory/maven/</url>
+        </repository>
+        <repository>
+            <id>unidata</id>
+            <name>Unidata Repository</name>
+            <url>http://artifacts.unidata.ucar.edu/content/repositories/unidata-releases</url>
+        </repository>
     </repositories>
     <dependencies>
        
@@ -529,6 +539,18 @@
             <artifactId>poi-ooxml</artifactId>
             <version>3.16-beta1</version>
         </dependency>
+        <dependency>
+            <groupId>org.openmicroscopy</groupId>
+            <artifactId>ome-xml</artifactId>
+            <version>5.5.6</version>
+        </dependency>
+        <dependency>
+            <groupId>ome</groupId>
+            <artifactId>formats-gpl</artifactId>
+            <version>5.5.2</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>

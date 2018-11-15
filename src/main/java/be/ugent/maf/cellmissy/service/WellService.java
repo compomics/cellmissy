@@ -98,7 +98,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId);
+    void fetchTracks(Well well, Long AlgorithmId, Long ImagingTpeId, boolean cmso);
 
     /**
      * Fetch track points only for some wellHasImagingTypes
@@ -107,7 +107,7 @@ public interface WellService extends GenericService<Well, Long> {
      * @param AlgorithmId
      * @param ImagingTpeId
      */
-    void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId);
+    void fetchTrackPoints(Well well, Long AlgorithmId, Long ImagingTpeId, boolean cmso);
 
     /**
      * Fetch both time steps and tracks (track points as well).

@@ -100,9 +100,9 @@ class Playground {
                             Well currentWell = plateCondition.getWellList().get(i);
                             //fetch tracks collection for the wellhasimagingtype of interest
                             wellService.fetchTracks(currentWell, algorithm.getAlgorithmid(), imagingType
-                                    .getImagingTypeid());
+                                    .getImagingTypeid(), false);
                             wellService.fetchTrackPoints(currentWell, algorithm.getAlgorithmid(), imagingType
-                                    .getImagingTypeid());
+                                    .getImagingTypeid(), false);
                             numbersOfTrackPoints.add(AnalysisUtils.getNumbersOfTrackPoints(currentWell));
                             numberOfTracks.add(AnalysisUtils.getNumbersOfTracks(currentWell));
                         }
