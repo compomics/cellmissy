@@ -19,11 +19,15 @@
 
 The single-cell analysis is presented in “*An end-to-end software solution for the analysis of high-throughput single-cell migration data.*” (P. Masuzzo, L. Huyck, A. Simiczyjew, C. Ampe, L. Martens, and M. Van Troys, PMID: [28205527](http://www.ncbi.nlm.nih.gov/pubmed/28205527))
 
+The dose-response capabilites are presented in “*DoRes within CellMissy: dose-response analysis on cell migration and related data.*” (G. Sergeant, L. Martens, M. Van Troys and P. Masuzzo, PMID: [30052834](https://www.ncbi.nlm.nih.gov/pubmed/30052834))
 [Go to top of page](#cellmissy)
 
 ----
 
 ## News
+**November 2018**:
+[CellMissy 1.3.0](https://github.com/compomics/cellmissy/releases/tag/v1.3.0) is now compatible with CMSO standards (add link to publication). New features are the possibilities to 1) export an existing experiment to ISA-Tab (experimental metadata) and biotracks files (cell track data); and 2) to import a CMSO compliant dataset and (re-)analyse its cell track data.
+
 **January 2018**:
 [CellMissy 1.2.0](https://github.com/compomics/cellmissy/releases/tag/v1.2.0) adds the DoRes module, which enables dose-response analyses for collective migration experiments as well as generic dose-response datasets!
 
@@ -38,7 +42,9 @@ Look at how to import single-cell migration data into CellMissy [here](https://f
 **CellMissy**: DB schema has been modified to take into account users privileges in relation to projects and experiments. Download the new SQL script to create your *CellMissy* DB (see more in the [downloads section](#downloads)).
 
 ## Downloads
-Download *CellMissy* 1.2.0 [here]().
+Download *CellMissy* 1.3.0 [here](https://github.com/compomics/cellmissy/releases/tag/v1.3.0).
+
+Download *CellMissy* 1.2.0 [here](https://github.com/compomics/cellmissy/releases/tag/v1.2.0).
 
 Download *CellMissy* 1.1.0 and 1.0.4 [here](releases/).
 
@@ -57,7 +63,7 @@ Download *CellMissy* 1.1.0 and 1.0.4 [here](releases/).
 
 ## Usage
 See the [manual](supportFiles/CellMissy_Manual_1.0.3.pdf) for further information on how to use the tool.
-This manual version of *CellMissy* focuses on wound healing data from scratch assay or cell zone exclusion assays of different types.
+This manual version of *CellMissy v1.0.3* focuses on wound healing data from scratch assay or cell zone exclusion assays of different types.
 
 [Go to top of page](#cellmissy)
 
