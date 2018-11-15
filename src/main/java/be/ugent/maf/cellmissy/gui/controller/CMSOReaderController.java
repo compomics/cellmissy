@@ -34,6 +34,7 @@ import be.ugent.maf.cellmissy.service.PlateService;
 import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.TreatmentService;
 import be.ugent.maf.cellmissy.service.WellService;
+import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -279,7 +280,7 @@ public class CMSOReaderController {
                     // the dp folder is the one we need to show a summary of the tracks
                     // from in here we need the csv's with objects and links
                     for (File well : trackingSoftware.listFiles()) {
-                        imagedWells.add(well.getName().split("_")[0] + checkRowCoordinate(well.getName().split("_")[1]));
+                        imagedWells.add(well.getName().split("_")[0] + AnalysisUtils.checkRowCoordinate(well.getName().split("_")[1]));
                         biotracksText += "Well: " + well.getName() + "\n";
                         File dp = getFileFromFolder(well, "dp");
                         String[] softwareSummary = parseBiotracks(dp, trackingSoftware.getName(), well.getName());
@@ -583,7 +584,7 @@ public class CMSOReaderController {
 
             }
         }
-        biotracksDataHolders.put((software + checkRowCoordinate(wellName.split("_")[1]) + wellName.split("_")[0]), new BiotracksDataHolder(objectsMap, linksMap));
+        biotracksDataHolders.put((software + AnalysisUtils.checkRowCoordinate(wellName.split("_")[1]) + wellName.split("_")[0]), new BiotracksDataHolder(objectsMap, linksMap));
         return biotracksText;
     }
 
@@ -647,7 +648,7 @@ public class CMSOReaderController {
             conditionRow.setWellList(new ArrayList<>());
             // rownr is a letter in the isa files, need to convert this to int
             conditionRow.getWellList().add(new Well(Integer.parseInt(studyMap.get("Parameter Value[plate well column coordinate]").get(condition)),
-                    (checkRowCoordinate(studyMap.get("Parameter Value[plate well row coordinate]").get(condition)))));
+                    (AnalysisUtils.checkRowCoordinate(studyMap.get("Parameter Value[plate well row coordinate]").get(condition)))));
 
             conditionRow.getWellList().get(0).setPlateCondition(conditionRow);
             conditionRow.setTreatmentList(new ArrayList<>());
@@ -875,13 +876,5 @@ public class CMSOReaderController {
         return null;
     }
 
-    private int checkRowCoordinate(String coordinate) {
-        try {
-            Integer.parseInt(coordinate);
-            return (int) (coordinate.charAt(0));
-        } catch (NumberFormatException e) {
-            return (int) (coordinate.charAt(0) - 64);
-        }
-    }
 
 }
