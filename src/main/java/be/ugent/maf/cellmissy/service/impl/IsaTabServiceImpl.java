@@ -15,11 +15,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author CompOmics Gwen
  */
+@Service("isaTabService")
 public class IsaTabServiceImpl implements IsaTabService {
 
     @Override
