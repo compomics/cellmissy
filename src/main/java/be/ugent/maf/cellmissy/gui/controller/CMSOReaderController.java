@@ -29,11 +29,8 @@ import be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.SingleCellMainC
 import be.ugent.maf.cellmissy.service.AssayService;
 import be.ugent.maf.cellmissy.service.CellLineService;
 import be.ugent.maf.cellmissy.service.ExperimentService;
-import be.ugent.maf.cellmissy.service.InstrumentService;
 import be.ugent.maf.cellmissy.service.PlateService;
-import be.ugent.maf.cellmissy.service.ProjectService;
 import be.ugent.maf.cellmissy.service.TreatmentService;
-import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import java.awt.GridBagConstraints;
@@ -92,12 +89,6 @@ public class CMSOReaderController {
     private GridBagConstraints gridBagConstraints;
     @Autowired
     private ExperimentService experimentService;
-    @Autowired
-    private InstrumentService instrumentService;
-    @Autowired
-    private ProjectService projectService;
-    @Autowired
-    private WellService wellService;
     @Autowired
     private PlateService plateService;
     @Autowired
@@ -256,7 +247,14 @@ public class CMSOReaderController {
                     String omeText = "File name: " + file.getName() + "\n";
                     omeText += "Dataset structure: " + reader.getDatasetStructureDescription() + "\n";
                     omeText += "Total amount of images = " + reader.getImageCount() + "\n";
+                    omeText += "RGB Channel count: " + reader.getRGBChannelCount() + "\n";
                     omeText += "Dimension order: " + reader.getDimensionOrder() + "\n";
+                    omeText += "Pixel type: " + reader.getPixelType() + "\n";
+                    omeText += "Pixel size X: " + reader.getSizeX() + "\n";
+                    omeText += "Pixel size Y: " + reader.getSizeY() + "\n";
+                    omeText += "Pixel size Z: " + reader.getSizeZ() + "\n";
+                    omeText += "Pixel size C: " + reader.getSizeC() + "\n";
+                    omeText += "Pixel size T: " + reader.getSizeT() + "\n";
 
                     cmsoReaderPanel.getOmeTextArea().setText(omeText);
 
