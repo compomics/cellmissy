@@ -95,6 +95,7 @@ public class CMSOExportController {
      * Initialize controller
      */
     public void init() {
+        cmsoExportPanel = new CMSOExportPanel();
         bindingGroup = new BindingGroup();
         // make a new waiting dialog here
         waitingDialog = new WaitingDialog(cellMissyController.getCellMissyFrame(), true);
