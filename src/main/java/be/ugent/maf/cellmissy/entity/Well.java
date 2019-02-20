@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -55,7 +56,7 @@ public class Well implements Serializable {
     @Column(name = "row_number")
     @XmlAttribute(required = true)
     private Integer rowNumber;
-    @OneToMany(mappedBy = "well", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "well", orphanRemoval = true)
     @XmlElementWrapper(name = "wellHasImagingTypes")
     @XmlElement(name = "wellHasImagingType", required = false)
     private List<WellHasImagingType> wellHasImagingTypeList;
