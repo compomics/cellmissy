@@ -820,7 +820,7 @@ public class SingleCellPreProcessingController {
         @Override
         protected Void doInBackground() throws Exception {
             // show waiting dialog
-            singleCellMainController.showWaitingDialog("Computing for: " + plateCondition);
+            showWaitingDialog("Computing for: " + plateCondition);
             // show a waiting cursor, disable GUI components
             singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             singleCellMainController.controlGuiComponents(false);
@@ -868,7 +868,7 @@ public class SingleCellPreProcessingController {
         @Override
         protected Void doInBackground() throws Exception {
             // show waiting dialog
-            singleCellMainController.showWaitingDialog("Enabling analysis, processing the other conditions...");
+            showWaitingDialog("Enabling analysis, processing the other conditions...");
             // show a waiting cursor, disable GUI components
             singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             singleCellMainController.controlGuiComponents(false);
