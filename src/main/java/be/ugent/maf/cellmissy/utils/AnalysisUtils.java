@@ -49,7 +49,7 @@ public class AnalysisUtils {
     public static Double[] excludeNaNvalues(Double[] data) {
         List<Double> list = new ArrayList<>();
         for (Double value : data) {
-            if (value != Double.NaN) {
+            if (!Double.isNaN(value)) {
                 list.add(value);
             }
         }
