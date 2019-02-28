@@ -539,6 +539,7 @@ public class SingleCellMainController {
                         .getInspectingDataLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
+                analysisExperimentPanel.getNextButton().setEnabled(false);
                 showInfoMessage("Conditions-based analysis");
                 analysisPlatePanel.setCurrentCondition(null);
                 analysisPlatePanel.repaint();
