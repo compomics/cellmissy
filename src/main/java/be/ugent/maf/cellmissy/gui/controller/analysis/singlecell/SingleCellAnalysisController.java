@@ -693,7 +693,9 @@ public class SingleCellAnalysisController {
                 setTrackChartsWithCollections(Integer.parseInt((String) plotOptionsPanel.getnColsComboBox().getSelectedItem()));
                 singleCellMainController.hideWaitingDialog();
                 singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                //re-enable gui components but next button must be disabled
                 singleCellMainController.controlGuiComponents(true);
+                singleCellMainController.getAnalysisExperimentPanel().getNextButton().setEnabled(false);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 singleCellMainController.handleUnexpectedError(ex);
