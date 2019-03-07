@@ -9,6 +9,7 @@ import be.ugent.maf.cellmissy.analysis.SignificanceLevel;
 import be.ugent.maf.cellmissy.analysis.factory.MultipleComparisonsCorrectionFactory;
 import be.ugent.maf.cellmissy.analysis.factory.StatisticsTestFactory;
 import be.ugent.maf.cellmissy.analysis.singlecell.processing.SingleCellStatisticsAnalyzer;
+import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellAnalysisGroup;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AnalysisPanel;
@@ -147,16 +148,21 @@ public class SingleCellStatisticsController {
             // remove the selected group from list
             removeGroupFromAnalysis();
         });
+
         /**
          * Execute a Mann Whitney Test on selected Analysis Group
          */
         analysisPanel.getPerformStatButton().addActionListener((ActionEvent e) -> {
+            // get selected analysis group, statistical test and cell parameter
             int selectedIndex = analysisPanel.getAnalysisGroupList().getSelectedIndex();
             String statisticalTestName = analysisPanel.getStatTestComboBox().getSelectedItem().toString();
             String param = analysisPanel.getParameterComboBox().getSelectedItem().toString();
+            // get correction method
+            String correctionMethod = analysisPanel.getCorrectionComboBox().getSelectedItem().toString();
             // check that an analysis group is being selected
             if (selectedIndex != -1) {
                 SingleCellAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+                selectedGroup.setCorrectionMethodName(correctionMethod);
                 // compute statistics
                 computeStatistics(selectedGroup, statisticalTestName, param);
                 // show statistics in tables
@@ -168,6 +174,7 @@ public class SingleCellStatisticsController {
                     showPValues(selectedGroup, false);
                 } else {
                     // show p values with adjustement
+                    singleCellStatisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
                     showPValues(selectedGroup, true);
                 }
             } else {
@@ -176,62 +183,58 @@ public class SingleCellStatisticsController {
             }
         });
 
-        /**
-         * Refresh p value table with current selected significance of level
-         */
-        analysisPanel.getSignLevelComboBox().addActionListener((ActionEvent e) -> {
-            if (analysisPanel.getSignLevelComboBox().getSelectedIndex() != -1) {
-                String statisticalTest = analysisPanel.getStatTestComboBox().getSelectedItem().toString();
-                Double selectedSignLevel = (Double) analysisPanel.getSignLevelComboBox().getSelectedItem();
-                SingleCellAnalysisGroup selectedGroup = groupsBindingList.get(analysisPanel.getAnalysisGroupList().getSelectedIndex());
-                boolean isAdjusted = !selectedGroup.getCorrectionMethodName().equals("none");
-                singleCellStatisticsAnalyzer.detectSignificance(selectedGroup, statisticalTest, selectedSignLevel, isAdjusted);
-                boolean[][] significances = selectedGroup.getSignificances();
-                JTable pValuesTable = analysisPanel.getComparisonTable();
-                for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
-                    pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
-                }
-                pValuesTable.repaint();
-            }
-        });
-
-        /**
-         * Apply correction for multiple comparisons: choose the algorithm!
-         */
-        analysisPanel.getCorrectionComboBox().addActionListener((ActionEvent e) -> {
-            int selectedIndex = analysisPanel.getAnalysisGroupList().getSelectedIndex();
-            if (selectedIndex != -1) {
-                SingleCellAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                String correctionMethod = analysisPanel.getCorrectionComboBox().getSelectedItem().toString();
-
-                // if the correction method is not "NONE"
-                if (!correctionMethod.equals("none")) {
-                    // adjust p values
-                    singleCellStatisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
-                    // show p - values with the applied correction
-                    showPValues(selectedGroup, true);
-                } else {
-                    // if selected correction method is "NONE", do not apply correction and only show normal p-values
-                    showPValues(selectedGroup, false);
-                }
-            }
-        });
-
-        /**
-         * Perform statistical test: choose the test!!
-         */
-        analysisPanel.getPerformStatButton().addActionListener((ActionEvent e) -> {
-            // get the selected test to be executed
-            String selectedTest = analysisPanel.getStatTestComboBox().getSelectedItem().toString();
-            String param = analysisPanel.getParameterComboBox().getSelectedItem().toString();
-            // analysis group
-            int selectedIndex = analysisPanel.getAnalysisGroupList().getSelectedIndex();
-            if (selectedIndex != -1) {
-                SingleCellAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
-                computeStatistics(selectedGroup, selectedTest, param);
-            }
-        });
-
+//        /**
+//         * Refresh p value table with current selected significance of level.
+//         * Commented because showPValues() below does the same and more.
+//         */
+//        analysisPanel.getSignLevelComboBox().addActionListener((ActionEvent e) -> {
+//            // check if a p value and analysis group is selected
+//            if (analysisPanel.getSignLevelComboBox().getSelectedIndex() != -1 && analysisPanel.getAnalysisGroupList().getSelectedIndex() != -1) {
+//                //mann-whitney test
+//                String statisticalTest = analysisPanel.getStatTestComboBox().getSelectedItem().toString();
+//                // get p value and analysis group
+//                Double selectedSignLevel = (Double) analysisPanel.getSignLevelComboBox().getSelectedItem();
+//                SingleCellAnalysisGroup selectedGroup = groupsBindingList.get(analysisPanel.getAnalysisGroupList().getSelectedIndex());
+//                // calculate significances (booleans) for (non-)correction
+//                boolean isAdjusted = !selectedGroup.getCorrectionMethodName().equals("none");
+//                singleCellStatisticsAnalyzer.detectSignificance(selectedGroup, statisticalTest, selectedSignLevel, isAdjusted);
+//                boolean[][] significances = selectedGroup.getSignificances();
+//                // get table, go through columns and do set a renderer with colour coded p values for significances
+//                JTable pValuesTable = analysisPanel.getComparisonTable();
+//                for (int i = 1; i < pValuesTable.getColumnCount(); i++) {
+//                    pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
+//                }
+//                pValuesTable.repaint();
+//            } else {
+//                // ask user to select a group
+//                singleCellAnalysisController.showMessage("Please select a group to perform analysis on.", "You must select a group first", JOptionPane.INFORMATION_MESSAGE);
+//            }
+//        });
+//
+//        /**
+//         * Apply correction for multiple comparisons: choose the algorithm!
+//         * Commented because this functionality is completely incapsulated in 
+//         * the action listener for the "Perform Stat" button.
+//         */
+//        analysisPanel.getCorrectionComboBox().addActionListener((ActionEvent e) -> {
+//            // get selected analysis group 
+//            int selectedIndex = analysisPanel.getAnalysisGroupList().getSelectedIndex();
+//            if (selectedIndex != -1) {
+//                SingleCellAnalysisGroup selectedGroup = groupsBindingList.get(selectedIndex);
+//                // get correction method
+//                String correctionMethod = analysisPanel.getCorrectionComboBox().getSelectedItem().toString();
+//                // if the correction method is not "NONE"
+//                if (!correctionMethod.equals("none")) {
+//                    // adjust p values
+//                    singleCellStatisticsAnalyzer.correctForMultipleComparisons(selectedGroup, correctionMethod);
+//                    // show p - values with the applied correction
+//                    showPValues(selectedGroup, true);
+//                } else {
+//                    // if selected correction method is "NONE", do not apply correction and only show normal p-values
+//                    showPValues(selectedGroup, false);
+//                }
+//            }
+//        });
         //multiple comparison correction: set the default correction to none
         analysisPanel.getCorrectionComboBox().setSelectedIndex(0);
         analysisPanel.getStatTestComboBox().setSelectedIndex(0);
@@ -252,7 +255,8 @@ public class SingleCellStatisticsController {
         for (int i = 1; i < statisticalSummaryTable.getColumnCount(); i++) {
             statisticalSummaryTable.getColumnModel().getColumn(i).setCellRenderer(new FormatRenderer(new DecimalFormat("#.####"), SwingConstants.CENTER));
         }
-        statisticalSummaryTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        statisticalSummaryTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.CENTER));
+        statisticalSummaryTable.repaint();
     }
 
     /**
@@ -261,10 +265,12 @@ public class SingleCellStatisticsController {
      * @param analysisGroup
      */
     private void showPValues(SingleCellAnalysisGroup singleCellAnalysisGroup, boolean isAdjusted) {
+        // mann-whitney test
         String statisticalTestName = singleCellAnalysisController.getAnalysisPanel().getStatTestComboBox().getSelectedItem().toString();
         SingleCellPValuesTableModel pValuesTableModel = new SingleCellPValuesTableModel(singleCellAnalysisGroup, isAdjusted);
         JTable pValuesTable = singleCellAnalysisController.getAnalysisPanel().getComparisonTable();
         pValuesTable.setModel(pValuesTableModel);
+        //get p value
         Double selectedSignLevel = (Double) singleCellAnalysisController.getAnalysisPanel().getSignLevelComboBox().getSelectedItem();
         // detect significances with selected alpha level
         singleCellStatisticsAnalyzer.detectSignificance(singleCellAnalysisGroup, statisticalTestName, selectedSignLevel, isAdjusted);
@@ -273,6 +279,7 @@ public class SingleCellStatisticsController {
             pValuesTable.getColumnModel().getColumn(i).setCellRenderer(new PValuesTableRenderer(new DecimalFormat("#.####"), significances));
         }
         pValuesTable.getTableHeader().setDefaultRenderer(new TableHeaderRenderer(SwingConstants.RIGHT));
+        pValuesTable.repaint();
     }
 
     /**
@@ -296,16 +303,25 @@ public class SingleCellStatisticsController {
 
         Boolean filteredData = singleCellAnalysisController.isFilteredData();
         AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
-        int[] selectedIndices = analysisPanel.getConditionList().getSelectedIndices();
+        List<PlateCondition> selectedValues = analysisPanel.getConditionList().getSelectedValuesList();
 
         // we check here that at least two conditions have been selected to be part of the analysis group
         // else, the analysis does not really make sense
-        if (selectedIndices.length > 1) {
-
+        if (selectedValues.size() > 1) {
+            //add only the data of the selected conditions
+            // check which PlateConditions of the scCDataHolder are selected
             if (filteredData) {
-                conditionDataHolders.addAll(singleCellAnalysisController.getFilteringMap().keySet());
+                for(SingleCellConditionDataHolder dataHolder : singleCellAnalysisController.getFilteringMap().keySet()){
+                    if(selectedValues.contains(dataHolder.getPlateCondition())){
+                        conditionDataHolders.add(dataHolder);
+                    }
+                }
             } else {
-                conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
+                for(SingleCellConditionDataHolder dataHolder : singleCellAnalysisController.getPreProcessingMap().values()){
+                    if(selectedValues.contains(dataHolder.getPlateCondition())){
+                        conditionDataHolders.add(dataHolder);
+                    }
+                }
             }
 
             // make a new analysis group, with those conditions and those results
