@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import org.apache.commons.lang.ArrayUtils;
@@ -152,6 +153,26 @@ public class SingleCellAnalysisController {
         singleCellMainController.showMessage(message, title, messageType);
     }
 
+    /**
+     * Reset everything when cancelling analysis. 
+     * Called by parent controller.
+     */
+    protected void resetOnCancel(){
+        cellTracksChartPanels = new ArrayList<>();
+        rosePlotChartPanels = new ArrayList<>();
+        cellTracksData = new ArrayList<>();
+        filteredData = Boolean.FALSE;
+        speedBoxPlotChartPanel = new ChartPanel(null);
+        speedBoxPlotChartPanel.setOpaque(false);
+        directPlotChartPanel = new ChartPanel(null);
+        directPlotChartPanel.setOpaque(false);
+        speedKDEChartPanel = new ChartPanel(null);
+        speedKDEChartPanel.setOpaque(false);
+        //also reset child controller
+        singleCellStatisticsController.resetOnCancel();
+        analysisPanel.getCellTracksRadioButton().setSelected(true);
+    }
+    
     /**
      * Initialize main view.
      */
@@ -372,15 +393,15 @@ public class SingleCellAnalysisController {
         if (!filteredData) {
             getPreProcessingMap().values().stream().map((conditionDataHolder)
                     -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
-                            -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
-                        densityFunction.add(oneConditionDensityFunction);
-                    });
+                    -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                densityFunction.add(oneConditionDensityFunction);
+            });
         } else {
             getFilteringMap().keySet().stream().map((conditionDataHolder)
                     -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
-                            -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
-                        densityFunction.add(oneConditionDensityFunction);
-                    });
+                    -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                densityFunction.add(oneConditionDensityFunction);
+            });
         }
 
         return densityFunction;
@@ -481,8 +502,18 @@ public class SingleCellAnalysisController {
      * @return
      */
     private void setTrackDataHolders() {
-        if (filteredData) {
+        // check whether data was actually filtered! Otherwise null filteringmap
+        if (filteredData && singleCellMainController.getFilteringMap() != null) {
             trackDataHolderList = new ArrayList<>(singleCellMainController.getFilteringMap().values());
+        } else if (filteredData) {
+            // notify user that he has not actually filtered anything
+            showMessage("No filtered data found. Proceeding analysis with raw data.", "No filtering applied.", JOptionPane.INFORMATION_MESSAGE);
+            // proceed with raw data
+            List<List<TrackDataHolder>> list = new ArrayList<>();
+            singleCellMainController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {
+                list.add(conditionDataHolder.getTrackDataHolders());
+            });
+            trackDataHolderList = list;
         } else {
             List<List<TrackDataHolder>> list = new ArrayList<>();
             singleCellMainController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {

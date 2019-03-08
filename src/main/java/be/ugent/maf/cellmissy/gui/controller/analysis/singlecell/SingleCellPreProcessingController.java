@@ -136,6 +136,7 @@ public class SingleCellPreProcessingController {
     public void computePlateMADSpeed() {
         singleCellMainController.computePlateMADSpeed();
     }
+
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesController.getTrackCoordinatesPanel();
     }
@@ -337,6 +338,16 @@ public class SingleCellPreProcessingController {
     }
 
     /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        bindingGroup = new BindingGroup();
+        singleCellAnalysisPanel.getTrackPointsTable().setModel(null);
+        singleCellAnalysisPanel.getTracksTable().setModel(null);
+        filteringController.resetOnCancel();
+    }
+
+    /**
      *
      * @param plateCondition
      */
@@ -354,9 +365,6 @@ public class SingleCellPreProcessingController {
         singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
         LOG.info("generating track displacements...");
         singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-        
-        
-        
         LOG.info("generating cumulative distances...");
         singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
         LOG.info("generating euclidean distances...");

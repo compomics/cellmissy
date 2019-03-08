@@ -72,6 +72,18 @@ public class SingleCutOffFilteringController {
     public SingleCutOffPanel getSingleCutOffPanel() {
         return singleCutOffPanel;
     }
+    
+    /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        singleCutOffPanel.getMedianDisplList().setModel(new DefaultListModel());
+        singleCutOffPanel.getSummaryTable().setModel(null);
+        rawDisplChartPanel = new ChartPanel(null);
+        filteredDisplChartPanel = new ChartPanel(null);
+        rawSpeedChartPanel = new ChartPanel(null);
+        filteredSpeedChartPanel = new ChartPanel(null);
+    }
 
     /**
      * Plot the raw KDE for track displacements.

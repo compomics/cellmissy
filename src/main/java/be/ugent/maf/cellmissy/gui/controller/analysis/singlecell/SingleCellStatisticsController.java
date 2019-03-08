@@ -70,6 +70,16 @@ public class SingleCellStatisticsController {
     }
 
     /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
+        analysisPanel.getConditionList().setModel(new DefaultListModel());
+        analysisPanel.getStatTable().setModel(null);
+        analysisPanel.getComparisonTable().setModel(null);
+    }
+
+    /**
      * Update the list with conditions.
      */
     public void updateConditionList() {
@@ -311,14 +321,14 @@ public class SingleCellStatisticsController {
             //add only the data of the selected conditions
             // check which PlateConditions of the scCDataHolder are selected
             if (filteredData) {
-                for(SingleCellConditionDataHolder dataHolder : singleCellAnalysisController.getFilteringMap().keySet()){
-                    if(selectedValues.contains(dataHolder.getPlateCondition())){
+                for (SingleCellConditionDataHolder dataHolder : singleCellAnalysisController.getFilteringMap().keySet()) {
+                    if (selectedValues.contains(dataHolder.getPlateCondition())) {
                         conditionDataHolders.add(dataHolder);
                     }
                 }
             } else {
-                for(SingleCellConditionDataHolder dataHolder : singleCellAnalysisController.getPreProcessingMap().values()){
-                    if(selectedValues.contains(dataHolder.getPlateCondition())){
+                for (SingleCellConditionDataHolder dataHolder : singleCellAnalysisController.getPreProcessingMap().values()) {
+                    if (selectedValues.contains(dataHolder.getPlateCondition())) {
                         conditionDataHolders.add(dataHolder);
                     }
                 }

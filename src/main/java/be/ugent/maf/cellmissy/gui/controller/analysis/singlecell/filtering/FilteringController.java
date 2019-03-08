@@ -71,6 +71,16 @@ public class FilteringController {
         multipleCutOffFilteringController.init();
         singleCutOffFilteringController.init();
     }
+    
+    /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    public void resetOnCancel() {
+        filteringMap = null;
+        filteringPanel.getMultipleCutOffRadioButton().setSelected(true);
+        multipleCutOffFilteringController.resetOnCancel();
+        singleCutOffFilteringController.resetOnCancel();
+    }
 
     public FilteringPanel getFilteringPanel() {
         return filteringPanel;
