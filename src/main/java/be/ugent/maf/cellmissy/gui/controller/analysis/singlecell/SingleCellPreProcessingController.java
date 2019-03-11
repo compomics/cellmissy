@@ -48,6 +48,7 @@ import java.text.Format;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -342,8 +343,8 @@ public class SingleCellPreProcessingController {
      */
     protected void resetOnCancel() {
         bindingGroup = new BindingGroup();
-        singleCellAnalysisPanel.getTrackPointsTable().setModel(null);
-        singleCellAnalysisPanel.getTracksTable().setModel(null);
+        singleCellAnalysisPanel.getTrackPointsTable().setModel(new DefaultTableModel());
+        singleCellAnalysisPanel.getTracksTable().setModel(new DefaultTableModel());
         filteringController.resetOnCancel();
     }
 

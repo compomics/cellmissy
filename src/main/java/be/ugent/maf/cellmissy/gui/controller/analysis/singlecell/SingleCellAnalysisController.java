@@ -27,6 +27,7 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -154,10 +155,9 @@ public class SingleCellAnalysisController {
     }
 
     /**
-     * Reset everything when cancelling analysis. 
-     * Called by parent controller.
+     * Reset everything when cancelling analysis. Called by parent controller.
      */
-    protected void resetOnCancel(){
+    protected void resetOnCancel() {
         cellTracksChartPanels = new ArrayList<>();
         rosePlotChartPanels = new ArrayList<>();
         cellTracksData = new ArrayList<>();
@@ -172,7 +172,7 @@ public class SingleCellAnalysisController {
         singleCellStatisticsController.resetOnCancel();
         analysisPanel.getCellTracksRadioButton().setSelected(true);
     }
-    
+
     /**
      * Initialize main view.
      */
@@ -333,7 +333,14 @@ public class SingleCellAnalysisController {
      */
     private DefaultBoxAndWhiskerCategoryDataset getSpeedBoxPlotDataset() {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        singleCellMainController.getFilteringMap().keySet().stream().forEach((singleCellConditionDataHolder) -> {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
+        data.stream().forEach((singleCellConditionDataHolder) -> {
             dataset.add(Arrays.asList(singleCellConditionDataHolder.getTrackSpeedsVector()), singleCellConditionDataHolder.getPlateCondition().toString(), "");
         });
         return dataset;
@@ -347,7 +354,14 @@ public class SingleCellAnalysisController {
      */
     private DefaultBoxAndWhiskerCategoryDataset getDirecBoxPlotDataset() {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        singleCellMainController.getFilteringMap().keySet().stream().forEach((singleCellConditionDataHolder) -> {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
+        data.stream().forEach((singleCellConditionDataHolder) -> {
             dataset.add(Arrays.asList(singleCellConditionDataHolder.getEndPointDirectionalityRatios()),
                     singleCellConditionDataHolder.getPlateCondition().toString(), "");
         });
@@ -444,8 +458,15 @@ public class SingleCellAnalysisController {
      * Update the mean speed values in the list.
      */
     private void updateDataTable() {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
         analysisPanel.getDataTable().setModel(new SingleCellConditionDataTableModel(
-                new ArrayList<>(singleCellMainController.getFilteringMap().keySet())));
+                new ArrayList<>(data)));
     }
 
     /**
@@ -574,7 +595,14 @@ public class SingleCellAnalysisController {
      */
     private List<XYSeriesCollection> getPolarTrackTADatasets() {
         List<XYSeriesCollection> list = new ArrayList<>();
-        singleCellMainController.getFilteringMap().keySet().stream().forEach((conditionDataHolder) -> {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+            
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
+        data.stream().forEach((conditionDataHolder) -> {
             list.add(getPolarDatasetForACondition(conditionDataHolder));
         });
         return list;

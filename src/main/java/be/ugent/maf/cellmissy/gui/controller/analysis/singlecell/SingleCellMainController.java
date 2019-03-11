@@ -517,6 +517,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
+                // enable next button (in case of pressing previous on analysis parent panel)
+                analysisExperimentPanel.getNextButton().setEnabled(true);
                 showInfoMessage("Single-cell trajectories filtering - Quality Control");
                 singleCellPreProcessingController.setMeanDisplForExperiment();
                 if (singleCellPreProcessingController.getFilteringPanel().getMultipleCutOffRadioButton().isSelected()) {

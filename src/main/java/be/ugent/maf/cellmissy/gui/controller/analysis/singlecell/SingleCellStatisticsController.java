@@ -28,6 +28,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.beansbinding.AutoBinding;
 import org.jdesktop.beansbinding.BindingGroup;
@@ -75,8 +76,8 @@ public class SingleCellStatisticsController {
     protected void resetOnCancel() {
         AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
         analysisPanel.getConditionList().setModel(new DefaultListModel());
-        analysisPanel.getStatTable().setModel(null);
-        analysisPanel.getComparisonTable().setModel(null);
+        analysisPanel.getStatTable().setModel(new DefaultTableModel());
+        analysisPanel.getComparisonTable().setModel(new DefaultTableModel());
     }
 
     /**

@@ -29,6 +29,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -92,8 +93,8 @@ public class MultipleCutOffFilteringController {
         rawKdeChartPanel.setOpaque(false);
         filteredKdeChartPanel = new ChartPanel(null);
         filteredKdeChartPanel.setOpaque(false);
-        multipleCutOffPanel.getFilterTrackTable().setModel(null);
-        multipleCutOffPanel.getSummaryTable().setModel(null);
+        multipleCutOffPanel.getFilterTrackTable().setModel(new DefaultTableModel());
+        multipleCutOffPanel.getSummaryTable().setModel(new DefaultTableModel());
         // set default to micrometer
         multipleCutOffPanel.getMicroMeterRadioButton().setSelected(true);
         // and therefore no need for the conversion factor
