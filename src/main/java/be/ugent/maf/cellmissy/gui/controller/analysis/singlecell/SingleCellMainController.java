@@ -517,6 +517,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
+                // enable next button (in case of pressing previous on analysis parent panel)
+                analysisExperimentPanel.getNextButton().setEnabled(true);
                 showInfoMessage("Single-cell trajectories filtering - Quality Control");
                 singleCellPreProcessingController.setMeanDisplForExperiment();
                 if (singleCellPreProcessingController.getFilteringPanel().getMultipleCutOffRadioButton().isSelected()) {
@@ -689,7 +691,7 @@ public class SingleCellMainController {
             if (showOptionDialog == 0) {
                 // reset everything
                 cmsoData = false;
-                //onCancel();
+                onCancel();
             }
         });
 
@@ -839,7 +841,6 @@ public class SingleCellMainController {
     private void initDataAnalysisPanel() {
         //when a certain condition is selected, fetch tracks for each well of the condition
         dataAnalysisPanel.getConditionsList().getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-            controlGuiComponents(true);
             if (!e.getValueIsAdjusting()) {
                 PlateCondition selectedCondition = (PlateCondition) dataAnalysisPanel.getConditionsList()
                         .getSelectedValue();
@@ -848,6 +849,52 @@ public class SingleCellMainController {
                 }
             }
         });
+    }
+
+    /**
+     * On cancel: reset views
+     */
+    private void onCancel() {
+        String message = "Please select a project and an experiment to visualize and analyse single cell data.";
+        showInfoMessage(message);
+        algorithmBindingList.clear();
+        imagingTypeBindingList.clear();
+        // clear plate conditions list, if not null
+        if (plateConditionList != null) {
+            plateConditionList.clear();
+        }
+        // clear selection on lists
+        metadataSingleCellPanel.getProjectsList().clearSelection();
+        metadataSingleCellPanel.getExperimentsList().clearSelection();
+        // set text area to empty field
+        metadataSingleCellPanel.getProjectDescriptionTextArea().setText("");
+        singleCellPreProcessingController.getPreProcessingMap().clear();
+        currentCondition = null;
+        experiment = null;
+        GuiUtils.switchChildPanels(analysisExperimentPanel.getTopPanel(), metadataSingleCellPanel, dataAnalysisPanel);
+        analysisExperimentPanel.getTopPanel().repaint();
+        analysisExperimentPanel.getTopPanel().revalidate();
+        resetExperimentMetadataFields();
+        analysisExperimentPanel.getStartButton().setEnabled(false);
+        analysisExperimentPanel.getNextButton().setEnabled(false);
+        analysisExperimentPanel.getCancelButton().setEnabled(false);
+        analysisExperimentPanel.getPreviousButton().setEnabled(false);
+        if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
+            experimentBindingList.clear();
+        }
+        // reset subcontrollers
+        singleCellAnalysisController.resetOnCancel();
+        singleCellPreProcessingController.resetOnCancel();
+    }
+
+    /**
+     * Reset text of experiment metadata fields
+     */
+    private void resetExperimentMetadataFields() {
+        metadataSingleCellPanel.getUserTextField().setText("");
+        metadataSingleCellPanel.getInstrumentTextField().setText("");
+        metadataSingleCellPanel.getPurposeTextArea().setText("");
+        metadataSingleCellPanel.getTimeFramesTextField().setText("");
     }
 
     /**

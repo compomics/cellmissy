@@ -265,6 +265,9 @@ class ImportExportController {
                         File xmlFile = createXmlFile(fileName, currentDirectory, exportExperimentDialog);
                         // if the XML file was successfully created, we execute a swing worker and export the experiment to the file.
                         if (xmlFile != null) {
+                            // show waiting dialog
+                            String title = "Experiment is being exported to file. Please wait...";
+                            showWaitingDialog(title);
                             ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
                             exportExperimentSwingWorker.execute();
                         }
@@ -359,6 +362,9 @@ class ImportExportController {
                     // create and execute a new swing worker with the selected file for the import
                     ImportExperimentSwingWorker importExperimentSwingWorker = new ImportExperimentSwingWorker(chosenFile);
                     importExperimentSwingWorker.execute();
+                    //instantiate waiting dialog
+                    String title = "XML file is being parsed. Please wait...";
+                    showWaitingDialog(title);
                 } else {
                     JOptionPane.showMessageDialog(importExperimentDialog, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -427,6 +433,9 @@ class ImportExportController {
                     for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
                         plateCondition.setExperiment(importedExperiment);
                     }
+                    // set the title of waiting dialog and show it
+                    String title = "Experiment is being saved to DB. Please wait...";
+                    showWaitingDialog(title);
                     // make a new swing worker and execute it
                     SaveExperimentSwingWorker saveExperimentSwingWorker = new SaveExperimentSwingWorker();
                     saveExperimentSwingWorker.execute();
@@ -544,6 +553,9 @@ class ImportExportController {
                         if (xmlFile != null) {
                             // if the XML file was successfully created, we execute a new swing worker
                             ExportTemplateSwingWorker exportTemplateSwingWorker = new ExportTemplateSwingWorker(xmlFile);
+                            // show waiting dialog
+                            String title = "Template is being exported to file. Please wait...";
+                            showWaitingDialog(title);
                             exportTemplateSwingWorker.execute();
                         }
                     } else {
@@ -751,9 +763,6 @@ class ImportExportController {
             //disable buttons and show a waiting cursor
             exportExperimentDialog.getExportButton().setEnabled(false);
             exportExperimentDialog.getCancelButton().setEnabled(false);
-            // show waiting dialog
-            String title = "Experiment is being exported to file. Please wait...";
-            showWaitingDialog(title);
             // fetch the migration data
             for (PlateCondition plateCondition : experimentToExport.getPlateConditionList()) {
                 List<Well> wells = new ArrayList<>();
@@ -802,11 +811,8 @@ class ImportExportController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            //disable buttons and show a waiting cursor
+            //disable buttons
             exportTemplateDialog.getExportButton().setEnabled(false);
-            // show waiting dialog
-            String title = "Template is being exported to file. Please wait...";
-            showWaitingDialog(title);
             // export the experiment to file
             exportExperimentTemplateToXMLFile(xmlFile);
             return null;
@@ -844,9 +850,6 @@ class ImportExportController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            // show waiting dialog
-            String title = "XML file is being parsed. Please wait...";
-            showWaitingDialog(title);
             // parse xmlfile
             parseXMLFile(xmlFile);
             return null;
@@ -881,9 +884,6 @@ class ImportExportController {
             importExperimentDialog.getPreviousButton().setEnabled(false);
             importExperimentDialog.getNextButton().setEnabled(false);
             importExperimentDialog.getCancelButton().setEnabled(false);
-            // set the title of waiting dialog and show it
-            String title = "Experiment is being saved to DB. Please wait...";
-            showWaitingDialog(title);
             //save the new experiment to the DB
             // first we need to check if other objects need to be stored, then we actually save the experiment
             persistNewObjects();

@@ -50,6 +50,16 @@ public class SummaryMultipleCutOffController {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         initMainView();
     }
+    
+    /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        rawDisplChartPanel = new ChartPanel(null);
+        filteredDisplChartPanel = new ChartPanel(null);
+        rawSpeedChartPanel = new ChartPanel(null);
+        filteredSpeedChartPanel = new ChartPanel(null);
+    }
 
     public void setCutOff(Double cutOff) {
         this.cutOff = cutOff;

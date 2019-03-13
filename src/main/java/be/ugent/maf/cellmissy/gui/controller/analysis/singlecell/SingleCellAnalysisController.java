@@ -27,10 +27,12 @@ import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import org.apache.commons.lang.ArrayUtils;
@@ -150,6 +152,25 @@ public class SingleCellAnalysisController {
 
     public void showMessage(String message, String title, Integer messageType) {
         singleCellMainController.showMessage(message, title, messageType);
+    }
+
+    /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        cellTracksChartPanels = new ArrayList<>();
+        rosePlotChartPanels = new ArrayList<>();
+        cellTracksData = new ArrayList<>();
+        filteredData = Boolean.FALSE;
+        speedBoxPlotChartPanel = new ChartPanel(null);
+        speedBoxPlotChartPanel.setOpaque(false);
+        directPlotChartPanel = new ChartPanel(null);
+        directPlotChartPanel.setOpaque(false);
+        speedKDEChartPanel = new ChartPanel(null);
+        speedKDEChartPanel.setOpaque(false);
+        //also reset child controller
+        singleCellStatisticsController.resetOnCancel();
+        analysisPanel.getCellTracksRadioButton().setSelected(true);
     }
 
     /**
@@ -312,7 +333,14 @@ public class SingleCellAnalysisController {
      */
     private DefaultBoxAndWhiskerCategoryDataset getSpeedBoxPlotDataset() {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        singleCellMainController.getFilteringMap().keySet().stream().forEach((singleCellConditionDataHolder) -> {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
+        data.stream().forEach((singleCellConditionDataHolder) -> {
             dataset.add(Arrays.asList(singleCellConditionDataHolder.getTrackSpeedsVector()), singleCellConditionDataHolder.getPlateCondition().toString(), "");
         });
         return dataset;
@@ -326,7 +354,14 @@ public class SingleCellAnalysisController {
      */
     private DefaultBoxAndWhiskerCategoryDataset getDirecBoxPlotDataset() {
         DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
-        singleCellMainController.getFilteringMap().keySet().stream().forEach((singleCellConditionDataHolder) -> {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
+        data.stream().forEach((singleCellConditionDataHolder) -> {
             dataset.add(Arrays.asList(singleCellConditionDataHolder.getEndPointDirectionalityRatios()),
                     singleCellConditionDataHolder.getPlateCondition().toString(), "");
         });
@@ -372,15 +407,15 @@ public class SingleCellAnalysisController {
         if (!filteredData) {
             getPreProcessingMap().values().stream().map((conditionDataHolder)
                     -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
-                            -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
-                        densityFunction.add(oneConditionDensityFunction);
-                    });
+                    -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                densityFunction.add(oneConditionDensityFunction);
+            });
         } else {
             getFilteringMap().keySet().stream().map((conditionDataHolder)
                     -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
-                            -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
-                        densityFunction.add(oneConditionDensityFunction);
-                    });
+                    -> singleCellMainController.estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+                densityFunction.add(oneConditionDensityFunction);
+            });
         }
 
         return densityFunction;
@@ -423,8 +458,15 @@ public class SingleCellAnalysisController {
      * Update the mean speed values in the list.
      */
     private void updateDataTable() {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
         analysisPanel.getDataTable().setModel(new SingleCellConditionDataTableModel(
-                new ArrayList<>(singleCellMainController.getFilteringMap().keySet())));
+                new ArrayList<>(data)));
     }
 
     /**
@@ -481,8 +523,18 @@ public class SingleCellAnalysisController {
      * @return
      */
     private void setTrackDataHolders() {
-        if (filteredData) {
+        // check whether data was actually filtered! Otherwise null filteringmap
+        if (filteredData && singleCellMainController.getFilteringMap() != null) {
             trackDataHolderList = new ArrayList<>(singleCellMainController.getFilteringMap().values());
+        } else if (filteredData) {
+            // notify user that he has not actually filtered anything
+            showMessage("No filtered data found. Proceeding analysis with raw data.", "No filtering applied.", JOptionPane.INFORMATION_MESSAGE);
+            // proceed with raw data
+            List<List<TrackDataHolder>> list = new ArrayList<>();
+            singleCellMainController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {
+                list.add(conditionDataHolder.getTrackDataHolders());
+            });
+            trackDataHolderList = list;
         } else {
             List<List<TrackDataHolder>> list = new ArrayList<>();
             singleCellMainController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {
@@ -543,7 +595,14 @@ public class SingleCellAnalysisController {
      */
     private List<XYSeriesCollection> getPolarTrackTADatasets() {
         List<XYSeriesCollection> list = new ArrayList<>();
-        singleCellMainController.getFilteringMap().keySet().stream().forEach((conditionDataHolder) -> {
+        Collection<SingleCellConditionDataHolder> data;
+        if (filteredData) {
+            data = singleCellMainController.getFilteringMap().keySet();
+            
+        } else {
+            data = singleCellMainController.getPreProcessingMap().values();
+        }
+        data.stream().forEach((conditionDataHolder) -> {
             list.add(getPolarDatasetForACondition(conditionDataHolder));
         });
         return list;
@@ -693,7 +752,9 @@ public class SingleCellAnalysisController {
                 setTrackChartsWithCollections(Integer.parseInt((String) plotOptionsPanel.getnColsComboBox().getSelectedItem()));
                 singleCellMainController.hideWaitingDialog();
                 singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                //re-enable gui components but next button must be disabled
                 singleCellMainController.controlGuiComponents(true);
+                singleCellMainController.getAnalysisExperimentPanel().getNextButton().setEnabled(false);
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
                 singleCellMainController.handleUnexpectedError(ex);
