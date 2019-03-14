@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package be.ugent.maf.cellmissy.analysis.impl;
@@ -7,24 +8,22 @@ package be.ugent.maf.cellmissy.analysis.impl;
 import be.ugent.maf.cellmissy.analysis.StatisticsCalculator;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
+import org.apache.commons.math3.stat.inference.TTest;
+import static org.apache.commons.math3.stat.inference.TestUtils.tTest;
 
 /**
- * Implementation for Statistics Calculator: it is performing a
- * MannWhitneyUTest.
  *
- * @author Paola Masuzzo
+ * @author ninad
  */
-public class MannWhitneyStatisticsCalculator implements StatisticsCalculator {
+public class tTestStatisticsCalculator implements StatisticsCalculator{
 
     @Override
     public double executeStatisticalTest(double[] x, double[] y) {
-
-        MannWhitneyUTest mannWhitneyUTest = new MannWhitneyUTest();
-        return mannWhitneyUTest.mannWhitneyUTest(x, y);
+        TTest tTest = new TTest();
+        return tTest.homoscedasticTTest(x, y);
     }
-
-    @Override
+    
+        @Override
     public StatisticalSummary getSummaryStatistics(double[] x) {
         SummaryStatistics summaryStatistics = new SummaryStatistics();
         for (double aX : x) {
@@ -48,4 +47,7 @@ public class MannWhitneyStatisticsCalculator implements StatisticsCalculator {
         }
         return significances;
     }
+
+
+    
 }

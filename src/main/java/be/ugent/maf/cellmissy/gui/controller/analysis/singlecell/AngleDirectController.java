@@ -124,7 +124,7 @@ public class AngleDirectController {
      */
     public void showInstAngleInTable(PlateCondition plateCondition) {
         SingleCellConditionDataHolder singleCellConditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
-        if (singleCellConditionDataHolder != null) {
+        if (singleCellConditionDataHolder != null) { 
             dataTable.setModel(new InstantaneousDataTableModel(singleCellConditionDataHolder.getDataStructure(),
                     singleCellConditionDataHolder.getTurningAnglesVector(), "inst turn angle"));
             AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.CENTER);

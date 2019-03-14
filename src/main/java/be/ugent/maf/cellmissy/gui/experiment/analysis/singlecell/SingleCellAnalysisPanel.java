@@ -84,11 +84,20 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         return filteringParentPanel;
     }
 
+    public JLabel getDistanceLabel() {
+        return distanceLabel;
+    }
+    
+
     /**
      * Creates new form SingleCellAnalysisPanel
      */
     public SingleCellAnalysisPanel() {
         initComponents();
+    }
+
+    public JPanel getDistanceParentPanel() {
+        return distanceParentPanel;
     }
 
     /**
@@ -108,6 +117,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         angleDirectLabel = new javax.swing.JLabel();
         filteringLabel = new javax.swing.JLabel();
         analysisLabel = new javax.swing.JLabel();
+        distanceLabel = new javax.swing.JLabel();
         bottomPanel = new javax.swing.JPanel();
         inspectingDataPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -121,6 +131,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         cellTracksParentPanel = new javax.swing.JPanel();
         displSpeedParentPanel = new javax.swing.JPanel();
         angleDirectParentPanel = new javax.swing.JPanel();
+        distanceParentPanel = new javax.swing.JPanel();
         filteringParentPanel = new javax.swing.JPanel();
         analysisParentPanel = new javax.swing.JPanel();
 
@@ -148,12 +159,14 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         angleDirectLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         filteringLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        filteringLabel.setText("5. Filtering/QC");
+        filteringLabel.setText("6. Filtering/QC");
         filteringLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
 
         analysisLabel.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        analysisLabel.setText("6. Conditions Analysis");
+        analysisLabel.setText("7. Conditions Analysis");
         analysisLabel.setToolTipText("Data pre-processing: normalization and outliers detection");
+
+        distanceLabel.setText("5. Distance");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
         topPanel.setLayout(topPanelLayout);
@@ -169,10 +182,12 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(angleDirectLabel)
                 .addGap(18, 18, 18)
+                .addComponent(distanceLabel)
+                .addGap(18, 18, 18)
                 .addComponent(filteringLabel)
                 .addGap(18, 18, 18)
                 .addComponent(analysisLabel)
-                .addContainerGap(287, Short.MAX_VALUE))
+                .addContainerGap(204, Short.MAX_VALUE))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -183,8 +198,9 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                     .addComponent(cellTracksLabel)
                     .addComponent(displSpeedLabel)
                     .addComponent(angleDirectLabel)
-                    .addComponent(analysisLabel)
-                    .addComponent(filteringLabel))
+                    .addComponent(filteringLabel)
+                    .addComponent(analysisLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(distanceLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -227,7 +243,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 985, Short.MAX_VALUE)
+                .addComponent(tracksScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 977, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -259,7 +275,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 985, Short.MAX_VALUE)
+                .addComponent(trackPointsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 977, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -290,7 +306,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addGroup(inspectingDataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 1017, Short.MAX_VALUE))
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 1013, Short.MAX_VALUE))
                 .addContainerGap())
         );
         inspectingDataPanelLayout.setVerticalGroup(
@@ -301,7 +317,7 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -328,6 +344,10 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
         angleDirectParentPanel.setLayout(new java.awt.GridBagLayout());
         bottomPanel.add(angleDirectParentPanel, "angleDirectParentPanel");
         angleDirectParentPanel.getAccessibleContext().setAccessibleName("angleDirectParentPanel");
+
+        distanceParentPanel.setName("distanceParentPanel"); // NOI18N
+        distanceParentPanel.setLayout(new java.awt.GridBagLayout());
+        bottomPanel.add(distanceParentPanel, "card8");
 
         filteringParentPanel.setName("filteringParentPanel"); // NOI18N
         filteringParentPanel.setOpaque(false);
@@ -361,6 +381,8 @@ public class SingleCellAnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel cellTracksParentPanel;
     private javax.swing.JLabel displSpeedLabel;
     private javax.swing.JPanel displSpeedParentPanel;
+    private javax.swing.JLabel distanceLabel;
+    private javax.swing.JPanel distanceParentPanel;
     private javax.swing.JLabel filteringLabel;
     private javax.swing.JPanel filteringParentPanel;
     private javax.swing.JLabel inspectingDataLabel;

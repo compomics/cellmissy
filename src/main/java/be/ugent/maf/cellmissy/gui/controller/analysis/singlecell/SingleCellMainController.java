@@ -16,6 +16,7 @@ import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MetadataSingleCellPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
@@ -89,6 +90,8 @@ public class SingleCellMainController {
     private SingleCellPreProcessingController singleCellPreProcessingController;
     @Autowired
     private SingleCellAnalysisController singleCellAnalysisController;
+    @Autowired
+    private DistanceController distanceController;
     // services
     @Autowired
     private ExperimentService experimentService;
@@ -482,6 +485,8 @@ public class SingleCellMainController {
                         .getAnalysisLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
                 showInfoMessage("Single Cell Turning Angles and Directionality Measures");
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getAngleDirectPanel().getInstTurnAngleRadioButton().isSelected()) {
@@ -493,6 +498,31 @@ public class SingleCellMainController {
 //
 //                }
                 singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
+                break;
+            case "distanceParentPanel":
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
+                // select only distancelabel 
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
+             
+                showInfoMessage("Single Cell Travelled Distance");
+                // check which button is selected for analysis
+                if (singleCellPreProcessingController.getDistancePanel().getAccumulatedDistanceRadioButton().isSelected()) {
+                    distanceController.showAccumDistInTable(selectedCondition);
+                    distanceController.plotAccumDistBoxPlot(selectedCondition);
+                } else if (singleCellPreProcessingController.getDistancePanel().getEuclidianDistanceRadioButton().isSelected()) {
+                    distanceController.showEuclDistInTable(selectedCondition);
+                    distanceController.plotEucDistBoxPlot(selectedCondition);
+                }
                 break;
             case "filteringParentPanel":
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
@@ -507,6 +537,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
                 showInfoMessage("Single-cell trajectories filtering - Quality Control");
                 singleCellPreProcessingController.setMeanDisplForExperiment();
                 if (singleCellPreProcessingController.getFilteringPanel().getMultipleCutOffRadioButton().isSelected()) {
@@ -529,8 +561,10 @@ public class SingleCellMainController {
                         .getInspectingDataLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
                 showInfoMessage("Conditions-based analysis");
-                analysisPlatePanel.setCurrentCondition(null);
+                //analysisPlatePanel.setCurrentCondition(null);
                 analysisPlatePanel.repaint();
                 analysisPlatePanel.revalidate();
                 dataAnalysisPanel.getConditionsList().setEnabled(false);
@@ -555,6 +589,15 @@ public class SingleCellMainController {
 //                    singleCellAnalysisController.plotData();
                 } else if (singleCellAnalysisController.getAnalysisPanel().getStatisticsRadioButton().isSelected()) {
 
+                } else if (singleCellAnalysisController.getAnalysisPanel().getNormalityTestsRadioButton().isSelected()) {
+                   
+                    dataAnalysisPanel.getConditionsList().setEnabled(true); //terug condities kunnen selecteren om per conditie te kunnen zien of het normaal verdeeld is
+                    String index = Integer.toString(singleCellAnalysisController.getSingleCellNormalityTestController().getNormalityTestParentPanel().getSelectedIndex());
+                    singleCellAnalysisController.getSingleCellNormalityTestController().plotQQPlots(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().ComputeStatisticalTests(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().computeSkewness(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().computeKurtosis(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().fillInConditionTextFields();
                 }
                 break;
 

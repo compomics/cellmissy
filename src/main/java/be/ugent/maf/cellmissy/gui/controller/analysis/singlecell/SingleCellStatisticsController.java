@@ -72,8 +72,9 @@ public class SingleCellStatisticsController {
      * Update the list with conditions.
      */
     public void updateConditionList() {
-        JList conditionList = singleCellAnalysisController.getAnalysisPanel().getConditionList();
+        JList conditionList = singleCellAnalysisController.getAnalysisPanel().getConditionList();        
         DefaultListModel model = (DefaultListModel) conditionList.getModel();
+        model.clear();
         if (singleCellAnalysisController.isFilteredData()) {
             singleCellAnalysisController.getFilteringMap().keySet().stream().forEach((conditionDataHolder) -> {
                 model.addElement(conditionDataHolder.getPlateCondition());
@@ -131,6 +132,8 @@ public class SingleCellStatisticsController {
         // add parameters to perform analysis on
         analysisPanel.getParameterComboBox().addItem("cell speed");
         analysisPanel.getParameterComboBox().addItem("cell direct");
+        analysisPanel.getParameterComboBox().addItem("accumulated distance");
+        analysisPanel.getParameterComboBox().addItem("euclidian distance");
 
         /**
          * Add a group to analysis
@@ -148,7 +151,7 @@ public class SingleCellStatisticsController {
             removeGroupFromAnalysis();
         });
         /**
-         * Execute a Mann Whitney Test on selected Analysis Group
+         * Execute a Mann Whitney Test or other tests on selected Analysis Group
          */
         analysisPanel.getPerformStatButton().addActionListener((ActionEvent e) -> {
             int selectedIndex = analysisPanel.getAnalysisGroupList().getSelectedIndex();

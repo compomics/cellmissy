@@ -638,7 +638,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                         .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(plateMedianSpeedTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
                             .addComponent(plateMADSpeedTextField))))
-                .addContainerGap(103, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         optionsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aggregationComboBox, jLabel5, jLabel6, measurementComboBox, plotHeatMapButton, plotZScoreButton});
@@ -670,7 +670,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
                 .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(plateMADSpeedTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(270, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         optionsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {aggregationComboBox, measurementComboBox, plotHeatMapButton});
@@ -722,7 +722,7 @@ public class TrackCoordinatesPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.7;
         plateHeatMapPanel.add(plateHeatMapParentPanel, gridBagConstraints);
 
-        zScoreParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "z*-score"));
+        zScoreParentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("z*-score"));
         zScoreParentPanel.setMinimumSize(new java.awt.Dimension(20, 20));
         zScoreParentPanel.setPreferredSize(new java.awt.Dimension(20, 20));
         zScoreParentPanel.setLayout(new java.awt.GridBagLayout());

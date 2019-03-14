@@ -25,6 +25,7 @@ public class StatisticsCalculatorTest {
     
     @Autowired
     private StatisticsCalculator mann_Whitney_Statistics; 
+    
 
     /**
      * SetUp data for test
