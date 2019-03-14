@@ -535,6 +535,7 @@ public class SingleCellAnalysisController {
                 list.add(conditionDataHolder.getTrackDataHolders());
             });
             trackDataHolderList = list;
+            setFilteredData(false);
         } else {
             List<List<TrackDataHolder>> list = new ArrayList<>();
             singleCellMainController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {
