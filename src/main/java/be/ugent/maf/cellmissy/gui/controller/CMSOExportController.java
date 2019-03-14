@@ -110,24 +110,7 @@ public class CMSOExportController {
      * Reset view.
      */
     protected void resetAfterCardSwitch() {
-//        cmsoReaderPanel.getNextButton().setEnabled(false);
-//        importedExperiment = null;
-//        //reset text fields
-//        cmsoReaderPanel.getFolderTextField().setText("");
-//        cmsoReaderPanel.getSummaryTextArea().setText("");
-//        cmsoReaderPanel.getIsaTextArea().setText("");
-//        cmsoReaderPanel.getOmeTextArea().setText("");
-//        cmsoReaderPanel.getBiotracksTextArea().setText("");
-//        //reset model entities
-//        biotracksFolders = null;
-//        tracksPresent = false;
-//        investigationMap = new HashMap<>();
-//        studyMap = new HashMap<>();
-//        assayMap = new HashMap<>();
-//        biotracksDataHolders = new HashMap();
-//        imagedWells = new ArrayList<>();
-//        algorithmsList = new ArrayList<>();
-//        imgTypesList = new ArrayList<>();
+        resetView();
     }
 
     /**
@@ -297,6 +280,8 @@ public class CMSOExportController {
         cmsoExportPanel.getPlateFormatLabel().setText("");
         cmsoExportPanel.getNumberConditionsLabel().setText("");
         cmsoExportPanel.getProjectDescriptionTextArea().setText("");
+        cmsoExportPanel.getOrcidTextField().setText("");
+        cmsoExportPanel.getOrganismTextField().setText("Homo sapiens");
         // reset table model to a default one
         cmsoExportPanel.getConditionsDetailsTable().setModel(new DefaultTableModel());
         // clear selection on both projects and experiments lists
@@ -306,6 +291,7 @@ public class CMSOExportController {
         if (experimentBindingList != null && !experimentBindingList.isEmpty()) {
             experimentBindingList.clear();
         }
+        experimentToExport = null;
         biotracksFolderPath = null;
     }
 
@@ -433,7 +419,7 @@ public class CMSOExportController {
                 cmsoExportPanel.getExportButton().setEnabled(true);
                 resetView();
                 // to show starting dialog on screen, not needed here
-//                cellMissyController.onStartup();
+                cellMissyController.onStartup();
             } catch (InterruptedException | ExecutionException | CancellationException ex) {
                 LOG.error(ex.getMessage(), ex);
             }
