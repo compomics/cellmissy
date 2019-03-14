@@ -169,7 +169,11 @@ public class StepCentricOperatorImpl implements StepCentricOperator {
                 tempCumDist += instantaneousDisplacements[i];
             }
             double currentDirectionalityRatio = euclDistToStartPoint / tempCumDist;
-            directionalityRatios[row - 1] = currentDirectionalityRatio;
+            if (Double.isNaN(currentDirectionalityRatio)) {
+                directionalityRatios[row - 1] = 0.0;
+            } else {
+                directionalityRatios[row - 1] = currentDirectionalityRatio;
+            }
         }
         stepCentricDataHolder.setDirectionalityRatios(directionalityRatios);
     }

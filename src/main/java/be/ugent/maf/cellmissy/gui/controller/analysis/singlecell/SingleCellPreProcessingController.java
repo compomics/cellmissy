@@ -49,6 +49,7 @@ import java.text.Format;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -140,6 +141,7 @@ public class SingleCellPreProcessingController {
     public void computePlateMADSpeed() {
         singleCellMainController.computePlateMADSpeed();
     }
+
     public TrackCoordinatesPanel getTrackCoordinatesPanel() {
         return trackCoordinatesController.getTrackCoordinatesPanel();
     }
@@ -353,6 +355,16 @@ public class SingleCellPreProcessingController {
     }
 
     /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        bindingGroup = new BindingGroup();
+        singleCellAnalysisPanel.getTrackPointsTable().setModel(new DefaultTableModel());
+        singleCellAnalysisPanel.getTracksTable().setModel(new DefaultTableModel());
+        filteringController.resetOnCancel();
+    }
+
+    /**
      *
      * @param plateCondition
      */
@@ -370,9 +382,6 @@ public class SingleCellPreProcessingController {
         singleCellConditionOperator.generateMedianDirectionalityRatiosVector(singleCellConditionDataHolder);
         LOG.info("generating track displacements...");
         singleCellConditionOperator.generateTrackDisplacementsVector(singleCellConditionDataHolder);
-        
-        
-        
         LOG.info("generating cumulative distances...");
         singleCellConditionOperator.generateCumulativeDistancesVector(singleCellConditionDataHolder);
         LOG.info("generating euclidean distances...");
@@ -836,7 +845,7 @@ public class SingleCellPreProcessingController {
         @Override
         protected Void doInBackground() throws Exception {
             // show waiting dialog
-            singleCellMainController.showWaitingDialog("Computing for: " + plateCondition);
+            showWaitingDialog("Computing for: " + plateCondition);
             // show a waiting cursor, disable GUI components
             singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             singleCellMainController.controlGuiComponents(false);
@@ -884,7 +893,7 @@ public class SingleCellPreProcessingController {
         @Override
         protected Void doInBackground() throws Exception {
             // show waiting dialog
-            singleCellMainController.showWaitingDialog("Enabling analysis, processing the other conditions...");
+            showWaitingDialog("Enabling analysis, processing the other conditions...");
             // show a waiting cursor, disable GUI components
             singleCellMainController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             singleCellMainController.controlGuiComponents(false);

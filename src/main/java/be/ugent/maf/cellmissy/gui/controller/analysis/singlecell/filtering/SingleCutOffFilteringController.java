@@ -26,6 +26,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -71,6 +72,18 @@ public class SingleCutOffFilteringController {
 
     public SingleCutOffPanel getSingleCutOffPanel() {
         return singleCutOffPanel;
+    }
+    
+    /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        singleCutOffPanel.getMedianDisplList().setModel(new DefaultListModel());
+        singleCutOffPanel.getSummaryTable().setModel(new DefaultTableModel());
+        rawDisplChartPanel = new ChartPanel(null);
+        filteredDisplChartPanel = new ChartPanel(null);
+        rawSpeedChartPanel = new ChartPanel(null);
+        filteredSpeedChartPanel = new ChartPanel(null);
     }
 
     /**

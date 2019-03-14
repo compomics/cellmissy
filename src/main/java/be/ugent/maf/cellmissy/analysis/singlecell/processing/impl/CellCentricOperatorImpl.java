@@ -114,7 +114,12 @@ public class CellCentricOperatorImpl implements CellCentricOperator {
     @Override
     public void computeEndPointDirectionalityRatio(CellCentricDataHolder cellCentricDataHolder) {
         double endPointDirectionalityRatio = cellCentricDataHolder.getEuclideanDistance() / cellCentricDataHolder.getCumulativeDistance();
-        cellCentricDataHolder.setEndPointDirectionalityRatio(endPointDirectionalityRatio);
+        if (!Double.isNaN(endPointDirectionalityRatio)){
+            cellCentricDataHolder.setEndPointDirectionalityRatio(endPointDirectionalityRatio);
+        } else {
+            cellCentricDataHolder.setEndPointDirectionalityRatio(0.0);
+        }
+        
     }
 
     @Override

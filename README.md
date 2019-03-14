@@ -17,14 +17,24 @@
 ### Citation
 *CellMissy* is described in “*CellMissy: a tool for management, storage and analysis of cell migration data produced in wound healing-like assays.*” (P. Masuzzo, N. Hulstaert, L. Huyck, C. Ampe, M. Van Troys and L. Martens, PMID: [23918247](http://www.ncbi.nlm.nih.gov/pubmed/23918247))
 
+The single-cell analysis is presented in “*An end-to-end software solution for the analysis of high-throughput single-cell migration data.*” (P. Masuzzo, L. Huyck, A. Simiczyjew, C. Ampe, L. Martens, and M. Van Troys, PMID: [28205527](http://www.ncbi.nlm.nih.gov/pubmed/28205527))
+
+The dose-response capabilites are presented in “*DoRes within CellMissy: dose-response analysis on cell migration and related data.*” (G. Sergeant, L. Martens, M. Van Troys and P. Masuzzo, PMID: [30052834](https://www.ncbi.nlm.nih.gov/pubmed/30052834))
+
 [Go to top of page](#cellmissy)
 
 ----
 
 ## News
-**June 2016**
+**November 2018**:
+[CellMissy 1.3.0](https://github.com/compomics/cellmissy/releases/tag/v1.3.0) is now compatible with CMSO standards (add link to publication). New features are the possibilities to 1) export an existing experiment to ISA-Tab (experimental metadata) and biotracks files (cell track data); and 2) to import a CMSO compliant dataset and (re-)analyse its cell track data.
+
+**January 2018**:
+[CellMissy 1.2.0](https://github.com/compomics/cellmissy/releases/tag/v1.2.0) adds the DoRes module, which enables dose-response analyses for collective migration experiments as well as generic dose-response datasets!
+
+**June 2016**:
 [CellMissy 1.1.0](releases/CellMissy-1.1.0.zip) is now available! Single-cell migration analysis implemented!
-Look at how to import single-cell migration data into CellMissy here: https://figshare.com/articles/Single-cell_data_import_-_how_to/4245059.
+Look at how to import single-cell migration data into CellMissy [here](https://figshare.com/articles/Single-cell_data_import_-_how_to/4245059).
 
 **November 30, 2013**: 
 [CellMissy 1.0.4](releases/CellMissy-1.0.4.zip) is now available!
@@ -33,9 +43,11 @@ Look at how to import single-cell migration data into CellMissy here: https://fi
 **CellMissy**: DB schema has been modified to take into account users privileges in relation to projects and experiments. Download the new SQL script to create your *CellMissy* DB (see more in the [downloads section](#downloads)).
 
 ## Downloads
-Download *CellMissy* 1.1.0 [here](releases/CellMissy-1.1.0.zip).
+Download *CellMissy* 1.3.0 [here](https://github.com/compomics/cellmissy/releases/tag/v1.3.0).
 
-Download *CellMissy* 1.0.4 [here](releases/CellMissy-1.0.4.zip).
+Download *CellMissy* 1.2.0 [here](https://github.com/compomics/cellmissy/releases/tag/v1.2.0).
+
+Download *CellMissy* 1.1.0 and 1.0.4 [here](releases/).
 
 ### Supportive Files
 
@@ -52,7 +64,7 @@ Download *CellMissy* 1.0.4 [here](releases/CellMissy-1.0.4.zip).
 
 ## Usage
 See the [manual](supportFiles/CellMissy_Manual_1.0.3.pdf) for further information on how to use the tool.
-This manual version of *CellMissy* focuses on wound healing data from scratch assay or cell zone exclusion assays of different types.
+This manual version of *CellMissy v1.0.3* focuses on wound healing data from scratch assay or cell zone exclusion assays of different types.
 
 [Go to top of page](#cellmissy)
 
@@ -74,5 +86,5 @@ The CellMissy project is grateful for the support by:
 |:--:|:--:|:--:|:--:|
 | [![intellij](supportFiles/images/icon_IntelliJIDEA.png)](https://www.jetbrains.com/idea/) | [![netbeans](https://netbeans.org/images_www/visual-guidelines/NB-logo-single.jpg)](https://netbeans.org/) | [![java](supportFiles/images/java.png)](http://java.com/en/) | [![maven](supportFiles/images/maven.png)](http://maven.apache.org/) |
 
-[Go to top of page](#jtraml)
+[Go to top of page](#cellmissy)
 

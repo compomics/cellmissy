@@ -29,6 +29,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -81,6 +82,40 @@ public class MultipleCutOffFilteringController {
         summaryMultipleCutOffController.init();
     }
 
+    /**
+     * Reset everything when cancelling analysis. Called by parent controller.
+     */
+    protected void resetOnCancel() {
+        filteringMap = new LinkedHashMap<>();
+        cutOffMap = new LinkedHashMap<>();
+        motileStepsFilterMap = new LinkedHashMap<>();
+        rawKdeChartPanel = new ChartPanel(null);
+        rawKdeChartPanel.setOpaque(false);
+        filteredKdeChartPanel = new ChartPanel(null);
+        filteredKdeChartPanel.setOpaque(false);
+        multipleCutOffPanel.getFilterTrackTable().setModel(new DefaultTableModel());
+        multipleCutOffPanel.getSummaryTable().setModel(new DefaultTableModel());
+        // set default to micrometer
+        multipleCutOffPanel.getMicroMeterRadioButton().setSelected(true);
+        // and therefore no need for the conversion factor
+        multipleCutOffPanel.getConversionFactorTextField().setEnabled(false);
+        multipleCutOffPanel.getConversionFactorTextField().setText("");
+        // reset some default values
+        multipleCutOffPanel.getBottomLimTextField().setText("0.4");
+        multipleCutOffPanel.getTopLimTextField().setText("2.8");
+        multipleCutOffPanel.getTranslocationStepTextField().setText("0.8");
+        multipleCutOffPanel.getPercentageMotileStepsTextField().setText("30");
+        percentageMotile = 33;
+        multipleCutOffPanel.getPercentageTextField().setText("");
+        // reset the logic of the panel
+        multipleCutOffPanel.getFilteredPlotParentPanel().removeAll();
+        multipleCutOffPanel.getFilteredPlotParentPanel().revalidate();
+        multipleCutOffPanel.getFilteredPlotParentPanel().repaint();
+        multipleCutOffPanel.getFilteredPlotParentPanel().add(filteredKdeChartPanel, gridBagConstraints);
+        //reset child controller (chart panels)
+        summaryMultipleCutOffController.resetOnCancel();
+    }
+
     public MultipleCutOffPanel getMultipleCutOffPanel() {
         return multipleCutOffPanel;
     }
@@ -100,7 +135,7 @@ public class MultipleCutOffFilteringController {
     public List<List<double[]>> estimateRawDisplKDE() {
         return filteringController.estimateRawDisplKDE();
     }
-    
+
     public List<List<double[]>> estimateRawSpeedKDE() {
         return filteringController.estimateRawSpeedKDE();
     }
@@ -116,7 +151,6 @@ public class MultipleCutOffFilteringController {
     public void setCutOffMap(Map<SingleCellConditionDataHolder, Double> cutOffMap) {
         this.cutOffMap = cutOffMap;
     }
-
 
     /**
      * Plot the raw KDE for track displacements.
@@ -263,8 +297,8 @@ public class MultipleCutOffFilteringController {
 
         retainedTrackMap.keySet().stream().map((singleCellWellDataHolder)
                 -> getRetainedDisplacements(retainedTrackMap, singleCellWellDataHolder)).map((retainedDisplacements) -> filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackDisplDensityFunction) -> {
-                    densityFunction.add(oneReplicateTrackDisplDensityFunction);
-                });
+            densityFunction.add(oneReplicateTrackDisplDensityFunction);
+        });
         return densityFunction;
     }
 

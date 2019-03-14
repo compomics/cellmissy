@@ -49,7 +49,7 @@ public class AnalysisUtils {
     public static Double[] excludeNaNvalues(Double[] data) {
         List<Double> list = new ArrayList<>();
         for (Double value : data) {
-            if (value != Double.NaN) {
+            if (!Double.isNaN(value)) {
                 list.add(value);
             }
         }
@@ -346,7 +346,7 @@ public class AnalysisUtils {
         }
         return max;
     }
-    
+
     /**
      * Add the contents of the array to the list
      *
@@ -647,4 +647,33 @@ public class AnalysisUtils {
         return result;
     }
 
+    /**
+     * Maps a string coordinate to its corresponding integer (A-1, B-2 etc.). If
+     * the input is already an integer, return it.
+     *
+     * @param coordinate
+     * @return
+     */
+    public static int checkRowCoordinate(String coordinate) {
+        String t = "";
+        String s = coordinate.toLowerCase();
+        for (int i = 0; i < s.length(); ++i) {
+            char ch = s.charAt(i);
+            int n = (int) ch - (int) 'a' + 1;
+            t += String.valueOf(n);
+        }
+        return Integer.parseInt(t);
+    }
+
+    /**
+     * Maps an integer coordinate to its corresponding string (1-A, 2-B etc.).
+     * Unlike above, the input cannot be a string how the method is currently
+     * used.
+     *
+     * @param coordinate
+     * @return
+     */
+    public static String RowCoordinateToString(int coordinate) {
+        return (char)(coordinate+'A'-1) + "";
+    }
 }
