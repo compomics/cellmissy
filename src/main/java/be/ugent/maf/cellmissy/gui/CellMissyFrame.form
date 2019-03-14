@@ -541,16 +541,25 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
         </Container>
-        <Container class="javax.swing.JPanel" name="cmsoDatasetParentPanel">
+        <Container class="javax.swing.JPanel" name="importCmsoParentPanel">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="cmsoDatasetParentPanel" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="importCmsoParentPanel" noResource="true"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
               <CardConstraints cardName="cmsoDatasetParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+        </Container>
+        <Container class="javax.swing.JPanel" name="exportCmsoParentPanel">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="card10"/>
             </Constraint>
           </Constraints>
 

@@ -171,14 +171,14 @@ public class CMSOReaderController {
                      */
                     singleCellMainController.setCmsoData(tracksPresent);
                     singleCellMainController.proceedToAnalysis(importedExperiment, algorithmsList, imgTypesList);
-                    cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().removeAll();
-                    cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().add(singleCellMainController.getAnalysisExperimentPanel(), gridBagConstraints);
+                    cellMissyController.getCellMissyFrame().getImportCmsoParentPanel().removeAll();
+                    cellMissyController.getCellMissyFrame().getImportCmsoParentPanel().add(singleCellMainController.getAnalysisExperimentPanel(), gridBagConstraints);
                 }
             }
         });
 
         //add panel to main view
-        cellMissyController.getCellMissyFrame().getCmsoDatasetParentPanel().add(cmsoReaderPanel, gridBagConstraints);
+        cellMissyController.getCellMissyFrame().getImportCmsoParentPanel().add(cmsoReaderPanel, gridBagConstraints);
     }
 
     /**

@@ -65,6 +65,7 @@ public class CellMissyController {
     private boolean firstLoadingFromCellMia;
     private boolean firstLoadingFromGenericInput;
     private boolean firstCMSOLoading;
+    private boolean firstCMSOExport;
     //view
     //main frame
     private CellMissyFrame cellMissyFrame;
@@ -173,6 +174,7 @@ public class CellMissyController {
         firstLoadingFromCellMia = true;
         firstLoadingFromGenericInput = true;
         firstCMSOLoading = true;
+        firstCMSOExport = true;
         //init child controllers
         setupExperimentController.init();
         loadExperimentFromCellMiaController.init();
@@ -386,8 +388,6 @@ public class CellMissyController {
         cellMissyFrame.getDoseResponseMenuItem().addActionListener(itemActionListener);
         // CMSO dataset import
         cellMissyFrame.getCmsoMenuItem().addActionListener(itemActionListener);
-        // export experiment to CMSO dataset
-        cellMissyFrame.getCMSOExportMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -446,7 +446,15 @@ public class CellMissyController {
                 onExportTemplate();
             }
         });
-
+        
+        // export experiment to CMSO dataset format
+        cellMissyFrame.getCMSOExportMenuItem().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onExportingCSMODataset();
+            }
+        });
+        
         // import setup settings
         cellMissyFrame.getImportSettingsMenuItem().addActionListener(new ActionListener() {
             @Override
@@ -630,7 +638,7 @@ public class CellMissyController {
         getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getLoadFromCellMiaParentPanel().getName());
         firstLoadingFromCellMia = false;
     }
-    
+
     /**
      * Action performed on loading CMSO dataset
      */
@@ -638,8 +646,19 @@ public class CellMissyController {
         if (!firstCMSOLoading) {
             cMSOReaderController.resetAfterCardSwitch();
         }
-        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getCmsoDatasetParentPanel().getName());
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getImportCmsoParentPanel().getName());
         firstCMSOLoading = false;
+    }
+
+    /**
+     * Action performed on loading CMSO dataset
+     */
+    private void onExportingCSMODataset() {
+        if (!firstCMSOExport) {
+            cMSOExportController.resetAfterCardSwitch();
+        }
+        getCardLayout().show(cellMissyFrame.getBackgroundPanel(), cellMissyFrame.getExportCmsoParentPanel().getName());
+        firstCMSOExport = false;
     }
 
     /**

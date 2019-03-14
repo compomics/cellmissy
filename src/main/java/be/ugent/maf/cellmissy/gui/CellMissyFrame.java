@@ -153,15 +153,18 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return cmsoMenuItem;
     }
 
-    public JPanel getCmsoDatasetParentPanel() {
-        return cmsoDatasetParentPanel;
+    public JPanel getImportCmsoParentPanel() {
+        return importCmsoParentPanel;
     }
 
     public JMenuItem getCMSOExportMenuItem() {
         return cmsoExportMenuItem;
     }
-    
 
+    public JPanel getExportCmsoParentPanel() {
+        return exportCmsoParentPanel;
+    }
+    
     /**
      * This method is called from within the constructor to initialise the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -183,7 +186,8 @@ public class CellMissyFrame extends javax.swing.JFrame {
         areaAnalysisParentPanel = new javax.swing.JPanel();
         singleCellAnalysisParentPanel = new javax.swing.JPanel();
         doseResponseAnalysisParentPanel = new javax.swing.JPanel();
-        cmsoDatasetParentPanel = new javax.swing.JPanel();
+        importCmsoParentPanel = new javax.swing.JPanel();
+        exportCmsoParentPanel = new javax.swing.JPanel();
         cellMissyMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newExperimentMenuItem = new javax.swing.JMenuItem();
@@ -342,10 +346,13 @@ public class CellMissyFrame extends javax.swing.JFrame {
         doseResponseAnalysisParentPanel.setLayout(new java.awt.GridBagLayout());
         backgroundPanel.add(doseResponseAnalysisParentPanel, "doseResponseAnalysisParentPanel");
 
-        cmsoDatasetParentPanel.setBackground(new java.awt.Color(255, 255, 255));
-        cmsoDatasetParentPanel.setName("cmsoDatasetParentPanel"); // NOI18N
-        cmsoDatasetParentPanel.setLayout(new java.awt.GridBagLayout());
-        backgroundPanel.add(cmsoDatasetParentPanel, "cmsoDatasetParentPanel");
+        importCmsoParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        importCmsoParentPanel.setName("importCmsoParentPanel"); // NOI18N
+        importCmsoParentPanel.setLayout(new java.awt.GridBagLayout());
+        backgroundPanel.add(importCmsoParentPanel, "cmsoDatasetParentPanel");
+
+        exportCmsoParentPanel.setLayout(new java.awt.GridBagLayout());
+        backgroundPanel.add(exportCmsoParentPanel, "card10");
 
         cellMissyMenuBar.setBackground(java.awt.Color.white);
         cellMissyMenuBar.setAlignmentY(0.5F);
@@ -540,13 +547,13 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
-    private javax.swing.JPanel cmsoDatasetParentPanel;
     private javax.swing.JMenuItem cmsoExportMenuItem;
     private javax.swing.JMenuItem cmsoMenuItem;
     private javax.swing.JPanel doseResponseAnalysisParentPanel;
     private javax.swing.JMenuItem doseResponseMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JPanel exportCmsoParentPanel;
     private javax.swing.JMenuItem exportExperimentMenuItem;
     private javax.swing.JMenu exportMenu;
     private javax.swing.JMenuItem exportTemplateMenuItem;
@@ -555,6 +562,7 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem helpMenuItem;
     private javax.swing.JPanel homePanel;
     private javax.swing.JPanel homeParentPanel;
+    private javax.swing.JPanel importCmsoParentPanel;
     private javax.swing.JMenuItem importExperimentMenuItem;
     private javax.swing.JMenu importMenu;
     private javax.swing.JMenuItem importSettingsMenuItem;

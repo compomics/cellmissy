@@ -24,6 +24,7 @@ import be.ugent.maf.cellmissy.service.WellService;
 import be.ugent.maf.cellmissy.utils.AnalysisUtils;
 import be.ugent.maf.cellmissy.utils.GuiUtils;
 import be.ugent.maf.cellmissy.utils.CsvUtils;
+import java.awt.GridBagConstraints;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -82,6 +83,7 @@ public class CMSOExportController {
     @Autowired
     private CellMissyController cellMissyController;
     //services
+    private GridBagConstraints gridBagConstraints;
     @Autowired
     private ProjectService projectService;
     @Autowired
@@ -99,8 +101,33 @@ public class CMSOExportController {
         bindingGroup = new BindingGroup();
         // make a new waiting dialog here
         waitingDialog = new WaitingDialog(cellMissyController.getCellMissyFrame(), true);
+        gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         // init views
         initExportPanel();
+    }
+
+    /**
+     * Reset view.
+     */
+    protected void resetAfterCardSwitch() {
+//        cmsoReaderPanel.getNextButton().setEnabled(false);
+//        importedExperiment = null;
+//        //reset text fields
+//        cmsoReaderPanel.getFolderTextField().setText("");
+//        cmsoReaderPanel.getSummaryTextArea().setText("");
+//        cmsoReaderPanel.getIsaTextArea().setText("");
+//        cmsoReaderPanel.getOmeTextArea().setText("");
+//        cmsoReaderPanel.getBiotracksTextArea().setText("");
+//        //reset model entities
+//        biotracksFolders = null;
+//        tracksPresent = false;
+//        investigationMap = new HashMap<>();
+//        studyMap = new HashMap<>();
+//        assayMap = new HashMap<>();
+//        biotracksDataHolders = new HashMap();
+//        imagedWells = new ArrayList<>();
+//        algorithmsList = new ArrayList<>();
+//        imgTypesList = new ArrayList<>();
     }
 
     /**
@@ -203,7 +230,8 @@ public class CMSOExportController {
                 }
             }
         });
-
+        //add panel to main view
+        cellMissyController.getCellMissyFrame().getExportCmsoParentPanel().add(cmsoExportPanel, gridBagConstraints);
     }
 
     private File createFolderStructure(String mainFolderName, File directory) {
