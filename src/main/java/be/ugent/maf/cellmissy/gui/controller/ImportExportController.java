@@ -265,11 +265,11 @@ class ImportExportController {
                         File xmlFile = createXmlFile(fileName, currentDirectory, exportExperimentDialog);
                         // if the XML file was successfully created, we execute a swing worker and export the experiment to the file.
                         if (xmlFile != null) {
+                            ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
+                            exportExperimentSwingWorker.execute();
                             // show waiting dialog
                             String title = "Experiment is being exported to file. Please wait...";
                             showWaitingDialog(title);
-                            ExportExperimentSwingWorker exportExperimentSwingWorker = new ExportExperimentSwingWorker(xmlFile);
-                            exportExperimentSwingWorker.execute();
                         }
                     } else {
                         JOptionPane.showMessageDialog(exportExperimentDialog, "Command cancelled by user", "", JOptionPane.INFORMATION_MESSAGE);
@@ -433,12 +433,12 @@ class ImportExportController {
                     for (PlateCondition plateCondition : importedExperiment.getPlateConditionList()) {
                         plateCondition.setExperiment(importedExperiment);
                     }
-                    // set the title of waiting dialog and show it
-                    String title = "Experiment is being saved to DB. Please wait...";
-                    showWaitingDialog(title);
                     // make a new swing worker and execute it
                     SaveExperimentSwingWorker saveExperimentSwingWorker = new SaveExperimentSwingWorker();
                     saveExperimentSwingWorker.execute();
+                    // set the title of waiting dialog and show it
+                    String title = "Experiment is being saved to DB. Please wait...";
+                    showWaitingDialog(title);
                 } else {
                     String message = "Oooops! Imported experiment already exists for this project!\nYou can choose a different project....\n\n...or maybe you have already imported this experiment !!!";
                     JOptionPane.showMessageDialog(importExperimentDialog, message, "experiment is present in DB", JOptionPane.WARNING_MESSAGE);
