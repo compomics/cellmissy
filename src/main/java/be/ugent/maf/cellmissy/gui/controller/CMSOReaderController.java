@@ -182,7 +182,7 @@ public class CMSOReaderController {
     }
 
     /**
-     * Called in the main controller, resetData views and models if another view
+     * Called in the main controller, reset data views and models if another view
      * has being shown
      */
     public void resetAfterCardSwitch() {

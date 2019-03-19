@@ -446,15 +446,16 @@ public class CellMissyController {
                 onExportTemplate();
             }
         });
-        
+
         // export experiment to CMSO dataset format
         cellMissyFrame.getCMSOExportMenuItem().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                switchCard("Export to CMSO dataset...");
                 onExportingCSMODataset();
             }
         });
-        
+
         // import setup settings
         cellMissyFrame.getImportSettingsMenuItem().addActionListener(new ActionListener() {
             @Override
