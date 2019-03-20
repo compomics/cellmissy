@@ -5,6 +5,7 @@
  */
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.filtering;
 
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.SingleCutOffPanel;
@@ -27,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
+import org.apache.commons.lang.ArrayUtils;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -73,7 +75,7 @@ public class SingleCutOffFilteringController {
     public SingleCutOffPanel getSingleCutOffPanel() {
         return singleCutOffPanel;
     }
-    
+
     /**
      * Reset everything when cancelling analysis. Called by parent controller.
      */
@@ -95,8 +97,8 @@ public class SingleCutOffFilteringController {
         model.clear();
         filteringController.getPlateConditions().stream().map((condition)
                 -> filteringController.getMedianDisplAcrossReplicates(condition)).forEach((Double medianDisplForCondition) -> {
-                    model.addElement(AnalysisUtils.roundThreeDecimals(medianDisplForCondition));
-                });
+            model.addElement(AnalysisUtils.roundThreeDecimals(medianDisplForCondition));
+        });
     }
 
     /**
@@ -223,9 +225,9 @@ public class SingleCutOffFilteringController {
         Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = filteringController.getFilteringMap();
         filteringMap.keySet().stream().map((conditionDataHolder)
                 -> getRetainedDisplacements(conditionDataHolder)).map((retainedDisplacements)
-                        -> filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackDisplDensityFunction) -> {
-                    densityFunction.add(oneConditionTrackDisplDensityFunction);
-                });
+                -> filteringController.estimateDensityFunction(retainedDisplacements, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackDisplDensityFunction) -> {
+            densityFunction.add(oneConditionTrackDisplDensityFunction);
+        });
 
         return densityFunction;
     }
@@ -236,9 +238,9 @@ public class SingleCutOffFilteringController {
         Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = filteringController.getFilteringMap();
         filteringMap.keySet().stream().map((conditionDataHolder)
                 -> getRetainedSpeeds(conditionDataHolder)).map((retainedSpeeds)
-                        -> filteringController.estimateDensityFunction(retainedSpeeds, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackSpeedDensityFunction) -> {
-                    densityFunction.add(oneConditionTrackSpeedDensityFunction);
-                });
+                -> filteringController.estimateDensityFunction(retainedSpeeds, kernelDensityEstimatorBeanName)).forEach((oneConditionTrackSpeedDensityFunction) -> {
+            densityFunction.add(oneConditionTrackSpeedDensityFunction);
+        });
 
         return densityFunction;
     }
@@ -277,24 +279,37 @@ public class SingleCutOffFilteringController {
      * pass it to the parent controller.
      */
     private void filter() {
+        List<Integer> originalNumberTracks = new ArrayList<>();
         Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap = new LinkedHashMap<>();
         filteringController.getPreProcessingMap().keySet().stream().forEach((plateCondition) -> {
             List<TrackDataHolder> retainedTrackDataHolders = new ArrayList<>();
             SingleCellConditionDataHolder conditionDataHolder = filteringController.getPreProcessingMap().get(plateCondition);
-            conditionDataHolder.getTrackDataHolders().stream().filter((trackDataHolder)
-                    -> (trackDataHolder.getCellCentricDataHolder().getMedianDisplacement() >= cutOff)).forEach((trackDataHolder) -> {
-                        retainedTrackDataHolders.add(trackDataHolder);
-                    });
-            filteringMap.put(conditionDataHolder, retainedTrackDataHolders);
+            List<Integer> retainedIndices = new ArrayList<>();
+            // go through all track data holders in the condition data holder with i
+            // if the track is retained, save dataholder and i in lists
+            for (int i = 0; i < conditionDataHolder.getTrackDataHolders().size(); i++) {
+                TrackDataHolder trackDataHolder = conditionDataHolder.getTrackDataHolders().get(i);
+                if (trackDataHolder.getCellCentricDataHolder().getMedianDisplacement() >= cutOff) {
+                    retainedTrackDataHolders.add(trackDataHolder);
+                    retainedIndices.add(i);
+                    }
+            }
+            SingleCellConditionDataHolder filteredCondDataHolder = filteringController.transferFilteredData(conditionDataHolder, retainedIndices);
+            
+            // copy retained track data holders to new conditiondataholder
+            filteredCondDataHolder.setTrackDataHolders(retainedTrackDataHolders);
+            filteringMap.put(filteredCondDataHolder, retainedTrackDataHolders);
+            originalNumberTracks.add(conditionDataHolder.getTrackDataHolders().size());
         });
         filteringController.setFilteringMap(filteringMap);
+        filteringController.setOriginalNumberTracks(originalNumberTracks);
     }
 
     /**
      * Update the summary table.
      */
     private void updateSummaryTable() {
-        singleCutOffPanel.getSummaryTable().setModel(new SingleFilteringSummaryTableModel(filteringController.getFilteringMap()));
+        singleCutOffPanel.getSummaryTable().setModel(new SingleFilteringSummaryTableModel(filteringController.getFilteringMap(), filteringController.getOriginalNumberTracks()));
     }
 
     /**

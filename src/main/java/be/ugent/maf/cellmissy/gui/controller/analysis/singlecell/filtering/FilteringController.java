@@ -6,6 +6,7 @@
 package be.ugent.maf.cellmissy.gui.controller.analysis.singlecell.filtering;
 
 import be.ugent.maf.cellmissy.entity.PlateCondition;
+import be.ugent.maf.cellmissy.entity.result.singlecell.ConvexHull;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellWellDataHolder;
 import be.ugent.maf.cellmissy.entity.result.singlecell.TrackDataHolder;
@@ -44,6 +45,7 @@ public class FilteringController {
     private static final org.apache.log4j.Logger LOG = org.apache.log4j.Logger.getLogger(FilteringController.class);
     // model
     private Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
+    private List<Integer> originalNumberTracks;
     // view
     private FilteringPanel filteringPanel;
     private FilteringInfoDialog filteringInfoDialog;
@@ -71,7 +73,7 @@ public class FilteringController {
         multipleCutOffFilteringController.init();
         singleCutOffFilteringController.init();
     }
-    
+
     /**
      * Reset everything when cancelling analysis. Called by parent controller.
      */
@@ -147,6 +149,14 @@ public class FilteringController {
         return singleCellPreProcessingController.getPreProcessingMap();
     }
 
+    public List<Integer> getOriginalNumberTracks() {
+        return originalNumberTracks;
+    }
+
+    public void setOriginalNumberTracks(List<Integer> originalNumberTracks) {
+        this.originalNumberTracks = originalNumberTracks;
+    }
+    
     /**
      * Get the mean displacement for a condition.
      *
@@ -168,7 +178,7 @@ public class FilteringController {
         SingleCellConditionDataHolder conditionDataHolder = singleCellPreProcessingController.getConditionDataHolder(plateCondition);
         multipleCutOffFilteringController.getMultipleCutOffPanel().getPercentileDisplTextField().
                 setText("" + AnalysisUtils.roundThreeDecimals(AnalysisUtils.computeQuantile(
-                                        ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditionDataHolder.getTrackDisplacementsVector())), 5)));
+                        ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditionDataHolder.getTrackDisplacementsVector())), 5)));
     }
 
     public void setMedianDisplForExperiment() {
@@ -200,8 +210,8 @@ public class FilteringController {
         singleCellConditionDataHolder.getSingleCellWellDataHolders().stream().map((singleCellWellDataHolder)
                 -> estimateDensityFunction(singleCellWellDataHolder.getTrackDisplacementsVector(),
                         kernelDensityEstimatorBeanName)).forEach((oneReplicateTrackDisplDensityFunction) -> {
-                    densityFunction.add(oneReplicateTrackDisplDensityFunction);
-                });
+            densityFunction.add(oneReplicateTrackDisplDensityFunction);
+        });
 
         return densityFunction;
     }
@@ -217,9 +227,9 @@ public class FilteringController {
         List<List<double[]>> densityFunction = new ArrayList<>();
         getPreProcessingMap().values().stream().map((conditionDataHolder)
                 -> conditionDataHolder.getInstantaneousDisplacementsVector()).map((instantaneousDisplacementsVector)
-                        -> estimateDensityFunction(instantaneousDisplacementsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
-                    densityFunction.add(oneConditionDensityFunction);
-                });
+                -> estimateDensityFunction(instantaneousDisplacementsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+            densityFunction.add(oneConditionDensityFunction);
+        });
         return densityFunction;
     }
 
@@ -228,9 +238,9 @@ public class FilteringController {
         List<List<double[]>> densityFunction = new ArrayList<>();
         getPreProcessingMap().values().stream().map((conditionDataHolder)
                 -> conditionDataHolder.getTrackSpeedsVector()).map((trackSpeedsVector)
-                        -> estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
-                    densityFunction.add(oneConditionDensityFunction);
-                });
+                -> estimateDensityFunction(trackSpeedsVector, kernelDensityEstimatorBeanName)).forEach((oneConditionDensityFunction) -> {
+            densityFunction.add(oneConditionDensityFunction);
+        });
         return densityFunction;
     }
 
@@ -244,23 +254,23 @@ public class FilteringController {
      */
     public XYSeriesCollection generateDensityFunction(SingleCellConditionDataHolder singleCellConditionDataHolder, List<List<double[]>> densityFunctions) {
         XYSeriesCollection collection = new XYSeriesCollection();
-        
-         List<SingleCellWellDataHolder> singleCellWellDataHolders = singleCellConditionDataHolder.getSingleCellWellDataHolders();
-        
-        for(int j =0; j < singleCellWellDataHolders.size(); j++){
+
+        List<SingleCellWellDataHolder> singleCellWellDataHolders = singleCellConditionDataHolder.getSingleCellWellDataHolders();
+
+        for (int j = 0; j < singleCellWellDataHolders.size(); j++) {
             // x values
-                double[] xValues = densityFunctions.get(j).get(0);
-                // y values
-                double[] yValues = densityFunctions.get(j).get(1);
-                 XYSeries series = new XYSeries("" + singleCellWellDataHolders.get(j).getWell(), false);
-                for (int z = 0; z < xValues.length; z++) {
-                    double x = xValues[z];
-                    double y = yValues[z];
-                    series.add(x, y);
-                }
-                collection.addSeries(series);
+            double[] xValues = densityFunctions.get(j).get(0);
+            // y values
+            double[] yValues = densityFunctions.get(j).get(1);
+            XYSeries series = new XYSeries("" + singleCellWellDataHolders.get(j).getWell(), false);
+            for (int z = 0; z < xValues.length; z++) {
+                double x = xValues[z];
+                double y = yValues[z];
+                series.add(x, y);
+            }
+            collection.addSeries(series);
         }
-        
+
 //        int counter = 0;
 //        for (SingleCellWellDataHolder singleCellWellDataHolder : singleCellConditionDataHolder.getSingleCellWellDataHolders()) {
 //            int numberOfSamplesPerWell = AnalysisUtils.getNumberOfSingleCellAnalyzedSamplesPerWell(singleCellWellDataHolder.getWell());
@@ -419,6 +429,73 @@ public class FilteringController {
             medianValues[i] = getMedianDisplAcrossReplicates(singleCellPreProcessingController.getPlateConditionList().get(i));
         }
         return AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(medianValues)));
+    }
+
+    /**
+     * Transfer track and parameter data from original to new data holder. This
+     * method is called after determining which tracks are retained after
+     * filtering. Only the data from the retained tracks is transferred to the
+     * return value.
+     *
+     * @param conditionDataHolder The original data holder with all tracks data.
+     * @param retainedIndices List of indices of tracks that were retained after
+     * filtering.
+     * @return Data holder with tracks data of only retained tracks.
+     */
+    protected SingleCellConditionDataHolder transferFilteredData(SingleCellConditionDataHolder conditionDataHolder, List<Integer> retainedIndices) {
+        SingleCellConditionDataHolder filteredCondDataHolder = new SingleCellConditionDataHolder(conditionDataHolder.getPlateCondition());
+        //setup 14 new arrays for features of retained tracks, length of retainedIndices
+        int newSize = retainedIndices.size();
+        Double[] instantaneousDisplacementsVector = new Double[newSize];
+        Double[] directionalityRatiosVector = new Double[newSize];
+        Double[] medianDirectionalityRatiosVector = new Double[newSize];
+        Double[] trackDisplacementsVector = new Double[newSize];
+        Double[] trackSpeedsVector = new Double[newSize];
+        Double[] cumulativeDistancesVector = new Double[newSize];
+        Double[] euclideanDistancesVector = new Double[newSize];
+        Double[] endPointDirectionalityRatios = new Double[newSize];
+        Double[] displacementRatiosVector = new Double[newSize];
+        Double[] outreachRatiosVector = new Double[newSize];
+        Double[] turningAnglesVector = new Double[newSize];
+        Double[] medianTurningAnglesVector = new Double[newSize];
+        Double[] medianDirectionAutocorrelationsVector = new Double[newSize];
+        ConvexHull[] convexHullsVector = new ConvexHull[newSize];
+        for (int j = 0; j < retainedIndices.size(); j++) {
+            int dhIndex = retainedIndices.get(j);
+            // get index i from feature arrays in old cdh and set new one index j
+            instantaneousDisplacementsVector[j] = conditionDataHolder.getInstantaneousDisplacementsVector()[dhIndex];
+            directionalityRatiosVector[j] = conditionDataHolder.getDirectionalityRatiosVector()[dhIndex];
+            medianDirectionalityRatiosVector[j] = conditionDataHolder.getMedianDirectionalityRatiosVector()[dhIndex];
+            trackDisplacementsVector[j] = conditionDataHolder.getTrackDisplacementsVector()[dhIndex];
+            trackSpeedsVector[j] = conditionDataHolder.getTrackSpeedsVector()[dhIndex];
+            cumulativeDistancesVector[j] = conditionDataHolder.getCumulativeDistancesVector()[dhIndex];
+            euclideanDistancesVector[j] = conditionDataHolder.getEuclideanDistancesVector()[dhIndex];
+            endPointDirectionalityRatios[j] = conditionDataHolder.getEndPointDirectionalityRatios()[dhIndex];
+//            displacementRatiosVector[j] = conditionDataHolder.getDisplacementRatiosVector()[dhIndex];   // currently null, not used
+//            outreachRatiosVector[j] = conditionDataHolder.getOutreachRatiosVector()[dhIndex];           // currently null, not used
+            turningAnglesVector[j] = conditionDataHolder.getTurningAnglesVector()[dhIndex];
+            medianTurningAnglesVector[j] = conditionDataHolder.getMedianTurningAnglesVector()[dhIndex];
+//            medianDirectionAutocorrelationsVector[j] = conditionDataHolder.getMedianDirectionAutocorrelationsVector()[dhIndex]; // currently null, not used
+//            convexHullsVector[j] = conditionDataHolder.getConvexHullsVector()[dhIndex];                 // currently null, not used
+        }
+        //set feature arrays
+        filteredCondDataHolder.setInstantaneousDisplacementsVector(instantaneousDisplacementsVector);
+        filteredCondDataHolder.setDirectionalityRatiosVector(directionalityRatiosVector);
+        filteredCondDataHolder.setMedianDirectionalityRatiosVector(medianDirectionalityRatiosVector);
+        filteredCondDataHolder.setTrackDisplacementsVector(trackDisplacementsVector);
+        filteredCondDataHolder.setTrackSpeedsVector(trackSpeedsVector);
+        filteredCondDataHolder.setCumulativeDistancesVector(cumulativeDistancesVector);
+        filteredCondDataHolder.setEuclideanDistancesVector(euclideanDistancesVector);
+        filteredCondDataHolder.setEndPointDirectionalityRatios(endPointDirectionalityRatios);
+//        filteredCondDataHolder.setDisplacementRatiosVector(displacementRatiosVector);
+//        filteredCondDataHolder.setOutreachRatiosVector(outreachRatiosVector);
+        filteredCondDataHolder.setTurningAnglesVector(turningAnglesVector);
+        filteredCondDataHolder.setMedianTurningAnglesVector(medianTurningAnglesVector);
+//        filteredCondDataHolder.setMedianDirectionAutocorrelationsVector(medianDirectionAutocorrelationsVector);
+//        filteredCondDataHolder.setConvexHullsVector(convexHullsVector);
+        //calculate new median speed
+        filteredCondDataHolder.setMedianSpeed(AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(trackSpeedsVector))));
+        return filteredCondDataHolder;
     }
 
 }
