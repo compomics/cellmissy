@@ -19,6 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class SingleFilteringSummaryTableModel extends AbstractTableModel {
 
     private final Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
+    private List<Integer> originalNumberTracks;
     private String columnNames[];
     private Object[][] data;
 
@@ -27,8 +28,9 @@ public class SingleFilteringSummaryTableModel extends AbstractTableModel {
      *
      * @param filteringMap
      */
-    public SingleFilteringSummaryTableModel(Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap) {
+    public SingleFilteringSummaryTableModel(Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap, List<Integer> originalNumberTracks) {
         this.filteringMap = filteringMap;
+        this.originalNumberTracks = originalNumberTracks;
         initTable();
     }
 
@@ -66,9 +68,9 @@ public class SingleFilteringSummaryTableModel extends AbstractTableModel {
         for (int i = 0; i < conditionDataHolders.size(); i++) {
             SingleCellConditionDataHolder conditionDataHolder = conditionDataHolders.get(i);
             data[i][0] = conditionDataHolder.getPlateCondition();
-            data[i][1] = conditionDataHolder.getTrackDataHolders().size();
+            data[i][1] = originalNumberTracks.get(i);
             data[i][2] = filteringMap.get(conditionDataHolder).size();
-            data[i][3] = filteringMap.get(conditionDataHolder).size() * 100 / conditionDataHolder.getTrackDataHolders().size();
+            data[i][3] = filteringMap.get(conditionDataHolder).size() * 100 / originalNumberTracks.get(i);
         }
     }
 }

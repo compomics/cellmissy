@@ -84,7 +84,7 @@ public class SummaryMultipleCutOffController {
         multipleCutOffFilteringController.getMultipleCutOffPanel().getPercentageTextField().
                 setText(multipleCutOffFilteringController.getPercentageMotile() + " %");
         multipleCutOffFilteringController.getMultipleCutOffPanel().getSummaryTable().setModel(new FilteringSummaryTableModel(multipleCutOffFilteringController.getFilteringMap(),
-                multipleCutOffFilteringController.getCutOffMap()));
+                multipleCutOffFilteringController.getCutOffMap(), multipleCutOffFilteringController.getOriginalNumberTracks()));
     }
 
     // initialize the main view
