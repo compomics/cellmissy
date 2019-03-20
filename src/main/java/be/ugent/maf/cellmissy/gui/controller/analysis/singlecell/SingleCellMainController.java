@@ -16,7 +16,6 @@ import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.controller.CellMissyController;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.AnalysisExperimentPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.DataAnalysisPanel;
-import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.MetadataSingleCellPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
@@ -579,7 +578,7 @@ public class SingleCellMainController {
                 //analysisPlatePanel.setCurrentCondition(null);
                 analysisPlatePanel.repaint();
                 analysisPlatePanel.revalidate();
-                dataAnalysisPanel.getConditionsList().setEnabled(false);
+                //dataAnalysisPanel.getConditionsList().setEnabled(false);
                 // see if some conditions still need to be processed
                 if (!proceedToAnalysis()) { // I am pretty sure this is no longer needed !!!
                     singleCellPreProcessingController.enableAnalysis();
@@ -603,7 +602,7 @@ public class SingleCellMainController {
 
                 } else if (singleCellAnalysisController.getAnalysisPanel().getNormalityTestsRadioButton().isSelected()) {
                    
-                    dataAnalysisPanel.getConditionsList().setEnabled(true); //terug condities kunnen selecteren om per conditie te kunnen zien of het normaal verdeeld is
+                    dataAnalysisPanel.getConditionsList().setEnabled(true); //conditions need to be selected again
                     String index = Integer.toString(singleCellAnalysisController.getSingleCellNormalityTestController().getNormalityTestParentPanel().getSelectedIndex());
                     singleCellAnalysisController.getSingleCellNormalityTestController().plotQQPlots(index);
                     singleCellAnalysisController.getSingleCellNormalityTestController().ComputeStatisticalTests(index);

@@ -229,7 +229,6 @@ public class SingleCellAnalysisController {
             // get the layout from the bottom panel and show the appropriate one
             CardLayout layout = (CardLayout) analysisPanel.getBottomPanel().getLayout();
             layout.show(analysisPanel.getBottomPanel(), analysisPanel.getNormalityTestParentPanel().getName());
-            //hier moet wss nog iets komen
             String parameter = Integer.toString(analysisPanel.getNormalityTestParentPanel().getSelectedIndex());  
         });        
 
@@ -556,6 +555,7 @@ public class SingleCellAnalysisController {
                 list.add(conditionDataHolder.getTrackDataHolders());
             });
             trackDataHolderList = list;
+            setFilteredData(false);
         } else {
             List<List<TrackDataHolder>> list = new ArrayList<>();
             singleCellMainController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {

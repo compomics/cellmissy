@@ -8,11 +8,10 @@ package be.ugent.maf.cellmissy.entity.result.singlecell;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
+ * Render datasets to be able to compute the QQPlots in de normalitytestcontroller
  *
  * @author ninad
  */

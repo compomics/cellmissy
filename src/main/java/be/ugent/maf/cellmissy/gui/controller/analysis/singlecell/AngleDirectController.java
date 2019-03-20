@@ -233,7 +233,7 @@ public class AngleDirectController {
          */
         angleDirectPanel.getSaveChartToPdfButton().addActionListener((ActionEvent e) -> {
 
-            ChartPanel chartPanel = rosePlotChartPanels.get(2);
+            ChartPanel chartPanel = rosePlotChartPanels.get(0);
             JFreeChart chart = chartPanel.getChart();
             if (chart != null) {
                 try {

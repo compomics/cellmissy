@@ -9,7 +9,6 @@ import be.ugent.maf.cellmissy.analysis.StatisticsCalculator;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TTest;
-import static org.apache.commons.math3.stat.inference.TestUtils.tTest;
 
 /**
  *

@@ -307,38 +307,6 @@ public class AnalysisPanel extends javax.swing.JPanel {
         return normalityTestParentPanel;
     }
 
-    public JTextField getShapiroOutcomeTextField() {
-        return shapiroOutcomeADTextField;
-    }
-
-    public JTextField getShapiroOutcomeTextField1() {
-        return shapiroOutcomeTextField1;
-    }
-
-    public JTextField getShapiroOutcomeTextField2() {
-        return shapiroOutcomeTextField2;
-    }
-
-    public JTextField getShapiroOutcomeTextField3() {
-        return shapiroOutcomeTextField3;
-    }
-
-    public JTextField getShapiroPTextField() {
-        return shapiroPADTextField;
-    }
-
-    public JTextField getShapiroPTextField1() {
-        return shapiroPTextField1;
-    }
-
-    public JTextField getShapiroPTextField2() {
-        return shapiroPTextField2;
-    }
-
-    public JTextField getShapiroPTextField3() {
-        return shapiroPTextField3;
-    }
-
     public JTextField getSkewnessOutcomeTextField() {
         return skewnessOutcomeADTextField;
     }
@@ -391,9 +359,6 @@ public class AnalysisPanel extends javax.swing.JPanel {
         return andersonPADTextField;
     }
 
-    public JTextField getShapiroPADTextField() {
-        return shapiroPADTextField;
-    }
 
     public JTextField getAndersonOutcomeADTextField() {
         return andersonOutcomeADTextField;
@@ -403,9 +368,6 @@ public class AnalysisPanel extends javax.swing.JPanel {
         return kurtosisOutcomeADTextField;
     }
 
-    public JTextField getShapiroOutcomeADTextField() {
-        return shapiroOutcomeADTextField;
-    }
 
     public JTextField getSkewnessOutcomeADTextField() {
         return skewnessOutcomeADTextField;
@@ -475,23 +437,18 @@ public class AnalysisPanel extends javax.swing.JPanel {
         accumulatedTestPanel = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         accumulatedConditionTextField = new javax.swing.JTextField();
-        shapiroWilkLabel = new javax.swing.JLabel();
         andersonDarlingLabel = new javax.swing.JLabel();
         skewnessLabel = new javax.swing.JLabel();
         kurtosisLabel = new javax.swing.JLabel();
-        shapiroPLabel = new javax.swing.JLabel();
         AndersonPLabel = new javax.swing.JLabel();
         skewnessValueLabel = new javax.swing.JLabel();
         KurtosisValueLabel = new javax.swing.JLabel();
-        shapiroPADTextField = new javax.swing.JTextField();
         andersonPADTextField = new javax.swing.JTextField();
         skewnessValueADTextField = new javax.swing.JTextField();
         kurtosisValueADTextField = new javax.swing.JTextField();
         kurtosisOutcomeLabel = new javax.swing.JLabel();
-        shapiroOutcomeLabel = new javax.swing.JLabel();
         andersonOutcomeLabel = new javax.swing.JLabel();
         skewnessOutcomeLabel = new javax.swing.JLabel();
-        shapiroOutcomeADTextField = new javax.swing.JTextField();
         andersonOutcomeADTextField = new javax.swing.JTextField();
         skewnessOutcomeADTextField = new javax.swing.JTextField();
         kurtosisOutcomeADTextField = new javax.swing.JTextField();
@@ -500,23 +457,18 @@ public class AnalysisPanel extends javax.swing.JPanel {
         euclidianTestPanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         euclidianConditionTextField = new javax.swing.JTextField();
-        shapiroWilkLabel1 = new javax.swing.JLabel();
         andersonDarlingLabel1 = new javax.swing.JLabel();
         skewnessLabel1 = new javax.swing.JLabel();
         kurtosisLabel1 = new javax.swing.JLabel();
-        shapiroPLabel1 = new javax.swing.JLabel();
         AndersonPLabel1 = new javax.swing.JLabel();
         skewnessValueLabel1 = new javax.swing.JLabel();
         KurtosisValueLabel1 = new javax.swing.JLabel();
-        shapiroPTextField1 = new javax.swing.JTextField();
         andersonPTextField1 = new javax.swing.JTextField();
         skewnessPTextField1 = new javax.swing.JTextField();
         kurtosisPTextField1 = new javax.swing.JTextField();
         kurtosisOutcomeLabel1 = new javax.swing.JLabel();
-        shapiroOutcomeLabel1 = new javax.swing.JLabel();
         andersonOutcomeLabel1 = new javax.swing.JLabel();
         skewnessOutcomeLabel1 = new javax.swing.JLabel();
-        shapiroOutcomeTextField1 = new javax.swing.JTextField();
         andersonOutcomeTextField1 = new javax.swing.JTextField();
         skewnessOutcomeTextField1 = new javax.swing.JTextField();
         kurtosisOutcomeTextField1 = new javax.swing.JTextField();
@@ -525,23 +477,18 @@ public class AnalysisPanel extends javax.swing.JPanel {
         directionalityTestPanel = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         directionalityConditionTextField = new javax.swing.JTextField();
-        shapiroWilkLabel3 = new javax.swing.JLabel();
         andersonDarlingLabel3 = new javax.swing.JLabel();
         skewnessLabel3 = new javax.swing.JLabel();
         kurtosisLabel3 = new javax.swing.JLabel();
-        shapiroPLabel3 = new javax.swing.JLabel();
         AndersonPLabel3 = new javax.swing.JLabel();
         skewnessValueLabel3 = new javax.swing.JLabel();
         KurtosisValueLabel3 = new javax.swing.JLabel();
-        shapiroPTextField3 = new javax.swing.JTextField();
         andersonPTextField3 = new javax.swing.JTextField();
         skewnessPTextField3 = new javax.swing.JTextField();
         kurtosisPTextField3 = new javax.swing.JTextField();
         kurtosisOutcomeLabel3 = new javax.swing.JLabel();
-        shapiroOutcomeLabel3 = new javax.swing.JLabel();
         andersonOutcomeLabel3 = new javax.swing.JLabel();
         skewnessOutcomeLabel3 = new javax.swing.JLabel();
-        shapiroOutcomeTextField3 = new javax.swing.JTextField();
         andersonOutcomeTextField3 = new javax.swing.JTextField();
         skewnessOutcomeTextField3 = new javax.swing.JTextField();
         kurtosisOutcomeTextField3 = new javax.swing.JTextField();
@@ -550,23 +497,18 @@ public class AnalysisPanel extends javax.swing.JPanel {
         speedTestPanel = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         speedConditionTextField = new javax.swing.JTextField();
-        shapiroWilkLabel2 = new javax.swing.JLabel();
         andersonDarlingLabel2 = new javax.swing.JLabel();
         skewnessLabel2 = new javax.swing.JLabel();
         kurtosisLabel2 = new javax.swing.JLabel();
-        shapiroPLabel2 = new javax.swing.JLabel();
         AndersonPLabel2 = new javax.swing.JLabel();
         skewnessValueLabel2 = new javax.swing.JLabel();
         KurtosisValueLabel2 = new javax.swing.JLabel();
-        shapiroPTextField2 = new javax.swing.JTextField();
         andersonPTextField2 = new javax.swing.JTextField();
         skewnessPTextField2 = new javax.swing.JTextField();
         kurtosisPTextField2 = new javax.swing.JTextField();
         kurtosisOutcomeLabel2 = new javax.swing.JLabel();
-        shapiroOutcomeLabel2 = new javax.swing.JLabel();
         andersonOutcomeLabel2 = new javax.swing.JLabel();
         skewnessOutcomeLabel2 = new javax.swing.JLabel();
-        shapiroOutcomeTextField2 = new javax.swing.JTextField();
         andersonOutcomeTextField2 = new javax.swing.JTextField();
         skewnessOutcomeTextField2 = new javax.swing.JTextField();
         kurtosisOutcomeTextField2 = new javax.swing.JTextField();
@@ -602,7 +544,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addComponent(statisticsRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(normalityTestsRadioButton)
-                .addContainerGap(628, Short.MAX_VALUE))
+                .addContainerGap(1217, Short.MAX_VALUE))
         );
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -613,7 +555,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
                     .addComponent(cellSpeedRadioButton)
                     .addComponent(statisticsRadioButton)
                     .addComponent(normalityTestsRadioButton))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(90, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -683,7 +625,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
             dataPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(dataPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1164, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1753, Short.MAX_VALUE)
                 .addContainerGap())
         );
         dataPanelLayout.setVerticalGroup(
@@ -691,7 +633,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
             .addGroup(dataPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(325, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -910,7 +852,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(performStatButton)
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(479, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -975,8 +917,8 @@ public class AnalysisPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statisticsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 1589, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 1589, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(statisticsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(currentGroupName, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -995,7 +937,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 124, Short.MAX_VALUE))
+                .addGap(0, 619, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1026,28 +968,17 @@ public class AnalysisPanel extends javax.swing.JPanel {
             }
         });
 
-        shapiroWilkLabel.setText("Shapiro Wilk:");
-
         andersonDarlingLabel.setText("Anderson Darling:");
 
         skewnessLabel.setText("Skewness:");
 
         kurtosisLabel.setText("Kurtosis:");
 
-        shapiroPLabel.setText("p-value:");
-
         AndersonPLabel.setText("p-value:");
 
         skewnessValueLabel.setText("value:");
 
         KurtosisValueLabel.setText("value:");
-
-        shapiroPADTextField.setEditable(false);
-        shapiroPADTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                shapiroPADTextFieldActionPerformed(evt);
-            }
-        });
 
         andersonPADTextField.setEditable(false);
         andersonPADTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -1057,18 +988,19 @@ public class AnalysisPanel extends javax.swing.JPanel {
         });
 
         skewnessValueADTextField.setEditable(false);
+        skewnessValueADTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                skewnessValueADTextFieldActionPerformed(evt);
+            }
+        });
 
         kurtosisValueADTextField.setEditable(false);
 
         kurtosisOutcomeLabel.setText("outcome:");
 
-        shapiroOutcomeLabel.setText("outcome:");
-
         andersonOutcomeLabel.setText("outcome:");
 
         skewnessOutcomeLabel.setText("outcome:");
-
-        shapiroOutcomeADTextField.setEditable(false);
 
         andersonOutcomeADTextField.setEditable(false);
         andersonOutcomeADTextField.addActionListener(new java.awt.event.ActionListener() {
@@ -1089,103 +1021,105 @@ public class AnalysisPanel extends javax.swing.JPanel {
         accumulatedTestPanelLayout.setHorizontalGroup(
             accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(24, 24, 24)
                 .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
-                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
-                                .addComponent(shapiroWilkLabel)
-                                .addGap(43, 43, 43)
-                                .addComponent(shapiroPLabel))
-                            .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
-                                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(andersonDarlingLabel)
-                                    .addComponent(skewnessLabel)
-                                    .addComponent(kurtosisLabel))
-                                .addGap(18, 18, 18)
-                                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(KurtosisValueLabel)
-                                    .addComponent(skewnessValueLabel)
-                                    .addComponent(AndersonPLabel))))
-                        .addGap(26, 26, 26)
-                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(skewnessValueADTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
-                            .addComponent(andersonPADTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(shapiroPADTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(kurtosisValueADTextField))
-                        .addGap(53, 53, 53)
-                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(andersonOutcomeLabel)
-                            .addComponent(shapiroOutcomeLabel)
-                            .addComponent(skewnessOutcomeLabel)
-                            .addComponent(kurtosisOutcomeLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(skewnessOutcomeADTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                            .addComponent(andersonOutcomeADTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(shapiroOutcomeADTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(kurtosisOutcomeADTextField))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(accumulatedQQPlotPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(accumulatedQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1208, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
-                        .addComponent(accumulatedConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 515, Short.MAX_VALUE))))
+                        .addComponent(accumulatedConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(kurtosisLabel)
+                            .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(andersonDarlingLabel)
+                                    .addComponent(skewnessLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                                        .addComponent(AndersonPLabel)
+                                        .addGap(26, 26, 26)
+                                        .addComponent(andersonPADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(KurtosisValueLabel)
+                                            .addComponent(skewnessValueLabel))
+                                        .addGap(38, 38, 38)
+                                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(skewnessValueADTextField)
+                                            .addComponent(kurtosisValueADTextField))))))
+                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                                .addGap(53, 53, 53)
+                                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                                        .addComponent(skewnessOutcomeLabel)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(skewnessOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                                        .addComponent(andersonOutcomeLabel)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(andersonOutcomeADTextField))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, accumulatedTestPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(kurtosisOutcomeLabel)
+                                .addGap(18, 18, 18)
+                                .addComponent(kurtosisOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap())
         );
         accumulatedTestPanelLayout.setVerticalGroup(
             accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(accumulatedConditionTextField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(shapiroWilkLabel)
-                    .addComponent(shapiroPLabel)
-                    .addComponent(shapiroPADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(shapiroOutcomeLabel)
-                    .addComponent(shapiroOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(andersonDarlingLabel)
-                    .addComponent(AndersonPLabel)
-                    .addComponent(andersonPADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(andersonOutcomeLabel)
-                    .addComponent(andersonOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(skewnessLabel)
-                    .addComponent(skewnessValueLabel)
-                    .addComponent(skewnessValueADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(skewnessOutcomeLabel)
-                    .addComponent(skewnessOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(kurtosisLabel)
-                    .addComponent(KurtosisValueLabel)
-                    .addComponent(kurtosisValueADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(kurtosisOutcomeLabel)
-                    .addComponent(kurtosisOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(accumulatedConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(24, 24, 24)
+                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(andersonPADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(AndersonPLabel)
+                        .addComponent(andersonDarlingLabel))
+                    .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(andersonOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(andersonOutcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(accumulatedQQPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
+                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(skewnessOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(skewnessOutcomeLabel))
+                    .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(skewnessValueADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(skewnessValueLabel)
+                        .addComponent(skewnessLabel)))
+                .addGap(18, 18, 18)
+                .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(kurtosisValueADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(KurtosisValueLabel)
+                        .addComponent(kurtosisLabel))
+                    .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(kurtosisOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(kurtosisOutcomeLabel)))
+                .addGap(31, 31, 31)
+                .addComponent(accumulatedQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 136;
-        gridBagConstraints.ipady = 446;
+        gridBagConstraints.ipadx = 504;
+        gridBagConstraints.ipady = 1041;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(13, 12, 0, 12);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 24);
         AccumulatedDistancePanel.add(accumulatedTestPanel, gridBagConstraints);
 
         normalityTestParentPanel.addTab("Accumulated Distance", AccumulatedDistancePanel);
 
         EuclidianDistancePanel.setName("euclidianDIstancePanel"); // NOI18N
-        EuclidianDistancePanel.setLayout(new java.awt.GridBagLayout());
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
         jLabel10.setText("Condition:");
@@ -1197,28 +1131,17 @@ public class AnalysisPanel extends javax.swing.JPanel {
             }
         });
 
-        shapiroWilkLabel1.setText("Shapiro Wilk:");
-
         andersonDarlingLabel1.setText("Anderson Darling:");
 
         skewnessLabel1.setText("Skewness:");
 
         kurtosisLabel1.setText("Kurtosis:");
 
-        shapiroPLabel1.setText("p-value:");
-
         AndersonPLabel1.setText("p-value:");
 
         skewnessValueLabel1.setText("value:");
 
         KurtosisValueLabel1.setText("value:");
-
-        shapiroPTextField1.setEditable(false);
-        shapiroPTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                shapiroPTextField1ActionPerformed(evt);
-            }
-        });
 
         andersonPTextField1.setEditable(false);
         andersonPTextField1.addActionListener(new java.awt.event.ActionListener() {
@@ -1228,18 +1151,19 @@ public class AnalysisPanel extends javax.swing.JPanel {
         });
 
         skewnessPTextField1.setEditable(false);
+        skewnessPTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                skewnessPTextField1ActionPerformed(evt);
+            }
+        });
 
         kurtosisPTextField1.setEditable(false);
 
         kurtosisOutcomeLabel1.setText("outcome:");
 
-        shapiroOutcomeLabel1.setText("outcome:");
-
         andersonOutcomeLabel1.setText("outcome:");
 
         skewnessOutcomeLabel1.setText("outcome:");
-
-        shapiroOutcomeTextField1.setEditable(false);
 
         andersonOutcomeTextField1.setEditable(false);
         andersonOutcomeTextField1.addActionListener(new java.awt.event.ActionListener() {
@@ -1260,100 +1184,88 @@ public class AnalysisPanel extends javax.swing.JPanel {
         euclidianTestPanelLayout.setHorizontalGroup(
             euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(euclidianTestPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(1, 1, 1)
                 .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(euclidianQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1208, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(euclidianTestPanelLayout.createSequentialGroup()
                         .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(euclidianTestPanelLayout.createSequentialGroup()
-                                .addComponent(shapiroWilkLabel1)
-                                .addGap(43, 43, 43)
-                                .addComponent(shapiroPLabel1))
-                            .addGroup(euclidianTestPanelLayout.createSequentialGroup()
-                                .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(andersonDarlingLabel1)
-                                    .addComponent(skewnessLabel1)
-                                    .addComponent(kurtosisLabel1))
-                                .addGap(18, 18, 18)
-                                .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(KurtosisValueLabel1)
-                                    .addComponent(skewnessValueLabel1)
-                                    .addComponent(AndersonPLabel1))))
+                            .addComponent(andersonDarlingLabel1)
+                            .addComponent(skewnessLabel1)
+                            .addComponent(kurtosisLabel1))
+                        .addGap(18, 18, 18)
+                        .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(KurtosisValueLabel1)
+                            .addComponent(skewnessValueLabel1)
+                            .addComponent(AndersonPLabel1))
                         .addGap(26, 26, 26)
-                        .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(andersonPTextField1)
-                            .addComponent(skewnessPTextField1)
+                        .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(skewnessPTextField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
                             .addComponent(kurtosisPTextField1)
-                            .addComponent(shapiroPTextField1))
-                        .addGap(57, 57, 57)
+                            .addComponent(andersonPTextField1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addGap(53, 53, 53)
                         .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(shapiroOutcomeLabel1)
-                            .addComponent(kurtosisOutcomeLabel1)
                             .addComponent(skewnessOutcomeLabel1)
-                            .addComponent(andersonOutcomeLabel1))
-                        .addGap(31, 31, 31)
-                        .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(andersonOutcomeLabel1)
+                            .addComponent(kurtosisOutcomeLabel1))
+                        .addGap(18, 18, 18)
+                        .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(skewnessOutcomeTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
                             .addComponent(andersonOutcomeTextField1)
-                            .addComponent(shapiroOutcomeTextField1)
-                            .addComponent(kurtosisOutcomeTextField1)
-                            .addComponent(skewnessOutcomeTextField1))
-                        .addGap(285, 285, 285))
+                            .addComponent(kurtosisOutcomeTextField1)))
                     .addGroup(euclidianTestPanelLayout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(18, 18, 18)
-                        .addComponent(euclidianConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-            .addGroup(euclidianTestPanelLayout.createSequentialGroup()
-                .addComponent(euclidianQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 895, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 199, Short.MAX_VALUE))
+                        .addComponent(euclidianConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(316, Short.MAX_VALUE))
         );
         euclidianTestPanelLayout.setVerticalGroup(
             euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(euclidianTestPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(euclidianConditionTextField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(shapiroWilkLabel1)
-                    .addComponent(shapiroPLabel1)
-                    .addComponent(shapiroPTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(shapiroOutcomeLabel1)
-                    .addComponent(shapiroOutcomeTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(24, 24, 24)
                 .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(andersonDarlingLabel1)
                     .addComponent(AndersonPLabel1)
                     .addComponent(andersonPTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(andersonOutcomeLabel1)
                     .addComponent(andersonOutcomeTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(skewnessLabel1)
                     .addComponent(skewnessValueLabel1)
                     .addComponent(skewnessPTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(skewnessOutcomeLabel1)
                     .addComponent(skewnessOutcomeTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(euclidianTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(kurtosisLabel1)
                     .addComponent(KurtosisValueLabel1)
                     .addComponent(kurtosisPTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(kurtosisOutcomeLabel1)
                     .addComponent(kurtosisOutcomeTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(euclidianQQPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(31, 31, 31)
+                .addComponent(euclidianQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(221, 221, 221))
         );
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 199;
-        gridBagConstraints.ipady = 286;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 173, 48);
-        EuclidianDistancePanel.add(euclidianTestPanel, gridBagConstraints);
+        javax.swing.GroupLayout EuclidianDistancePanelLayout = new javax.swing.GroupLayout(EuclidianDistancePanel);
+        EuclidianDistancePanel.setLayout(EuclidianDistancePanelLayout);
+        EuclidianDistancePanelLayout.setHorizontalGroup(
+            EuclidianDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(EuclidianDistancePanelLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(euclidianTestPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(224, Short.MAX_VALUE))
+        );
+        EuclidianDistancePanelLayout.setVerticalGroup(
+            EuclidianDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(EuclidianDistancePanelLayout.createSequentialGroup()
+                .addComponent(euclidianTestPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 758, Short.MAX_VALUE))
+        );
 
         normalityTestParentPanel.addTab("Euclidian Distance", EuclidianDistancePanel);
 
@@ -1370,28 +1282,17 @@ public class AnalysisPanel extends javax.swing.JPanel {
             }
         });
 
-        shapiroWilkLabel3.setText("Shapiro Wilk:");
-
         andersonDarlingLabel3.setText("Anderson Darling:");
 
         skewnessLabel3.setText("Skewness:");
 
         kurtosisLabel3.setText("Kurtosis:");
 
-        shapiroPLabel3.setText("p-value:");
-
         AndersonPLabel3.setText("p-value:");
 
         skewnessValueLabel3.setText("value:");
 
         KurtosisValueLabel3.setText("value:");
-
-        shapiroPTextField3.setEditable(false);
-        shapiroPTextField3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                shapiroPTextField3ActionPerformed(evt);
-            }
-        });
 
         andersonPTextField3.setEditable(false);
         andersonPTextField3.addActionListener(new java.awt.event.ActionListener() {
@@ -1406,13 +1307,9 @@ public class AnalysisPanel extends javax.swing.JPanel {
 
         kurtosisOutcomeLabel3.setText("outcome:");
 
-        shapiroOutcomeLabel3.setText("outcome:");
-
         andersonOutcomeLabel3.setText("outcome:");
 
         skewnessOutcomeLabel3.setText("outcome:");
-
-        shapiroOutcomeTextField3.setEditable(false);
 
         andersonOutcomeTextField3.setEditable(false);
         andersonOutcomeTextField3.addActionListener(new java.awt.event.ActionListener() {
@@ -1434,51 +1331,47 @@ public class AnalysisPanel extends javax.swing.JPanel {
         directionalityTestPanelLayout.setHorizontalGroup(
             directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(directionalityTestPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(24, 24, 24)
                 .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(directionalityTestPanelLayout.createSequentialGroup()
-                        .addComponent(directionalityQQPlotpanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(directionalityTestPanelLayout.createSequentialGroup()
-                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(directionalityTestPanelLayout.createSequentialGroup()
-                                .addComponent(shapiroWilkLabel3)
-                                .addGap(43, 43, 43)
-                                .addComponent(shapiroPLabel3))
-                            .addGroup(directionalityTestPanelLayout.createSequentialGroup()
-                                .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(andersonDarlingLabel3)
-                                    .addComponent(skewnessLabel3)
-                                    .addComponent(kurtosisLabel3))
-                                .addGap(18, 18, 18)
-                                .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(KurtosisValueLabel3)
-                                    .addComponent(skewnessValueLabel3)
-                                    .addComponent(AndersonPLabel3))))
-                        .addGap(26, 26, 26)
-                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(andersonPTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
-                            .addComponent(skewnessPTextField3)
-                            .addComponent(kurtosisPTextField3)
-                            .addComponent(shapiroPTextField3))
-                        .addGap(57, 57, 57)
-                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(shapiroOutcomeLabel3)
-                            .addComponent(kurtosisOutcomeLabel3)
-                            .addComponent(skewnessOutcomeLabel3)
-                            .addComponent(andersonOutcomeLabel3))
-                        .addGap(31, 31, 31)
-                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(andersonOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(skewnessOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(kurtosisOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(shapiroOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(285, 285, 285))
+                    .addComponent(directionalityQQPlotpanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1208, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(directionalityTestPanelLayout.createSequentialGroup()
                         .addComponent(jLabel12)
                         .addGap(18, 18, 18)
-                        .addComponent(directionalityConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(directionalityConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(directionalityTestPanelLayout.createSequentialGroup()
+                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(directionalityTestPanelLayout.createSequentialGroup()
+                                .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(skewnessLabel3)
+                                    .addComponent(kurtosisLabel3))
+                                .addGap(56, 56, 56))
+                            .addGroup(directionalityTestPanelLayout.createSequentialGroup()
+                                .addComponent(andersonDarlingLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(16, 16, 16)))
+                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(KurtosisValueLabel3)
+                            .addComponent(skewnessValueLabel3)
+                            .addComponent(AndersonPLabel3))
+                        .addGap(26, 26, 26)
+                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(andersonPTextField3, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                            .addComponent(skewnessPTextField3)
+                            .addComponent(kurtosisPTextField3))
+                        .addGap(53, 53, 53)
+                        .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(directionalityTestPanelLayout.createSequentialGroup()
+                                .addComponent(kurtosisOutcomeLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(kurtosisOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(directionalityTestPanelLayout.createSequentialGroup()
+                                .addComponent(andersonOutcomeLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(andersonOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(directionalityTestPanelLayout.createSequentialGroup()
+                                .addComponent(skewnessOutcomeLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(skewnessOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(463, Short.MAX_VALUE))
         );
         directionalityTestPanelLayout.setVerticalGroup(
             directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1487,37 +1380,30 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(directionalityConditionTextField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(shapiroWilkLabel3)
-                    .addComponent(shapiroPLabel3)
-                    .addComponent(shapiroPTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(shapiroOutcomeLabel3)
-                    .addComponent(shapiroOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(24, 24, 24)
                 .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(andersonDarlingLabel3)
                     .addComponent(AndersonPLabel3)
                     .addComponent(andersonPTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(andersonOutcomeLabel3)
                     .addComponent(andersonOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(skewnessLabel3)
                     .addComponent(skewnessValueLabel3)
                     .addComponent(skewnessPTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(skewnessOutcomeLabel3)
                     .addComponent(skewnessOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(directionalityTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(kurtosisLabel3)
                     .addComponent(KurtosisValueLabel3)
                     .addComponent(kurtosisPTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(kurtosisOutcomeLabel3)
-                    .addComponent(kurtosisOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(directionalityQQPlotpanel, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                .addContainerGap(282, Short.MAX_VALUE))
+                    .addComponent(kurtosisOutcomeTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(kurtosisLabel3))
+                .addGap(31, 31, 31)
+                .addComponent(directionalityQQPlotpanel, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(551, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1543,28 +1429,17 @@ public class AnalysisPanel extends javax.swing.JPanel {
             }
         });
 
-        shapiroWilkLabel2.setText("Shapiro Wilk:");
-
         andersonDarlingLabel2.setText("Anderson Darling:");
 
         skewnessLabel2.setText("Skewness:");
 
         kurtosisLabel2.setText("Kurtosis:");
 
-        shapiroPLabel2.setText("p-value:");
-
         AndersonPLabel2.setText("p-value:");
 
         skewnessValueLabel2.setText("value:");
 
         KurtosisValueLabel2.setText("value:");
-
-        shapiroPTextField2.setEditable(false);
-        shapiroPTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                shapiroPTextField2ActionPerformed(evt);
-            }
-        });
 
         andersonPTextField2.setEditable(false);
         andersonPTextField2.addActionListener(new java.awt.event.ActionListener() {
@@ -1579,13 +1454,9 @@ public class AnalysisPanel extends javax.swing.JPanel {
 
         kurtosisOutcomeLabel2.setText("outcome:");
 
-        shapiroOutcomeLabel2.setText("outcome:");
-
         andersonOutcomeLabel2.setText("outcome:");
 
         skewnessOutcomeLabel2.setText("outcome:");
-
-        shapiroOutcomeTextField2.setEditable(false);
 
         andersonOutcomeTextField2.setEditable(false);
         andersonOutcomeTextField2.addActionListener(new java.awt.event.ActionListener() {
@@ -1606,51 +1477,43 @@ public class AnalysisPanel extends javax.swing.JPanel {
         speedTestPanelLayout.setHorizontalGroup(
             speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(speedTestPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(24, 24, 24)
                 .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(speedTestPanelLayout.createSequentialGroup()
                         .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(speedTestPanelLayout.createSequentialGroup()
-                                .addComponent(shapiroWilkLabel2)
-                                .addGap(43, 43, 43)
-                                .addComponent(shapiroPLabel2))
-                            .addGroup(speedTestPanelLayout.createSequentialGroup()
-                                .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(andersonDarlingLabel2)
-                                    .addComponent(skewnessLabel2)
-                                    .addComponent(kurtosisLabel2))
-                                .addGap(18, 18, 18)
-                                .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(KurtosisValueLabel2)
-                                    .addComponent(skewnessValueLabel2)
-                                    .addComponent(AndersonPLabel2))))
+                            .addComponent(andersonDarlingLabel2)
+                            .addComponent(skewnessLabel2)
+                            .addComponent(kurtosisLabel2))
+                        .addGap(18, 18, 18)
+                        .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(AndersonPLabel2)
+                            .addComponent(skewnessValueLabel2)
+                            .addComponent(KurtosisValueLabel2))
                         .addGap(26, 26, 26)
+                        .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(kurtosisPTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                            .addComponent(andersonPTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                            .addComponent(skewnessPTextField2))
+                        .addGap(53, 53, 53)
                         .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(andersonPTextField2)
-                            .addComponent(skewnessPTextField2)
-                            .addComponent(kurtosisPTextField2)
-                            .addComponent(shapiroPTextField2))
-                        .addGap(57, 57, 57)
-                        .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(shapiroOutcomeLabel2)
-                            .addComponent(kurtosisOutcomeLabel2)
-                            .addComponent(skewnessOutcomeLabel2)
-                            .addComponent(andersonOutcomeLabel2))
-                        .addGap(31, 31, 31)
-                        .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(skewnessOutcomeTextField2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-                            .addComponent(andersonOutcomeTextField2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(shapiroOutcomeTextField2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(kurtosisOutcomeTextField2))
-                        .addContainerGap(598, Short.MAX_VALUE))
-                    .addGroup(speedTestPanelLayout.createSequentialGroup()
-                        .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(speedQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1142, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(speedTestPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel11)
+                                .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(skewnessOutcomeLabel2)
+                                    .addComponent(kurtosisOutcomeLabel2))
                                 .addGap(18, 18, 18)
-                                .addComponent(speedConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(29, Short.MAX_VALUE))))
+                                .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(kurtosisOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(skewnessOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(speedTestPanelLayout.createSequentialGroup()
+                                .addComponent(andersonOutcomeLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(andersonOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(speedQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(speedTestPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addGap(18, 18, 18)
+                        .addComponent(speedConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 459, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         speedTestPanelLayout.setVerticalGroup(
             speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1659,37 +1522,30 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(speedConditionTextField))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(shapiroWilkLabel2)
-                    .addComponent(shapiroPLabel2)
-                    .addComponent(shapiroPTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(shapiroOutcomeLabel2)
-                    .addComponent(shapiroOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(24, 24, 24)
                 .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(andersonDarlingLabel2)
                     .addComponent(AndersonPLabel2)
                     .addComponent(andersonPTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(andersonOutcomeLabel2)
-                    .addComponent(andersonOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(andersonOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(andersonOutcomeLabel2))
+                .addGap(18, 18, 18)
                 .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(skewnessLabel2)
                     .addComponent(skewnessValueLabel2)
                     .addComponent(skewnessPTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(skewnessOutcomeLabel2)
                     .addComponent(skewnessOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(speedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(kurtosisLabel2)
                     .addComponent(KurtosisValueLabel2)
                     .addComponent(kurtosisPTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(kurtosisOutcomeLabel2)
-                    .addComponent(kurtosisOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(speedQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 572, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                    .addComponent(kurtosisOutcomeTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(kurtosisOutcomeLabel2))
+                .addGap(31, 31, 31)
+                .addComponent(speedQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(90, 90, 90))
         );
 
         javax.swing.GroupLayout SpeedPanelLayout = new javax.swing.GroupLayout(SpeedPanel);
@@ -1697,14 +1553,14 @@ public class AnalysisPanel extends javax.swing.JPanel {
         SpeedPanelLayout.setHorizontalGroup(
             SpeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(SpeedPanelLayout.createSequentialGroup()
-                .addComponent(speedTestPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(speedTestPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1196, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 576, Short.MAX_VALUE))
         );
         SpeedPanelLayout.setVerticalGroup(
             SpeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(SpeedPanelLayout.createSequentialGroup()
                 .addComponent(speedTestPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 882, Short.MAX_VALUE))
         );
 
         normalityTestParentPanel.addTab("Speed", SpeedPanel);
@@ -1729,10 +1585,6 @@ public class AnalysisPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_accumulatedConditionTextFieldActionPerformed
 
-    private void shapiroPADTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shapiroPADTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_shapiroPADTextFieldActionPerformed
-
     private void andersonPADTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_andersonPADTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_andersonPADTextFieldActionPerformed
@@ -1741,29 +1593,9 @@ public class AnalysisPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_andersonOutcomeADTextFieldActionPerformed
 
-    private void euclidianConditionTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_euclidianConditionTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_euclidianConditionTextFieldActionPerformed
-
-    private void shapiroPTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shapiroPTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_shapiroPTextField1ActionPerformed
-
-    private void andersonPTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_andersonPTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_andersonPTextField1ActionPerformed
-
-    private void andersonOutcomeTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_andersonOutcomeTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_andersonOutcomeTextField1ActionPerformed
-
     private void speedConditionTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_speedConditionTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_speedConditionTextFieldActionPerformed
-
-    private void shapiroPTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shapiroPTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_shapiroPTextField2ActionPerformed
 
     private void andersonPTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_andersonPTextField2ActionPerformed
         // TODO add your handling code here:
@@ -1781,13 +1613,29 @@ public class AnalysisPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_andersonPTextField3ActionPerformed
 
-    private void shapiroPTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_shapiroPTextField3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_shapiroPTextField3ActionPerformed
-
     private void directionalityConditionTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_directionalityConditionTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_directionalityConditionTextFieldActionPerformed
+
+    private void skewnessValueADTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skewnessValueADTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_skewnessValueADTextFieldActionPerformed
+
+    private void andersonOutcomeTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_andersonOutcomeTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_andersonOutcomeTextField1ActionPerformed
+
+    private void andersonPTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_andersonPTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_andersonPTextField1ActionPerformed
+
+    private void euclidianConditionTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_euclidianConditionTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_euclidianConditionTextFieldActionPerformed
+
+    private void skewnessPTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skewnessPTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_skewnessPTextField1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1888,26 +1736,6 @@ public class AnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JButton removeGroupButton;
     private javax.swing.JPanel rosePlotParentPanel;
-    private javax.swing.JTextField shapiroOutcomeADTextField;
-    private javax.swing.JLabel shapiroOutcomeLabel;
-    private javax.swing.JLabel shapiroOutcomeLabel1;
-    private javax.swing.JLabel shapiroOutcomeLabel2;
-    private javax.swing.JLabel shapiroOutcomeLabel3;
-    private javax.swing.JTextField shapiroOutcomeTextField1;
-    private javax.swing.JTextField shapiroOutcomeTextField2;
-    private javax.swing.JTextField shapiroOutcomeTextField3;
-    private javax.swing.JTextField shapiroPADTextField;
-    private javax.swing.JLabel shapiroPLabel;
-    private javax.swing.JLabel shapiroPLabel1;
-    private javax.swing.JLabel shapiroPLabel2;
-    private javax.swing.JLabel shapiroPLabel3;
-    private javax.swing.JTextField shapiroPTextField1;
-    private javax.swing.JTextField shapiroPTextField2;
-    private javax.swing.JTextField shapiroPTextField3;
-    private javax.swing.JLabel shapiroWilkLabel;
-    private javax.swing.JLabel shapiroWilkLabel1;
-    private javax.swing.JLabel shapiroWilkLabel2;
-    private javax.swing.JLabel shapiroWilkLabel3;
     private javax.swing.JComboBox signLevelComboBox;
     private javax.swing.JLabel skewnessLabel;
     private javax.swing.JLabel skewnessLabel1;
