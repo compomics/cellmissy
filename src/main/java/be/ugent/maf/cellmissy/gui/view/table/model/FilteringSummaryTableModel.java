@@ -20,6 +20,7 @@ public class FilteringSummaryTableModel extends AbstractTableModel {
 
     private final Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
     private final Map<SingleCellConditionDataHolder, Double> cutOffMap;
+     private List<Integer> originalNumberTracks;
     private String columnNames[];
     private Object[][] data;
 
@@ -29,9 +30,10 @@ public class FilteringSummaryTableModel extends AbstractTableModel {
      * @param filteringMap
      * @param cutOffMap
      */
-    public FilteringSummaryTableModel(Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap, Map<SingleCellConditionDataHolder, Double> cutOffMap) {
+    public FilteringSummaryTableModel(Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap, Map<SingleCellConditionDataHolder, Double> cutOffMap, List<Integer> originalNumberTracks) {
         this.filteringMap = filteringMap;
         this.cutOffMap = cutOffMap;
+        this.originalNumberTracks = originalNumberTracks;
         initTable();
     }
 
@@ -71,9 +73,9 @@ public class FilteringSummaryTableModel extends AbstractTableModel {
             SingleCellConditionDataHolder conditionDataHolder = conditionDataHolders.get(i);
             data[i][0] = conditionDataHolder.getPlateCondition();
             data[i][1] = cutOffMap.get(conditionDataHolder);
-            data[i][2] = conditionDataHolder.getTrackDataHolders().size();
+            data[i][2] = originalNumberTracks.get(i);
             data[i][3] = filteringMap.get(conditionDataHolder).size();
-            data[i][4] = filteringMap.get(conditionDataHolder).size() * 100 / conditionDataHolder.getTrackDataHolders().size();
+            data[i][4] = filteringMap.get(conditionDataHolder).size() * 100 / originalNumberTracks.get(i);
         }
     }
 }

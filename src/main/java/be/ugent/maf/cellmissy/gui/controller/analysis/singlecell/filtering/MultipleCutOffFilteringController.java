@@ -52,7 +52,7 @@ public class MultipleCutOffFilteringController {
     private Map<SingleCellConditionDataHolder, Map<SingleCellWellDataHolder, Map<TrackDataHolder, boolean[]>>> motileStepsFilterMap;
     private Map<SingleCellConditionDataHolder, List<TrackDataHolder>> filteringMap;
     private Map<SingleCellConditionDataHolder, Double> cutOffMap;
-
+    private List<Integer> originalNumberTracks;
     // view 
     private MultipleCutOffPanel multipleCutOffPanel;
     private ChartPanel rawKdeChartPanel;
@@ -74,6 +74,7 @@ public class MultipleCutOffFilteringController {
         motileStepsFilterMap = new LinkedHashMap<>();
         filteringMap = new LinkedHashMap<>();
         cutOffMap = new LinkedHashMap<>();
+        originalNumberTracks = new ArrayList<>();
         // initialize the main view
         initMainView();
         // initialize the other views
@@ -150,6 +151,10 @@ public class MultipleCutOffFilteringController {
 
     public void setCutOffMap(Map<SingleCellConditionDataHolder, Double> cutOffMap) {
         this.cutOffMap = cutOffMap;
+    }
+    
+    public List<Integer> getOriginalNumberTracks(){
+        return filteringController.getOriginalNumberTracks();
     }
 
     /**
@@ -229,6 +234,8 @@ public class MultipleCutOffFilteringController {
                 }
                 FilterSwingWorker filterSwingWorker = new FilterSwingWorker();
                 filterSwingWorker.execute();
+                // show waiting dialog
+                filteringController.showWaitingDialog("Filtering: " + filteringController.getCurrentCondition());
 
             } catch (NumberFormatException ex) {
                 // warn the user and log the error for info
@@ -489,7 +496,8 @@ public class MultipleCutOffFilteringController {
         filteringController.getPreProcessingMap().values().stream().forEach((conditionDataHolder) -> {
             filterConditionForAValue(conditionDataHolder, value);
         });
-        filteringController.setFilteringMap(filteringMap); //???? also to other controller?
+        filteringController.setOriginalNumberTracks(originalNumberTracks);
+        filteringController.setFilteringMap(filteringMap);
     }
 
     /**
@@ -500,15 +508,19 @@ public class MultipleCutOffFilteringController {
      */
     private void filterConditionForAValue(SingleCellConditionDataHolder conditionDataHolder, Double value) {
         List<TrackDataHolder> retainedTracks = new ArrayList<>();
-        conditionDataHolder.getSingleCellWellDataHolders().stream().forEach((wellDataHolder) -> {
-            wellDataHolder.getTrackDataHolders().stream().forEach((trackDataHolder) -> {
-                boolean filterSingleTrack = filterSingleTrack(trackDataHolder, value);
-                if (filterSingleTrack) {
-                    retainedTracks.add(trackDataHolder);
-                }
-            });
-        });
-        filteringMap.put(conditionDataHolder, retainedTracks);
+        List<Integer> retainedIndices = new ArrayList<>();
+        for (int i = 0; i < conditionDataHolder.getTrackDataHolders().size(); i++) {
+            TrackDataHolder trackDataHolder = conditionDataHolder.getTrackDataHolders().get(i);
+            if (filterSingleTrack(trackDataHolder, value)) {
+                retainedTracks.add(trackDataHolder);
+                retainedIndices.add(i);
+            }
+        }
+        SingleCellConditionDataHolder filteredCondDataHolder = filteringController.transferFilteredData(conditionDataHolder, retainedIndices);
+        // copy retained track data holders to new conditiondataholder
+        filteredCondDataHolder.setTrackDataHolders(retainedTracks);
+        filteringMap.put(filteredCondDataHolder, retainedTracks);
+        originalNumberTracks.add(conditionDataHolder.getTrackDataHolders().size());
     }
 
     /**
@@ -519,8 +531,6 @@ public class MultipleCutOffFilteringController {
 
         @Override
         protected Void doInBackground() throws Exception {
-            // show waiting dialog
-            filteringController.showWaitingDialog("Filtering: " + filteringController.getCurrentCondition());
             // show a waiting cursor, disable GUI components
             filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             filteringController.controlGuiComponents(false);
