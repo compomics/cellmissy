@@ -349,10 +349,14 @@ public class CellMissyFrame extends javax.swing.JFrame {
         importCmsoParentPanel.setBackground(new java.awt.Color(255, 255, 255));
         importCmsoParentPanel.setName("importCmsoParentPanel"); // NOI18N
         importCmsoParentPanel.setLayout(new java.awt.GridBagLayout());
-        backgroundPanel.add(importCmsoParentPanel, "cmsoDatasetParentPanel");
+        backgroundPanel.add(importCmsoParentPanel, "importCmsoParentPanel");
+        importCmsoParentPanel.getAccessibleContext().setAccessibleName("importCmsoParentPanel");
 
+        exportCmsoParentPanel.setBackground(new java.awt.Color(255, 255, 255));
+        exportCmsoParentPanel.setName("exportCmsoParentPanel"); // NOI18N
         exportCmsoParentPanel.setLayout(new java.awt.GridBagLayout());
-        backgroundPanel.add(exportCmsoParentPanel, "card10");
+        backgroundPanel.add(exportCmsoParentPanel, "exportCmsoParentPanel");
+        exportCmsoParentPanel.getAccessibleContext().setAccessibleName("exportCmsoParentPanel");
 
         cellMissyMenuBar.setBackground(java.awt.Color.white);
         cellMissyMenuBar.setAlignmentY(0.5F);
