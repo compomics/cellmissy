@@ -13,7 +13,6 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import javax.swing.ButtonGroup;
@@ -26,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import smile.plot.BoxPlot;
 import smile.plot.PlotCanvas;
+import java.awt.Color;
+
 
 
 
@@ -141,7 +142,7 @@ public class DistanceController {
         radioButtonGroup.add(distancePanel.getEuclidianDistanceRadioButton());
 
         
-        //Show accumulated distance boxplot of different conditions
+        //Show accumulated distance boxplot and table of selected condition
         distancePanel.getAccumulatedDistanceRadioButton().addActionListener((ActionEvent e) -> {
             PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
             //check that a condition is selected
@@ -151,7 +152,7 @@ public class DistanceController {
             }
         });
         
-        //Show euclidian distance boxplot of different conditions
+        //Show euclidian distance boxplot and table of selected condition
         distancePanel.getEuclidianDistanceRadioButton().addActionListener((ActionEvent e) -> {
             PlateCondition currentCondition = singleCellPreProcessingController.getCurrentCondition();
             //check that a condition is selected
@@ -167,7 +168,6 @@ public class DistanceController {
         //Add view to parent panel (single cell analysis panel)
         singleCellPreProcessingController.getSingleCellAnalysisPanel().getDistanceParentPanel().add(distancePanel, gridBagConstraints);
     }
-
     
     
    //Render the boxplots for accumulated distance

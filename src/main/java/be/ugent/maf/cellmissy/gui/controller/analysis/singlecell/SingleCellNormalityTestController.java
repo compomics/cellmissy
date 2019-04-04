@@ -14,6 +14,7 @@ import umontreal.ssj.probdist.NormalDist;
 import be.ugent.maf.cellmissy.entity.PlateCondition;
 import be.ugent.maf.cellmissy.entity.result.singlecell.QQPlotDatasets;
 import be.ugent.maf.cellmissy.entity.result.singlecell.SingleCellConditionDataHolder;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.NormalityTestInfoDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import static be.ugent.maf.cellmissy.utils.AnalysisUtils.computeMean;
 import static be.ugent.maf.cellmissy.utils.AnalysisUtils.computeStandardDeviation;
@@ -34,6 +35,10 @@ import org.springframework.stereotype.Controller;
 import smile.plot.PlotCanvas;
 import smile.plot.QQPlot;
 import smile.stat.distribution.GaussianDistribution;
+import java.lang.Math;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 
 
@@ -50,9 +55,11 @@ public class SingleCellNormalityTestController {
     private HashMap<String, List<double[]>> datasetHashMap;
     // view
     private SingleCellAnalysisPanel singleCellAnalysisPanel;
+    private NormalityTestInfoDialog normalityTestInfoDialog;
     // parent controller
     @Autowired
     private SingleCellAnalysisController singleCellAnalysisController;
+    @Autowired
     private SingleCellPreProcessingController singleCellPreProcessingController;
     // child controllers
     // services
@@ -82,6 +89,8 @@ public class SingleCellNormalityTestController {
     public void init() {
         gridBagConstraints = GuiUtils.getDefaultGridBagConstraints();
         qqplotDatasets = new QQPlotDatasets();
+        
+        normalityTestInfoDialog = new NormalityTestInfoDialog(singleCellPreProcessingController.getMainFrame(), true);
 
         // initialize the main view
 
@@ -103,6 +112,18 @@ public class SingleCellNormalityTestController {
         // the view is kept in the parent controllers
         AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
         analysisPanel.getConditionList().setModel(new DefaultListModel());
+        // set icon for question button
+        Icon questionIcon = UIManager.getIcon("OptionPane.questionIcon");
+        ImageIcon scaledQuestionIcon = GuiUtils.getScaledIcon(questionIcon);
+        analysisPanel.getQuestionButton().setIcon(scaledQuestionIcon);
+        
+                // action listeners
+        // info button
+        analysisPanel.getQuestionButton().addActionListener((ActionEvent e) -> {
+            // pack and show info dialog
+            GuiUtils.centerDialogOnFrame(singleCellPreProcessingController.getMainFrame(), normalityTestInfoDialog);
+            normalityTestInfoDialog.setVisible(true);
+        });
 
         /**
         * Change Listener to the Tabbed Pane
@@ -159,9 +180,6 @@ public class SingleCellNormalityTestController {
      * Get datasets for following methods
      */
     private List<double[]> getDataset(){
-                // get condition
-        // get right feature -> right tab in the tabbed pane
-        AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
         
         // Get data for selected condition 
         Boolean filteredData = singleCellAnalysisController.isFilteredData();
@@ -199,29 +217,6 @@ public class SingleCellNormalityTestController {
 //        // get right feature -> right tab in the tabbed pane
         AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
 //        
-//        // Get data for selected condition 
-//        Boolean filteredData = singleCellAnalysisController.isFilteredData();
-//        List<SingleCellConditionDataHolder> conditionDataHolders = new ArrayList<>();
-//
-//        if (filteredData && singleCellMainController.getFilteringMap() != null) {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getFilteringMap().keySet());
-//        } else if (filteredData){
-//            // notify user that he has not actually filtered anything
-//            showMessage("No filtered data found. Proceeding analysis with raw data.", "No filtering applied.", JOptionPane.INFORMATION_MESSAGE);
-//            // proceed with raw data
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        else {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        
-//        List<PlateCondition> plateConditionList = singleCellMainController.getPlateConditionList();
-//        PlateCondition condition = singleCellMainController.getSelectedCondition();
-//        
-//        // Get features for selected condition
-//        datasetHashMap = qqplotDatasets.getDatasetHashMap(conditionDataHolders);
-//      
-//        List<double[]> datasetCondition = datasetHashMap.get(condition.toString());
 
         List<double[]> datasetCondition = getDataset();
 
@@ -287,22 +282,7 @@ public class SingleCellNormalityTestController {
     
     public void ComputeStatisticalTests(String parameter){
         AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
-//        
-//        Boolean filteredData = singleCellAnalysisController.isFilteredData();
-//        List<SingleCellConditionDataHolder> conditionDataHolders = new ArrayList<>();
-//        
-//        if (filteredData && singleCellMainController.getFilteringMap() != null) {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getFilteringMap().keySet());
-//        } else if (filteredData){
-//            // proceed with raw data
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        else {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        
-//        PlateCondition condition = singleCellMainController.getSelectedCondition();
-//        List<double[]> datasetCondition = datasetHashMap.get(condition.toString());
+
         
         List<double[]> datasetCondition = getDataset();
         
@@ -365,27 +345,23 @@ public class SingleCellNormalityTestController {
     }
     
     /**
+     * Compute standard error of the skewness (SES)
+     */
+    
+    private double computeSES(double[] parameter){
+        // N = sample size = number of tracks
+        int N = parameter.length;
+        double SES = Math.sqrt((double)6/N);
+        return SES;
+    }
+    
+    /**
      * Compute skewness and kurtosis for given condition
      * @param parameter
      */
     public void computeSkewness(String parameter){
          AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
         
-//        Boolean filteredData = singleCellAnalysisController.isFilteredData();
-//        List<SingleCellConditionDataHolder> conditionDataHolders = new ArrayList<>();
-//        
-//        if (filteredData && singleCellMainController.getFilteringMap() != null) {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getFilteringMap().keySet());
-//        } else if (filteredData){
-//            // proceed with raw data
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        else {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        
-//        PlateCondition condition = singleCellMainController.getSelectedCondition();
-//        List<double[]> datasetCondition = datasetHashMap.get(condition.toString());
         
         List<double[]> datasetCondition = getDataset();
         
@@ -395,14 +371,17 @@ public class SingleCellNormalityTestController {
         double[] direct = datasetCondition.get(2);
         double[] speed = datasetCondition.get(3);    
         Skewness skew = new Skewness();
+        // SES is the same for all parameters, because the number of tracks is always the same for all four
+        // So the length of just one parameter is needed each time
+        double SES = computeSES(accumdist);
         switch(parameter){
             case "0": skew.setData(accumdist);
             double skewaccum = skew.evaluate();
             analysisPanel.getSkewnessPTextField().setText(Double.toString(skewaccum));
-            if (skewaccum < -0.5){
+            if (skewaccum < -2*SES){
                 analysisPanel.getSkewnessOutcomeADTextField().setText("Left skewed");
             }
-            else if (skewaccum > 0.5){
+            else if (skewaccum > 2*SES){
                 analysisPanel.getSkewnessOutcomeADTextField().setText("Right skewed"); 
             }
             else {
@@ -412,10 +391,10 @@ public class SingleCellNormalityTestController {
             case "1": skew.setData(euclid);
             double skeweuclid = skew.evaluate();
             analysisPanel.getSkewnessPTextField1().setText(Double.toString(skeweuclid));
-            if (skeweuclid < -0.5){
+            if (skeweuclid < -2*SES){
                 analysisPanel.getSkewnessOutcomeTextField1().setText("Left skewed");
             }
-            else if (skeweuclid > 0.5){
+            else if (skeweuclid > 2*SES){
                 analysisPanel.getSkewnessOutcomeTextField1().setText("Right skewed"); 
             }
             else {
@@ -425,10 +404,10 @@ public class SingleCellNormalityTestController {
             case "2" : skew.setData(direct);
             double skewdirect = skew.evaluate();
             analysisPanel.getSkewnessPTextField3().setText(Double.toString(skewdirect));
-            if (skewdirect < -0.5){
+            if (skewdirect < -2*SES){
                 analysisPanel.getSkewnessOutcomeTextField3().setText("Left skewed");
             }
-            else if (skewdirect > 0.5){
+            else if (skewdirect > 2*SES){
                 analysisPanel.getSkewnessOutcomeTextField3().setText("Right skewed"); 
             }
             else {
@@ -438,10 +417,10 @@ public class SingleCellNormalityTestController {
             case "3" : skew.setData(speed);
             double skewspeed = skew.evaluate();
             analysisPanel.getSkewnessPTextField2().setText(Double.toString(skewspeed));
-            if (skewspeed < -0.5){
+            if (skewspeed < -2*SES){
                 analysisPanel.getSkewnessOutcomeTextField2().setText("Left skewed");
             }
-            else if (skewspeed > 0.5){
+            else if (skewspeed > 2*SES){
                 analysisPanel.getSkewnessOutcomeTextField2().setText("Right skewed"); 
             }
             else {
@@ -451,24 +430,19 @@ public class SingleCellNormalityTestController {
         }
     }
     
+    /*
+    *Compute standard error of kurtosis(SEK)
+    */
+    
+        private double computeSEK(double[] parameter){
+            int N = parameter.length;
+            double SEK = Math.sqrt((double)24/N);
+            return SEK;
+        }
+    
         public void computeKurtosis(String parameter){
         AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
-        
-//        Boolean filteredData = singleCellAnalysisController.isFilteredData();
-//        List<SingleCellConditionDataHolder> conditionDataHolders = new ArrayList<>();
-//        
-//        if (filteredData && singleCellMainController.getFilteringMap() != null) {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getFilteringMap().keySet());
-//        } else if (filteredData){
-//            // proceed with raw data
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        else {
-//            conditionDataHolders.addAll(singleCellAnalysisController.getPreProcessingMap().values());
-//        }
-//        
-//        PlateCondition condition = singleCellMainController.getSelectedCondition();
-//        List<double[]> datasetCondition = datasetHashMap.get(condition.toString());
+
         
         List<double[]> datasetCondition = getDataset();
         
@@ -477,15 +451,18 @@ public class SingleCellNormalityTestController {
         double[] direct = datasetCondition.get(2);
         double[] speed = datasetCondition.get(3);    
         Kurtosis kurt = new Kurtosis();
+        // SES is the same for all parameters, because the number of tracks is always the same for all four
+        // So the length of just one parameter is needed each time        
+        double SEK = computeSEK(accumdist);
         
         switch(parameter){
             case "0": kurt.setData(accumdist);
             double kurtaccum = kurt.evaluate();
             analysisPanel.getKurtosisPTextField().setText(Double.toString(kurtaccum));
-            if (kurtaccum < -0.5){
+            if (kurtaccum < -2*SEK){
                 analysisPanel.getKurtosisOutcomeADTextField().setText("Platykurtic");
             }
-            else if (kurtaccum > 0.5){
+            else if (kurtaccum > 2*SEK){
                 analysisPanel.getKurtosisOutcomeADTextField().setText("Leptokurtic"); 
             }
             else {
@@ -495,10 +472,10 @@ public class SingleCellNormalityTestController {
             case "1": kurt.setData(euclid);
             double kurteuclid = kurt.evaluate();
             analysisPanel.getKurtosisPTextField1().setText(Double.toString(kurteuclid));
-            if (kurteuclid < -0.5){
+            if (kurteuclid < -2*SEK){
                 analysisPanel.getKurtosisOutcomeTextField1().setText("Platykurtic");
             }
-            else if (kurteuclid > 0.5){
+            else if (kurteuclid > 2*SEK){
                 analysisPanel.getKurtosisOutcomeTextField1().setText("Leptokurtic"); 
             }
             else {
@@ -508,10 +485,10 @@ public class SingleCellNormalityTestController {
             case "2" : kurt.setData(direct);
             double kurtdirect = kurt.evaluate();
             analysisPanel.getKurtosisPTextField3().setText(Double.toString(kurtdirect));
-            if (kurtdirect < -0.5){
+            if (kurtdirect < -2*SEK){
                 analysisPanel.getKurtosisOutcomeTextField3().setText("Platykurtic");
             }
-            else if (kurtdirect > 0.5){
+            else if (kurtdirect > 2*SEK){
                 analysisPanel.getKurtosisOutcomeTextField3().setText("Leptokurtic"); 
             }
             else {
@@ -521,10 +498,10 @@ public class SingleCellNormalityTestController {
             case "3" : kurt.setData(speed);
             double kurtspeed = kurt.evaluate();
             analysisPanel.getKurtosisPTextField2().setText(Double.toString(kurtspeed));
-            if (kurtspeed < -0.5){
+            if (kurtspeed < - 2*SEK){
                 analysisPanel.getKurtosisOutcomeTextField2().setText("Platykurtic");
             }
-            else if (kurtspeed > 0.5){
+            else if (kurtspeed > 2*SEK){
                 analysisPanel.getKurtosisOutcomeTextField2().setText("Leptokurtic"); 
             }
             else {
@@ -548,6 +525,7 @@ public class SingleCellNormalityTestController {
         analysisPanel.getSpeedConditionTextField().setText(condition.toString());
             
         }
+
     
 }
 

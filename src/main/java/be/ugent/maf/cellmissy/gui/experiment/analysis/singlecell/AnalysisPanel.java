@@ -372,6 +372,10 @@ public class AnalysisPanel extends javax.swing.JPanel {
     public JTextField getSkewnessOutcomeADTextField() {
         return skewnessOutcomeADTextField;
     }
+
+    public JButton getQuestionButton() {
+        return questionButton;
+    }
     
    
     /**
@@ -453,6 +457,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
         skewnessOutcomeADTextField = new javax.swing.JTextField();
         kurtosisOutcomeADTextField = new javax.swing.JTextField();
         accumulatedQQPlotPanel = new javax.swing.JPanel();
+        questionButton = new javax.swing.JButton();
         EuclidianDistancePanel = new javax.swing.JPanel();
         euclidianTestPanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -549,13 +554,13 @@ public class AnalysisPanel extends javax.swing.JPanel {
         radioButtonsPanelLayout.setVerticalGroup(
             radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(radioButtonsPanelLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addGap(6, 6, 6)
                 .addGroup(radioButtonsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cellTracksRadioButton)
                     .addComponent(cellSpeedRadioButton)
                     .addComponent(statisticsRadioButton)
                     .addComponent(normalityTestsRadioButton))
-                .addContainerGap(90, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -633,7 +638,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
             .addGroup(dataPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(325, Short.MAX_VALUE))
+                .addContainerGap(324, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -852,7 +857,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(performStatButton)
-                .addContainerGap(479, Short.MAX_VALUE))
+                .addContainerGap(478, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -937,7 +942,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 619, Short.MAX_VALUE))
+                .addGap(0, 618, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1016,6 +1021,13 @@ public class AnalysisPanel extends javax.swing.JPanel {
         accumulatedQQPlotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("QQPlot"));
         accumulatedQQPlotPanel.setLayout(new java.awt.GridBagLayout());
 
+        questionButton.setBorderPainted(false);
+        questionButton.setContentAreaFilled(false);
+        questionButton.setMaximumSize(new java.awt.Dimension(33, 9));
+        questionButton.setMinimumSize(new java.awt.Dimension(33, 9));
+        questionButton.setOpaque(false);
+        questionButton.setPreferredSize(new java.awt.Dimension(33, 9));
+
         javax.swing.GroupLayout accumulatedTestPanelLayout = new javax.swing.GroupLayout(accumulatedTestPanel);
         accumulatedTestPanel.setLayout(accumulatedTestPanelLayout);
         accumulatedTestPanelLayout.setHorizontalGroup(
@@ -1060,7 +1072,9 @@ public class AnalysisPanel extends javax.swing.JPanel {
                                     .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
                                         .addComponent(andersonOutcomeLabel)
                                         .addGap(18, 18, 18)
-                                        .addComponent(andersonOutcomeADTextField))))
+                                        .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(andersonOutcomeADTextField)))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, accumulatedTestPanelLayout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(kurtosisOutcomeLabel)
@@ -1074,8 +1088,9 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(accumulatedConditionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addGap(24, 24, 24)
+                    .addComponent(jLabel9)
+                    .addComponent(questionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
                 .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(andersonPADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1086,9 +1101,8 @@ public class AnalysisPanel extends javax.swing.JPanel {
                         .addComponent(andersonOutcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(skewnessOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(accumulatedTestPanelLayout.createSequentialGroup()
-                        .addGap(3, 3, 3)
+                    .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(skewnessOutcomeADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(skewnessOutcomeLabel))
                     .addGroup(accumulatedTestPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(skewnessValueADTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1107,6 +1121,8 @@ public class AnalysisPanel extends javax.swing.JPanel {
                 .addComponent(accumulatedQQPlotPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 514, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        questionButton.getAccessibleContext().setAccessibleName("questionButton");
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1264,7 +1280,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
             EuclidianDistancePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(EuclidianDistancePanelLayout.createSequentialGroup()
                 .addComponent(euclidianTestPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 758, Short.MAX_VALUE))
+                .addGap(0, 756, Short.MAX_VALUE))
         );
 
         normalityTestParentPanel.addTab("Euclidian Distance", EuclidianDistancePanel);
@@ -1560,7 +1576,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
             SpeedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(SpeedPanelLayout.createSequentialGroup()
                 .addComponent(speedTestPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 882, Short.MAX_VALUE))
+                .addGap(0, 880, Short.MAX_VALUE))
         );
 
         normalityTestParentPanel.addTab("Speed", SpeedPanel);
@@ -1733,6 +1749,7 @@ public class AnalysisPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox parameterComboBox;
     private javax.swing.JButton performStatButton;
     private javax.swing.JPanel plotOptionsParentPanel;
+    private javax.swing.JButton questionButton;
     private javax.swing.JPanel radioButtonsPanel;
     private javax.swing.JButton removeGroupButton;
     private javax.swing.JPanel rosePlotParentPanel;

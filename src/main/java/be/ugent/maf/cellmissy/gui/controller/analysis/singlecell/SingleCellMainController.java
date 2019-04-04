@@ -584,6 +584,9 @@ public class SingleCellMainController {
                     singleCellPreProcessingController.enableAnalysis();
                 }
                 // check if the user wants to proceed with filtered data or not
+                // this check only needs to happen once
+                if (!singleCellAnalysisController.getAnalysisPanel().getNormalityTestsRadioButton().isSelected()){
+                    
                 Object[] options = {"Yes", "No"};
                 int choice = JOptionPane.showOptionDialog(null, "Proceed with filtered data? If NO, raw data will be used.", "", JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
@@ -592,6 +595,7 @@ public class SingleCellMainController {
                     singleCellAnalysisController.setFilteredData(Boolean.TRUE);
                 } else {
                     singleCellAnalysisController.setFilteredData(Boolean.FALSE);
+                }
                 }
                 // check which button is actually selected
                 if (singleCellAnalysisController.getAnalysisPanel().getCellTracksRadioButton().isSelected()) {
