@@ -11,7 +11,7 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 
 /**
- * Render datasets to be able to compute the QQPlots in de normalitytestcontroller
+ * Render datasets to be able to compute the QQPlots in the normalitytestcontroller
  *
  * @author ninad
  */

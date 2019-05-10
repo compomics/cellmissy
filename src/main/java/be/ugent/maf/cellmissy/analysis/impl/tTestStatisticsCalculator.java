@@ -16,13 +16,15 @@ import org.apache.commons.math3.stat.inference.TTest;
  */
 public class tTestStatisticsCalculator implements StatisticsCalculator{
 
+    //Calculate p-value
     @Override
     public double executeStatisticalTest(double[] x, double[] y) {
         TTest tTest = new TTest();
         return tTest.homoscedasticTTest(x, y);
     }
     
-        @Override
+    //Get summary statistics (mean, min, max...) for the distribution of x
+    @Override
     public StatisticalSummary getSummaryStatistics(double[] x) {
         SummaryStatistics summaryStatistics = new SummaryStatistics();
         for (double aX : x) {
@@ -31,6 +33,7 @@ public class tTestStatisticsCalculator implements StatisticsCalculator{
         return summaryStatistics.getSummary();
     }
 
+    //Determine significance
     @Override
     public boolean[][] detectSignificance(Double[][] data, double alpha) {
         boolean[][] significances = new boolean[data.length][data[0].length];

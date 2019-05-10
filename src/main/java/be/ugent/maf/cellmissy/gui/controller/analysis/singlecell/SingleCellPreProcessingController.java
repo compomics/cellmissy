@@ -362,6 +362,7 @@ public class SingleCellPreProcessingController {
         singleCellAnalysisPanel.getTrackPointsTable().setModel(new DefaultTableModel());
         singleCellAnalysisPanel.getTracksTable().setModel(new DefaultTableModel());
         filteringController.resetOnCancel();
+        distanceController.resetOnCancel();
     }
 
     /**

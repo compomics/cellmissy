@@ -12,6 +12,7 @@ import be.ugent.maf.cellmissy.gui.view.renderer.table.AlignedTableRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.FormatRenderer;
 import be.ugent.maf.cellmissy.gui.view.renderer.table.TableHeaderRenderer;
 import be.ugent.maf.cellmissy.gui.view.table.model.TrackDataTableModel;
+import be.ugent.maf.cellmissy.utils.GuiUtils;
 
 import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
@@ -79,6 +80,9 @@ public class DistanceController {
     
     public void resetOnCancel() {
         distanceDataTable.setModel(new DefaultTableModel());
+         // reset label
+        GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+        .getDistanceLabel());
         
     }
     /**

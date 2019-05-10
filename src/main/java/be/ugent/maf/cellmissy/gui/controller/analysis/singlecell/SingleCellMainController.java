@@ -930,7 +930,7 @@ public class SingleCellMainController {
         }
         // reset subcontrollers
         singleCellAnalysisController.resetOnCancel();
-        singleCellPreProcessingController.resetOnCancel();
+        singleCellPreProcessingController.resetOnCancel(); 
     }
 
     /**

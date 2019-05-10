@@ -29,8 +29,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import org.apache.commons.math.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math.stat.descriptive.moment.Skewness;
-import org.jdesktop.beansbinding.BindingGroup;
-import org.jfree.chart.ChartPanel;
 import org.springframework.stereotype.Controller;
 import smile.plot.PlotCanvas;
 import smile.plot.QQPlot;
@@ -215,8 +213,7 @@ public class SingleCellNormalityTestController {
     public void plotQQPlots(String parameter){
 //        // get condition
 //        // get right feature -> right tab in the tabbed pane
-        AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();
-//        
+        AnalysisPanel analysisPanel = singleCellAnalysisController.getAnalysisPanel();   
 
         List<double[]> datasetCondition = getDataset();
 

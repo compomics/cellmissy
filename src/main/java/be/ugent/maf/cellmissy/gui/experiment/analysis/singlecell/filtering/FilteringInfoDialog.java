@@ -52,7 +52,7 @@ public class FilteringInfoDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(infoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 289, Short.MAX_VALUE)
                 .addContainerGap())
         );
