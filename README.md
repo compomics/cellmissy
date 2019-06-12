@@ -43,6 +43,8 @@ Look at how to import single-cell migration data into CellMissy [here](https://f
 **CellMissy**: DB schema has been modified to take into account users privileges in relation to projects and experiments. Download the new SQL script to create your *CellMissy* DB (see more in the [downloads section](#downloads)).
 
 ## Downloads
+We are constantly thriving to make CellMissy the best it can be. As a result, minor versions may be released without announcing a download link. Please find the most recent release [here](https://github.com/compomics/cellmissy/releases).
+
 Download *CellMissy* 1.3.0 [here](https://github.com/compomics/cellmissy/releases/tag/v1.3.0).
 
 Download *CellMissy* 1.2.0 [here](https://github.com/compomics/cellmissy/releases/tag/v1.2.0).
