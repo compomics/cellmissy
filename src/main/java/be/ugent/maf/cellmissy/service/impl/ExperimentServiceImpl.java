@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -903,6 +904,7 @@ public class ExperimentServiceImpl implements ExperimentService {
         List<Algorithm> algorithms = new ArrayList<>();
         for (PlateCondition plateCondition : experiment.getPlateConditionList()) {
             for (Well well : plateCondition.getWellList()) {
+                Hibernate.unproxy(well.getWellHasImagingTypeList());
                 for (WellHasImagingType wellHasImagingType : well.getWellHasImagingTypeList()) {
                     Algorithm algorithm = wellHasImagingType.getAlgorithm();
                     if (!algorithms.contains(algorithm)) {

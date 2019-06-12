@@ -62,7 +62,7 @@
         <property name="password" value="${jasypt.password}"/>
     </bean>
 
-    <bean id="hibernateEncryptor" class="org.jasypt.hibernate4.encryptor.HibernatePBEStringEncryptor" lazy-init="false">
+    <bean id="hibernateEncryptor" class="org.jasypt.hibernate5.encryptor.HibernatePBEStringEncryptor" lazy-init="false">
         <!-- This property value must match "encryptorRegisteredName" used when defining hibernate user types -->
         <property name="registeredName" value="jasyptHibernateEncryptor"/>
         <property name="encryptor" ref="stringEncryptor"/>

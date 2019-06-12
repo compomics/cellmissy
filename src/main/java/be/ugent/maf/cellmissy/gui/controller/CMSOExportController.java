@@ -60,6 +60,7 @@ import org.jdesktop.swingbinding.JListBinding;
 import org.jdesktop.swingbinding.SwingBindings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -223,7 +224,10 @@ public class CMSOExportController {
         Path isapath = Paths.get(directory.getPath() + "/" + mainFolderName + "/isa");
         // how to get trackingsoftware information? is inside the wellHasImgType
         //The name for mia analysed data is often algox or MIAalgox. This needs to be changed to CellMIA
-        String trackingsoftware = experimentToExport.getPlateConditionList().get(0).getSingleCellAnalyzedWells().get(0).getWellHasImagingTypeList().get(0).getAlgorithm().getAlgorithmName();
+        String trackingsoftware = experimentService.getAlgorithms(experimentToExport).get(0).getAlgorithmName();
+        // lines trigger Hibernate LazyLoadingException
+        //original =
+//        String trackingsoftware = experimentToExport.getPlateConditionList().get(0).getSingleCellAnalyzedWells().get(0).getWellHasImagingTypeList().get(0).getAlgorithm().getAlgorithmName();
         if (trackingsoftware.contains("algo")) {
             trackingsoftware = "CellMIA";
         }

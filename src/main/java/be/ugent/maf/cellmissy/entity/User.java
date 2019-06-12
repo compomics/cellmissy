@@ -20,7 +20,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-import org.jasypt.hibernate4.type.EncryptedStringType;
+import org.jasypt.hibernate5.type.EncryptedStringType;
 //import org.jasypt.hibernate.type.EncryptedStringType;
 
 /**

@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.hibernate.Hibernate;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -227,6 +228,7 @@ public class PlateCondition implements Serializable {
     public List<Well> getImagedWells() {
         List<Well> imagedWells = new ArrayList<>();
         for (Well well : this.getWellList()) {
+            Hibernate.initialize(well.getWellHasImagingTypeList());
             List<WellHasImagingType> wellHasImagingTypeList = well.getWellHasImagingTypeList();
             if (!wellHasImagingTypeList.isEmpty()) {
                 imagedWells.add(well);

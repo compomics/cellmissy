@@ -26,10 +26,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
         initComponents();
     }
 
-    public JLabel getCellLinesLabel() {
-        return cellLinesLabel;
-    }
-
     public JList getExperimentsList() {
         return experimentsList;
     }
@@ -121,8 +117,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
         purposeTextArea = new javax.swing.JTextArea();
-        jLabel8 = new javax.swing.JLabel();
-        cellLinesLabel = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         timeFramesLabel = new javax.swing.JLabel();
         tablePanel = new javax.swing.JPanel();
@@ -358,26 +352,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(26, 6, 18, 56);
         detailsPanel.add(jScrollPane5, gridBagConstraints);
 
-        jLabel8.setText("cell lines");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipady = 6;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 16, 0, 0);
-        detailsPanel.add(jLabel8, gridBagConstraints);
-
-        cellLinesLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102)));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.ipadx = 235;
-        gridBagConstraints.ipady = 18;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(11, 10, 0, 56);
-        detailsPanel.add(cellLinesLabel, gridBagConstraints);
-
         jLabel9.setText("# time frames");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -533,7 +507,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomPanel;
-    private javax.swing.JLabel cellLinesLabel;
     private javax.swing.JTable conditionsDetailsTable;
     private javax.swing.JPanel detailsPanel;
     private javax.swing.JList experimentsList;
@@ -546,7 +519,6 @@ public class CMSOExportPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

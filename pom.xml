@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.springframework.version>4.2.4.RELEASE</org.springframework.version>
+        <org.springframework.version>4.3.6.RELEASE</org.springframework.version>
     </properties>
 
     <build>
@@ -276,11 +276,17 @@
     </repositories>
     <dependencies>
        
-        <dependency>
+        <!-- replace with newer version       <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.3.8.Final</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.2.10.Final</version>
         </dependency>
+
 
         <dependency>
             <groupId>junit</groupId>
@@ -358,10 +364,15 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
+        <!-- replace with newer version       <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>4.2.0.Final</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.16.Final</version>
         </dependency>
 
         <dependency>
@@ -396,8 +407,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasypt</groupId>
-            <artifactId>jasypt-hibernate4</artifactId>
+            <groupId>de.qaware.jasypt</groupId>
+            <artifactId>jasypt-hibernate5</artifactId>
             <version>1.9.2</version>
         </dependency>
 
