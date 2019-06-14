@@ -11,7 +11,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,3,64,0,0,4,127"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,7,42,0,0,6,-15"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
@@ -38,20 +38,23 @@
                   <Component id="cellSpeedRadioButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="statisticsRadioButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="786" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="normalityTestsRadioButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="1217" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="cellTracksRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="cellSpeedRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="statisticsRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="normalityTestsRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="96" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -71,6 +74,14 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Statistics"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JRadioButton" name="normalityTestsRadioButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Normality Tests"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="normalityTestsRadioButtonActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -175,7 +186,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jScrollPane2" pref="1131" max="32767" attributes="0"/>
+                          <Component id="jScrollPane2" pref="1753" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -185,7 +196,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jScrollPane2" min="-2" pref="182" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace pref="324" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -559,7 +570,7 @@
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="performStatButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="121" max="32767" attributes="0"/>
+                              <EmptySpace pref="478" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -659,8 +670,8 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jScrollPane5" pref="967" max="32767" attributes="0"/>
-                              <Component id="jScrollPane4" pref="967" max="32767" attributes="0"/>
+                              <Component id="jScrollPane5" pref="1589" max="32767" attributes="0"/>
+                              <Component id="jScrollPane4" pref="1589" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -684,8 +695,8 @@
                               <Component id="jScrollPane4" min="-2" pref="200" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="jScrollPane5" pref="214" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jScrollPane5" min="-2" pref="170" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="618" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -759,6 +770,1013 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="currentGroupName">
                 </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JTabbedPane" name="normalityTestParentPanel">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="normalityTestParentPanel" noResource="true"/>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
+              <CardConstraints cardName="normalityTestParentPanel"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+          <SubComponents>
+            <Container class="javax.swing.JPanel" name="AccumulatedDistancePanel">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="accumulatedDistancePanel" noResource="true"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Accumulated Distance">
+                    <Property name="tabTitle" type="java.lang.String" value="Accumulated Distance"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+              <SubComponents>
+                <Container class="javax.swing.JPanel" name="accumulatedTestPanel">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="0" ipadX="504" ipadY="1041" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="24" anchor="18" weightX="0.0" weightY="0.0"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="accumulatedQQPlotPanel" min="-2" pref="1208" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="accumulatedConditionTextField" min="-2" pref="460" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="kurtosisLabel" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="andersonDarlingLabel" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="skewnessLabel" min="-2" pref="75" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Group type="102" attributes="0">
+                                                      <Component id="AndersonPLabel" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                                                      <Component id="andersonPADTextField" min="-2" pref="373" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" attributes="0">
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Component id="KurtosisValueLabel" min="-2" max="-2" attributes="0"/>
+                                                          <Component id="skewnessValueLabel" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Component id="skewnessValueADTextField" max="32767" attributes="0"/>
+                                                          <Component id="kurtosisValueADTextField" max="32767" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                              </Group>
+                                          </Group>
+                                      </Group>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace min="53" pref="53" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="skewnessOutcomeLabel" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                      <Component id="skewnessOutcomeADTextField" min="-2" pref="231" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <Component id="andersonOutcomeLabel" min="-2" max="-2" attributes="0"/>
+                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                      <Group type="103" groupAlignment="0" attributes="0">
+                                                          <Component id="questionButton" min="-2" pref="46" max="-2" attributes="0"/>
+                                                          <Component id="andersonOutcomeADTextField" max="32767" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                              </Group>
+                                          </Group>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="kurtosisOutcomeLabel" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="kurtosisOutcomeADTextField" min="-2" pref="231" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="accumulatedConditionTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="questionButton" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="andersonPADTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="AndersonPLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="andersonDarlingLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="andersonOutcomeADTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="andersonOutcomeLabel" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="skewnessOutcomeADTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="skewnessOutcomeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                      <Component id="skewnessValueADTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="skewnessValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="skewnessLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="kurtosisValueADTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="KurtosisValueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="kurtosisLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="kurtosisOutcomeADTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="kurtosisOutcomeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                              <Component id="accumulatedQQPlotPanel" min="-2" pref="514" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel9">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="13" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Condition:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="accumulatedConditionTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="accumulatedConditionTextFieldActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonDarlingLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Anderson Darling:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Skewness:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Kurtosis:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="AndersonPLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="p-value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessValueLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="KurtosisValueLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonPADTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonPADTextFieldActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessValueADTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="skewnessValueADTextFieldActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisValueADTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisOutcomeLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonOutcomeLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessOutcomeLabel">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonOutcomeADTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonOutcomeADTextFieldActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessOutcomeADTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisOutcomeADTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JPanel" name="accumulatedQQPlotPanel">
+                      <Properties>
+                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                            <TitledBorder title="QQPlot"/>
+                          </Border>
+                        </Property>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+                    </Container>
+                    <Component class="javax.swing.JButton" name="questionButton">
+                      <Properties>
+                        <Property name="borderPainted" type="boolean" value="false"/>
+                        <Property name="contentAreaFilled" type="boolean" value="false"/>
+                        <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[33, 9]"/>
+                        </Property>
+                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[33, 9]"/>
+                        </Property>
+                        <Property name="opaque" type="boolean" value="false"/>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[33, 9]"/>
+                        </Property>
+                      </Properties>
+                      <AccessibilityProperties>
+                        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="questionButton"/>
+                      </AccessibilityProperties>
+                    </Component>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="EuclidianDistancePanel">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="euclidianDIstancePanel" noResource="true"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Euclidian Distance">
+                    <Property name="tabTitle" type="java.lang.String" value="Euclidian Distance"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                          <Component id="euclidianTestPanel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="224" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="euclidianTestPanel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="756" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Container class="javax.swing.JPanel" name="euclidianTestPanel">
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="euclidianQQPlotPanel" min="-2" pref="1208" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="andersonDarlingLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="skewnessLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="kurtosisLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="KurtosisValueLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="skewnessValueLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="AndersonPLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                          <Component id="skewnessPTextField1" alignment="0" pref="373" max="32767" attributes="0"/>
+                                          <Component id="kurtosisPTextField1" max="32767" attributes="0"/>
+                                          <Component id="andersonPTextField1" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="skewnessOutcomeLabel1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="andersonOutcomeLabel1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="kurtosisOutcomeLabel1" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="skewnessOutcomeTextField1" alignment="0" pref="231" max="32767" attributes="0"/>
+                                          <Component id="andersonOutcomeTextField1" max="32767" attributes="0"/>
+                                          <Component id="kurtosisOutcomeTextField1" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="euclidianConditionTextField" min="-2" pref="461" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace pref="316" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="euclidianConditionTextField" alignment="3" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="andersonDarlingLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="AndersonPLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonPTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonOutcomeLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonOutcomeTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="skewnessLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessValueLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessPTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessOutcomeLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessOutcomeTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="kurtosisLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="KurtosisValueLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisPTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisOutcomeLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisOutcomeTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                              <Component id="euclidianQQPlotPanel" min="-2" pref="514" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="221" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel10">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="13" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Condition:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="euclidianConditionTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="euclidianConditionTextFieldActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonDarlingLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Anderson Darling:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Skewness:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Kurtosis:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="AndersonPLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="p-value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessValueLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="KurtosisValueLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonPTextField1">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonPTextField1ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessPTextField1">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="skewnessPTextField1ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisPTextField1">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisOutcomeLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonOutcomeLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessOutcomeLabel1">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonOutcomeTextField1">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonOutcomeTextField1ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessOutcomeTextField1">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisOutcomeTextField1">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JPanel" name="euclidianQQPlotPanel">
+                      <Properties>
+                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                            <TitledBorder title="QQPlot"/>
+                          </Border>
+                        </Property>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+                    </Container>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="DirectionalityPanel">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="directionalityPanel" noResource="true"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Directionality">
+                    <Property name="tabTitle" type="java.lang.String" value="Directionality"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+              <SubComponents>
+                <Container class="javax.swing.JPanel" name="directionalityTestPanel">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+                      <GridBagConstraints gridX="0" gridY="0" gridWidth="1" gridHeight="1" fill="0" ipadX="451" ipadY="538" insetsTop="13" insetsLeft="12" insetsBottom="0" insetsRight="12" anchor="18" weightX="0.0" weightY="0.0"/>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="directionalityQQPlotpanel" min="-2" pref="1208" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="directionalityConditionTextField" min="-2" pref="461" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="skewnessLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="kurtosisLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" attributes="0">
+                                              <Component id="andersonDarlingLabel3" max="32767" attributes="0"/>
+                                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="KurtosisValueLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="skewnessValueLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="AndersonPLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="andersonPTextField3" pref="373" max="32767" attributes="0"/>
+                                          <Component id="skewnessPTextField3" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="kurtosisPTextField3" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="kurtosisOutcomeLabel3" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="kurtosisOutcomeTextField3" min="-2" pref="231" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="andersonOutcomeLabel3" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="andersonOutcomeTextField3" min="-2" pref="231" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="skewnessOutcomeLabel3" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="skewnessOutcomeTextField3" min="-2" pref="231" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                  </Group>
+                              </Group>
+                              <EmptySpace pref="463" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="directionalityConditionTextField" alignment="3" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="andersonDarlingLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="AndersonPLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonPTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonOutcomeLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonOutcomeTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="skewnessLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessValueLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessPTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessOutcomeLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessOutcomeTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="KurtosisValueLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisPTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisOutcomeLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisOutcomeTextField3" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                              <Component id="directionalityQQPlotpanel" min="-2" pref="514" max="-2" attributes="0"/>
+                              <EmptySpace pref="551" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel12">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="13" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Condition:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="directionalityConditionTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="directionalityConditionTextFieldActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonDarlingLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Anderson Darling:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Skewness:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Kurtosis:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="AndersonPLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="p-value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessValueLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="KurtosisValueLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonPTextField3">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonPTextField3ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessPTextField3">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisPTextField3">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisOutcomeLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonOutcomeLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessOutcomeLabel3">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonOutcomeTextField3">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonOutcomeTextField3ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessOutcomeTextField3">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisOutcomeTextField3">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JPanel" name="directionalityQQPlotpanel">
+                      <Properties>
+                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                            <TitledBorder title="QQPlot"/>
+                          </Border>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="directionalityQQPlotpanel" noResource="true"/>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+                    </Container>
+                  </SubComponents>
+                </Container>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="SpeedPanel">
+              <Properties>
+                <Property name="name" type="java.lang.String" value="speedPanel" noResource="true"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Speed">
+                    <Property name="tabTitle" type="java.lang.String" value="Speed"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="speedTestPanel" min="-2" pref="1196" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="576" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="speedTestPanel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="880" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Container class="javax.swing.JPanel" name="speedTestPanel">
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="andersonDarlingLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="skewnessLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="kurtosisLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="AndersonPLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="skewnessValueLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="KurtosisValueLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="kurtosisPTextField2" pref="373" max="32767" attributes="0"/>
+                                          <Component id="andersonPTextField2" pref="373" max="32767" attributes="0"/>
+                                          <Component id="skewnessPTextField2" max="32767" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="skewnessOutcomeLabel2" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="kurtosisOutcomeLabel2" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="kurtosisOutcomeTextField2" min="-2" pref="230" max="-2" attributes="0"/>
+                                                  <Component id="skewnessOutcomeTextField2" min="-2" pref="230" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="andersonOutcomeLabel2" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="andersonOutcomeTextField2" min="-2" pref="231" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                  </Group>
+                                  <Component id="speedQQPlotPanel" min="-2" pref="1208" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="speedConditionTextField" min="-2" pref="459" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="speedConditionTextField" alignment="3" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="andersonDarlingLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="AndersonPLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonPTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonOutcomeTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="andersonOutcomeLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="skewnessLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessValueLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessPTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessOutcomeLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="skewnessOutcomeTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="kurtosisLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="KurtosisValueLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisPTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisOutcomeTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kurtosisOutcomeLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="31" max="-2" attributes="0"/>
+                              <Component id="speedQQPlotPanel" min="-2" pref="514" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel11">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="13" style="1"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Condition:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="speedConditionTextField">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speedConditionTextFieldActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonDarlingLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Anderson Darling:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Skewness:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Kurtosis:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="AndersonPLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="p-value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessValueLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="KurtosisValueLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="value:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonPTextField2">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonPTextField2ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessPTextField2">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisPTextField2">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="kurtosisOutcomeLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="andersonOutcomeLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="skewnessOutcomeLabel2">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="outcome:"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="andersonOutcomeTextField2">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="andersonOutcomeTextField2ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="skewnessOutcomeTextField2">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="kurtosisOutcomeTextField2">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JPanel" name="speedQQPlotPanel">
+                      <Properties>
+                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                            <TitledBorder title="QQPlot"/>
+                          </Border>
+                        </Property>
+                      </Properties>
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
+                    </Container>
+                  </SubComponents>
+                </Container>
               </SubComponents>
             </Container>
           </SubComponents>

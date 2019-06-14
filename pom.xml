@@ -294,6 +294,7 @@
             <artifactId>spring-core</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
+       
 
         <!--
             Expression Language (depends on core)
@@ -348,7 +349,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.18</version>
+            <version>8.0.14</version>
         </dependency>
 
         <dependency>
@@ -459,6 +460,36 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>1.7.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.haifengl</groupId>
+            <artifactId>smile-core</artifactId>
+            <version>1.5.2</version>
+         </dependency>
+
+         <dependency>
+            <groupId>com.github.haifengl</groupId>
+            <artifactId>smile-plot</artifactId>
+            <version>1.5.2</version>
+         </dependency>
+         
+        <dependency>
+            <groupId>com.github.haifengl</groupId>
+            <artifactId>smile-netlib</artifactId>
+            <version>1.5.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>ca.umontreal.iro.simul</groupId>
+            <artifactId>ssj</artifactId>
+            <version>3.3.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.datumbox</groupId>
+            <artifactId>datumbox-framework-lib</artifactId>
+            <version>0.8.1</version>
         </dependency>
 
         <!-- h2 in memory db for unit testing -->

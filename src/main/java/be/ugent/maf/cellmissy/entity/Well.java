@@ -53,7 +53,7 @@ public class Well implements Serializable {
     @Column(name = "column_number")
     @XmlAttribute(required = true)
     private Integer columnNumber;
-    @Column(name = "row_number")
+    @Column(name = "rownumber")
     @XmlAttribute(required = true)
     private Integer rowNumber;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "well", orphanRemoval = true)

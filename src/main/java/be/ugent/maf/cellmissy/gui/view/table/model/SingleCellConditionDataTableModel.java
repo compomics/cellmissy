@@ -62,9 +62,9 @@ public class SingleCellConditionDataTableModel extends AbstractTableModel {
                     AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getTrackSpeedsVector()))));
             data[row][2] = AnalysisUtils.roundThreeDecimals(
                     AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getTrackSpeedsVector()))));
+            
             data[row][3] = AnalysisUtils.roundThreeDecimals(
-                    AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(AnalysisUtils.excludeNaNvalues(
-                            conditions.get(row).getEndPointDirectionalityRatios())))));
+                    AnalysisUtils.computeMean(ArrayUtils.toPrimitive(AnalysisUtils.excludeNaNvalues(AnalysisUtils.excludeNullValues(conditions.get(row).getEndPointDirectionalityRatios())))));
             data[row][4] = AnalysisUtils.roundThreeDecimals(
                     AnalysisUtils.computeMedian(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(conditions.get(row).getEndPointDirectionalityRatios()))));
             data[row][5] = AnalysisUtils.roundThreeDecimals(

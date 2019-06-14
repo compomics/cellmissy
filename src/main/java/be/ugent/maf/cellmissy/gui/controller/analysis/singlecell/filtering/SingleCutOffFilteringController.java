@@ -340,7 +340,7 @@ public class SingleCutOffFilteringController {
                 // recontrol GUI
                 filteringController.hideWaitingDialog();
                 filteringController.controlGuiComponents(true);
-                filteringController.getConditionsList().setEnabled(false);
+                //filteringController.getConditionsList().setEnabled(false);
                 filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);
@@ -382,7 +382,7 @@ public class SingleCutOffFilteringController {
                 // recontrol GUI
                 filteringController.hideWaitingDialog();
                 filteringController.controlGuiComponents(true);
-                filteringController.getConditionsList().setEnabled(false);
+                //filteringController.getConditionsList().setEnabled(false);
                 filteringController.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             } catch (InterruptedException | ExecutionException ex) {
                 LOG.error(ex.getMessage(), ex);

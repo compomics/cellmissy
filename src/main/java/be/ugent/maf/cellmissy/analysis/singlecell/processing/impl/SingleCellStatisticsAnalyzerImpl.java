@@ -37,6 +37,12 @@ public class SingleCellStatisticsAnalyzerImpl implements SingleCellStatisticsAna
             } else if (parameter.equals("cell direct")) {
                 data = conditionDataHolder.getEndPointDirectionalityRatios();
             }
+             else if (parameter.equalsIgnoreCase("accumulated distance")) {
+                data = conditionDataHolder.getCumulativeDistancesVector();
+            }
+            else if (parameter.equalsIgnoreCase("euclidian distance")) {
+                data = conditionDataHolder.getEuclideanDistancesVector();
+            }
             return data;
         }).map((data) -> statisticsCalculator.getSummaryStatistics(ArrayUtils.toPrimitive(AnalysisUtils.excludeNullValues(data)))).forEach((statisticalSummary) -> {
             statisticalSummaries.add(statisticalSummary);
@@ -103,6 +109,12 @@ public class SingleCellStatisticsAnalyzerImpl implements SingleCellStatisticsAna
                 data = singleCellAnalysisGroup.getConditionDataHolders().get(i).getTrackSpeedsVector();
             } else if (parameter.equals("cell direct")) {
                 data = singleCellAnalysisGroup.getConditionDataHolders().get(i).getEndPointDirectionalityRatios();
+            }
+            else if (parameter.equalsIgnoreCase("accumulated distance")) {
+                data = singleCellAnalysisGroup.getConditionDataHolders().get(i).getCumulativeDistancesVector();
+            }
+            else if (parameter.equalsIgnoreCase("euclidian distance")) {
+                data = singleCellAnalysisGroup.getConditionDataHolders().get(i).getEuclideanDistancesVector();
             }
             dataMatrix[i] = data;
         }

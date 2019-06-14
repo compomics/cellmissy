@@ -18,6 +18,7 @@ import be.ugent.maf.cellmissy.gui.CellMissyFrame;
 import be.ugent.maf.cellmissy.gui.WaitingDialog;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.AngleDirectPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DisplSpeedPanel;
+import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.DistancePanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.SingleCellAnalysisPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.TrackCoordinatesPanel;
 import be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering.FilteringPanel;
@@ -84,6 +85,8 @@ public class SingleCellPreProcessingController {
     private AngleDirectController angleDirectController;
     @Autowired
     private FilteringController filteringController;
+    @Autowired
+    private DistanceController distanceController;
     //services
     @Autowired
     private SingleCellConditionPreProcessor singleCellConditionPreProcessor;
@@ -104,6 +107,7 @@ public class SingleCellPreProcessingController {
         displSpeedController.init();
         angleDirectController.init();
         filteringController.init();
+        distanceController.init();
         // get the GUI appender and set the text area for it
         LogTextAreaAppender appender = (LogTextAreaAppender) org.apache.log4j.Logger.getLogger("gui").getAppender("gui");
         appender.setTextArea(singleCellAnalysisPanel.getLogTextArea());
@@ -150,6 +154,14 @@ public class SingleCellPreProcessingController {
         return angleDirectController.getAngleDirectPanel();
     }
 
+    public DistanceController getDistanceController() {
+        return distanceController;
+    }
+    
+    public DistancePanel getDistancePanel() {
+        return distanceController.getDistancePanel();
+    }
+        
     public ObservableList<Track> getTracksBindingList() {
         return tracksBindingList;
     }
@@ -238,6 +250,8 @@ public class SingleCellPreProcessingController {
         angleDirectController.showTrackAngleInTable(plateCondition);
     }
 
+    // Show data in table: stukje van in distancecontroller moet hier dan ook nog bijkomen
+    
     public void plotDisplAndSpeedData(PlateCondition plateCondition) {
         displSpeedController.plotDisplAndSpeedData(plateCondition);
     }
@@ -249,6 +263,8 @@ public class SingleCellPreProcessingController {
     public void plotAngleAndDirectData(PlateCondition plateCondition) {
         angleDirectController.plotAngleAndDirectData(plateCondition);
     }
+    
+    // Show plots van distance
 
     public void showTrackDisplInTable(PlateCondition plateCondition) {
         displSpeedController.showTrackDisplInTable(plateCondition);
@@ -346,6 +362,7 @@ public class SingleCellPreProcessingController {
         singleCellAnalysisPanel.getTrackPointsTable().setModel(new DefaultTableModel());
         singleCellAnalysisPanel.getTracksTable().setModel(new DefaultTableModel());
         filteringController.resetOnCancel();
+        distanceController.resetOnCancel();
     }
 
     /**
