@@ -226,7 +226,7 @@
     create table well (
         wellid bigint not null auto_increment,
         column_number integer,
-        rownumber integer,
+        row_number integer,
         l_conditionid bigint not null,
         primary key (wellid)
     ) ENGINE=InnoDB;
