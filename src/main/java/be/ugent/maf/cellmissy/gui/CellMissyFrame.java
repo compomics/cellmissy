@@ -157,9 +157,9 @@ public class CellMissyFrame extends javax.swing.JFrame {
         return cmsoDatasetParentPanel;
     }
 
-    public JMenuItem getCMSOExportMenuItem() {
-        return cmsoExportMenuItem;
-    }
+//    public JMenuItem getCMSOExportMenuItem() {
+//        return cmsoExportMenuItem;
+//    }
     
 
     /**
@@ -206,7 +206,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         exitMenuItem = new javax.swing.JMenuItem();
         exportMenu = new javax.swing.JMenu();
         exportExperimentMenuItem = new javax.swing.JMenuItem();
-        cmsoExportMenuItem = new javax.swing.JMenuItem();
         exportTemplateMenuItem = new javax.swing.JMenuItem();
         importMenu = new javax.swing.JMenu();
         importExperimentMenuItem = new javax.swing.JMenuItem();
@@ -424,9 +423,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
         exportExperimentMenuItem.setText("Export Experiment...");
         exportMenu.add(exportExperimentMenuItem);
 
-        cmsoExportMenuItem.setText("Export to CMSO dataset...");
-        exportMenu.add(cmsoExportMenuItem);
-
         exportTemplateMenuItem.setText("Export Setup Template...");
         exportMenu.add(exportTemplateMenuItem);
 
@@ -541,7 +537,6 @@ public class CellMissyFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem cellMiaMenuItem;
     private javax.swing.JMenuBar cellMissyMenuBar;
     private javax.swing.JPanel cmsoDatasetParentPanel;
-    private javax.swing.JMenuItem cmsoExportMenuItem;
     private javax.swing.JMenuItem cmsoMenuItem;
     private javax.swing.JPanel doseResponseAnalysisParentPanel;
     private javax.swing.JMenuItem doseResponseMenuItem;

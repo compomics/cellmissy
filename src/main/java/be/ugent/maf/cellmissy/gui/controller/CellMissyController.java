@@ -387,7 +387,7 @@ public class CellMissyController {
         // CMSO dataset import
         cellMissyFrame.getCmsoMenuItem().addActionListener(itemActionListener);
         // export experiment to CMSO dataset
-        cellMissyFrame.getCMSOExportMenuItem().addActionListener(itemActionListener);
+//        cellMissyFrame.getCMSOExportMenuItem().addActionListener(itemActionListener);
         // exit the application
         cellMissyFrame.getExitMenuItem().addActionListener(new ActionListener() {
             @Override
