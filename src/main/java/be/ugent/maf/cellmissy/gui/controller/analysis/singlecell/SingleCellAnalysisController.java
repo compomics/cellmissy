@@ -51,6 +51,8 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import smile.plot.QQPlot;
+
 
 /**
  * A controller for the actual analysis.
@@ -79,6 +81,8 @@ public class SingleCellAnalysisController {
     // child controllers
     @Autowired
     private SingleCellStatisticsController singleCellStatisticsController;
+    @Autowired
+    private SingleCellNormalityTestController singleCellNormalityTestController;
     // services
     private GridBagConstraints gridBagConstraints;
 
@@ -97,6 +101,7 @@ public class SingleCellAnalysisController {
         initOtherViews();
         // init child controllers
         singleCellStatisticsController.init();
+        singleCellNormalityTestController.init();
     }
 
     /**
@@ -115,6 +120,11 @@ public class SingleCellAnalysisController {
     public Map<SingleCellConditionDataHolder, List<TrackDataHolder>> getFilteringMap() {
         return singleCellMainController.getFilteringMap();
     }
+
+    public SingleCellNormalityTestController getSingleCellNormalityTestController() {
+        return singleCellNormalityTestController;
+    }
+    
 
     /**
      * Called in the parent controller: update data and graphics.
@@ -184,7 +194,8 @@ public class SingleCellAnalysisController {
         radioButtonGroup.add(analysisPanel.getCellTracksRadioButton());
         radioButtonGroup.add(analysisPanel.getCellSpeedRadioButton());
         radioButtonGroup.add(analysisPanel.getStatisticsRadioButton());
-
+        radioButtonGroup.add(analysisPanel.getNormalityTestsRadioButton());
+        
         /**
          * Add action listeners
          */
@@ -212,7 +223,16 @@ public class SingleCellAnalysisController {
             layout.show(analysisPanel.getBottomPanel(), analysisPanel.getStatisticsParentPanel().getName());
             singleCellStatisticsController.updateConditionList();
         });
+        
+        // go to normality tests
+        analysisPanel.getNormalityTestsRadioButton().addActionListener((ActionEvent e) -> {
+            // get the layout from the bottom panel and show the appropriate one
+            CardLayout layout = (CardLayout) analysisPanel.getBottomPanel().getLayout();
+            layout.show(analysisPanel.getBottomPanel(), analysisPanel.getNormalityTestParentPanel().getName());
+            String parameter = Integer.toString(analysisPanel.getNormalityTestParentPanel().getSelectedIndex());  
+        });        
 
+        //Default selected button
         analysisPanel.getCellTracksRadioButton().setSelected(true);
         AlignedTableRenderer alignedTableRenderer = new AlignedTableRenderer(SwingConstants.LEFT);
         for (int i = 0; i < analysisPanel.getDataTable().getColumnModel().getColumnCount(); i++) {
@@ -225,7 +245,7 @@ public class SingleCellAnalysisController {
     }
 
     /**
-     * Initialize plot options panel.
+     * Initialize plot options panel. (van cell tracks panel)
      */
     private void initPlotOptionsPanel() {
         // make new view

@@ -90,6 +90,8 @@ public class SingleCellMainController {
     private SingleCellPreProcessingController singleCellPreProcessingController;
     @Autowired
     private SingleCellAnalysisController singleCellAnalysisController;
+    @Autowired
+    private DistanceController distanceController;
     // services
     @Autowired
     private ExperimentService experimentService;
@@ -492,6 +494,8 @@ public class SingleCellMainController {
                         .getAnalysisLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
                 showInfoMessage("Single Cell Turning Angles and Directionality Measures");
                 // check which button is selected for analysis
                 if (singleCellPreProcessingController.getAngleDirectPanel().getInstTurnAngleRadioButton().isSelected()) {
@@ -503,6 +507,31 @@ public class SingleCellMainController {
 //
 //                }
                 singleCellPreProcessingController.plotAngleAndDirectData(selectedCondition);
+                break;
+            case "distanceParentPanel":
+                dataAnalysisPanel.getConditionsList().setEnabled(true);
+                // select only distancelabel 
+                GuiUtils.highlightLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().getAngleDirectLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getCellTracksLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getAnalysisLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
+                        getFilteringLabel());
+             
+                showInfoMessage("Single Cell Travelled Distance");
+                // check which button is selected for analysis
+                if (singleCellPreProcessingController.getDistancePanel().getAccumulatedDistanceRadioButton().isSelected()) {
+                    distanceController.showAccumDistInTable(selectedCondition);
+                    distanceController.plotAccumDistBoxPlot(selectedCondition);
+                } else if (singleCellPreProcessingController.getDistancePanel().getEuclidianDistanceRadioButton().isSelected()) {
+                    distanceController.showEuclDistInTable(selectedCondition);
+                    distanceController.plotEucDistBoxPlot(selectedCondition);
+                }
                 break;
             case "filteringParentPanel":
                 dataAnalysisPanel.getConditionsList().setEnabled(true);
@@ -517,6 +546,8 @@ public class SingleCellMainController {
                         .getCellTracksLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
                         .getInspectingDataLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
                 // enable next button (in case of pressing previous on analysis parent panel)
                 analysisExperimentPanel.getNextButton().setEnabled(true);
                 showInfoMessage("Single-cell trajectories filtering - Quality Control");
@@ -541,16 +572,21 @@ public class SingleCellMainController {
                         .getInspectingDataLabel());
                 GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel().
                         getFilteringLabel());
+                GuiUtils.resetLabel(singleCellPreProcessingController.getSingleCellAnalysisPanel()
+                        .getDistanceLabel());
                 showInfoMessage("Conditions-based analysis");
-                analysisPlatePanel.setCurrentCondition(null);
+                //analysisPlatePanel.setCurrentCondition(null);
                 analysisPlatePanel.repaint();
                 analysisPlatePanel.revalidate();
-                dataAnalysisPanel.getConditionsList().setEnabled(false);
+                //dataAnalysisPanel.getConditionsList().setEnabled(false);
                 // see if some conditions still need to be processed
                 if (!proceedToAnalysis()) { // I am pretty sure this is no longer needed !!!
                     singleCellPreProcessingController.enableAnalysis();
                 }
                 // check if the user wants to proceed with filtered data or not
+                // this check only needs to happen once
+                if (!singleCellAnalysisController.getAnalysisPanel().getNormalityTestsRadioButton().isSelected()){
+                    
                 Object[] options = {"Yes", "No"};
                 int choice = JOptionPane.showOptionDialog(null, "Proceed with filtered data? If NO, raw data will be used.", "", JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE, null, options, options[0]);
@@ -560,6 +596,7 @@ public class SingleCellMainController {
                 } else {
                     singleCellAnalysisController.setFilteredData(Boolean.FALSE);
                 }
+                }
                 // check which button is actually selected
                 if (singleCellAnalysisController.getAnalysisPanel().getCellTracksRadioButton().isSelected()) {
                     singleCellAnalysisController.plotCellTracks();
@@ -567,6 +604,15 @@ public class SingleCellMainController {
 //                    singleCellAnalysisController.plotData();
                 } else if (singleCellAnalysisController.getAnalysisPanel().getStatisticsRadioButton().isSelected()) {
 
+                } else if (singleCellAnalysisController.getAnalysisPanel().getNormalityTestsRadioButton().isSelected()) {
+                   
+                    dataAnalysisPanel.getConditionsList().setEnabled(true); //conditions need to be selected again
+                    String index = Integer.toString(singleCellAnalysisController.getSingleCellNormalityTestController().getNormalityTestParentPanel().getSelectedIndex());
+                    singleCellAnalysisController.getSingleCellNormalityTestController().plotQQPlots(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().ComputeStatisticalTests(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().computeSkewness(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().computeKurtosis(index);
+                    singleCellAnalysisController.getSingleCellNormalityTestController().fillInConditionTextFields();
                 }
                 break;
 
@@ -884,7 +930,7 @@ public class SingleCellMainController {
         }
         // reset subcontrollers
         singleCellAnalysisController.resetOnCancel();
-        singleCellPreProcessingController.resetOnCancel();
+        singleCellPreProcessingController.resetOnCancel(); 
     }
 
     /**

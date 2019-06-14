@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell.filtering;
+package be.ugent.maf.cellmissy.gui.experiment.analysis.singlecell;
 
 /**
  *
- * @author Paola
+ * @author ninad
  */
-public class FilteringInfoDialog extends javax.swing.JDialog {
+public class NormalityTestInfoDialog extends javax.swing.JDialog {
 
     /**
-     * Creates new form FilteringInfoDialog
+     * Creates new form NormalityTestInfoDialog
      */
-    public FilteringInfoDialog(java.awt.Frame parent, boolean modal) {
+    public NormalityTestInfoDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
@@ -33,28 +33,28 @@ public class FilteringInfoDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        infoScrollPane.setFocusable(false);
-        infoScrollPane.setMinimumSize(new java.awt.Dimension(350, 370));
-        infoScrollPane.setPreferredSize(new java.awt.Dimension(2966, 370));
-
         infoEditorPane.setEditable(false);
-        infoEditorPane.setContentType("text/html"); // NOI18N
-        infoEditorPane.setText("<html>\n   <head>\n      <TITLE></TITLE>\n   </head>\n   <body>\n      <a name=\"#top\"/>\n      <i>Filtering on single-cell trajectories ...</i>\n      <hr>\n      <br>\n      <p align=\"left\">\n        In this module you can filter/quality control single-cell trajectories.\n\nYou can select between two filtering methods: single cut-off criterium, and multiple cut-off checks.\n\tSINGLE CUT-OFF: a unique threshold value is set on the cell displacement, and trajectories that show a displacement smaller than this threshold are discarded.\n\tMULTIPLE CUT-OFF:\n\tFirst, a \"motile step criterion\" is applied: insert top and bottom limit for translocation values, together with a translocation step.\n\t\tIf you choose µm as unit of measurement, nothing happens; if you choose pixels, please insert an appropriate conversion factor in the correspondent field.\n\tSecond, only cell trajectories that meet this first criterion in - at minimum - a specific percentage of steps of their total lenght can be retained. The other trajectories will be therefore discarded.\n         </br>\n      </p>\n   </body>\n</html>");
+        infoEditorPane.setContentType("text/html\n"); // NOI18N
+        infoEditorPane.setText("Tests on the shape and normality of the parameters\n------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nThe following tests try to give an indication about the distribution of the data.\nThe Anderson-Darling test is a normality test.\nThe skewness and kurtosis give an indication about the shape of the data.\n\nThe different outcomes for the kurtosis are mesokurtic, leptokurtic and platykurtic.\nMesokurtic means that the distribution has a kurtosis around zero, matching that of the normal distribution. \nThis means that the given data has a similar distribution of extreme values as the Gaussian distribution.\nPositive excess kurtosis means that the distribution is leptokurtic, which means that it has fatter tails than the Gaussian distribution.\nNegative excess kurtosis means that the distribtuion is platykurtic, which means that it has thinner tails than the Gaussian distribution.\n\nPlease note that these tests only give an indication about normality. Inspection of the QQ-plot is necessary to conclude (non-)normality.");
+        infoEditorPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         infoEditorPane.setFocusable(false);
-        infoEditorPane.setPreferredSize(new java.awt.Dimension(2964, 370));
         infoScrollPane.setViewportView(infoEditorPane);
+        infoEditorPane.getAccessibleContext().setAccessibleName("infoEditorPane");
+        infoEditorPane.getAccessibleContext().setAccessibleDescription("text/html\n");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGap(0, 782, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(infoScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 289, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 254, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(infoScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE))
         );
 
         pack();
@@ -77,20 +77,20 @@ public class FilteringInfoDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FilteringInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NormalityTestInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FilteringInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NormalityTestInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FilteringInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NormalityTestInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FilteringInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NormalityTestInfoDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                FilteringInfoDialog dialog = new FilteringInfoDialog(new javax.swing.JFrame(), true);
+                NormalityTestInfoDialog dialog = new NormalityTestInfoDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

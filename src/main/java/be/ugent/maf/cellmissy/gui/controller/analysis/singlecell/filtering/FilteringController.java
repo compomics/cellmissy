@@ -394,10 +394,10 @@ public class FilteringController {
 
         filteringPanel.getSingleCutOffRadioButton().addActionListener((ActionEvent e) -> {
             // need to disable the conditions list
-            singleCellPreProcessingController.getConditionsList().clearSelection();
-            singleCellPreProcessingController.getConditionsList().setEnabled(false);
-            singleCellPreProcessingController.setCurrentCondition(null);
-            singleCellPreProcessingController.getAnalysisPlatePanel().setCurrentCondition(null);
+            //singleCellPreProcessingController.getConditionsList().clearSelection();
+            //singleCellPreProcessingController.getConditionsList().setEnabled(false);
+            //singleCellPreProcessingController.setCurrentCondition(null);
+            //singleCellPreProcessingController.getAnalysisPlatePanel().setCurrentCondition(null);
             singleCellPreProcessingController.getAnalysisPlatePanel().repaint();
             // get the layout from the bottom panel and show the appropriate one
             CardLayout layout = (CardLayout) filteringPanel.getBottomPanel().getLayout();
