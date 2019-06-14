@@ -1,4 +1,5 @@
 -- create tables
+-- !!! IF YOU ARE USING CELLMISSY V1.4.0 AND BEYOND, DO NOT USE THIS SCHEMA
     create table algorithm (
         algorithmid bigint not null auto_increment,
         algorithm_name varchar(255) not null,
