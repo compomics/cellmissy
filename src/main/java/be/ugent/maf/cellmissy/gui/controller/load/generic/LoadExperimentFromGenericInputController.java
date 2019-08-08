@@ -319,6 +319,9 @@ public class LoadExperimentFromGenericInputController {
             experiment.setDuration(Double.parseDouble(genericExperimentDataController.getLoadFromGenericInputMetadataPanel().getDurationTextField().getText()));
         } catch (NumberFormatException e) {
             messages.add("Please insert valid experiment metadata");
+        } catch (NullPointerException e) {
+            //nullpointers come up here when the user has not selected an experiment before continuing
+            messages.add("Please select an experiment first");
         }
         return messages;
     }
