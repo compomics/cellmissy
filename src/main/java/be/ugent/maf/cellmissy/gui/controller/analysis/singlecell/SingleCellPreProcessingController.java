@@ -390,7 +390,7 @@ public class SingleCellPreProcessingController {
         LOG.info("generating track speeds...");
         singleCellConditionOperator.generateTrackSpeedsVector(singleCellConditionDataHolder);
 
-//        LOG.info("computing median speed...");
+        LOG.info("computing median speed...");
         singleCellConditionOperator.computeMedianSpeed(singleCellConditionDataHolder); // maybe not needed
         LOG.info("generating track end-point directionality ratios...");
         singleCellConditionOperator.generateEndPointDirectionalityRatiosVector(singleCellConditionDataHolder);
@@ -398,16 +398,16 @@ public class SingleCellPreProcessingController {
         singleCellConditionOperator.generateTurningAnglesVector(singleCellConditionDataHolder);
         LOG.info("generating median turning angles...");
         singleCellConditionOperator.generateMedianTurningAnglesVector(singleCellConditionDataHolder);
-//        LOG.info("generating mean-squared displacement...");
-//        singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
-//        LOG.info("generating convex hulls...");
-//        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
-//        LOG.info("generating track displacements...");
-//        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
-//        LOG.info("generating outreach ratios...");
-//        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
-//        LOG.info("computing for interpolated tracks...");
-//        singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
+        LOG.info("generating mean-squared displacement...");
+        singleCellConditionOperator.generateMSDArray(singleCellConditionDataHolder);
+        LOG.info("generating convex hulls...");
+        singleCellConditionOperator.generateConvexHullsVector(singleCellConditionDataHolder);
+        LOG.info("generating track displacements...");
+        singleCellConditionOperator.generateDisplacementRatiosVector(singleCellConditionDataHolder);
+        LOG.info("generating outreach ratios...");
+        singleCellConditionOperator.generateOutreachRatiosVector(singleCellConditionDataHolder);
+        LOG.info("computing for interpolated tracks...");
+        singleCellConditionOperator.operateOnInterpolatedTracks(singleCellConditionDataHolder);
         plateCondition.setComputed(true);
     }
 
