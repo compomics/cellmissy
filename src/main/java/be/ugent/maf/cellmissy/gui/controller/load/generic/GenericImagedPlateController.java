@@ -476,15 +476,13 @@ public class GenericImagedPlateController {
                                     imagingNode.add(dataNode);
                                 }
                             } else {
-                                throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct!");
+                                throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct! CellMissy can't find any .txt files.");
                             }
                         }
                     } else {
-                        throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct!");
+                        throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct! There seem to be no imaging type folders in the directory structure.");
                     }
-                } else {
-                    throw new GenericImportDirectoryException("Sorry, this directory structure doesn't seem quite correct!");
-                }
+                } 
             }
         } else {
             throw new GenericImportDirectoryException("This directory seems to be empty!\nPlease load something else!");
