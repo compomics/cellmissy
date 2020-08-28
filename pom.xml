@@ -5,7 +5,7 @@
 
     <groupId>be.ugent.maf</groupId>
     <artifactId>CellMissy</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <packaging>jar</packaging>
 
     <name>CellMissy</name>
@@ -425,7 +425,11 @@
             <artifactId>betterbeansbinding-core</artifactId>
             <version>1.3.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+        </dependency>
         <dependency>
             <groupId>it.tidalwave.betterbeansbinding</groupId>
             <artifactId>betterbeansbinding-swingbinding</artifactId>
@@ -466,13 +470,13 @@
             <groupId>com.github.haifengl</groupId>
             <artifactId>smile-core</artifactId>
             <version>1.5.2</version>
-         </dependency>
+        </dependency>
 
-         <dependency>
+        <dependency>
             <groupId>com.github.haifengl</groupId>
             <artifactId>smile-plot</artifactId>
             <version>1.5.2</version>
-         </dependency>
+        </dependency>
          
         <dependency>
             <groupId>com.github.haifengl</groupId>
@@ -518,6 +522,18 @@
             <version>2.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
@@ -580,6 +596,18 @@
             <artifactId>formats-gpl</artifactId>
             <version>5.5.2</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- JAXB API -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <!-- JAXB Runtime -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.2</version>
         </dependency>
 
     </dependencies>
